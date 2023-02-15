@@ -21,7 +21,11 @@ def generate_launch_description():
             package='teleop_twist_joy',
             executable='teleop_node',
             name='teleop_node',
-            parameters=[joy_params, {'use_sim_time': use_sim_time}],
+            parameters=[joy_params, {
+                'use_sim_time': use_sim_time,
+                'enable_button': 0,
+                'enable_turbo_button': 3
+                }],
             remappings=[('/cmd_vel','/cmd_vel_joy')]
          )
 
