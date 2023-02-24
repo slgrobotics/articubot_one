@@ -87,6 +87,29 @@
         <material>Gazebo/Orange</material>
     </gazebo>
 
+    <!-- *********************** IMU SETUP *********************************  -->
+    <!-- Each sensor must be attached to a link.                              -->
+
+    <link name="imu_link">
+        <visual>
+        <geometry>
+            <box size="0.1 0.1 0.1"/>
+        </geometry>
+        </visual>
+        
+        <collision>
+        <geometry>
+            <box size="0.1 0.1 0.1"/>
+        </geometry>
+        </collision>
+    </link>
+        
+    <joint name="imu_joint" type="fixed">
+        <parent link="chassis"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0.01"/>
+    </joint>
+
     <!-- LEFT WHEEL LINK -->
 
     <joint name="left_wheel_joint" type="continuous">
