@@ -14,8 +14,9 @@ diff_cont:
 
     publish_rate: 50.0
 
-    base_frame_id: base_footprint
+    # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
     #base_frame_id: base_link
+    base_frame_id: base_footprint
 
     # See http://wiki.ros.org/diff_drive_controller
 
@@ -33,11 +34,14 @@ diff_cont:
     # left_wheel_radius_multiplier: x
     # right_wheel_radius_multiplier: x
 
-    odom_frame_id: 'odom'
-    #child_frame_id: "base_footprint"
+    # Name of frame to publish odometry in. Default: "/odom"
+    odom_frame_id: '/odom'
+
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
     twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
     # open_loop: x
+
+    # Publish to TF directly or not. Default: true
     enable_odom_tf: true
 
     cmd_vel_timeout: 1.0

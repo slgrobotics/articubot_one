@@ -60,11 +60,11 @@
 
     <joint name="chassis_joint" type="fixed">
         <parent link="base_link"/>
-        <child link="chassis"/>
+        <child link="chassis_link"/>
         <origin xyz="${-wheel_offset_x} 0 ${-wheel_offset_z}"/>
     </joint>
 
-    <link name="chassis">
+    <link name="chassis_link">
         <visual>
             <origin xyz="${chassis_length/2} 0 ${chassis_height/2}"/>
             <geometry>
@@ -83,7 +83,7 @@
         </xacro:inertial_box>
     </link>
 
-    <gazebo reference="chassis">
+    <gazebo reference="chassis_link">
         <material>Gazebo/Orange</material>
     </gazebo>
 
@@ -105,7 +105,7 @@
     </link>
         
     <joint name="imu_joint" type="fixed">
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="imu_link"/>
         <origin xyz="0 0 0.01"/>
     </joint>
@@ -177,7 +177,7 @@
     <!-- CASTER WHEEL LINK -->
 
     <joint name="caster_wheel_joint" type="fixed">
-        <parent link="chassis"/>
+        <parent link="chassis_link"/>
         <child link="caster_wheel"/>
         <origin xyz="${caster_wheel_offset_x} 0 ${caster_wheel_offset_z}"/>
     </joint>
