@@ -98,6 +98,27 @@ def generate_launch_description():
     #
     # Replace the diff_drive_spawner in the final return with delayed_diff_drive_spawner
 
+    ldlidar_node = Node(
+        package='ldlidar_sl_ros2',
+        executable='ldlidar_sl_ros2_node',
+        name='ldlidar_publisher_ld14',
+        output='screen',
+        respawn=True,
+        respawn_delay=10,
+        parameters=[
+          {'product_name': 'LDLiDAR_LD14'},
+          {'laser_scan_topic_name': 'scan'},
+          {'point_cloud_2d_topic_name': 'pointcloud2d'},
+          {'frame_id': 'laser_frame'},
+          {'port_name': '/dev/ttyUSB0'},
+          {'serial_baudrate' : 115200},
+          {'laser_scan_dir': True},
+          {'enable_angle_crop_func': False},
+          {'angle_crop_min': 135.0},
+          {'angle_crop_max': 225.0}
+        ]
+    )
+
     mpu9250driver_node = Node(
         package='mpu9250driver',
         executable='mpu9250driver',
@@ -129,5 +150,6 @@ def generate_launch_description():
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
+        ldlidar_node,
         mpu9250driver_node
     ])
