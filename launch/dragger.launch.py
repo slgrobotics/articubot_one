@@ -110,7 +110,7 @@ def generate_launch_description():
           {'laser_scan_topic_name': 'scan'},
           {'point_cloud_2d_topic_name': 'pointcloud2d'},
           {'frame_id': 'laser_frame'},
-          {'port_name': '/dev/ttyUSB0'},
+          {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': False},
@@ -129,7 +129,7 @@ def generate_launch_description():
         emulate_tty=True,
         parameters=[
           {'calibrate': False },
-          {'gyro_range': 0 },     # Gyroscope range: 0 -> +-250°/s, 1 -> +-500°/s, 2 -> +-1000°/s, 3 -> +-2000°/s
+          {'gyro_range': 0 },     # Gyroscope range: 0 -> +-250Â°/s, 1 -> +-500Â°/s, 2 -> +-1000Â°/s, 3 -> +-2000Â°/s
           {'accel_range': 0 },    # Acceleration range: 0 -> +-2g, 1 -> +-4g, 2 -> +-8g, 3 -> +-16g
           {'dlpf_bandwidth': 2 },   # Digital low pass filter bandwidth [0-6]: 0 -> 260Hz, 1 -> 184Hz, 2 -> 94Hz, 3 -> 44Hz, 4 -> 21Hz, 5 -> 10Hz, 6 -> 5Hz
           {'gyro_x_offset':  0.0 },  # If "calibrate" is true, these values will be overriden by the calibration procedure
