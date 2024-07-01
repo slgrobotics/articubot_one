@@ -142,6 +142,21 @@ def generate_launch_description():
         ]
     )
 
+    gps_node = Node(
+        package='nmea_navsat_driver',
+        executable='nmea_serial_driver',
+        output='both',
+        respawn=True,
+        respawn_delay=10,
+        parameters=[
+            {'port' : '/dev/ttyUSBGPS' },
+            {'baud' : 115200 },
+            {'frame_id' : 'gps' },
+            {'time_ref_source' : 'gps' },
+            {'useRMC' : False }
+        ]
+    )
+
     # Launch them all!
     return LaunchDescription([
         rsp,
@@ -151,5 +166,6 @@ def generate_launch_description():
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
         ldlidar_node,
+        gps_node,
         mpu9250driver_node
     ])
