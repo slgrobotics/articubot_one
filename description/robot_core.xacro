@@ -3,20 +3,20 @@
 
     <xacro:include filename="inertial_macros.xacro"/>
 
-
-    <xacro:property name="chassis_length" value="0.335"/>
-    <xacro:property name="chassis_width" value="0.265"/>
-    <xacro:property name="chassis_height" value="0.138"/>
-    <xacro:property name="chassis_mass" value="1.0"/>
-    <xacro:property name="wheel_radius" value="0.033"/>
-    <xacro:property name="wheel_thickness" value="0.026"/>
-    <xacro:property name="wheel_mass" value="0.05"/>
-    <xacro:property name="wheel_offset_x" value="0.226"/>
-    <xacro:property name="wheel_offset_y" value="0.1485"/>
+	<!-- Values corrected for Dragger robot -->
+    <xacro:property name="chassis_length" value="0.90"/>
+    <xacro:property name="chassis_width" value="0.70"/>
+    <xacro:property name="chassis_height" value="0.75"/>
+    <xacro:property name="chassis_mass" value="30.0"/>
+    <xacro:property name="wheel_radius" value="0.192"/>
+    <xacro:property name="wheel_thickness" value="0.09"/>
+    <xacro:property name="wheel_mass" value="1.0"/>
+    <xacro:property name="wheel_offset_x" value="0.10"/>
+    <xacro:property name="wheel_offset_y" value="0.290"/>
     <xacro:property name="wheel_offset_z" value="0.01"/>
-    <xacro:property name="caster_wheel_radius" value="0.01"/>
-    <xacro:property name="caster_wheel_mass" value="0.01"/>
-    <xacro:property name="caster_wheel_offset_x" value="0.075"/>
+    <xacro:property name="caster_wheel_radius" value="0.12"/>
+    <xacro:property name="caster_wheel_mass" value="0.3"/>
+    <xacro:property name="caster_wheel_offset_x" value="0.48"/>
     <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
 
     <material name="white">
