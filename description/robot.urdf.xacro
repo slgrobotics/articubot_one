@@ -17,6 +17,6 @@
     <!-- <xacro:include filename="depth_camera.xacro" /> -->
     <xacro:include filename="gps.xacro" />
 
-    <xacro:include filename="face.xacro" />
+    <!-- xacro:include filename="face.xacro" / -->
     
 </robot>

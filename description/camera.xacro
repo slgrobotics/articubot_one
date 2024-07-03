@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
+    <xacro:property name="camera_offset_x" value="0.2"/>
+    <xacro:property name="camera_offset_z" value="0.55"/>
+
     <joint name="camera_joint" type="fixed">
-        <parent link="chassis_link"/>
+        <parent link="base_link"/>
         <child link="camera_link"/>
-        <origin xyz="0.276 0 0.181" rpy="0 0.18 0"/>
+        <origin xyz="${camera_offset_x} 0 ${camera_offset_z}" rpy="0 0.18 0"/>
     </joint>
 
     <link name="camera_link">
@@ -12,14 +15,12 @@
             <geometry>
                 <box size="0.010 0.03 0.03"/>
             </geometry>
-            <material name="black"/>
         </visual>
         <visual>
             <origin xyz="0 0 -0.05"/>
             <geometry>
                 <cylinder radius="0.002" length="0.1"/>
             </geometry>
-            <material name="black"/>
         </visual>
     </link>
 
@@ -33,10 +34,12 @@
     <link name="camera_link_optical"></link>
 
 
+    <gazebo reference="laser_frame">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
 
     <gazebo reference="camera_link">
-        <material>Gazebo/Black</material>
-
         <sensor name="camera" type="camera">
             <pose> 0 0 0 0 0 0 </pose>
             <visualize>true</visualize>
