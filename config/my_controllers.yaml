@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 30
+    update_rate: 30 # Hz
     # use_sim_time: true
 
     diff_cont:
@@ -13,6 +13,9 @@ diff_cont:
   ros__parameters:
 
     publish_rate: 50.0
+
+    # Name of frame to publish odometry in. Default: "/odom"
+    odom_frame_id: '/odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
     #base_frame_id: base_link
@@ -30,44 +33,49 @@ diff_cont:
     # open_loop: false    
 
     wheels_per_side: 1
-    # wheel_separation_multiplier: x
-    # left_wheel_radius_multiplier: x
-    # right_wheel_radius_multiplier: x
-
-    # Name of frame to publish odometry in. Default: "/odom"
-    odom_frame_id: '/odom'
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
 
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
     twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+
+    # pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    # twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+  
     # open_loop: x
 
     # Publish to TF directly or not. Default: true
     enable_odom_tf: true
 
     cmd_vel_timeout: 1.0
-    # publish_limited_velocity: x
-    # velocity_rolling_window_size: x
-    
+    # publish_limited_velocity: true
+    # velocity_rolling_window_size: 10
 
-    #linear.x.has_velocity_limits: true
-    # linear.x.has_acceleration_limits: false
+    # Velocity and acceleration limits
+    # Whenever a min_* is unspecified, default to -max_*
+
+    # linear.x.has_velocity_limits: true
+    # linear.x.has_acceleration_limits: true
     # linear.x.has_jerk_limits: false
-    #linear.x.max_velocity: 0.320    # m/s - experimental on actual robot
-    #linear.x.min_velocity: -0.320
-    # linear.x.max_acceleration: NAN
-    # linear.x.min_acceleration: NAN
-    # linear.x.max_jerk: NAN
-    # linear.x.min_jerk: NAN
 
-    #angular.z.has_velocity_limits: true
-    # angular.z.has_acceleration_limits: false
+    # linear.x.max_velocity: 0.320    # m/s - experimental on actual robot
+    # linear.x.min_velocity: -0.320
+    # linear.x.max_acceleration: 1.0
+    # linear.x.min_acceleration: -1.0
+    # linear.x.max_jerk: 0.0
+    # linear.x.min_jerk: 0.0
+
+    # angular.z.has_velocity_limits: true
+    # angular.z.has_acceleration_limits: true
     # angular.z.has_jerk_limits: false
-    #angular.z.max_velocity: 0.185    # rad/s - experimental on actual robot
-    #angular.z.min_velocity: -0.185
-    # angular.z.max_acceleration: NAN
-    # angular.z.min_acceleration: NAN
-    # angular.z.max_jerk: NAN
-    # angular.z.min_jerk: NAN
+
+    # angular.z.max_velocity: 0.185    # rad/s - experimental on actual robot
+    # angular.z.min_velocity: -0.185
+    # angular.z.max_acceleration: 1.0
+    # angular.z.min_acceleration: -1.0
+    # angular.z.max_jerk: 0.0
+    # angular.z.min_jerk: 0.0
 
 
 # joint_broad:

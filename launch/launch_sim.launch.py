@@ -70,6 +70,23 @@ def generate_launch_description():
         arguments=["joint_broad"],
     )
     ##################################################################
+    
+    # Process the URDF file
+    pkg_path = os.path.join(get_package_share_directory('articubot_one'))
+    xacro_file = os.path.join(pkg_path,'description','robot.urdf.xacro')
+    # robot_description_config = xacro.process_file(xacro_file).toxml()
+    robot_description_config = Command(['xacro ', xacro_file, ' use_ros2_control:=', 'true', ' sim_mode:=', 'true'])
+    
+    # Create a robot_state_publisher node
+    params = {'robot_description': robot_description_config, 'use_sim_time': 'true'}
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='screen',
+        parameters=[params]
+    )
+    
+    ##################################################################
 
     robot_description = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
 
@@ -78,8 +95,8 @@ def generate_launch_description():
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[{'robot_description': robot_description}, controller_params_file],
-        remappings=[('/diff_cont/odom','/odom')]
+        parameters=[controller_params_file],
+        remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
     )
 
     delayed_controller_manager = TimerAction(period=3.0, actions=[controller_manager])
@@ -131,5 +148,6 @@ def generate_launch_description():
         spawn_entity,
         #diff_drive_spawner,
         #joint_broad_spawner
+        #node_robot_state_publisher
     ])
 
