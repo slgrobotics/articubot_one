@@ -132,7 +132,6 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-0.756237 1.39226 0 0 -0 0</pose>
     </model>
     <model name='Construction Cone'>
       <link name='link'>
@@ -181,7 +180,6 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-2.19745 -2.25046 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
       <sim_time>457 444000000</sim_time>
@@ -189,20 +187,18 @@
       <wall_time>1646216792 728719362</wall_time>
       <iterations>457444</iterations>
       <model name='Construction Barrel'>
-        <pose>-0.756319 1.39223 0 0 0 -2.4e-05</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-0.756319 1.39223 0 0 0 -2.4e-05</pose>
+          <pose>2.0 2.0 0 0 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>3.45865 5.7443 4.40608 1.34644 0.778762 3.14097</acceleration>
           <wrench>1729.32 2872.15 2203.04 0 -0 0</wrench>
         </link>
       </model>
       <model name='Construction Cone'>
-        <pose>-2.19745 -2.25046 -0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-2.19745 -2.25046 -0 0 -0 0</pose>
+          <pose>2.5 -0.75 -0 0 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 -0 -0.008512 -2.58585 1.13682 3.14159</acceleration>
           <wrench>0 -0 -0.008512 0 -0 0</wrench>
@@ -224,7 +220,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-15.5892 0.392985 21.6628 0 0.851642 0.028194</pose>
+        <pose>-15.0 4.0 20.0 0 1.0 -0.18</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
