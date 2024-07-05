@@ -49,7 +49,8 @@ def generate_launch_description():
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_params_file],
+        # parameters=[controller_params_file],  - in theory, robot_description should be from topic, not parameter. Doesn't work this way though.
+        parameters=[{'robot_description': robot_description}, controller_params_file],
         remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
     )
 
@@ -123,7 +124,7 @@ def generate_launch_description():
         package='mpu9250driver',
         executable='mpu9250driver',
         name='mpu9250driver_node',
-        output="screen",
+        output='screen',
         respawn=True,
         respawn_delay=4,
         emulate_tty=True,
@@ -145,7 +146,7 @@ def generate_launch_description():
     gps_node = Node(
         package='nmea_navsat_driver',
         executable='nmea_serial_driver',
-        output='both',
+        output='screen',
         respawn=True,
         respawn_delay=10,
         parameters=[

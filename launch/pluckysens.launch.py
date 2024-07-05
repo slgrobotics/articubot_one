@@ -45,7 +45,7 @@ def generate_launch_description():
         package='mpu9250driver',
         executable='mpu9250driver',
         name='mpu9250driver_node',
-        output="screen",
+        output='screen',
         respawn=True,
         respawn_delay=4,
         emulate_tty=True,
