@@ -10,6 +10,7 @@ from launch.substitutions import Command
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterValue
 
 def generate_launch_description():
 
@@ -38,15 +39,15 @@ def generate_launch_description():
         remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
     )
 
-    robot_description = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
+    robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
 
-    controller_params_file = os.path.join(get_package_share_directory(package_name),'config','my_controllers.yaml')
+    controllers_params_file = os.path.join(get_package_share_directory(package_name),'config','my_controllers.yaml')
 
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        # parameters=[controller_params_file],  - in theory, robot_description should be from topic, not parameter. Doesn't work this way though.
-        parameters=[{'robot_description': robot_description}, controller_params_file],
+        # parameters=[controllers_params_file],  - in theory, robot_description should be from topic, not a string parameter. Doesn't work this way though.
+        parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str)}, controllers_params_file],
         remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
     )
 
