@@ -51,6 +51,12 @@ def generate_launch_description():
                     launch_arguments={'extra_gazebo_args': '--ros-args --params-file ' + gazebo_params_file}.items()
              )
 
+    spawn_robot = Node(package='ros_gz_sim', executable='create',
+            arguments=[
+                '-name', 'dragger',
+                '-topic', '/robot_description'],
+            output='screen')
+
     # Run the spawner node from the gazebo_ros package. The entity name doesn't really matter if you only have a single robot.
     spawn_entity = Node(package='gazebo_ros', executable='spawn_entity.py',
                         arguments=['-topic', 'robot_description',
@@ -95,7 +101,7 @@ def generate_launch_description():
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controller_params_file],
+        parameters=[{'robot_description': robot_description}, controller_params_file],
         remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
     )
 
@@ -144,8 +150,9 @@ def generate_launch_description():
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
-        gazebo,
-        spawn_entity,
+        spawn_robot,
+        #gazebo,
+        #spawn_entity,
         #diff_drive_spawner,
         #joint_broad_spawner
         #node_robot_state_publisher
