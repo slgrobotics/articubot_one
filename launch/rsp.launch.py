@@ -17,11 +17,10 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_ros2_control = LaunchConfiguration('use_ros2_control')
 
-    # Process the URDF file
+    # Produce the URDF string from collection of .xacro's:
     pkg_path = os.path.join(get_package_share_directory('articubot_one'))
     xacro_file = os.path.join(pkg_path,'description','robot.urdf.xacro')
 
-    # robot_description_sdf = xacro.process_file(xacro_file).toxml()
     robot_description_sdf = Command(['xacro ', xacro_file,
                                 ' use_ros2_control:=', use_ros2_control,
                                 ' sim_mode:=', use_sim_time])

@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:unless value="$(arg sim_mode)">
-        <ros2_control name="RealRobot" type="system">
-            <hardware>
-				<!-- Values corrected for Dragger robot -->
+    <ros2_control name="DraggerRobot" type="system">
+
+        <hardware>
+            <xacro:unless value="$(arg sim_mode)">
+                <!-- Values corrected for Dragger robot -->
                 <plugin>diffdrive_arduino/DiffDriveArduino</plugin>
                 <param name="left_wheel_name">left_wheel_joint</param>
                 <param name="right_wheel_name">right_wheel_joint</param>
@@ -13,123 +14,55 @@
                 <param name="baud_rate">115200</param>
                 <param name="timeout">1000</param>
                 <param name="enc_counts_per_rev">13730</param>
-            </hardware>
-            <joint name="left_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-            <joint name="right_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-        </ros2_control>
-    </xacro:unless>
+            </xacro:unless>
 
-    <xacro:if value="$(arg sim_mode)">
-
-
-        <ros2_control name="RobotSystem" type="system">
-            <hardware>
+            <xacro:if value="$(arg sim_mode)">
                 <plugin>ign_ros2_control/IgnitionSystem</plugin>
                 <!-- plugin>gz_ros2_control/GazeboSimSystem</plugin -->
-            </hardware>
-            <!-- hardware>
-                <plugin>mock_components/GenericSystem</plugin>
-                <param name="calculate_dynamics">true</param>
-            </hardware -->
-            <joint name="left_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-            <joint name="right_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-        </ros2_control>
+            </xacro:if>
+        </hardware>
 
+        <joint name="left_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="velocity">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+        </joint>
 
-        <!-- ros2_control name="GazeboSystem" type="system">
-            <hardware -->
-               <!-- plugin>mock_components/GenericSystem</plugin -->
-               <!-- plugin>fake_robot/FakeRobot</plugin -->
-               <!-- plugin>diffdrive_arduino/DiffDriveArduino</plugin -->
-        <!--    <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-            </hardware>
-            <joint name="left_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-            <joint name="right_wheel_joint">
-                <command_interface name="velocity">
-                    <param name="min">-10</param>
-                    <param name="max">10</param>
-                </command_interface>
-                <state_interface name="velocity">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-                <state_interface name="position">
-                    <param name="initial_value">0.0</param>
-                </state_interface>
-            </joint>
-        </ros2_control -->
-    </xacro:if>
+        <joint name="right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="velocity">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+        </joint>
+
+    </ros2_control>
 
     <gazebo>
-        <!-- library: /opt/ros/humble/lib/libign_ros2_control-system.so -->
+        <!-- library: /opt/ros/humble/lib/libign_ros2_control-system.so - GZ Fortress on ROS Humble -->
+        
         <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
         <!-- plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin" -->
+
+            <!-- the following are just default parameters anyway. Skip them unless you want to reaasign them:
             <robot_param>robot_description</robot_param>
-            <robot_param_node>robot_state_publisher</robot_param_node>
+            <robot_param_node>robot_state_publisher</robot_param_node> -->
+
             <parameters>$(find articubot_one)/config/gaz_ros2_ctl_use_sim.yaml</parameters>
             <parameters>$(find articubot_one)/config/my_controllers.yaml</parameters>
         </plugin>
     </gazebo>
-
-    <!-- gazebo>
-        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-            <parameters>$(find articubot_one)/config/my_controllers.yaml</parameters>
-            <parameters>$(find articubot_one)/config/gaz_ros2_ctl_use_sim.yaml</parameters>
-        </plugin>
-    </gazebo -->
 
 </robot>
