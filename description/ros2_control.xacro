@@ -46,8 +46,7 @@
 
         <ros2_control name="RobotSystem" type="system">
             <hardware>
-                <plugin>mock_components/GenericSystem</plugin>
-                <!-- plugin>ign_ros2_control/IgnitionSystem</plugin -->
+                <plugin>ign_ros2_control/IgnitionSystem</plugin>
                 <!-- plugin>gz_ros2_control/GazeboSimSystem</plugin -->
             </hardware>
             <!-- hardware>
@@ -116,12 +115,13 @@
     </xacro:if>
 
     <gazebo>
-        <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::GazeboSimROS2ControlPlugin">
+        <!-- library: /opt/ros/humble/lib/libign_ros2_control-system.so -->
+        <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
         <!-- plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin" -->
             <robot_param>robot_description</robot_param>
             <robot_param_node>robot_state_publisher</robot_param_node>
-            <parameters>$(find articubot_one)/config/my_controllers.yaml</parameters>
             <parameters>$(find articubot_one)/config/gaz_ros2_ctl_use_sim.yaml</parameters>
+            <parameters>$(find articubot_one)/config/my_controllers.yaml</parameters>
         </plugin>
     </gazebo>
 

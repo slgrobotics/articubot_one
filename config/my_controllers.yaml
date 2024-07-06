@@ -1,4 +1,4 @@
-controller_manager:
+controller_manager:     # target node name
   ros__parameters:
     update_rate: 30 # Hz
     # use_sim_time: true

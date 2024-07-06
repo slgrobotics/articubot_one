@@ -6,6 +6,7 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, Command
 from launch.actions import DeclareLaunchArgument
 from launch_ros.actions import Node
+from launch_ros.descriptions import ParameterValue
 
 import xacro
 
@@ -20,16 +21,14 @@ def generate_launch_description():
     pkg_path = os.path.join(get_package_share_directory('articubot_one'))
     xacro_file = os.path.join(pkg_path,'description','robot.urdf.xacro')
 
-    # robot_description = xacro.process_file(xacro_file).toxml()
-    robot_description = Command(['xacro ', xacro_file,
+    # robot_description_sdf = xacro.process_file(xacro_file).toxml()
+    robot_description_sdf = Command(['xacro ', xacro_file,
                                 ' use_ros2_control:=', use_ros2_control,
                                 ' sim_mode:=', use_sim_time])
     
-    print(robot_description)
-
     # Create a robot_state_publisher node
     params = {
-        'robot_description': robot_description,
+        'robot_description': ParameterValue(robot_description_sdf, value_type=str),
         #'publish_frequency' : 5.0,  - this has no effect. The topic is published on demand.
         'use_sim_time': use_sim_time
         }
