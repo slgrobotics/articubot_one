@@ -139,24 +139,19 @@
       </geometry>
       <material name="port_red"/>
     </visual>
-    <visual name="left_wheel_marker_visual">
+    <visual name="left_wheel_axis_visual">
       <geometry>
-        <box size="0.096 0.096 0.099"/>
+        <cylinder length="0.099" radius="0.019200000000000002"/>
       </geometry>
       <material name="blue"/>
     </visual>
-    <!-- visual name="left_wheel_marker_visual">
-            <pose>0.17 0 0 0 0 0</pose>
-            <geometry>
-                <box size=".10 .01 .21"/>
-            </geometry>
-            <material>
-                <ambient>1.0 0.2 0.2 1</ambient>
-                <diffuse>1.0 0.1 0.1 1</diffuse>
-                <specular>0 0 0 0</specular>
-                <emissive>0 0 0 1</emissive>
-            </material>
-        </visual -->
+    <visual name="left_wheel_marker_visual">
+      <origin rpy="0 0 0" xyz="0 0.1344 0"/>
+      <geometry>
+        <box size="0.038400000000000004 0.0576 0.099"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
     <collision>
       <geometry>
         <sphere radius="0.192"/>
@@ -176,15 +171,22 @@
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="right_wheel">
-    <visual>
+    <visual name="right_wheel_visual">
       <geometry>
         <cylinder length="0.09" radius="0.192"/>
       </geometry>
       <material name="starboard_green"/>
     </visual>
-    <visual name="right_wheel_marker_visual">
+    <visual name="right_wheel_axis_visual">
       <geometry>
-        <box size="0.096 0.096 0.099"/>
+        <cylinder length="0.099" radius="0.019200000000000002"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <visual name="right_wheel_marker_visual">
+      <origin rpy="0 0 0" xyz="0 -0.1344 0"/>
+      <geometry>
+        <box size="0.038400000000000004 0.0576 0.099"/>
       </geometry>
       <material name="blue"/>
     </visual>
@@ -207,7 +209,7 @@
     <axis xyz="0 0 1"/>
   </joint>
   <link name="left_caster_wheel">
-    <visual>
+    <visual name="left_caster_visual">
       <geometry>
         <cylinder length="0.08" radius="0.12"/>
       </geometry>
@@ -237,13 +239,13 @@
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="right_caster_wheel">
-    <visual>
+    <visual name="right_caster_visual">
       <geometry>
         <cylinder length="0.08" radius="0.12"/>
       </geometry>
       <material name="starboard_green"/>
     </visual>
-    <visual name="left_caster_marker_visual">
+    <visual name="right_caster_marker_visual">
       <geometry>
         <box size="0.06 0.06 0.08800000000000001"/>
       </geometry>
@@ -261,27 +263,12 @@
     </inertial>
   </link>
   <!-- gazebo reference="right_caster_wheel">
-        <material>Gazebo/Green</material>
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
-    </gazebo>
-
-    <gazebo reference="left_caster_wheel">
-        <material>Gazebo/Red</material>
         <material>
             <ambient>1.0 0.2 0.2 1</ambient>
             <diffuse>1.0 0.1 0.1 1</diffuse>
         </material>
         <mu1 value="0.001"/>
         <mu2 value="0.001"/>
-    </gazebo>
-
-    <gazebo reference="left_wheel">
-        <material>Gazebo/Red</material>
-    </gazebo>
-
-    <gazebo reference="right_wheel">
-        <material>Gazebo/Green</material>
     </gazebo -->
   <ros2_control name="DraggerRobot" type="system">
     <hardware>

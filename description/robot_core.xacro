@@ -110,24 +110,19 @@
             </geometry>
             <material name="port_red"/>
         </visual>
-        <visual name="left_wheel_marker_visual">
+        <visual name="left_wheel_axis_visual">
             <geometry>
-                <box size="${wheel_radius*0.5} ${wheel_radius*0.5} ${wheel_thickness*1.1}"/>
+                <cylinder radius="${wheel_radius*0.1}" length="${wheel_thickness*1.1}"/>
             </geometry>
             <material name="blue"/>
         </visual>
-        <!-- visual name="left_wheel_marker_visual">
-            <pose>0.17 0 0 0 0 0</pose>
+        <visual name="left_wheel_marker_visual">
+            <origin xyz="0 ${wheel_radius*0.7} 0" rpy="0 0 0" />
             <geometry>
-                <box size=".10 .01 .21"/>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
             </geometry>
-            <material>
-                <ambient>1.0 0.2 0.2 1</ambient>
-                <diffuse>1.0 0.1 0.1 1</diffuse>
-                <specular>0 0 0 0</specular>
-                <emissive>0 0 0 1</emissive>
-            </material>
-        </visual -->
+            <material name="blue"/>
+        </visual>
         <collision>
             <geometry>
                 <sphere radius="${wheel_radius}"/>
@@ -148,15 +143,22 @@
     </joint>
 
     <link name="right_wheel">
-        <visual>
+        <visual name="right_wheel_visual">
             <geometry>
                 <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
             </geometry>
             <material name="starboard_green"/>
         </visual>
-        <visual name="right_wheel_marker_visual">
+        <visual name="right_wheel_axis_visual">
             <geometry>
-                <box size="${wheel_radius*0.5} ${wheel_radius*0.5} ${wheel_thickness*1.1}"/>
+                <cylinder radius="${wheel_radius*0.1}" length="${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <visual name="right_wheel_marker_visual">
+            <origin xyz="0 ${-wheel_radius*0.7} 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
             </geometry>
             <material name="blue"/>
         </visual>
@@ -181,7 +183,7 @@
 
 
     <link name="left_caster_wheel">
-        <visual>
+        <visual name="left_caster_visual">
             <geometry>
                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
             </geometry>
@@ -212,13 +214,13 @@
 
 
     <link name="right_caster_wheel">
-        <visual>
+        <visual name="right_caster_visual">
             <geometry>
                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
             </geometry>
             <material name="starboard_green"/>
         </visual>
-        <visual name="left_caster_marker_visual">
+        <visual name="right_caster_marker_visual">
             <geometry>
                 <box size="${caster_wheel_radius*0.5} ${caster_wheel_radius*0.5} ${caster_wheel_thickness*1.1}"/>
             </geometry>
@@ -235,27 +237,12 @@
     </link>
 
     <!-- gazebo reference="right_caster_wheel">
-        <material>Gazebo/Green</material>
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
-    </gazebo>
-
-    <gazebo reference="left_caster_wheel">
-        <material>Gazebo/Red</material>
         <material>
             <ambient>1.0 0.2 0.2 1</ambient>
             <diffuse>1.0 0.1 0.1 1</diffuse>
         </material>
         <mu1 value="0.001"/>
         <mu2 value="0.001"/>
-    </gazebo>
-
-    <gazebo reference="left_wheel">
-        <material>Gazebo/Red</material>
-    </gazebo>
-
-    <gazebo reference="right_wheel">
-        <material>Gazebo/Green</material>
     </gazebo -->
 
 </robot>
