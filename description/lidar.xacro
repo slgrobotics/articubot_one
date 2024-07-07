@@ -15,12 +15,14 @@
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
+            <material name="sensor_blue"/>
         </visual>
         <visual>
             <origin xyz="0 0 -0.05"/>
             <geometry>
                 <cylinder radius="0.01" length="0.1"/>
             </geometry>
+            <material name="sensor_blue"/>
         </visual>
         <collision>
             <geometry>
@@ -31,12 +33,6 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
-
-    <gazebo reference="laser_link">
-        <!-- Indigo Turquoise - see gazebo.material in gz-sim GitHub -->
-        <material>Gazebo/Indigo</material>
-    </gazebo>
-
 
     <gazebo reference="laser_link">
         <sensor name="laser" type="ray">

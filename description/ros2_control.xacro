@@ -56,7 +56,7 @@
         <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
         <!-- plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin" -->
 
-            <!-- the following are just default parameters anyway. Skip them unless you want to reaasign them:
+            <!-- the following are just default parameters anyway. Skip them unless you want to reassign them:
             <robot_param>robot_description</robot_param>
             <robot_param_node>robot_state_publisher</robot_param_node> -->
 

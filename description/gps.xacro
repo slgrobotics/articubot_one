@@ -15,12 +15,14 @@
             <geometry>
                 <cylinder radius="0.05" length="0.02"/>
             </geometry>
+            <material name="sensor_yellow"/>
         </visual>
         <visual>
             <origin xyz="0 0 -0.1"/>
             <geometry>
                 <cylinder radius="0.01" length="0.2"/>
             </geometry>
+            <material name="sensor_yellow"/>
         </visual>
         <collision>
             <geometry>
@@ -29,10 +31,6 @@
         </collision>
     </link>
 	
-    <gazebo reference="gps_link">
-        <material>Gazebo/Yellow</material>
-    </gazebo>
-
 	<!-- See https://medium.com/@bytesrobotics/a-review-of-the-ros2-urdf-gazebo-sensor-91e947c633d7 -->
 
 	<gazebo reference="gps_link">

@@ -84,13 +84,26 @@ def generate_launch_description():
         )
     )
 
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+    )
+
+    bridge = Node(
+        package='ros_ign_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera@sensor_msgs/msg/Image@ignition.msgs.Image'],
+    )
+
     # Launch them all!
     return LaunchDescription([
         gazebo,
         rsp,
-        joystick,
-        twist_mux,
+#        joystick,
+#        twist_mux,
         spawn_sim_robot,
-        delayed_diff_drive_spawner,
-        delayed_joint_broad_spawner
+#        delayed_diff_drive_spawner,
+#        delayed_joint_broad_spawner,
+#        rviz,
+        bridge
     ])
