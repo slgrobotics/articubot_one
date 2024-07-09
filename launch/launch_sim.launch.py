@@ -99,11 +99,11 @@ def generate_launch_description():
     return LaunchDescription([
         gazebo,
         rsp,
-#        joystick,
-#        twist_mux,
+        joystick,
+        twist_mux,
         spawn_sim_robot,
-#        delayed_diff_drive_spawner,
-#        delayed_joint_broad_spawner,
+        delayed_diff_drive_spawner,
+        delayed_joint_broad_spawner,
 #        rviz,
         bridge
     ])
