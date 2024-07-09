@@ -39,13 +39,13 @@
 			<pose> 0 0 0 0 0 0 </pose>
 			<visualize>false</visualize>
 			<update_rate>5</update_rate>
-			<plugin name="gps_controller" filename="libgazebo_ros_gps_sensor.so">
+			<!-- plugin name="gps_controller" filename="libgazebo_ros_gps_sensor.so">
 				<ros>
-					<!-- <namespace>/br</namespace> -->
+					< !- - <namespace>/br</namespace> - - >
 					<remapping>gps_controller/out:=gps</remapping>
 				</ros>
 				<frame_name>gps_link</frame_name>
-			</plugin>
+			</plugin -->
 		</sensor>
 	</gazebo>
 

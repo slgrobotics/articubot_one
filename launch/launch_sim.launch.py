@@ -36,7 +36,7 @@ def generate_launch_description():
             remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
         )
 
-    # Start Gazebo Fortress (GZ, Ignition)
+    # Start Gazebo Garden (GZ, Ignition)
     try: 
         gazebo_launch_file = os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
     except:
@@ -47,7 +47,7 @@ def generate_launch_description():
         launch_arguments=[('gz_args', ['-r -v 1 empty.sdf'])],
     )
 
-    # spawn entity (robot model) in the Gazebo Fortress (Ignition, GZ):
+    # spawn entity (robot model) in the Gazebo Garden (Ignition, GZ):
     spawn_sim_robot = Node(package='ros_gz_sim', executable='create',
             arguments=[
                 '-name', 'dragger',
@@ -90,7 +90,7 @@ def generate_launch_description():
     )
 
     bridge = Node(
-        package='ros_ign_bridge',
+        package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=['/camera@sensor_msgs/msg/Image@ignition.msgs.Image'],
     )
