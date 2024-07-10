@@ -27,12 +27,16 @@
       <plugin filename="MinimalScene" name="3D View">
         <gz-gui>
           <title>3D View</title>
-          <property type="bool" key="showTitleBar">true</property>
+          <property type="bool" key="showTitleBar">false</property>
           <property type="string" key="state">docked</property>
         </gz-gui>
  
         <engine>ogre2</engine>
-        <camera_pose>4.15 3.5 3.9 0 0.5 -2.4</camera_pose>
+        <camera_pose>4.15 3.5 2.0 0 0.3 -2.4</camera_pose>
+        <camera_clip>
+          <near>0.25</near>
+          <far>25000</far>
+        </camera_clip>
       </plugin>
 
       <plugin filename="GzSceneManager" name="Scene Manager">
@@ -53,7 +57,7 @@
           <property key="showTitleBar" type="bool">false</property>
         </gz-gui>
       </plugin>
-     </gui>
+    </gui>
 
     <scene>
       <sky>
