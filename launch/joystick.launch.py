@@ -23,6 +23,7 @@ def generate_launch_description():
             name='teleop_node',
             parameters=[joy_params, {
                 'use_sim_time': use_sim_time,
+                # teleop_twist_joy:teleop_node will block /cmd_vel_joy unless one of these buttons are held:
                 'enable_button': 0,
                 'enable_turbo_button': 3
                 }],

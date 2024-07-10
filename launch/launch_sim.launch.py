@@ -3,11 +3,12 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import RegisterEventHandler
-from launch.event_handlers import OnProcessStart
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch_ros.actions import Node
+from launch.event_handlers import OnProcessStart
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
@@ -16,38 +17,65 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    package_path = get_package_share_directory(package_name)
+
     rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','rsp.launch.py'
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py'
                 )]), launch_arguments={'use_sim_time': 'true', 'use_ros2_control': 'true'}.items()
     )
 
     joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','joystick.launch.py'
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py'
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
-    twist_mux_params = os.path.join(get_package_share_directory(package_name),'config','twist_mux.yaml')
+    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
     twist_mux = Node(
             package="twist_mux",
             executable="twist_mux",
             parameters=[twist_mux_params, {'use_sim_time': True}],
             remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
-        )
-
-    # Start Gazebo Garden (GZ, Ignition)
-    try: 
-        gazebo_launch_file = os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
-    except:
-        gazebo_launch_file = ""
-
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([gazebo_launch_file]),
-        launch_arguments=[('gz_args', ['-r -v 1 empty.sdf'])],
     )
 
-    # spawn entity (robot model) in the Gazebo Garden (Ignition, GZ):
+    twist_stamper = Node(
+            package='twist_stamper',
+            executable='twist_stamper',
+            parameters=[{'use_sim_time': True}],
+            remappings=[('/cmd_vel_in','/diff_cont/cmd_vel_unstamped'),
+                        ('/cmd_vel_out','/diff_cont/cmd_vel')]
+    )
+
+    # Start Gazebo Harmonic (GZ, Ignition)
+    # -- set gazebo sim resource path for meshes and STLs:
+    gazebo_resource_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=[
+            os.path.join(package_path, 'worlds'), ':' +
+            os.path.join(package_path, 'description')
+            ]
+        )
+
+    # -- where to find the world SDF:
+    gazebo_arguments = LaunchDescription([
+            DeclareLaunchArgument('world', default_value='test_robot_world',
+                                  description='Gz sim Test World'),
+        ]
+    )
+
+    # -- how to launch Gazebo UI:
+    gazebo_ui = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
+        launch_arguments=[
+            ('gz_args', [LaunchConfiguration('world'),
+                '.sdf',
+                ' -v 4',
+                ' -r']
+            )
+        ]
+    )
+
+    # spawn entity (robot model) in the Gazebo gz_sim:
     spawn_sim_robot = Node(package='ros_gz_sim', executable='create',
             arguments=[
                 '-name', 'dragger',
@@ -97,10 +125,13 @@ def generate_launch_description():
 
     # Launch them all!
     return LaunchDescription([
-        gazebo,
+        gazebo_resource_path,
+        gazebo_arguments,
+        gazebo_ui,
         rsp,
         joystick,
         twist_mux,
+        twist_stamper,
         spawn_sim_robot,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
