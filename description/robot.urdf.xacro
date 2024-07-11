@@ -1,36 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
-    <!-- Gazebo Fortress (ROS Humble): -->
-    <!-- plugin name="ignition::gazebo::systems::Physics" filename="libignition-gazebo-physics-system"/>
-    <plugin name="ignition::gazebo::systems::UserCommands" filename="libignition-gazebo-user-commands-system"/>
-    <plugin name="ignition::gazebo::systems::SceneBroadcaster" filename="libignition-gazebo-scene-broadcaster-system"/>
-    <plugin name="ignition::gazebo::systems::Contact" filename="libignition-gazebo-contact-system"/>
-    <plugin name="ignition::gazebo::systems::Imu" filename="libignition-gazebo-imu-system"/>
-    <plugin name="ignition::gazebo::systems::AirPressure" filename="libignition-gazebo-air-pressure-system"/>
-    <plugin name="ignition::gazebo::systems::ApplyLinkWrench" filename="libignition-gazebo-apply-link-wrench-system"/>
-    <plugin name="ignition::gazebo::systems::NavSat" filename="libignition-gazebo-navsat-system"/>
-    <plugin name="ignition::gazebo::systems::Sensors" filename="libignition-gazebo-sensors-system">
-      <render_engine>ogre2</render_engine>
-    </plugin -->
-
-    <!-- Gazebo Garden (PX4): -->
-    <plugin name="gz::sim::systems::Physics" filename="gz-sim-physics-system"/>
-    <plugin name="gz::sim::systems::UserCommands" filename="gz-sim-user-commands-system"/>
-    <plugin name="gz::sim::systems::SceneBroadcaster" filename="gz-sim-scene-broadcaster-system"/>
-    <plugin name="gz::sim::systems::Contact" filename="gz-sim-contact-system"/>
-    <plugin name="gz::sim::systems::Imu" filename="gz-sim-imu-system"/>
-    <plugin name="gz::sim::systems::AirPressure" filename="gz-sim-air-pressure-system"/>
-    <plugin name="gz::sim::systems::ApplyLinkWrench" filename="gz-sim-apply-link-wrench-system"/>
-    <plugin name="gz::sim::systems::NavSat" filename="gz-sim-navsat-system"/>
-    <plugin name="gz::sim::systems::Sensors" filename="gz-sim-sensors-system">
-      <render_engine>ogre2</render_engine>
-    </plugin>
-
-    <!-- plugin filename="ignition-gazebo-sensors-system" name="gz::sim::systems::Sensors" -->
-    <!-- plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-       <render_engine>ogre</render_engine>
-    </plugin -->
+    <!-- See common Gazebo pugins in the world file -->
 
     <material name="white">
         <color rgba="1 1 1 1" />
@@ -58,8 +29,6 @@
 
     <material name="port_red">
         <color rgba="1 0.2 0.2 1"/>
-        <!-- ambient>1.0 0.2 0.2 1</ambient>
-        <diffuse>1.0 0.1 0.1 1</diffuse -->
     </material>
 
     <material name="starboard_green">
