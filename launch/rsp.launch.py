@@ -39,6 +39,15 @@ def generate_launch_description():
         parameters=[params]
     )
 
+    # For publishing and controlling the robot pose in the pop-up GUI:
+    node_joint_state_publisher_gui = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui',
+        # no need to supply SDF source here, it will be picked from topic /robot_description by default
+        #arguments=[sdf_file],
+        output=['screen']
+    )
 
     # Launch!
     return LaunchDescription([
@@ -51,5 +60,6 @@ def generate_launch_description():
             default_value='true',
             description='Use ros2_control if true'),
 
-        node_robot_state_publisher
+        node_robot_state_publisher,
+        node_joint_state_publisher_gui
     ])
