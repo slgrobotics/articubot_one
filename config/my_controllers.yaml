@@ -18,8 +18,8 @@ diff_cont:
     odom_frame_id: '/odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
-    #base_frame_id: base_link
-    base_frame_id: base_footprint
+    base_frame_id: base_link
+    #base_frame_id: base_footprint
 
     # Publish to TF directly or not. Default: true
     enable_odom_tf: true
