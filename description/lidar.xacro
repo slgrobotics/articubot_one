@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:property name="laser_offset_x" value="-0.01"/>
+    <xacro:property name="laser_offset_x" value="${chassis_length/4 + 0.05}"/>
     <xacro:property name="laser_offset_z" value="0.57"/>
 
     <joint name="laser_joint" type="fixed">
@@ -20,7 +20,7 @@
         <visual>
             <origin xyz="0 0 -0.05"/>
             <geometry>
-                <cylinder radius="0.01" length="0.1"/>
+                <cylinder radius="0.03" length="0.1"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>

@@ -11,6 +11,10 @@
         <color rgba="0 0 0 1"/>
     </material>
 
+    <material name="shadow_grey">
+        <color rgba="0.3 0.3 0.3 0.5"/>
+    </material>
+
     <material name="blue">
         <color rgba="0 0 1 1"/>
     </material>
