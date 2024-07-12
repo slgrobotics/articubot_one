@@ -1,7 +1,13 @@
-## Robot Package Template
+## Robot Package - Turtle, Plucky, Dragger
 
-This is a GitHub template. You can make your own copy by clicking the green "Use this template" button.
+This is an on-board ROS2 (Jazzy, and before - Humble) software, normally residing under Ubuntu Server on a Raspberry Pi.
 
-It is recommended that you keep the repo/package name the same, but if you do change it, ensure you do a "Find all" using your IDE (or the built-in GitHub IDE by hitting the `.` key) and rename all instances of `my_bot` to whatever your project's name is.
+Its Gazebo Simulation side runs on a desktop - see https://github.com/slgrobotics/robots_bringup/tree/main/Docs/ROS-Jazzy
 
-Note that each directory currently has at least one file in it to ensure that git tracks the files (and, consequently, that a fresh clone has direcctories present for CMake to find). These example files can be removed if required (and the directories can be removed if `CMakeLists.txt` is adjusted accordingly).
+For actual physical robots look at https://github.com/slgrobotics/robots_bringup/tree/main/Docs
+
+Also, see the root document - https://github.com/slgrobotics/robots_bringup/tree/main
+
+The origin of most code here is _Articulated Robotics_ by Josh Newans, a mechatronics engineer from Newcastle, Australia.
+
+Here is his work: https://articulatedrobotics.xyz/category/getting-ready-to-build-a-ros-robot
