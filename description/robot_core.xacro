@@ -69,13 +69,13 @@
             <material name="body_color"/>
         </visual>
         <collision>
-            <origin xyz="${chassis_length/2} 0 ${chassis_height/2}"/>
+            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
             <geometry>
                 <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="0.5" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
-            <origin xyz="${chassis_length/2} 0 ${chassis_height/2}" rpy="0 0 0"/>
+            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
 
@@ -139,8 +139,24 @@
         </visual>
         <collision>
             <geometry>
-                <sphere radius="${wheel_radius}"/>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
             </geometry>
+            <max_contacts>1</max_contacts>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0.4</mu>
+                    <mu2>0.6</mu2>
+                    </ode>
+                </friction>
+                <bounce/>
+                <contact>
+                    <ode>
+                    <min_depth>0.005</min_depth>
+                    <kp>1e8</kp>
+                    </ode>
+                </contact>
+            </surface>
         </collision>
         <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -183,8 +199,24 @@
         </visual>
         <collision>
             <geometry>
-                <sphere radius="${wheel_radius}"/>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
             </geometry>
+            <max_contacts>1</max_contacts>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0.4</mu>
+                    <mu2>0.6</mu2>
+                    </ode>
+                </friction>
+                <bounce/>
+                <contact>
+                    <ode>
+                    <min_depth>0.005</min_depth>
+                    <kp>1e8</kp>
+                    </ode>
+                </contact>
+            </surface>
         </collision>
         <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -216,8 +248,18 @@
         </visual>
         <collision>
             <geometry>
-                <sphere radius="${caster_wheel_radius}"/>
+                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
             </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0</mu>
+                    <mu2>0</mu2>
+                    <slip1>1.0</slip1>
+                    <slip2>1.0</slip2>
+                    </ode>
+                </friction>
+            </surface>
         </collision>
         <xacro:inertial_sphere mass="${caster_wheel_mass}" radius="${caster_wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -247,21 +289,22 @@
         </visual>
         <collision>
             <geometry>
-                <sphere radius="${caster_wheel_radius}"/>
+                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
             </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0</mu>
+                    <mu2>0</mu2>
+                    <slip1>1.0</slip1>
+                    <slip2>1.0</slip2>
+                    </ode>
+                </friction>
+            </surface>
         </collision>
         <xacro:inertial_sphere mass="${caster_wheel_mass}" radius="${caster_wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_sphere>
     </link>
-
-    <!-- gazebo reference="right_caster_wheel">
-        <material>
-            <ambient>1.0 0.2 0.2 1</ambient>
-            <diffuse>1.0 0.1 0.1 1</diffuse>
-        </material>
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
-    </gazebo -->
 
 </robot>
