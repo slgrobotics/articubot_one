@@ -23,6 +23,15 @@
     <magnetic_field>5.5645e-06 2.28758e-05 -4.23884e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
 
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>-33.2</latitude_deg>
+      <longitude_deg>-86.3</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
     <!-- gui>
       <plugin filename="MinimalScene" name="3D View">
         <gz-gui>
