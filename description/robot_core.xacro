@@ -102,6 +102,7 @@
         <origin xyz="0 0 0.04"/>
     </joint>
 
+    <!-- gz model -m dragger -s imu_sensor -->
     <gazebo reference="imu_link">
         <sensor name="imu_sensor" type="imu">
         <always_on>1</always_on>

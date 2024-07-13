@@ -35,8 +35,9 @@
     <link name="camera_link_optical">
     </link>
 
+    <!-- gz model -m dragger -s rgb_camera -->
 	<gazebo reference="camera_link_optical">
-        <sensor name='camera' type='camera'>
+        <sensor name='rgb_camera' type='camera'>
           <pose>0 0 0 0 0 0</pose>
 		  <always_on>true</always_on>
           <topic>camera</topic>

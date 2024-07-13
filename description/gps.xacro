@@ -33,6 +33,7 @@
 	
 	<!-- See https://medium.com/@bytesrobotics/a-review-of-the-ros2-urdf-gazebo-sensor-91e947c633d7 -->
 
+    <!-- gz model -m dragger -s gps_sensor -->
 	<gazebo reference="gps_link">
 		<sensor name="gps_sensor" type="gps">
 			<always_on>true</always_on>
