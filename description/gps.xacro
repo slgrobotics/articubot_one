@@ -36,16 +36,10 @@
 	<gazebo reference="gps_link">
 		<sensor name="gps_sensor" type="gps">
 			<always_on>true</always_on>
+            <topic>navsat</topic>
 			<pose> 0 0 0 0 0 0 </pose>
 			<visualize>false</visualize>
 			<update_rate>5</update_rate>
-			<!-- plugin name="gps_controller" filename="libgazebo_ros_gps_sensor.so">
-				<ros>
-					< !- - <namespace>/br</namespace> - - >
-					<remapping>gps_controller/out:=gps</remapping>
-				</ros>
-				<frame_name>gps_link</frame_name>
-			</plugin -->
 		</sensor>
 	</gazebo>
 

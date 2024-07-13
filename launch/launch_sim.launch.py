@@ -118,10 +118,15 @@ def generate_launch_description():
         executable='rviz2',
     )
 
+    # Bridge ROS topics and Gazebo messages for establishing communication
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/camera@sensor_msgs/msg/Image@ignition.msgs.Image'],
+        parameters=[{
+            'config_file': os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
+            'qos_overrides./tf_static.publisher.durability': 'transient_local',
+        }],
+        output='screen'
     )
 
     # Launch them all!
@@ -136,6 +141,6 @@ def generate_launch_description():
         spawn_sim_robot,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
-#        rviz,
+        rviz,
         bridge
     ])
