@@ -4,9 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Camera1/Visibility1
+        - /Global Options1
+        - /RobotModel1
+        - /RobotModel1/Status1
+        - /LaserScan1
       Splitter Ratio: 0.5
-    Tree Height: 520
+    Tree Height: 552
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -43,26 +46,32 @@ Visualization Manager:
       Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        base_footprint:
+          Value: true
         base_link:
           Value: true
         camera_link:
           Value: true
         camera_link_optical:
           Value: true
-        caster_wheel:
+        gps_link:
           Value: true
-        chassis:
+        imu_link:
           Value: true
-        face_link:
+        laser_link:
           Value: true
-        laser_frame:
+        left_caster_wheel:
           Value: true
         left_wheel:
           Value: true
         odom:
+          Value: true
+        right_caster_wheel:
           Value: true
         right_wheel:
           Value: true
@@ -74,17 +83,22 @@ Visualization Manager:
       Tree:
         odom:
           base_link:
-            chassis:
-              camera_link:
-                camera_link_optical:
-                  {}
-              caster_wheel:
+            base_footprint:
+              {}
+            camera_link:
+              camera_link_optical:
                 {}
-              face_link:
-                {}
-              laser_frame:
-                {}
+            gps_link:
+              {}
+            imu_link:
+              {}
+            laser_link:
+              {}
+            left_caster_wheel:
+              {}
             left_wheel:
+              {}
+            right_caster_wheel:
               {}
             right_wheel:
               {}
@@ -108,10 +122,16 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
@@ -121,22 +141,22 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        caster_wheel:
+        gps_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        chassis:
+        imu_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        face_link:
+        laser_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        laser_frame:
+        left_caster_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -146,11 +166,19 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        right_caster_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         right_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+      Mass Properties:
+        Inertia: false
+        Mass: false
       Name: RobotModel
       TF Prefix: ""
       Update Interval: 0
@@ -183,35 +211,31 @@ Visualization Manager:
       Topic:
         Depth: 5
         Durability Policy: Volatile
+        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz_default_plugins/Camera
+    - Class: rviz_default_plugins/Image
       Enabled: true
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera/image_raw
+        Value: /camera
       Value: true
-      Visibility:
-        Grid: true
-        LaserScan: true
-        RobotModel: false
-        TF: false
-        Value: true
-      Zoom Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -223,6 +247,9 @@ Visualization Manager:
     - Class: rviz_default_plugins/Measure
       Line color: 128; 128; 0
     - Class: rviz_default_plugins/SetInitialPose
+      Covariance x: 0.25
+      Covariance y: 0.25
+      Covariance yaw: 0.06853891909122467
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -272,14 +299,14 @@ Visualization Manager:
       Yaw: 5.1385817527771
     Saved: ~
 Window Geometry:
-  Camera:
-    collapsed: false
   Displays:
     collapsed: false
   Height: 996
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a00000385fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000004100000297000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d00650072006101000002de000000e80000002800ffffff000000010000010f00000386fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000004100000386000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d006501000000000000045000000000000000000000060e0000038500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000001d100000386fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005d00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003f000002b6000000cc00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000c00430061006d00650072006101000002dd000000e80000000000000000fb0000000a0049006d00610067006501000002fb000000ca0000002900ffffff000000010000010f00000386fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000004100000386000000a900fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000005a70000038600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Tool Properties:
@@ -287,5 +314,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1918
-  X: 0
-  Y: 28
+  X: 458
+  Y: 142

@@ -116,11 +116,11 @@ def generate_launch_description():
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
-        #condition=IfCondition(LaunchConfiguration('rviz')),
-        parameters=[
-            {'use_sim_time': True},
-        ]
+        #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
+        #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
+        arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
+        parameters=[{'use_sim_time': True}],
+        output='screen'
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
