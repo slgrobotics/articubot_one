@@ -23,6 +23,13 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
+# see /home/sergei/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
+- ros_topic_name: "depth_camera"
+  gz_topic_name: "/depth_camera"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
 - ros_topic_name: "navsat"
   gz_topic_name: "/navsat"
   ros_type_name: "gps_msgs/msg/GPSFix"
