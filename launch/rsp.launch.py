@@ -39,6 +39,13 @@ def generate_launch_description():
         parameters=[params]
     )
 
+    node_joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        output=['screen']
+    )
+
     # For publishing and controlling the robot pose in the pop-up GUI:
     node_joint_state_publisher_gui = Node(
         package='joint_state_publisher_gui',
@@ -61,5 +68,6 @@ def generate_launch_description():
             description='Use ros2_control if true'),
 
         node_robot_state_publisher,
-        node_joint_state_publisher_gui
+        node_joint_state_publisher,
+        #node_joint_state_publisher_gui
     ])

@@ -346,7 +346,8 @@
       <self_collide>false</self_collide>
     </model>
 
-    <include>
+    <!-- scale>0.3 0.3 0.3</scale - this does not work for included models -->
+    <!-- include>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Construction Cone</uri>
       <name>Construction Cone One</name>
       <pose>5 1 0 0 0 0</pose>
@@ -360,8 +361,7 @@
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Construction Barrel</uri>
       <name>Construction Barrel One</name>
       <pose>5 -1 0 0 0 0</pose>
-      <!-- scale>0.3 0.3 0.3</scale - this does not work -->
-    </include>
+    </include -->
     <!-- include>
       <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Standing person</uri>
       <name>Standing Person One</name>
