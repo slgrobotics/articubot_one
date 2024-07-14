@@ -36,6 +36,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
+        namespace="/",
         parameters=[params]
     )
 
@@ -43,6 +44,7 @@ def generate_launch_description():
         package='joint_state_publisher',
         executable='joint_state_publisher',
         name='joint_state_publisher',
+        namespace="/",
         output=['screen']
     )
 
@@ -51,6 +53,7 @@ def generate_launch_description():
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
+        namespace="/",
         # no need to supply SDF source here, it will be picked from topic /robot_description by default
         #arguments=[sdf_file],
         output=['screen']

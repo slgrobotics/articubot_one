@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
     <joint name="face_joint" type="fixed">
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="face_link"/>
         <origin xyz="${chassis_length} 0 ${chassis_height/2}" rpy="0 0 0"/>
     </joint>

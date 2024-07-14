@@ -5,7 +5,7 @@
     <xacro:property name="laser_offset_z" value="0.57"/>
 
     <joint name="laser_joint" type="fixed">
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="laser_link"/>
         <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 3.1459"/>
     </joint>

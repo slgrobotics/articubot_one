@@ -11,6 +11,12 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+- #ros_topic_name: "pointcloud2d"
+  #gz_topic_name: "/pointcloud2d"
+  #ros_type_name: "sensor_msgs/msg/PointCloud2"
+  #gz_type_name: "gz.msgs.PointCloud2"
+  #direction: GZ_TO_ROS
+
 - ros_topic_name: "camera"
   gz_topic_name: "/camera"
   ros_type_name: "sensor_msgs/msg/Image"
