@@ -79,16 +79,34 @@ diff_cont:
     # angular.z.max_jerk: 0.0
     # angular.z.min_jerk: 0.0
 
-joint_broad:
-  ros__parameters:
-    interfaces:
-      - position
-    joints:
-      - left_wheel_joint
-      - right_wheel_joint
-    extra_joints: '{}'
-    map_interface_to_joint_state:
-      effort: effort
-      position: position
-      velocity: velocity
-    use_local_topics: false
+#
+# By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
+#    under /joint_states topic (position and velocity changing, effort 0)
+#    there is no need to configure joint_state_broadcaster explicitly,
+#    anything defined in rsp.launch.py will be published.
+#
+#joint_broad:
+#  ros__parameters:
+#    interfaces:
+##      - effort
+#      - position
+##      - velocity
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+##    extra_joints:
+##    map_interface_to_joint_state:
+##      effort: effort
+##      position: position
+##      velocity: velocity
+## "true" means the topic will be /joint_broad/joint_states, false - /joint_states:
+#    use_local_topics: false
+
+#joint_broad:
+#  ros__parameters:
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+#    extra_joints:
+#      - left_caster_wheel_joint
+#      - right_caster_wheel_joint

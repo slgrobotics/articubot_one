@@ -33,7 +33,7 @@ def generate_launch_description():
     twist_mux = Node(
         package="twist_mux",
         executable="twist_mux",
-        namespace="/",
+        namespace='/',
         parameters=[twist_mux_params, {'use_sim_time': True}],
         remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
     )
@@ -41,7 +41,7 @@ def generate_launch_description():
     twist_stamper = Node(
         package='twist_stamper',
         executable='twist_stamper',
-        namespace="/",
+        namespace='/',
         # use_sim_time must be False here, or time stamp will be 0:
         parameters=[{'use_sim_time': False}, {'frame_id': 'base_link'}],
         remappings=[('/cmd_vel_in','/diff_cont/cmd_vel_unstamped'),
@@ -81,7 +81,7 @@ def generate_launch_description():
     # spawn entity (robot model) in the Gazebo gz_sim:
     spawn_sim_robot = Node(package='ros_gz_sim',
         executable='create',
-        namespace="/",
+        namespace='/',
         arguments=[
             '-name', 'dragger',
             '-topic', '/robot_description',
@@ -91,14 +91,14 @@ def generate_launch_description():
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        namespace="/",
+        namespace='/',
         arguments=["joint_broad", "--controller-manager", "/controller_manager"],
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        namespace="/",
+        namespace='/',
         arguments=["diff_cont", "--controller-manager", "/controller_manager"],
     )
 
@@ -122,7 +122,7 @@ def generate_launch_description():
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        namespace="/",
+        namespace='/',
         #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
         #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
         arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
@@ -134,7 +134,7 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        namespace="/",
+        namespace='/',
         parameters=[{
             'config_file': os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
