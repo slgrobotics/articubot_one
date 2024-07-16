@@ -39,6 +39,16 @@ def generate_launch_description():
         remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
     )
 
+    twist_stamper = Node(
+        package='twist_stamper',
+        executable='twist_stamper',
+        namespace='/',
+        # use_sim_time must be False here, or time stamp will be 0:
+        parameters=[{'use_sim_time': False}, {'frame_id': 'base_link'}],
+        remappings=[('/cmd_vel_in','/diff_cont/cmd_vel_unstamped'),
+                    ('/cmd_vel_out','/diff_cont/cmd_vel')]
+    )
+
     robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
 
     controllers_params_file = os.path.join(get_package_share_directory(package_name),'config','my_controllers.yaml')
@@ -143,6 +153,7 @@ def generate_launch_description():
         rsp,
         # joystick,
         twist_mux,
+        twist_stamper,
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_joint_broad_spawner,
