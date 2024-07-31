@@ -35,6 +35,8 @@
             <pose> 0 0 0 0 0 0 </pose>
             <visualize>true</visualize>
             <update_rate>10</update_rate>
+            <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+            <gz_frame_id>depth_camera_link</gz_frame_id>
             <camera>
                 <horizontal_fov>1.089</horizontal_fov>
                 <image>

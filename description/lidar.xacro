@@ -37,12 +37,14 @@
 
     <!-- gz model -m dragger -s front_laser -->
     <gazebo reference="laser_frame">
-        <sensor name='front_laser' type='gpu_lidar'>
+        <!-- name must be "laser_frame", specifically for lasers. Must reference an actual link in .xacro -->
+        <sensor name='laser_frame' type='gpu_lidar'>
           <pose>0 0 0 0 0 0</pose>
           <always_on>1</always_on>
           <update_rate>10</update_rate>
           <topic>scan</topic>
-          <!-- frame_id>laser_frame</frame_id -->
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>laser_frame</gz_frame_id>
           <ray>
             <scan>
               <horizontal>

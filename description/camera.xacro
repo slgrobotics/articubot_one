@@ -39,8 +39,10 @@
 	<gazebo reference="camera_link_optical">
         <sensor name='rgb_camera' type='camera'>
           <pose>0 0 0 0 0 0</pose>
-		  <always_on>true</always_on>
+		      <always_on>true</always_on>
           <topic>camera</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
           <update_rate>30</update_rate>
           <enable_metrics>false</enable_metrics>
           <camera name='__default__'>
@@ -82,7 +84,7 @@
               <cutoff_angle>1.5707963267948966</cutoff_angle>
               <env_texture_size>256</env_texture_size>
             </lens>
-            <optical_frame_id>camera_frame</optical_frame_id>
+            <optical_frame_id>camera_link_optical</optical_frame_id>
           </camera>
         </sensor>
     </gazebo>

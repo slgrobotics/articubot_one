@@ -8,7 +8,7 @@
     <xacro:property name="chassis_width" value="0.40"/>
     <xacro:property name="chassis_height" value="0.50"/>
     <xacro:property name="chassis_mass" value="30.0"/>
-    <xacro:property name="wheel_radius" value="0.192"/>
+    <xacro:property name="wheel_radius" value="0.177"/>
     <xacro:property name="wheel_thickness" value="0.09"/>
     <xacro:property name="wheel_mass" value="1.0"/>
     <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>
@@ -137,9 +137,11 @@
 
     <!-- gz model -m dragger -s imu_sensor -->
     <gazebo reference="imu_link">
-        <sensor name="imu_sensor" type="imu">
+        <sensor name="imu_link" type="imu">
         <always_on>1</always_on>
         <topic>imu</topic>
+        <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+        <gz_frame_id>imu_link</gz_frame_id>
         <update_rate>250</update_rate>
             <imu>
                 <enable_orientation>0</enable_orientation>

@@ -86,6 +86,7 @@ def generate_launch_description():
             '-name', 'dragger',
             '-topic', '/robot_description',
             '-allow_renaming', 'true'],
+        parameters=[{'use_sim_time': True}],
         output='screen')
 
     joint_broad_spawner = Node(

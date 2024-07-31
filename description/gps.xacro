@@ -38,6 +38,8 @@
 		<sensor name="gps_sensor" type="gps">
 			<always_on>true</always_on>
             <topic>navsat</topic>
+            <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+            <gz_frame_id>gps_link</gz_frame_id>
 			<pose> 0 0 0 0 0 0 </pose>
 			<visualize>false</visualize>
 			<update_rate>5</update_rate>
