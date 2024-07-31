@@ -50,7 +50,7 @@ def generate_launch_description():
         respawn_delay=4,
         emulate_tty=True,
         parameters=[
-          {'calibrate': False },
+          {'calibrate': True },
           {'gyro_range': 0 },     # Gyroscope range: 0 -> +-250°/s, 1 -> +-500°/s, 2 -> +-1000°/s, 3 -> +-2000°/s
           {'accel_range': 0 },    # Acceleration range: 0 -> +-2g, 1 -> +-4g, 2 -> +-8g, 3 -> +-16g
           {'dlpf_bandwidth': 2 },   # Digital low pass filter bandwidth [0-6]: 0 -> 260Hz, 1 -> 184Hz, 2 -> 94Hz, 3 -> 44Hz, 4 -> 21Hz, 5 -> 10Hz, 6 -> 5Hz
@@ -60,7 +60,7 @@ def generate_launch_description():
           {'accel_x_offset': 0.752060 },
           {'accel_y_offset': 0.278359 },
           {'accel_z_offset': 1.053610 },
-          {'frequency': 10 }
+          {'frequency': 50 }
         ]
     )
 
