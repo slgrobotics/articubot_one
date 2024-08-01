@@ -145,6 +145,14 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Gazebo controller_manager is not subject to renaming through parameters, so we use topic relay here:
+    odom_relay = Node(
+        package='topic_tools',
+        executable='relay',
+        namespace='/',
+        parameters=[{ 'input_topic': '/diff_cont/odom', 'output_topic': '/odom'}],
+    )
+
     gz_include = GroupAction(
         actions=[
 
@@ -157,7 +165,8 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             rviz,
-            bridge
+            bridge,
+            odom_relay
         ]
     )
 
@@ -167,5 +176,5 @@ def generate_launch_description():
         joystick,
         twist_mux,
         twist_stamper,
-        gz_include,
+        gz_include
     ])

@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /RobotModel1
-        - /RobotModel1/Status1
         - /LaserScan1
       Splitter Ratio: 0.5
     Tree Height: 552
@@ -59,15 +58,19 @@ Visualization Manager:
           Value: true
         camera_link_optical:
           Value: true
+        chassis_link:
+          Value: true
         gps_link:
           Value: true
         imu_link:
           Value: true
-        laser_link:
+        laser_frame:
           Value: true
         left_caster_wheel:
           Value: true
         left_wheel:
+          Value: true
+        map:
           Value: true
         odom:
           Value: true
@@ -81,27 +84,29 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        odom:
+        base_footprint:
           base_link:
-            base_footprint:
-              {}
-            camera_link:
-              camera_link_optical:
+            chassis_link:
+              camera_link:
+                camera_link_optical:
+                  {}
+              gps_link:
                 {}
-            gps_link:
-              {}
-            imu_link:
-              {}
-            laser_link:
-              {}
-            left_caster_wheel:
-              {}
-            left_wheel:
-              {}
-            right_caster_wheel:
-              {}
-            right_wheel:
-              {}
+              imu_link:
+                {}
+              laser_frame:
+                {}
+              left_caster_wheel:
+                {}
+              left_wheel:
+                {}
+              right_caster_wheel:
+                {}
+              right_wheel:
+                {}
+        map:
+          odom:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -141,6 +146,11 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+        chassis_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         gps_link:
           Alpha: 1
           Show Axes: false
@@ -151,7 +161,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        laser_link:
+        laser_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -235,7 +245,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
