@@ -12,6 +12,9 @@ controller_manager:     # target node name
 diff_cont:
   ros__parameters:
 
+    # See http://wiki.ros.org/diff_drive_controller  
+    #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
+
     publish_rate: 50.0
 
     # Name of frame to publish odometry in. Default: "/odom"
@@ -21,10 +24,8 @@ diff_cont:
     base_frame_id: base_link
     #base_frame_id: base_footprint
 
-    # Publish to TF directly or not. Default: true
+    # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
     enable_odom_tf: true
-
-    # See http://wiki.ros.org/diff_drive_controller
 
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]

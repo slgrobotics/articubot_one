@@ -3,9 +3,9 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetRemap
 from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -101,6 +101,8 @@ def generate_launch_description():
         executable="spawner",
         namespace='/',
         arguments=["diff_cont", "--controller-manager", "/controller_manager"],
+        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odomodom"],  # --ros-args --remap odom:=odomodom
+        #remappings=[('/diff_cont/odom','/odom')]
     )
 
     # No ned to run controller_manager - it runs within Gazebo ROS2 Bridge.
@@ -143,18 +145,27 @@ def generate_launch_description():
         output='screen'
     )
 
+    gz_include = GroupAction(
+        actions=[
+
+            #SetRemap(src='/diff_cont/odom', dst='/odom'),
+
+            gazebo_resource_path,
+            gazebo_arguments,
+            gazebo_ui,
+            spawn_sim_robot,
+            delayed_diff_drive_spawner,
+            delayed_joint_broad_spawner,
+            rviz,
+            bridge
+        ]
+    )
+
     # Launch them all!
     return LaunchDescription([
-        gazebo_resource_path,
-        gazebo_arguments,
-        gazebo_ui,
         rsp,
         joystick,
         twist_mux,
         twist_stamper,
-        spawn_sim_robot,
-        delayed_diff_drive_spawner,
-        delayed_joint_broad_spawner,
-        rviz,
-        bridge
+        gz_include,
     ])

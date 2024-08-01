@@ -66,13 +66,13 @@
   <joint name="base_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0.192"/>
+    <origin rpy="0 0 0" xyz="0 0 0.177"/>
   </joint>
   <!-- ********************** ROBOT BODY *********************************  -->
   <joint name="chassis_joint" type="fixed">
     <parent link="base_link"/>
     <child link="chassis_link"/>
-    <origin xyz="-0.248 0 -0.01"/>
+    <origin xyz="-0.263 0 -0.01"/>
   </joint>
   <!-- CHASSIS LINK -->
   <link name="chassis_link">
@@ -92,30 +92,30 @@
       <material name="body_color"/>
     </visual>
     <visual name="chassis_front_axle_left">
-      <origin rpy="-1.5707963267948966 0 0" xyz="0.248 0.2 0"/>
+      <origin rpy="-1.5707963267948966 0 0" xyz="0.263 0.2 0"/>
       <geometry>
         <cylinder length="0.2" radius="0.06"/>
       </geometry>
       <material name="body_color"/>
     </visual>
     <visual name="chassis_front_axle_right">
-      <origin rpy="1.5707963267948966 0 0" xyz="0.248 -0.2 0"/>
+      <origin rpy="1.5707963267948966 0 0" xyz="0.263 -0.2 0"/>
       <geometry>
         <cylinder length="0.2" radius="0.06"/>
       </geometry>
       <material name="body_color"/>
     </visual>
     <visual name="chassis_caster_joint_left">
-      <origin rpy="0 0 0" xyz="-0.32 0.20800000000000002 -0.062"/>
+      <origin rpy="0 0 0" xyz="-0.32 0.20800000000000002 -0.046999999999999986"/>
       <geometry>
-        <sphere radius="-0.06820000000000001"/>
+        <sphere radius="-0.05169999999999999"/>
       </geometry>
       <material name="body_color"/>
     </visual>
     <visual name="chassis_caster_joint_right">
-      <origin rpy="0 0 0" xyz="-0.32 -0.20400000000000001 -0.062"/>
+      <origin rpy="0 0 0" xyz="-0.32 -0.20400000000000001 -0.046999999999999986"/>
       <geometry>
-        <sphere radius="-0.06820000000000001"/>
+        <sphere radius="-0.05169999999999999"/>
       </geometry>
       <material name="body_color"/>
     </visual>
@@ -145,13 +145,15 @@
     <parent link="chassis_link"/>
     <child link="imu_link"/>
     <!-- we place IMU between the wheels -->
-    <origin rpy="0 0 0" xyz="0.248 0 0.04"/>
+    <origin rpy="0 0 0" xyz="0.263 0 0.04"/>
   </joint>
   <!-- gz model -m dragger -s imu_sensor -->
   <gazebo reference="imu_link">
-    <sensor name="imu_sensor" type="imu">
+    <sensor name="imu_link" type="imu">
       <always_on>1</always_on>
       <topic>imu</topic>
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <gz_frame_id>imu_link</gz_frame_id>
       <update_rate>250</update_rate>
       <imu>
         <enable_orientation>0</enable_orientation>
@@ -232,7 +234,7 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="chassis_link"/>
     <child link="left_wheel"/>
-    <origin rpy="-1.5707963267948966 0 0" xyz="0.248 0.29 0"/>
+    <origin rpy="-1.5707963267948966 0 0" xyz="0.263 0.29 0"/>
     <axis xyz="0 0 1">
       <limit>
         <lower>-1.79769e+308</lower>
@@ -243,26 +245,26 @@
   <link name="left_wheel">
     <visual name="left_wheel_visual">
       <geometry>
-        <cylinder length="0.09" radius="0.192"/>
+        <cylinder length="0.09" radius="0.177"/>
       </geometry>
       <material name="port_red"/>
     </visual>
     <visual name="left_wheel_axis_visual">
       <geometry>
-        <cylinder length="0.099" radius="0.019200000000000002"/>
+        <cylinder length="0.099" radius="0.0177"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <visual name="left_wheel_marker_visual">
-      <origin rpy="0 0 0" xyz="0 0.1344 0"/>
+      <origin rpy="0 0 0" xyz="0 0.12389999999999998 0"/>
       <geometry>
-        <box size="0.038400000000000004 0.0576 0.099"/>
+        <box size="0.0354 0.053099999999999994 0.099"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.09" radius="0.192"/>
+        <cylinder length="0.09" radius="0.177"/>
       </geometry>
       <max_contacts>1</max_contacts>
       <surface>
@@ -284,14 +286,14 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="1.0"/>
-      <inertia ixx="0.009891" ixy="0.0" ixz="0.0" iyy="0.009891" iyz="0.0" izz="0.018432"/>
+      <inertia ixx="0.008507249999999997" ixy="0.0" ixz="0.0" iyy="0.008507249999999997" iyz="0.0" izz="0.015664499999999998"/>
     </inertial>
   </link>
   <!-- RIGHT WHEEL LINK -->
   <joint name="right_wheel_joint" type="continuous">
     <parent link="chassis_link"/>
     <child link="right_wheel"/>
-    <origin rpy="1.5707963267948966 0 0" xyz="0.248 -0.29 0"/>
+    <origin rpy="1.5707963267948966 0 0" xyz="0.263 -0.29 0"/>
     <axis xyz="0 0 -1">
       <limit>
         <lower>-1.79769e+308</lower>
@@ -302,26 +304,26 @@
   <link name="right_wheel">
     <visual name="right_wheel_visual">
       <geometry>
-        <cylinder length="0.09" radius="0.192"/>
+        <cylinder length="0.09" radius="0.177"/>
       </geometry>
       <material name="starboard_green"/>
     </visual>
     <visual name="right_wheel_axis_visual">
       <geometry>
-        <cylinder length="0.099" radius="0.019200000000000002"/>
+        <cylinder length="0.099" radius="0.0177"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <visual name="right_wheel_marker_visual">
-      <origin rpy="0 0 0" xyz="0 -0.1344 0"/>
+      <origin rpy="0 0 0" xyz="0 -0.12389999999999998 0"/>
       <geometry>
-        <box size="0.038400000000000004 0.0576 0.099"/>
+        <box size="0.0354 0.053099999999999994 0.099"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.09" radius="0.192"/>
+        <cylinder length="0.09" radius="0.177"/>
       </geometry>
       <max_contacts>1</max_contacts>
       <surface>
@@ -343,14 +345,14 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="1.0"/>
-      <inertia ixx="0.009891" ixy="0.0" ixz="0.0" iyy="0.009891" iyz="0.0" izz="0.018432"/>
+      <inertia ixx="0.008507249999999997" ixy="0.0" ixz="0.0" iyy="0.008507249999999997" iyz="0.0" izz="0.015664499999999998"/>
     </inertial>
   </link>
   <!-- CASTER WHEELS LINKS -->
   <joint name="left_caster_wheel_joint" type="continuous">
     <parent link="chassis_link"/>
     <child link="left_caster_wheel"/>
-    <origin rpy="1.5707963267948966 0 0" xyz="-0.32 0.27 -0.062"/>
+    <origin rpy="1.5707963267948966 0 0" xyz="-0.32 0.27 -0.046999999999999986"/>
     <axis xyz="0 0 1"/>
   </joint>
   <link name="left_caster_wheel">
@@ -390,7 +392,7 @@
   <joint name="right_caster_wheel_joint" type="continuous">
     <parent link="chassis_link"/>
     <child link="right_caster_wheel"/>
-    <origin rpy="1.5707963267948966 0 0" xyz="-0.32 -0.27 -0.062"/>
+    <origin rpy="1.5707963267948966 0 0" xyz="-0.32 -0.27 -0.046999999999999986"/>
     <axis xyz="0 0 -1"/>
   </joint>
   <link name="right_caster_wheel">
@@ -490,10 +492,11 @@
   </gazebo>
   <joint name="laser_joint" type="fixed">
     <parent link="chassis_link"/>
-    <child link="laser_link"/>
+    <child link="laser_frame"/>
     <origin rpy="0 0 3.1459" xyz="0.275 0 0.57"/>
   </joint>
-  <link name="laser_link">
+  <!-- the name "laser_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
+  <link name="laser_frame">
     <visual>
       <geometry>
         <cylinder length="0.04" radius="0.05"/>
@@ -519,13 +522,15 @@
     </inertial>
   </link>
   <!-- gz model -m dragger -s front_laser -->
-  <gazebo reference="laser_link">
-    <sensor name="front_laser" type="gpu_lidar">
+  <gazebo reference="laser_frame">
+    <!-- name must be "laser_frame", specifically for lasers. Must reference an actual link in .xacro -->
+    <sensor name="laser_frame" type="gpu_lidar">
       <pose>0 0 0 0 0 0</pose>
       <always_on>1</always_on>
       <update_rate>10</update_rate>
       <topic>scan</topic>
-      <!-- frame_id>laser_frame</frame_id -->
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <gz_frame_id>laser_frame</gz_frame_id>
       <ray>
         <scan>
           <horizontal>
@@ -588,6 +593,8 @@
       <pose>0 0 0 0 0 0</pose>
       <always_on>true</always_on>
       <topic>camera</topic>
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
       <update_rate>30</update_rate>
       <enable_metrics>false</enable_metrics>
       <camera name="__default__">
@@ -629,7 +636,7 @@
           <cutoff_angle>1.5707963267948966</cutoff_angle>
           <env_texture_size>256</env_texture_size>
         </lens>
-        <optical_frame_id>camera_frame</optical_frame_id>
+        <optical_frame_id>camera_link_optical</optical_frame_id>
       </camera>
     </sensor>
   </gazebo>
@@ -664,6 +671,8 @@
     <sensor name="gps_sensor" type="gps">
       <always_on>true</always_on>
       <topic>navsat</topic>
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <gz_frame_id>gps_link</gz_frame_id>
       <pose> 0 0 0 0 0 0 </pose>
       <visualize>false</visualize>
       <update_rate>5</update_rate>
