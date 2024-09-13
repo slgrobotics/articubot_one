@@ -78,13 +78,18 @@ def generate_launch_description():
         ]
     )
 
-    # spawn entity (robot model) in the Gazebo gz_sim:
+    # spawn entity (robot model) in the Gazebo gz_sim
+    # see arguments:  ros2 run ros_gz_sim create --helpshort
     spawn_sim_robot = Node(package='ros_gz_sim',
         executable='create',
         namespace='/',
         arguments=[
             '-name', 'dragger',
             '-topic', '/robot_description',
+            '-x', '0.0',
+            '-y', '0.0',
+            '-z', '0.4',
+            '-Y', '0.333',
             '-allow_renaming', 'true'],
         parameters=[{'use_sim_time': True}],
         output='screen')
