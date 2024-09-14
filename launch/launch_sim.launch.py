@@ -110,7 +110,7 @@ def generate_launch_description():
         #remappings=[('/diff_cont/odom','/odom')]
     )
 
-    # No ned to run controller_manager - it runs within Gazebo ROS2 Bridge.
+    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
     # Only configure controllers, after the robot shows up live in GZ:
 
     delayed_joint_broad_spawner = RegisterEventHandler(
@@ -158,6 +158,28 @@ def generate_launch_description():
         parameters=[{ 'input_topic': '/diff_cont/odom', 'output_topic': '/odom'}],
     )
 
+    # =========================================================================
+    # see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+    #     https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/launch/dual_ekf_navsat.launch.py
+
+    # navsat_localizer wants gps_msgs/msg/NavSatFix while gz_bridge delivers gps_msgs/msg/GPSFix, so we use fix_translator here.
+    # see https://github.com/swri-robotics/gps_umd
+    gps_fix_translator = Node(
+        package='gps_tools',
+        executable='fix_translator',
+        namespace='/'
+        #remappings=[('/navsat','gps_fix_in'),
+        #            ('/navsat_fix_out','/gps/fix')]
+    )
+
+    navsat_localizer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(package_name),'launch','dual_ekf_navsat.launch.py'
+                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    # =========================================================================
+
     gz_include = GroupAction(
         actions=[
 
@@ -171,7 +193,8 @@ def generate_launch_description():
             delayed_joint_broad_spawner,
             rviz,
             bridge,
-            odom_relay
+            odom_relay,
+            #gps_fix_translator
         ]
     )
 
@@ -181,5 +204,6 @@ def generate_launch_description():
         joystick,
         twist_mux,
         twist_stamper,
-        gz_include
+        gz_include,
+        navsat_localizer
     ])

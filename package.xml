@@ -3,8 +3,8 @@
 <package format="3">
   <name>articubot_one</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="my_email@email.com">Josh Newans</maintainer>
+  <description>ROS2 Outdoors Robot</description>
+  <maintainer email="slg@quakemap.com">Sergei Grichine</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

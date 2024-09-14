@@ -37,7 +37,13 @@
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "navsat"
+- ros_topic_name: "/gps/fix"
+  gz_topic_name: "/navsat"
+  ros_type_name: "sensor_msgs/msg/NavSatFix"
+  gz_type_name: "gz.msgs.NavSat"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "gpsfix"
   gz_topic_name: "/navsat"
   ros_type_name: "gps_msgs/msg/GPSFix"
   gz_type_name: "gz.msgs.NavSat"

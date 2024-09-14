@@ -26,10 +26,16 @@
     <spherical_coordinates>
       <surface_model>EARTH_WGS84</surface_model>
       <world_frame_orientation>ENU</world_frame_orientation>
-      <latitude_deg>-33.2</latitude_deg>
-      <longitude_deg>-86.3</longitude_deg>
+      <latitude_deg>33.199840</latitude_deg>
+      <longitude_deg>-86.299795</longitude_deg>
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
+      <!-- see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+      currently gazebo has a bug: instead of outputting lat, long, altitude in ENU
+      (x = East, y = North and z = Up) as the default configurations, it's outputting (-E)(-N)U,
+      therefore we rotate the default frame 180 so that it would go back to ENU
+      see: https://github.com/osrf/gazebo/issues/2022 -->
+      <!-- heading_deg>180</heading_deg -->
     </spherical_coordinates>
 
     <!-- gui>
@@ -110,6 +116,13 @@
           <property key='height' type='double'>5</property>
           <property key='state' type='string'>floating</property>
           <property key='showTitleBar' type='bool'>false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="NavSatMap">
+        <gz-gui>
+          <property key="enabled" type="bool">true</property>
+          <property key="visible" type="bool">true</property>
+          <property key="state" type="string">docked</property>
         </gz-gui>
       </plugin>
       <plugin name='Camera Tracking' filename='CameraTracking'>
