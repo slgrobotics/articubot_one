@@ -4,7 +4,7 @@ from ament_index_python.packages import get_package_share_directory
 
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import IncludeLaunchDescription, TimerAction, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.actions import RegisterEventHandler
@@ -149,16 +149,35 @@ def generate_launch_description():
         ]
     )
 
+    navsat_localizer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(package_name),'launch','dual_ekf_navsat.launch.py'
+                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    drive_include = GroupAction(
+        actions=[
+            twist_mux,
+            twist_stamper,
+            delayed_controller_manager,
+            delayed_diff_drive_spawner,
+            delayed_joint_broad_spawner
+        ]
+    )
+
+    sensors_include = GroupAction(
+        actions=[
+            ldlidar_node,
+            gps_node,
+            mpu9250driver_node
+        ]
+    )
+
     # Launch them all!
     return LaunchDescription([
         rsp,
         # joystick,
-        twist_mux,
-        twist_stamper,
-        delayed_controller_manager,
-        delayed_diff_drive_spawner,
-        delayed_joint_broad_spawner,
-        ldlidar_node,
-        gps_node,
-        mpu9250driver_node
+        drive_include,
+        sensors_include,
+        navsat_localizer
     ])
