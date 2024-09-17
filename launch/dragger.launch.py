@@ -143,9 +143,13 @@ def generate_launch_description():
             {'port' : '/dev/ttyUSBGPS' },
             #{'baud' : 115200 },
             {'baud' : 38400 },
-            {'frame_id' : 'gps' },
+            {'frame_id' : 'gps_link' },
             {'time_ref_source' : 'gps' },
+            {'use_GNSS_time' : False },
             {'useRMC' : False }
+        ],
+        remappings=[
+            ("fix", "gps/fix")
         ]
     )
 
