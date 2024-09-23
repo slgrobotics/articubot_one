@@ -62,6 +62,8 @@ def generate_launch_description():
     gazebo_arguments = LaunchDescription([
             DeclareLaunchArgument('world', default_value='test_robot_world',
                                   description='Gz sim Test World'),
+            #DeclareLaunchArgument('world', default_value='baylands',
+            #                      description='Gz sim Baylands World'),
         ]
     )
 
