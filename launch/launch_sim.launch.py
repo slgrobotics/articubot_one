@@ -108,7 +108,8 @@ def generate_launch_description():
         executable="spawner",
         namespace='/',
         arguments=["diff_cont", "--controller-manager", "/controller_manager"],
-        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odomodom"],  # --ros-args --remap odom:=odomodom
+        # remappings don't work here. Use relay.
+        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
         #remappings=[('/diff_cont/odom','/odom')]
     )
 

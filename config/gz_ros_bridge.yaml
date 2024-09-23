@@ -1,5 +1,5 @@
 # See https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_bridge/README.md
----
+
 - ros_topic_name: "/clock"
   gz_topic_name: "/clock"
   ros_type_name: "rosgraph_msgs/msg/Clock"
@@ -55,9 +55,9 @@
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
-- #ros_topic_name: "odom"
-  #gz_topic_name: "/diff_cont/odom"
-  #ros_type_name: "nav_msgs/msg/Odometry"
-  #gz_type_name: "gz.msgs.Odometry"
-  #direction: GZ_TO_ROS
-
+# "odom" doesn't come from Gazebo, but from "diff_cont" and needs a topic_tools relay for remapping
+#- ros_topic_name: "odom"
+#  gz_topic_name: "/diff_cont/odom"
+#  ros_type_name: "nav_msgs/msg/Odometry"
+#  gz_type_name: "gz.msgs.Odometry"
+#  direction: GZ_TO_ROS
