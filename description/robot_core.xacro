@@ -8,7 +8,7 @@
     <xacro:property name="chassis_width" value="0.40"/>
     <xacro:property name="chassis_height" value="0.50"/>
     <xacro:property name="chassis_mass" value="30.0"/>
-    <xacro:property name="wheel_radius" value="0.177"/>
+    <xacro:property name="wheel_radius" value="0.192"/>
     <xacro:property name="wheel_thickness" value="0.09"/>
     <xacro:property name="wheel_mass" value="1.0"/>
     <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>

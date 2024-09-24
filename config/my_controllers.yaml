@@ -18,6 +18,7 @@ diff_cont:
     publish_rate: 50.0
 
     # Name of frame to publish odometry in. Default: "/odom"
+    # in Gazebo will become /diff_cont/odom
     odom_frame_id: '/odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
@@ -25,7 +26,8 @@ diff_cont:
     #base_frame_id: base_footprint
 
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
-    enable_odom_tf: true
+    # make itr false, or there will be a lot of jumping and wheels will be sepatared from the body.
+    enable_odom_tf: false
 
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]
