@@ -1,4 +1,6 @@
 # See https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_bridge/README.md
+#     https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_sim_demos/README.md
+# To list all gz topics: gz topic --list   (gz topic --help)
 
 - ros_topic_name: "/clock"
   gz_topic_name: "/clock"
@@ -49,10 +51,17 @@
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
 
+# Note: IMU in Gazebo reports orientation as all zeroes. Use magnetometer for compass readings. 
 - ros_topic_name: "imu"
   gz_topic_name: "/imu"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "magnetometer"
+  gz_topic_name: "/magnetometer"
+  ros_type_name: "sensor_msgs/msg/MagneticField"
+  gz_type_name: "gz.msgs.Magnetometer"
   direction: GZ_TO_ROS
 
 # "odom" doesn't come from Gazebo, but from "diff_cont" and needs a topic_tools relay for remapping
