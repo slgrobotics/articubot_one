@@ -41,7 +41,7 @@ ekf_filter_node_odom:
 # Debug settings. Not for the faint of heart. Outputs a ludicrous amount of information to the file specified by
 # debug_out_file. I hope you like matrices! Please note that setting this to true will have strongly deleterious
 # effects on the performance of the node. Defaults to false if unspecified.
-        debug: true
+#        debug: true
 
 # Defaults to "robot_localization_debug.txt" if unspecified. Please specify the full path.
         debug_out_file: /tmp/dual_ekf_navsat_odom_debug.txt
@@ -85,6 +85,7 @@ ekf_filter_node_odom:
 # sensor_msgs/Imu). To add an input, simply append the next number in the sequence to its "base" name, e.g., odom0,
 # odom1, twist0, twist1, imu0, imu1, imu2, etc. The value should be the topic name. These parameters obviously have no
 # default values, and must be specified.
+#        odom0: /diff_cont/odom
         odom0: odom
 
 # Each sensor reading updates some or all of the filter's state. These options give you greater control over which
@@ -95,7 +96,7 @@ ekf_filter_node_odom:
 # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
 # if unspecified, effectively making this parameter required for each sensor.
         odom0_config: [false, false, false,
-                       false, false, false,
+                       false, false, true,
                        true, true, true,
                        false, false, true,
                        false, false, false]    
@@ -249,7 +250,7 @@ ekf_filter_node_map:
     #transform_time_offset: 0.0
     #transform_timeout: 0.0
     print_diagnostics: true
-    debug: true
+    #debug: true
     debug_out_file: /tmp/dual_ekf_navsat_map_debug.txt
 
     # Whether to broadcast the transformation over the /tf topic. Defaults to true if unspecified.
@@ -272,22 +273,23 @@ ekf_filter_node_map:
 
     # Since per REP 105 the position of the robot in the odom frame has to be continuous over time, 
     # in this filter we just want to fuse the robot’s speed measured by its wheels published /odom, 
-    # and the imu heading published on /imu: 
+    # and the imu heading published on /imu:
+#    odom0: /diff_cont/odom 
     odom0: odom
     odom0_config: [false, false, false,
-                   false, false, false,
+                   false, false, true,
                    true, true, true,
                    false, false, true,
                    false, false, false]
     odom0_queue_size: 7
-#     odom0_nodelay: false
+#    odom0_nodelay: false
 #    odom0_differential: false
 #    odom0_relative: false     
                 
 
     odom1: odometry/gps
     odom1_config: [true,  true,  false,
-                   false, false, false,
+                   false, false, true,
                    false, false, false,
                    false, false, false,
                    false, false, false]
@@ -303,13 +305,13 @@ ekf_filter_node_map:
                 false, false, false,
                 false, false, false]
 
-#     imu0_nodelay: false
+#    imu0_nodelay: false
 #    imu0_differential: false  # If using a real robot you might want to set this to true, since usually absolute measurements from real imu's are not very accurate
 #    imu0_relative: false
     imu0_queue_size: 7
-#     imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
-#     imu0_twist_rejection_threshold: 0.8                #
-#     imu0_linear_acceleration_rejection_threshold: 0.8  #
+#    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
+#    imu0_twist_rejection_threshold: 0.8                #
+#    imu0_linear_acceleration_rejection_threshold: 0.8  #
     imu0_remove_gravitational_acceleration: true
     use_control: false
 
@@ -356,8 +358,8 @@ navsat_transform:
     yaw_offset: 0.0
 #    yaw_offset: 1.570796327  # if IMU reads 0 when facing magnetic north instead of east then set parameter to pi/2
     zero_altitude: true
-    broadcast_cartesian_transform: true
-    # broadcast_utm_transform_as_parent_frame: true
+#    broadcast_cartesian_transform: true
+#    broadcast_utm_transform_as_parent_frame: true
     publish_filtered_gps: true
     use_odometry_yaw: true # must be true
     wait_for_datum: false

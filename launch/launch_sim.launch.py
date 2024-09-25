@@ -159,6 +159,8 @@ def generate_launch_description():
         executable='relay',
         namespace='/',
         parameters=[{ 'input_topic': '/diff_cont/odom', 'output_topic': '/odom'}],
+        # see what odom0 says in config/dual_ekf_navsat_params.yaml
+        #parameters=[{ 'input_topic': '/odometry/local', 'output_topic': '/odom'}],
     )
 
     # =========================================================================

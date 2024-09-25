@@ -51,7 +51,7 @@
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
 
-# Note: IMU in Gazebo reports orientation as all zeroes. Use magnetometer for compass readings. 
+# Note: IMU in Gazebo may report orientation as all zeroes. Set <enable_orientation> to 1 in SDF to allow reporting real values. 
 - ros_topic_name: "imu"
   gz_topic_name: "/imu"
   ros_type_name: "sensor_msgs/msg/Imu"
