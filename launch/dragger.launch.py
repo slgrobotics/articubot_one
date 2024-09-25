@@ -110,27 +110,47 @@ def generate_launch_description():
         ]
     )
 
+#    mpu9250driver_node = Node(
+#        package='mpu9250driver',
+#        executable='mpu9250driver',
+#        name='mpu9250driver_node',
+#        output='screen',
+#        respawn=True,
+#        respawn_delay=4,
+#        emulate_tty=True,
+#        parameters=[
+#          {'calibrate': True },
+#          {'gyro_range': 0 },     # Gyroscope range: 0 -> +-250°/s, 1 -> +-500°/s, 2 -> +-1000°/s, 3 -> +-2000°/s
+#          {'accel_range': 0 },    # Acceleration range: 0 -> +-2g, 1 -> +-4g, 2 -> +-8g, 3 -> +-16g
+#          {'dlpf_bandwidth': 2 },   # Digital low pass filter bandwidth [0-6]: 0 -> 260Hz, 1 -> 184Hz, 2 -> 94Hz, 3 -> 44Hz, 4 -> 21Hz, 5 -> 10Hz, 6 -> 5Hz
+#          {'gyro_x_offset':  0.0 },  # If "calibrate" is true, these values will be overriden by the calibration procedure
+#          {'gyro_y_offset': 0.0},
+#          {'gyro_z_offset': 0.0 },
+#          {'accel_x_offset': 0.0 },
+#          {'accel_y_offset': 0.0 },
+#          {'accel_z_offset': 0.0 },
+#          {'frequency': 100 }
+#        ]
+#    )
+
     mpu9250driver_node = Node(
-        package='mpu9250driver',
-        executable='mpu9250driver',
-        name='mpu9250driver_node',
+        package="mpu9250",
+        executable="mpu9250",
+        name="mpu9250",
         output='screen',
         respawn=True,
         respawn_delay=4,
         emulate_tty=True,
         parameters=[
-          {'calibrate': True },
-          {'gyro_range': 0 },     # Gyroscope range: 0 -> +-250°/s, 1 -> +-500°/s, 2 -> +-1000°/s, 3 -> +-2000°/s
-          {'accel_range': 0 },    # Acceleration range: 0 -> +-2g, 1 -> +-4g, 2 -> +-8g, 3 -> +-16g
-          {'dlpf_bandwidth': 2 },   # Digital low pass filter bandwidth [0-6]: 0 -> 260Hz, 1 -> 184Hz, 2 -> 94Hz, 3 -> 44Hz, 4 -> 21Hz, 5 -> 10Hz, 6 -> 5Hz
-          {'gyro_x_offset':  0.0 },  # If "calibrate" is true, these values will be overriden by the calibration procedure
-          {'gyro_y_offset': 0.0},
-          {'gyro_z_offset': 0.0 },
-          {'accel_x_offset': 0.0 },
-          {'accel_y_offset': 0.0 },
-          {'accel_z_offset': 0.0 },
-          {'frequency': 100 }
-        ]
+          {"acceleration_scale": [1.0072387165748442, 1.0081436035838134, 0.9932769089604535],
+           "acceleration_bias": [0.17038044467587418, 0.20464685207217453, -0.12461014438322202],
+           "gyro_bias": [0.0069376404996494, -0.0619247665634732, 0.05717760948453845],
+           "magnetometer_bias": [0.4533159894397744, 3.4555818146055564, -5.984038606178013],
+           "magnetometer_transform": [   0.9983016121720226, 0.044890057238382707, 0.007231924972024632,
+                                0.044890057238382707, 1.2981683205953654, -0.1173361838042438,
+                                0.007231924972024633, -0.11733618380424381, 0.7835617468652673]
+          }
+        ],
     )
 
     gps_node = Node(

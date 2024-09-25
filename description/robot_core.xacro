@@ -143,7 +143,11 @@
         <gz_frame_id>imu_link</gz_frame_id>
         <update_rate>250</update_rate>
             <imu>
-                <enable_orientation>0</enable_orientation>
+                <orientation_reference_frame>
+                  <localization>ENU</localization>
+                  <!-- custom_rpy parent_frame='world'>1.570795 0 0</custom_rpy -->
+                </orientation_reference_frame>
+                <enable_orientation>1</enable_orientation>
                 <angular_velocity>
                     <x>
                         <noise type="gaussian">
@@ -245,19 +249,19 @@
             <x>
               <noise type="gaussian">
                 <mean>0.0</mean>
-                <stddev>0.1</stddev>
+                <stddev>0.001</stddev>
               </noise>
             </x>
             <y>
               <noise type="gaussian">
                 <mean>0.0</mean>
-                <stddev>0.1</stddev>
+                <stddev>0.001</stddev>
               </noise>
             </y>
             <z>
               <noise type="gaussian">
                 <mean>0.0</mean>
-                <stddev>0.1</stddev>
+                <stddev>0.001</stddev>
               </noise>
             </z>
           </magnetometer>

@@ -1,10 +1,23 @@
 <?xml version="1.0" ?>
 <sdf version='1.10'>
   <world name='pretty_lawn'>
-    <physics name='1ms' type='ode'>
+    <!-- physics name='1ms' type='ode'>
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>250</real_time_update_rate>
+    </physics-->
+    <!-- see https://robotics.snowcron.com/robotics_ros2_a/nav25d_02_ukf.htm -->
+    <physics name='1ms' type='ode'>
+        <max_step_size>0.0004</max_step_size>
+        <real_time_factor>1</real_time_factor>
+        <real_time_update_rate>2500</real_time_update_rate>
+        <ode>
+            <solver>
+                <type>quick</type>
+                <iters>100</iters>
+                <sor>1.3</sor>
+            </solver>
+        </ode>            
     </physics>
     <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
@@ -12,7 +25,11 @@
     <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
 
     <plugin name="gz::sim::systems::Imu" filename="gz-sim-imu-system"/>
-    <plugin name="gz::sim::systems::Magnetometer" filename="gz-sim-magnetometer-system"/>
+    <plugin name="gz::sim::systems::Magnetometer" filename="gz-sim-magnetometer-system">
+      <!-- See https://github.com/gazebosim/gz-sim/blob/gz-sim9/src/systems/magnetometer/Magnetometer.cc -->
+      <!-- use_units_gauss>false</use_units_gauss -->
+      <!-- use_earth_frame_ned>false</use_earth_frame_ned -->
+    </plugin>
     <plugin name="gz::sim::systems::AirPressure" filename="gz-sim-air-pressure-system"/>
     <plugin name="gz::sim::systems::ApplyLinkWrench" filename="gz-sim-apply-link-wrench-system"/>
     <plugin name="gz::sim::systems::NavSat" filename="gz-sim-navsat-system"/>
@@ -21,7 +38,8 @@
     </plugin>
 
     <gravity>0 0 -9.8</gravity>
-    <magnetic_field>5.5645e-06 2.28758e-05 -4.23884e-05</magnetic_field>
+    <!-- looks like magnetic field here is ignored, and is instead calculated by location in Gazebo Harmonic -->
+    <!-- magnetic_field>5.5645e-06 2.28758e-05 -4.23884e-05</magnetic_field -->
     <atmosphere type='adiabatic'/>
 
     <spherical_coordinates>

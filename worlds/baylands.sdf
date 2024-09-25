@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <sdf version='1.9'>
   <world name='baylands'>
     <physics type="ode">
@@ -10,6 +11,11 @@
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
     <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
     <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    <plugin name="gz::sim::systems::Magnetometer" filename="gz-sim-magnetometer-system">
+      <!-- See https://github.com/gazebosim/gz-sim/blob/gz-sim9/src/systems/magnetometer/Magnetometer.cc -->
+      <!-- use_units_gauss>false</use_units_gauss -->
+      <!-- use_earth_frame_ned>false</use_earth_frame_ned -->
+    </plugin>
     <plugin name='gz::sim::systems::AirPressure' filename='gz-sim-air-pressure-system'/>
     <plugin name='gz::sim::systems::ApplyLinkWrench' filename='gz-sim-apply-link-wrench-system'/>
     <plugin name='gz::sim::systems::NavSat' filename='gz-sim-navsat-system'/>
@@ -158,6 +164,7 @@
       <plugin name='Entity tree' filename='EntityTree'/>
     </gui>
     <gravity>0 0 -9.8</gravity>
+    <!-- looks like magnetic field here is ignored, and is instead calculated by location in Gazebo Harmonic -->
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
     <scene>
@@ -206,3 +213,4 @@
     </spherical_coordinates>
   </world>
 </sdf>
+</xml>
