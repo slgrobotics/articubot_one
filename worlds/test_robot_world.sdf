@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <sdf version='1.10'>
   <world name='pretty_lawn'>
-    <!-- physics name='1ms' type='ode'>
+    <physics name='1ms' type='ode'>
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>250</real_time_update_rate>
-    </physics-->
+    </physics>
     <!-- see https://robotics.snowcron.com/robotics_ros2_a/nav25d_02_ukf.htm -->
-    <physics name='1ms' type='ode'>
+    <!-- physics name='1ms' type='ode'>
         <max_step_size>0.0004</max_step_size>
         <real_time_factor>1</real_time_factor>
         <real_time_update_rate>2500</real_time_update_rate>
@@ -18,7 +18,7 @@
                 <sor>1.3</sor>
             </solver>
         </ode>            
-    </physics>
+    </physics-->
     <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
     <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
     <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
