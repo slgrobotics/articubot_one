@@ -143,6 +143,10 @@ def generate_launch_description():
         emulate_tty=True,
         parameters=[
           {
+              #"print" : True,
+              "frequency" : 30,
+              "i2c_address" : 0x68,
+              "i2c_port" : 1,
               "frame_id" : "imu_link",
               "acceleration_scale": [1.0072387165748442, 1.0081436035838134, 0.9932769089604535],
               "acceleration_bias": [0.17038044467587418, 0.20464685207217453, -0.12461014438322202],
