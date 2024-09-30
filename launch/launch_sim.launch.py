@@ -29,6 +29,12 @@ def generate_launch_description():
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
+    slam_toolbox = IncludeLaunchDescription(
+                #PythonLaunchDescriptionSource([os.path.join(package_path,'launch','online_async_launch.py'
+                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py'
+                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
     twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
     twist_mux = Node(
         package="twist_mux",
@@ -203,6 +209,13 @@ def generate_launch_description():
         ]
     )
 
+    nav_include = GroupAction(
+        actions=[
+            navsat_localizer,
+            slam_toolbox
+        ]
+    )
+
     # Launch them all!
     return LaunchDescription([
         rsp,
@@ -210,5 +223,5 @@ def generate_launch_description():
         twist_mux,
         twist_stamper,
         gz_include,
-        navsat_localizer
+        nav_include
     ])
