@@ -331,7 +331,7 @@
     </model>
 
     <model name='tall_blue_box'>
-      <pose>-1.7 1.5 0.6 0 0 0</pose>
+      <pose>-1.7 1.5 0.65 0 0 0</pose>
       <link name='box_link'>
         <inertial>
           <inertia>
@@ -379,7 +379,7 @@
     </model>
 
     <model name='wall_1'>
-      <pose>-3.16 0.0 0.6 0 0 0</pose>
+      <pose>-3.16 0.0 0.65 0 0 0</pose>
       <link name='wall_1_link'>
         <inertial>
           <inertia>
@@ -422,12 +422,12 @@
         <pose>0 0 0 0 0 0</pose>
         <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
+      <static>true</static>
       <self_collide>false</self_collide>
     </model>
 
     <model name='wall_2'>
-      <pose>0.0 -3.16 0.6 0 0 0</pose>
+      <pose>0.0 -3.16 0.65 0 0 0</pose>
       <link name='wall_2_link'>
         <inertial>
           <inertia>
@@ -470,12 +470,12 @@
         <pose>0 0 0 0 0 0</pose>
         <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
+      <static>true</static>
       <self_collide>false</self_collide>
     </model>
 
     <model name='wall_3'>
-      <pose>-5.16 0.0 0.6 0 0 0</pose>
+      <pose>-5.16 0.0 0.65 0 0 0</pose>
       <link name='wall_3_link'>
         <inertial>
           <inertia>
@@ -518,12 +518,12 @@
         <pose>0 0 0 0 0 0</pose>
         <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
+      <static>true</static>
       <self_collide>false</self_collide>
     </model>
 
     <model name='wall_4'>
-      <pose>0.0 -5.16 0.6 0 0 0</pose>
+      <pose>0.0 -5.16 0.65 0 0 0</pose>
       <link name='wall_4_link'>
         <inertial>
           <inertia>
@@ -566,7 +566,7 @@
         <pose>0 0 0 0 0 0</pose>
         <enable_wind>false</enable_wind>
       </link>
-      <static>false</static>
+      <static>true</static>
       <self_collide>false</self_collide>
     </model>
 
