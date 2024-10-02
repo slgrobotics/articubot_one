@@ -26,7 +26,7 @@
         <visual name="baselink_visual">
             <origin xyz="0 0 0"/>
             <geometry>
-                <sphere radius="0.03"/>
+                <sphere radius="0.04"/>
             </geometry>
             <material name="red"/>
         </visual>
