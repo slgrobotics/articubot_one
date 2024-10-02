@@ -175,20 +175,6 @@ def generate_launch_description():
         #parameters=[{ 'input_topic': '/odometry/local', 'output_topic': '/odom'}],
     )
 
-    # =========================================================================
-    # see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
-    #     https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/launch/dual_ekf_navsat.launch.py
-
-    # navsat_localizer wants gps_msgs/msg/NavSatFix while gz_bridge delivers gps_msgs/msg/GPSFix, so we use fix_translator here.
-    # see https://github.com/swri-robotics/gps_umd
-    #gps_fix_translator = Node(
-    #    package='gps_tools',
-    #    executable='fix_translator',
-    #    namespace='/'
-        #remappings=[('/navsat','gps_fix_in'),
-        #            ('/navsat_fix_out','/gps/fix')]
-    #)
-
     navsat_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(package_name),'launch','dual_ekf_navsat.launch.py'
