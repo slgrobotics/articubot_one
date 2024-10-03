@@ -19,31 +19,32 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    package_path = get_package_share_directory(package_name)
+
     rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','rsp.launch.py'
-                )]), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
     )
 
     # joystick = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory(package_name),'launch','joystick.launch.py'
-    #             )])
+    #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
+    #             )
     # )
 
     slam_toolbox = IncludeLaunchDescription(
-                #PythonLaunchDescriptionSource([os.path.join(package_path,'launch','online_async_launch.py'
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py'
-                )]), launch_arguments={'use_sim_time': 'false'}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','online_async_launch.py')]
+                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
+    # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                #PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py'
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py'
-                )]), launch_arguments={'use_sim_time': 'false'}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
     )
 
-    twist_mux_params = os.path.join(get_package_share_directory(package_name),'config','twist_mux.yaml')
+    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
     twist_mux = Node(
         package="twist_mux",
         executable="twist_mux",
@@ -63,7 +64,7 @@ def generate_launch_description():
 
     robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
 
-    controllers_params_file = os.path.join(get_package_share_directory(package_name),'config','my_controllers.yaml')
+    controllers_params_file = os.path.join(package_path,'config','my_controllers.yaml')
 
     controller_manager = Node(
         package="controller_manager",
@@ -198,9 +199,8 @@ def generate_launch_description():
     )
 
     navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','dual_ekf_navsat.launch.py'
-                )]), launch_arguments={'use_sim_time': 'false'}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
     drive_include = GroupAction(
