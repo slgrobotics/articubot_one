@@ -186,8 +186,8 @@ def generate_launch_description():
         respawn_delay=10,
         parameters=[
             {'port' : '/dev/ttyUSBGPS' },
-            #{'baud' : 115200 },
-            {'baud' : 38400 },
+            {'baud' : 115200 },
+            #{'baud' : 38400 },
             {'frame_id' : 'gps_link' },
             {'time_ref_source' : 'gps' },
             {'use_GNSS_time' : False },
