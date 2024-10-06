@@ -28,7 +28,9 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     pkg_path = os.path.join(get_package_share_directory('articubot_one'))
+    
     rl_params_file = os.path.join(pkg_path,'config','dual_ekf_navsat_params.yaml')
+    nt_params_file = os.path.join(pkg_path,'config','navsat_transform.yaml')
 
     return LaunchDescription(
         [
@@ -59,7 +61,7 @@ def generate_launch_description():
                 executable="navsat_transform_node",
                 name="navsat_transform",
                 output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
+                parameters=[nt_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[
                     ("imu/data", "imu/data"),
                     ("gps/fix", "gps/fix"),

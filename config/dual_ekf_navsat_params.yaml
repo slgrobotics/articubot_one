@@ -347,19 +347,3 @@ ekf_filter_node_map:
 #                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     1e-9,   0.0,    0.0,
 #                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    1e-9,   0.0,
 #                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    1e-9]
-
- 
-navsat_transform:
-  ros__parameters:
-    #use_sim_time: false
-    frequency: 10.0
-    delay: 8.0
-    magnetic_declination_radians: 0.0730129404 # For lat/long of Childersburg, Alabama, USA
-    yaw_offset: 0.0
-#    yaw_offset: 1.570796327  # if IMU reads 0 when facing magnetic north instead of east then set parameter to pi/2
-    zero_altitude: true
-#    broadcast_cartesian_transform: true
-#    broadcast_utm_transform_as_parent_frame: true
-    publish_filtered_gps: true
-    use_odometry_yaw: true # must be true
-    wait_for_datum: false
