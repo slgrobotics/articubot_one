@@ -21,6 +21,15 @@
     <xacro:property name="caster_wheel_offset_y" value="0.270"/>
     <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
 
+    <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
+    <xacro:if value="$(arg sim_mode)">
+        <xacro:property name="caster_joint_type" value="continuous"/>
+    </xacro:if>
+
+    <xacro:unless value="$(arg sim_mode)">
+        <xacro:property name="caster_joint_type" value="fixed"/>
+    </xacro:unless>
+
     <!-- ********************** ROBOT BASE *********************************  -->
     <link name="base_link">
         <visual name="baselink_visual">
@@ -390,7 +399,7 @@
 
     <!-- CASTER WHEELS LINKS -->
 
-    <joint name="left_caster_wheel_joint" type="continuous">
+    <joint name="left_caster_wheel_joint" type="${caster_joint_type}">
         <parent link="chassis_link"/>
         <child link="left_caster_wheel"/>
         <origin xyz="${caster_wheel_offset_x} ${caster_wheel_offset_y} ${caster_wheel_offset_z}" rpy="${pi/2} 0 0" />
@@ -431,7 +440,7 @@
         </xacro:inertial_cylinder>
     </link>
 
-    <joint name="right_caster_wheel_joint" type="continuous">
+    <joint name="right_caster_wheel_joint" type="${caster_joint_type}">
         <parent link="chassis_link"/>
         <child link="right_caster_wheel"/>
         <origin xyz="${caster_wheel_offset_x} ${-caster_wheel_offset_y} ${caster_wheel_offset_z}" rpy="${pi/2} 0 0" />
