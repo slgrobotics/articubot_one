@@ -3,7 +3,8 @@ Panels:
     Help Height: 0
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /LaserScan1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 606
   - Class: rviz_common/Selection
@@ -68,6 +69,8 @@ Visualization Manager:
           Value: true
         laser_frame:
           Value: true
+        left_caster_wheel:
+          Value: true
         left_wheel:
           Value: true
         magnetometer_link:
@@ -75,6 +78,8 @@ Visualization Manager:
         map:
           Value: true
         odom:
+          Value: true
+        right_caster_wheel:
           Value: true
         right_wheel:
           Value: true
@@ -99,9 +104,13 @@ Visualization Manager:
                   {}
                 laser_frame:
                   {}
+                left_caster_wheel:
+                  {}
                 left_wheel:
                   {}
                 magnetometer_link:
+                  {}
+                right_caster_wheel:
                   {}
                 right_wheel:
                   {}
@@ -212,9 +221,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 224
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 90
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -226,7 +235,7 @@ Visualization Manager:
         Durability Policy: Volatile
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Reliable
+        Reliability Policy: Best Effort
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
