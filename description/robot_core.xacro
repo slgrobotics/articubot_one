@@ -31,6 +31,13 @@
     </xacro:unless>
 
     <!-- ********************** ROBOT BASE *********************************  -->
+    <!-- The coordinate frame called base_link is rigidly attached to the robot root body.
+         It is recommended to choose the robot waist as its root body.
+         The base_link can be attached to the root in any arbitrary position or orientation;
+         for every hardware platform there will be a different place on the base that provides an obvious point of reference.
+         Note that REP 103 [1] specifies a preferred orientation for frames.
+         See https://www.ros.org/reps/rep-0120.html#base-link -->
+
     <link name="base_link">
         <visual name="baselink_visual">
             <origin xyz="0 0 0"/>
@@ -42,6 +49,12 @@
     </link>
     
     <!-- ****************** ROBOT BASE FOOTPRINT ***************************  -->
+    <!-- The base_footprint is the representation of the robot position on the floor. 
+         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole height respecitvely.
+         The translation component of the frame should be the barycenter of the feet projections on the floor.
+         With respect to the odom frame, the roll and pitch angles should be zero and the yaw angle should correspond to the base_link yaw angle.
+         Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. -->
+
     <!-- Define the center of the main robot chassis projected on the ground -->   
     <link name="base_footprint">
         <visual name="footprint_visual">
