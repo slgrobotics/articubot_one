@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <!-- only used if use_ros2_control=true -->
+
     <ros2_control name="DraggerRobot" type="system">
+
+        <!-- Wheel geometry information - see my_controllers.yaml -->
 
         <hardware>
             <xacro:unless value="$(arg sim_mode)">
@@ -14,6 +18,7 @@
                 <param name="baud_rate">115200</param>
                 <param name="timeout">1000</param>
                 <param name="enc_counts_per_rev">13730</param>
+                <param name="wheels_pwm_factor">1.0</param>
             </xacro:unless>
 
             <xacro:if value="$(arg sim_mode)">
