@@ -3,7 +3,7 @@
 
     <ros2_control name="DraggerRobot" type="system">
 
-        <!-- Wheel geometry information - see my_controllers.yaml -->
+        <!-- Wheel geometry information - see controllers_*.yaml -->
 
         <hardware>
             <xacro:unless value="$(arg sim_mode)">
@@ -87,7 +87,7 @@
             <robot_param_node>robot_state_publisher</robot_param_node> -->
 
             <parameters>$(find articubot_one)/config/gaz_ros2_ctl_use_sim.yaml</parameters>
-            <parameters>$(find articubot_one)/config/my_controllers.yaml</parameters>
+            <parameters>$(find articubot_one)/config/controllers_sim.yaml</parameters>
         </plugin>
     </gazebo>
 
