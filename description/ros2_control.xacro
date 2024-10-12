@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <!-- only used if use_ros2_control=true -->
-
     <ros2_control name="DraggerRobot" type="system">
 
         <!-- Wheel geometry information - see my_controllers.yaml -->

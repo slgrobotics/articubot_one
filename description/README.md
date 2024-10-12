@@ -52,4 +52,4 @@ source ~/robot_ws/install/setup.bash
 ros2 launch articubot_one launch_sim.launch.py
 
 
-xacro /home/sergei/robot_ws/install/articubot_one/share/articubot_one/description/robot.urdf.xacro use_ros2_control:=true sim_mode:=true > /home/sergei/robot_ws/src/articubot_one/description/robot.urdf
+xacro /home/sergei/robot_ws/install/articubot_one/share/articubot_one/description/robot.urdf.xacro sim_mode:=true > /home/sergei/robot_ws/src/articubot_one/description/robot.urdf

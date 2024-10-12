@@ -23,7 +23,7 @@ def generate_launch_description():
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'use_ros2_control': 'true'}.items()
+                ), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
     # joystick = IncludeLaunchDescription(
