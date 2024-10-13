@@ -31,21 +31,23 @@ diff_cont:
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
     enable_odom_tf: false
 
+    use_stamped_vel: false
+
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]
 
     wheels_per_side: 1
 
     wheel_separation: 0.580             # distance between left and right wheels
-    wheel_separation_multiplier: 1.05   # adjust so that when robot rotates in place the odom vector rotation follows it exactly 
-
     wheel_radius: 0.192
-    left_wheel_radius_multiplier: 1.95
-    right_wheel_radius_multiplier: 1.95
 
-    use_stamped_vel: false
+    # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
+    # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
 
-    # Is there position feedback from hardware, default to "true":
+    # Is there position feedback from hardware (wheel encoders), default to "true":
     position_feedback: true
     # If set to true the odometry of the robot will be calculated from the commanded values and not from feedback.
     # default to "false":
