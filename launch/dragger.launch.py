@@ -34,7 +34,7 @@ def generate_launch_description():
     slam_toolbox = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','online_async_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'slam_params_file': 'mapper_params_dragger.yaml'}.items()
     )
 
     # You need to press "Startup" button in RViz when autostart=false
