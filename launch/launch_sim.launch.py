@@ -72,6 +72,10 @@ def generate_launch_description():
             ]
         )
 
+    # -- where to find meshes:
+    gazebo_models_path = os.path.join(package_path, 'description')
+    os.environ["GAZEBO_MODEL_PATH"] = gazebo_models_path
+
     # -- where to find the world SDF:
     gazebo_arguments = LaunchDescription([
             DeclareLaunchArgument('world', default_value='test_robot_world',
