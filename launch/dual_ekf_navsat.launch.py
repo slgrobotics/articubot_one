@@ -63,7 +63,7 @@ def generate_launch_description():
                 output="screen",
                 parameters=[nt_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[
-                    ("imu/data", "imu/data"),
+                    ("imu", "imu/data"),
                     ("gps/fix", "gps/fix"),
                     ("gps/filtered", "gps/filtered"),
                     ("odometry/gps", "odometry/gps"),

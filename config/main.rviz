@@ -312,7 +312,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /imu
+        Value: /imu/data
       Value: false
       fixed_frame_orientation: true
     - Alpha: 0.699999988079071
