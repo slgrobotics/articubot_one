@@ -48,18 +48,20 @@ def generate_launch_description():
         package="twist_mux",
         executable="twist_mux",
         namespace='/',
-        parameters=[twist_mux_params, {'use_sim_time': True}],
-        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
+        output='screen',
+        parameters=[twist_mux_params, {'use_sim_time': True, 'use_stamped': True}],
+        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel')]
     )
 
-    twist_stamper = Node(
-        package='twist_stamper',
-        executable='twist_stamper',
-        namespace='/',
-        # use_sim_time must be False here, or time stamp will be 0:
-        parameters=[{'use_sim_time': False}, {'frame_id': 'base_link'}],
-        remappings=[('/cmd_vel_in','/diff_cont/cmd_vel_unstamped'),
-                    ('/cmd_vel_out','/diff_cont/cmd_vel')]
+    twist_mux_ = IncludeLaunchDescription(
+                #PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux_launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("twist_mux"),'launch','twist_mux_launch.py')]
+                ), launch_arguments={
+                    'use_sim_time': 'true',
+                    #'use_stamped': 'true',
+                    'cmd_vel_out': '/diff_cont/cmd_vel',
+                    'config_topics': twist_mux_params,
+                    }.items()
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
@@ -219,7 +221,6 @@ def generate_launch_description():
         rsp,
         joystick,
         twist_mux,
-        twist_stamper,
         gz_include,
         nav_include
     ])

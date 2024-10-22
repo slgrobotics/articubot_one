@@ -49,18 +49,10 @@ def generate_launch_description():
     twist_mux = Node(
         package="twist_mux",
         executable="twist_mux",
-        parameters=[twist_mux_params],
-        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel_unstamped')]
-    )
-
-    twist_stamper = Node(
-        package='twist_stamper',
-        executable='twist_stamper',
         namespace='/',
-        # use_sim_time must be False here, or time stamp will be 0:
-        parameters=[{'use_sim_time': False}, {'frame_id': 'base_link'}],
-        remappings=[('/cmd_vel_in','/diff_cont/cmd_vel_unstamped'),
-                    ('/cmd_vel_out','/diff_cont/cmd_vel')]
+        output='screen',
+        parameters=[twist_mux_params, {'use_stamped': True}],
+        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel')]
     )
 
     robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
@@ -207,7 +199,6 @@ def generate_launch_description():
     drive_include = GroupAction(
         actions=[
             twist_mux,
-            twist_stamper,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner
