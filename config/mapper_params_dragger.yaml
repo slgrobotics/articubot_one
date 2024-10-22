@@ -15,7 +15,6 @@ slam_toolbox:
 
     # ROS Parameters
     odom_frame: odom
-    #odom_frame: odometry/global
     map_frame: map
     base_frame: base_footprint
     scan_topic: /scan
