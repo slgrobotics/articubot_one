@@ -29,6 +29,11 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
+    twist_mux = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
+                ), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
     slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_online_async.yaml')
 
     slam_toolbox = IncludeLaunchDescription(
@@ -41,27 +46,6 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': 'true', 'autostart' : 'false'}.items()
-    )
-
-    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
-    twist_mux = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        namespace='/',
-        output='screen',
-        parameters=[twist_mux_params, {'use_sim_time': True, 'use_stamped': True}],
-        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel')]
-    )
-
-    twist_mux_ = IncludeLaunchDescription(
-                #PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux_launch.py')]
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("twist_mux"),'launch','twist_mux_launch.py')]
-                ), launch_arguments={
-                    'use_sim_time': 'true',
-                    #'use_stamped': 'true',
-                    'cmd_vel_out': '/diff_cont/cmd_vel',
-                    'config_topics': twist_mux_params,
-                    }.items()
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)

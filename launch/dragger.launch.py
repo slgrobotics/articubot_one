@@ -31,6 +31,11 @@ def generate_launch_description():
     #             )
     # )
 
+    twist_mux = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
+    )
+
     slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_dragger.yaml')
 
     slam_toolbox = IncludeLaunchDescription(
@@ -43,16 +48,6 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
-    )
-
-    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
-    twist_mux = Node(
-        package="twist_mux",
-        executable="twist_mux",
-        namespace='/',
-        output='screen',
-        parameters=[twist_mux_params, {'use_stamped': True}],
-        remappings=[('/cmd_vel_out','/diff_cont/cmd_vel')]
     )
 
     robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
