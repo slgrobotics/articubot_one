@@ -78,8 +78,7 @@ ekf_filter_node_odom:
 #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
     map_frame: map                  # Defaults to "map" if unspecified
     odom_frame: odom                # Defaults to "odom" if unspecified
-    base_link_frame: base_link      # Defaults to "base_link" if unspecified
-    #base_link_frame: base_footprint # Defaults to "base_link" if unspecified
+    base_link_frame: base_link      # Defaults to "base_link" if unspecified, don't change!
     world_frame: odom                # Defaults to the value of odom_frame if unspecified
 
 
@@ -243,8 +242,7 @@ ekf_filter_node_map:
 
     map_frame: map
     odom_frame: odom
-    base_link_frame: base_link
-    #base_link_frame: base_footprint
+    base_link_frame: base_footprint     # this is where the map will be attached to robot
     world_frame: map
 
     #x     , y     , z,
