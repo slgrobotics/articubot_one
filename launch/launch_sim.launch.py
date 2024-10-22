@@ -173,6 +173,7 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Obsolete: dual_ekf_navsat_params.yaml can subscribe to /diff_cont/odom directly
     # Gazebo controller_manager is not subject to renaming through parameters, so we use topic relay here:
     odom_relay = Node(
         package='topic_tools',
@@ -203,7 +204,7 @@ def generate_launch_description():
             delayed_joint_broad_spawner,
             rviz,
             bridge,
-            odom_relay,
+            #odom_relay,
             #gps_fix_translator
         ]
     )

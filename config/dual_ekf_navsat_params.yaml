@@ -88,8 +88,7 @@ ekf_filter_node_odom:
 # sensor_msgs/Imu). To add an input, simply append the next number in the sequence to its "base" name, e.g., odom0,
 # odom1, twist0, twist1, imu0, imu1, imu2, etc. The value should be the topic name. These parameters obviously have no
 # default values, and must be specified.
-#        odom0: /diff_cont/odom
-    odom0: odom
+    odom0: /diff_cont/odom
 
 # Each sensor reading updates some or all of the filter's state. These options give you greater control over which
 # values from each measurement are fed to the filter. For example, if you have an odometry message as input, but only
@@ -190,7 +189,7 @@ ekf_filter_node_odom:
 
 # Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
 # false.
-#        stamped_control: false
+    stamped_control: true
 # The last issued control command will be used in prediction for this period. Defaults to 0.2.
 #        control_timeout: 0.2
 # Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
@@ -257,9 +256,7 @@ ekf_filter_node_map:
     # Since per REP 105 the position of the robot in the odom frame has to be continuous over time, 
     # in this filter we just want to fuse the robot’s speed measured by its wheels published /odom, 
     # and the imu heading published on /imu/data:
-#    odom0: /diff_cont/odom 
-    #odom0: odometry/wheel
-    odom0: odom
+    odom0: /diff_cont/odom 
     odom0_config: [false, false, false,
                    false, false, false,
                     true,  true, false,

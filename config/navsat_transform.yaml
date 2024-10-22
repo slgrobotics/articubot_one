@@ -43,8 +43,9 @@ navsat_transform:
 # /odometry/filtered topic coming from one of robot_localization's state estimation nodes). BE CAREFUL when using this!
 # The yaw value in your odometry source *must* be world-referenced, e.g., you cannot use your odometry source for yaw
 # if your yaw data is based purely on integrated velocities. Defaults to false.
-        # use_odometry_yaw: false  # must be false if you trust your IMU compass and want to rely on it directly
-        use_odometry_yaw: true # make sure that /odometry/global pose has valid orientation 
+# Hint: see if navsat_transform subscribes to /imu/data when "false".
+        # use_odometry_yaw: false  # must be false if you trust your IMU compass and want to rely on it directly (ignoring odometry)
+        use_odometry_yaw: true # make sure that /odometry/global pose has valid orientation (ignores IMU)
 
 # If true, will retrieve the datum from the 'datum' parameter below, if available. If no 'datum' parameter exists,
 # navsat_transform_node will wait until the user calls the 'datum' service with the SetDatum service message.
