@@ -2,16 +2,15 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 
-
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
+from launch_ros.descriptions import ParameterValue
 
 from launch_ros.actions import Node
-
 
 
 def generate_launch_description():
@@ -22,10 +21,11 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    package_path = get_package_share_directory(package_name)
+
     rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(package_name),'launch','rsp.launch.py'
-                )]), launch_arguments={'use_sim_time': 'false'}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
     # joystick = IncludeLaunchDescription(
@@ -39,14 +39,15 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false'}.items()
     )
 
-    robot_description = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
+    robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
 
-    controller_params_file = os.path.join(get_package_share_directory(package_name),'config','controllers_plucky.yaml')
+    controllers_params_file = os.path.join(get_package_share_directory(package_name),'config','controllers_plucky.yaml')
 
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[{'robot_description': robot_description}, controller_params_file],
+        # parameters=[controllers_params_file],  - in theory, robot_description should be from topic, not a string parameter. Doesn't work this way though.
+        parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str)}, controllers_params_file],
         #remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
         remappings=[('~/robot_description','robot_description')]
     )
@@ -78,24 +79,6 @@ def generate_launch_description():
             on_start=[joint_broad_spawner],
         )
     )
-
-
-    # Code for delaying a node (I haven't tested how effective it is)
-    # 
-    # First add the below lines to imports
-    # from launch.actions import RegisterEventHandler
-    # from launch.event_handlers import OnProcessExit
-    #
-    # Then add the following below the current diff_drive_spawner
-    # delayed_diff_drive_spawner = RegisterEventHandler(
-    #     event_handler=OnProcessExit(
-    #         target_action=spawn_entity,
-    #         on_exit=[diff_drive_spawner],
-    #     )
-    # )
-    #
-    # Replace the diff_drive_spawner in the final return with delayed_diff_drive_spawner
-
 
 
     # Launch them all!
