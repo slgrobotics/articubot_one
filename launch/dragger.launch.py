@@ -165,6 +165,7 @@ def generate_launch_description():
                                          0.0030740476998857356, 0.0022885632953903268, 0.9837206150979054]
           }
         ],
+        remappings=[("imu", "imu/data")]
     )
 
     gps_node = Node(
@@ -182,9 +183,7 @@ def generate_launch_description():
             {'use_GNSS_time' : False },
             {'useRMC' : False }
         ],
-        remappings=[
-            ("fix", "gps/fix")
-        ]
+        remappings=[("fix", "gps/fix")]
     )
 
     navsat_localizer = IncludeLaunchDescription(
