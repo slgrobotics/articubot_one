@@ -50,17 +50,13 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
     )
 
-    robot_description_sdf = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
-
     controllers_params_file = os.path.join(package_path,'config','controllers_dragger.yaml')
 
     controller_manager = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        # parameters=[controllers_params_file],  - in theory, robot_description should be from topic, not a string parameter. Doesn't work this way though.
-        parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str)}, controllers_params_file],
-        #remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
-        remappings=[('~/robot_description','robot_description'), ('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false"
+        parameters=[controllers_params_file],
+        remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
     )
 
     delayed_controller_manager = TimerAction(period=3.0, actions=[controller_manager])
