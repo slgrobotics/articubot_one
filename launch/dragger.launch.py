@@ -60,7 +60,7 @@ def generate_launch_description():
         # parameters=[controllers_params_file],  - in theory, robot_description should be from topic, not a string parameter. Doesn't work this way though.
         parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str)}, controllers_params_file],
         #remappings=[('/diff_cont/odom','/odom'), ('~/robot_description','robot_description')]
-        remappings=[('~/robot_description','robot_description')]
+        remappings=[('~/robot_description','robot_description'), ('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false"
     )
 
     delayed_controller_manager = TimerAction(period=3.0, actions=[controller_manager])
