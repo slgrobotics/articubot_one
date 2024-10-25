@@ -26,6 +26,7 @@ def generate_launch_description():
     robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
     
     # Create a robot_state_publisher node
+    # See https://github.com/ros/robot_state_publisher/tree/jazzy
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -33,7 +34,7 @@ def generate_launch_description():
         output='screen',
         namespace='/',
         parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str),
-                    #'publish_frequency' : 5.0,  - this has no effect. The topic is published on demand.
+                    #'publish_frequency' : 5.0,  # Defaults to 20.0 Hz. Only affects non-static joints.
                     'use_sim_time': use_sim_time
                     }]
     )

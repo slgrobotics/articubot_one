@@ -53,17 +53,19 @@
                         <noise type="gaussian_quantized">
                             <mean>0.0</mean>
                             <!-- the standard deviation of the Gaussian distribution from which noise values are drawn -->
-                            <stddev>1.0e-16</stddev>
+                            <stddev>1.0e-6</stddev>
                             <!-- the mean of the Gaussian distribution from which bias values are drawn -->
                             <bias_mean>0.0</bias_mean>
                             <!-- the standard deviation of the Gaussian distribution from which bias values are drawn -->
-                            <bias_stddev>1.0e-16</bias_stddev>
+                            <bias_stddev>1.0e-6</bias_stddev>
                             <!-- the standard deviation of the noise used to drive a process to model slow variations in a sensor bias -->
-                            <dynamic_bias_stddev>1.0e-16</dynamic_bias_stddev>
-                            <!-- the correlation time in seconds of the noise used to drive a process to model slow variations in a sensor bias. A typical value, when used, would be on the order of 3600 seconds (1 hour) -->
+                            <dynamic_bias_stddev>1.0e-6</dynamic_bias_stddev>
+                            <!-- the correlation time in seconds of the noise used to drive a process to model slow variations in a sensor bias.
+                                 A typical value, when used, would be on the order of 3600 seconds (1 hour) -->
                             <dynamic_bias_correlation_time>3600</dynamic_bias_correlation_time>
-                            <!-- For type "gaussian_quantized", the precision of output signals. A value of zero implies infinite precision / no quantization -->
-                            <precision>1.0e-16</precision>
+                            <!-- For type "gaussian_quantized", the precision of output signals.
+                                 A value of zero implies infinite precision / no quantization -->
+                            <precision>2.0e-7</precision>
                         </noise>
                     </horizontal>
                     <vertical>
