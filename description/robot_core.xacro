@@ -60,7 +60,8 @@
         <visual name="footprint_visual">
             <origin xyz="0 0 0.01"/>
             <geometry>
-                <box size="${chassis_length} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/>
+                <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
+                <cylinder radius="${wheel_offset_y + wheel_thickness / 2}" length="0.02"/>
             </geometry>
             <material name="shadow_grey"/>
         </visual>
@@ -70,7 +71,7 @@
     <joint name="base_joint" type="fixed">
         <parent link="base_link"/>
         <child link="base_footprint" />
-        <origin xyz="-${wheel_offset_x} 0 -${wheel_radius}" rpy="0 0 0"/>
+        <origin xyz="0 0 -${wheel_radius}" rpy="0 0 0"/>
     </joint>
     
     <!-- ********************** ROBOT BODY *********************************  -->

@@ -31,7 +31,9 @@
         </collision>
     </link>
 	
-	<!-- See https://medium.com/@bytesrobotics/a-review-of-the-ros2-urdf-gazebo-sensor-91e947c633d7 -->
+	<!-- See https://medium.com/@bytesrobotics/a-review-of-the-ros2-urdf-gazebo-sensor-91e947c633d7
+             https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+             http://sdformat.org/spec?elem=sensor -->
 
     <!-- gz model -m dragger -s gps_sensor -->
 	<gazebo reference="gps_link">
@@ -45,37 +47,39 @@
 			<pose> 0 0 0 0 0 0 </pose>
 			<visualize>false</visualize>
 			<update_rate>5</update_rate>
+            <gps>
+                <position_sensing>
+                    <horizontal>
+                        <noise type="gaussian_quantized">
+                            <mean>0.0</mean>
+                            <!-- the standard deviation of the Gaussian distribution from which noise values are drawn -->
+                            <stddev>1.0e-16</stddev>
+                            <!-- the mean of the Gaussian distribution from which bias values are drawn -->
+                            <bias_mean>0.0</bias_mean>
+                            <!-- the standard deviation of the Gaussian distribution from which bias values are drawn -->
+                            <bias_stddev>1.0e-16</bias_stddev>
+                            <!-- the standard deviation of the noise used to drive a process to model slow variations in a sensor bias -->
+                            <dynamic_bias_stddev>1.0e-16</dynamic_bias_stddev>
+                            <!-- the correlation time in seconds of the noise used to drive a process to model slow variations in a sensor bias. A typical value, when used, would be on the order of 3600 seconds (1 hour) -->
+                            <dynamic_bias_correlation_time>3600</dynamic_bias_correlation_time>
+                            <!-- For type "gaussian_quantized", the precision of output signals. A value of zero implies infinite precision / no quantization -->
+                            <precision>1.0e-16</precision>
+                        </noise>
+                    </horizontal>
+                    <vertical>
+                        <noise type="gaussian_quantized">
+                            <mean>0.0</mean>
+                            <stddev>1.0e-16</stddev>
+                            <bias_mean>0.0</bias_mean>
+                            <bias_stddev>0.0</bias_stddev>
+                            <dynamic_bias_stddev>0.0</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>3600</dynamic_bias_correlation_time>
+                            <precision>0.0</precision>
+                        </noise>
+                    </vertical>
+                </position_sensing>
+            </gps>
 		</sensor>
-
-        <!-- see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
-        <sensor name="tb3_gps" type="gps">
-        <always_on>true</always_on>
-        <update_rate>1</update_rate>
-        <pose>0 0 0 0 0 0</pose>
-        <gps>
-            <position_sensing>
-            <horizontal>
-                <noise type="gaussian">
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-                </noise>
-            </horizontal>
-            <vertical>
-                <noise type="gaussian">
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-                </noise>
-            </vertical>
-            </position_sensing>
-        </gps>
-        <plugin name="my_gps_plugin" filename="libgazebo_ros_gps_sensor.so">
-            <ros>
-            <remapping>~/out:=/gps/fix</remapping>
-            </ros>
-        </plugin>
-        </sensor>
-        -->
-
 	</gazebo>
 
 </robot>
