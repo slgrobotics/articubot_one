@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:property name="magnetometer_offset_x" value="${wheel_offset_x}"/>
+    <xacro:property name="magnetometer_offset_z" value="0.03"/>
+
+    <!-- ******************* MAGNETOMETER SETUP ****************************  -->
+    <!-- Each sensor must be attached to a link.                              -->
+
+    <joint name="magnetometer_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="magnetometer_link"/>
+        <!-- we place Magnetometer next to IMU between the wheels -->
+        <origin xyz="${wheel_offset_x} 0 ${magnetometer_offset_z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="magnetometer_link">
+        <visual>
+            <geometry>
+                <box size="0.1 0.1 0.1"/>
+            </geometry>
+            <material name="sensor_blue"/>
+        </visual>
+    </link>
+
+    <gazebo reference="magnetometer_link">
+        <sensor name="magnetometer" type="magnetometer">
+          <always_on>1</always_on>
+          <update_rate>100</update_rate>
+          <visualize>true</visualize>
+          <topic>magnetometer</topic>
+          <enable_metrics>true</enable_metrics>
+          <magnetometer>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </z>
+          </magnetometer>
+        </sensor>
+    </gazebo>
+
+</robot>

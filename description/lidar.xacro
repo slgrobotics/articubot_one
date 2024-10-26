@@ -4,10 +4,13 @@
     <xacro:property name="laser_offset_x" value="${chassis_length/4 + 0.05}"/>
     <xacro:property name="laser_offset_z" value="0.57"/>
 
+    <!-- ********************* LIDAR SETUP *********************************  -->
+    <!-- Each sensor must be attached to a link.                              -->
+
     <joint name="laser_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="laser_frame"/>
-        <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 ${pi}"/>
+        <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <!-- the name "laser_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
