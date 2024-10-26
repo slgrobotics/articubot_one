@@ -7,7 +7,7 @@
     <joint name="gps_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="gps_link"/>
-        <origin xyz="${gps_offset_x} 0 ${gps_offset_z}" rpy="0 0 3.1459"/>
+        <origin xyz="${gps_offset_x} 0 ${gps_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="gps_link">

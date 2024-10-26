@@ -7,7 +7,7 @@
     <joint name="laser_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="laser_frame"/>
-        <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 3.1459"/>
+        <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 ${pi}"/>
     </joint>
 
     <!-- the name "laser_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -50,8 +50,8 @@
               <horizontal>
                 <samples>360</samples>
                 <resolution>1</resolution>
-                <min_angle>-3.1459</min_angle>
-                <max_angle>3.1459</max_angle>
+                <min_angle>-${pi}</min_angle>
+                <max_angle>${pi}</max_angle>
               </horizontal>
               <vertical>
                 <samples>1</samples>
