@@ -25,7 +25,8 @@ navsat_transform:
         yaw_offset: 0.0
 
 # If this is true, the altitude is set to 0 in the output odometry message. Defaults to false.
-        zero_altitude: true
+# Must be left false to avoid random runaway on all axes
+#        zero_altitude: true
 
 # If this is true, the transform world_frame->utm transform is broadcast for use by other nodes. Defaults to false.
         broadcast_utm_transform: false
