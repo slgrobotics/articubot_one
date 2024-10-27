@@ -27,9 +27,10 @@
     <gazebo reference="imu_link">
         <sensor name="imu_link" type="imu">
         <always_on>1</always_on>
-        <topic>imu/data</topic>
+        <topic>imu</topic>
         <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
         <gz_frame_id>imu_link</gz_frame_id>
+        <frame_id>imu_link</frame_id>
         <update_rate>250</update_rate>
             <imu>
                 <orientation_reference_frame>

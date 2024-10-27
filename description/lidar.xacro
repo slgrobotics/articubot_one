@@ -48,6 +48,7 @@
           <topic>scan</topic>
           <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
           <gz_frame_id>laser_frame</gz_frame_id>
+          <frame_id>laser_frame</frame_id>
           <ray>
             <scan>
               <horizontal>
