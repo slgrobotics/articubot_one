@@ -2,6 +2,11 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
     <!-- See common Gazebo pugins in the world file -->
+    
+    <!--
+        To re-generate robot.urdf manually for troubleshooting:
+          xacro ~/robot_ws/install/articubot_one/share/articubot_one/description/robot.urdf.xacro sim_mode:=true > ~/robot_ws/src/articubot_one/description/robot.urdf
+    -->
 
     <material name="white">
         <color rgba="1 1 1 1" />
