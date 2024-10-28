@@ -28,7 +28,7 @@
           <always_on>1</always_on>
           <update_rate>100</update_rate>
           <visualize>true</visualize>
-          <topic>magnetometer</topic>
+          <topic>gz_magnetometer/data</topic>
           <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
           <gz_frame_id>magnetometer_link</gz_frame_id>
           <frame_id>magnetometer_link</frame_id>

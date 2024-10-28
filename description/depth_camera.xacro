@@ -1,10 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
+
+    <xacro:property name="depth_camera_offset_x" value="${chassis_length/2 - 0.04}"/>
+    <xacro:property name="depth_camera_offset_z" value="0.55"/>
+
     <joint name="depth_camera_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="depth_camera_link"/>
-        <origin xyz="0.305 0 0.08" rpy="0 0 0"/>
+        <origin xyz="${depth_camera_offset_x} 0 ${depth_camera_offset_z}" rpy="0 0.18 0"/>
     </joint>
 
     <link name="depth_camera_link">
@@ -12,48 +16,51 @@
             <geometry>
                 <box size="0.010 0.03 0.03"/>
             </geometry>
-            <material name="red"/>
+            <material name="sensor_blue"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 -0.05"/>
+            <geometry>
+                <cylinder radius="0.002" length="0.1"/>
+            </geometry>
+            <material name="sensor_blue"/>
         </visual>
     </link>
-
 
     <joint name="depth_camera_optical_joint" type="fixed">
         <parent link="depth_camera_link"/>
         <child link="depth_camera_link_optical"/>
-        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="depth_camera_link_optical">
     </link>
 
     <!-- gz model -m dragger -s depth_camera -->
-    <gazebo reference="depth_camera_link">
-        <!-- TODO: port to GZ Harmonic, add to gz_ros_brigde.yaml -->
-        <material>Gazebo/Red</material>
-
+    <gazebo reference="depth_camera_link_optical">
         <sensor name="depth_camera" type="depth">
             <pose> 0 0 0 0 0 0 </pose>
-            <visualize>true</visualize>
+		    <always_on>true</always_on>
+            <topic>gz_depth_camera</topic>
             <update_rate>10</update_rate>
+            <visualize>true</visualize>
             <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-            <gz_frame_id>depth_camera_link</gz_frame_id>
+            <gz_frame_id>depth_camera_link_optical</gz_frame_id>
+            <frame_id>depth_camera_link_optical</frame_id>
             <camera>
-                <horizontal_fov>1.089</horizontal_fov>
+                <horizontal_fov>1.047</horizontal_fov>
+                <!-- camera_info_topic>gz_depth_camera_info</camera_info_topic -->
                 <image>
+                    <width>320</width>
+                    <height>240</height>
+                    <!--format>RGB_INT8</format -->
                     <format>B8G8R8</format>
-                    <width>640</width>
-                    <height>480</height>
                 </image>
                 <clip>
                     <near>0.05</near>
                     <far>8.0</far>
                 </clip>
             </camera>
-            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-                <frame_name>camera_link_optical</frame_name>
-                <min_depth>0.1</min_depth>
-                <max_depth>100.0</max_depth>
-            </plugin>
         </sensor>
     </gazebo>
 

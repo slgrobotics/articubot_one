@@ -40,7 +40,7 @@
 		<sensor name="gps_sensor" type="gps">
 			<always_on>true</always_on>
             <!-- topic defined in .../config/gz_ros_bridge.yaml -->
-            <topic>navsat</topic>
+            <topic>gz_navsat/fix</topic>
             <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
             <gz_frame_id>gps_link</gz_frame_id>
             <frame_id>gps_link</frame_id>

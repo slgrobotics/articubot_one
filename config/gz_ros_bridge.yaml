@@ -9,62 +9,69 @@
   direction: GZ_TO_ROS  # can be BIDIRECTIONAL or ROS_TO_GZ
 
 - ros_topic_name: "scan"
-  gz_topic_name: "/scan"
+  gz_topic_name: "gz_scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "pointcloud2d"
-  gz_topic_name: "/pointcloud2d"
+  gz_topic_name: "pointcloud2d"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "camera"
-  gz_topic_name: "/camera"
+  gz_topic_name: "gz_camera"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "camera_info"
-  gz_topic_name: "/camera_info"
+  gz_topic_name: "gz_camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
 # see ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
 - ros_topic_name: "depth_camera"
-  gz_topic_name: "/depth_camera"
+  gz_topic_name: "gz_depth_camera"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "/gps/fix"
-  gz_topic_name: "/navsat"
+# TODO: is there depth_camera_info?
+#- ros_topic_name: "depth_camera_info"
+#  gz_topic_name: "gz_depth_camera_info"
+#  ros_type_name: "sensor_msgs/msg/CameraInfo"
+#  gz_type_name: "gz.msgs.CameraInfo"
+#  direction: GZ_TO_ROS
+
+- ros_topic_name: "gps/fix"
+  gz_topic_name: "gz_navsat/fix"
   ros_type_name: "sensor_msgs/msg/NavSatFix"
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
 
 - ros_topic_name: "gpsfix"
-  gz_topic_name: "/navsat"
+  gz_topic_name: "gz_navsat/fix"
   ros_type_name: "gps_msgs/msg/GPSFix"
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
 
 # Note: IMU in Gazebo may report orientation as all zeroes. Set <enable_orientation> to 1 in SDF to allow reporting real values. 
 - ros_topic_name: "imu/data"
-  gz_topic_name: "/imu"
+  gz_topic_name: "gz_imu/data"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "magnetometer"
-  gz_topic_name: "/magnetometer"
+- ros_topic_name: "magnetometer/data"
+  gz_topic_name: "gz_magnetometer/data"
   ros_type_name: "sensor_msgs/msg/MagneticField"
   gz_type_name: "gz.msgs.Magnetometer"
   direction: GZ_TO_ROS
 
-# "odom" doesn't come from Gazebo, but from "diff_cont" and needs a topic_tools relay for remapping
+# "odom" doesn't come from Gazebo, but from "diff_cont" and needs a topic_tools relay if remapping is needed
 #- ros_topic_name: "odom"
 #  gz_topic_name: "/diff_cont/odom"
 #  ros_type_name: "nav_msgs/msg/Odometry"

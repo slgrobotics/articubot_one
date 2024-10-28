@@ -45,7 +45,7 @@
           <pose>0 0 0 0 0 0</pose>
           <always_on>1</always_on>
           <update_rate>10</update_rate>
-          <topic>scan</topic>
+          <topic>gz_scan</topic>
           <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
           <gz_frame_id>laser_frame</gz_frame_id>
           <frame_id>laser_frame</frame_id>
