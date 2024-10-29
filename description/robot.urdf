@@ -5,6 +5,10 @@
 <!-- =================================================================================== -->
 <robot name="robot">
   <!-- See common Gazebo pugins in the world file -->
+  <!--
+        To re-generate robot.urdf manually for troubleshooting:
+          xacro ~/robot_ws/install/articubot_one/share/articubot_one/description/robot.urdf.xacro sim_mode:=true > ~/robot_ws/src/articubot_one/description/robot.urdf
+    -->
   <material name="white">
     <color rgba="1 1 1 1"/>
   </material>
@@ -369,68 +373,6 @@
       <inertia ixx="0.0011424999999999999" ixy="0.0" ixz="0.0" iyy="0.0011424999999999999" iyz="0.0" izz="0.00216"/>
     </inertial>
   </link>
-  <ros2_control name="DraggerRobot" type="system">
-    <!-- Wheel geometry information - see controllers_*.yaml -->
-    <hardware>
-      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-    </hardware>
-    <joint name="left_wheel_joint">
-      <command_interface name="velocity">
-        <param name="min">-10</param>
-        <param name="max">10</param>
-      </command_interface>
-      <state_interface name="velocity">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <state_interface name="position">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <!-- state_interface name="effort">
-                <param name="initial_value">0.0</param>
-            </state_interface -->
-    </joint>
-    <joint name="right_wheel_joint">
-      <command_interface name="velocity">
-        <param name="min">-10</param>
-        <param name="max">10</param>
-      </command_interface>
-      <state_interface name="velocity">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <state_interface name="position">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <!-- state_interface name="effort">
-                <param name="initial_value">0.0</param>
-            </state_interface -->
-    </joint>
-    <!-- we need this for Rviz to reflect rotations of joints published by broad_cont in Gazebo -->
-    <joint name="left_caster_wheel_joint">
-      <state_interface name="velocity">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <state_interface name="position">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-    </joint>
-    <joint name="right_caster_wheel_joint">
-      <state_interface name="velocity">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-      <state_interface name="position">
-        <param name="initial_value">0.0</param>
-      </state_interface>
-    </joint>
-  </ros2_control>
-  <gazebo>
-    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <!-- the following are just default parameters anyway. Skip them unless you want to reassign them:
-            <robot_param>robot_description</robot_param>
-            <robot_param_node>robot_state_publisher</robot_param_node> -->
-      <parameters>/home/sergei/robot_ws/install/articubot_one/share/articubot_one/config/gaz_ros2_ctl_use_sim.yaml</parameters>
-      <parameters>/home/sergei/robot_ws/install/articubot_one/share/articubot_one/config/controllers_sim.yaml</parameters>
-    </plugin>
-  </gazebo>
   <!-- *********************** IMU SETUP *********************************  -->
   <!-- Each sensor must be attached to a link.                              -->
   <joint name="imu_joint" type="fixed">
@@ -451,9 +393,10 @@
   <gazebo reference="imu_link">
     <sensor name="imu_link" type="imu">
       <always_on>1</always_on>
-      <topic>imu/data</topic>
+      <topic>gz_imu/data</topic>
       <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
       <gz_frame_id>imu_link</gz_frame_id>
+      <frame_id>imu_link</frame_id>
       <update_rate>250</update_rate>
       <imu>
         <orientation_reference_frame>
@@ -555,7 +498,10 @@
       <always_on>1</always_on>
       <update_rate>100</update_rate>
       <visualize>true</visualize>
-      <topic>magnetometer</topic>
+      <topic>gz_magnetometer/data</topic>
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <gz_frame_id>magnetometer_link</gz_frame_id>
+      <frame_id>magnetometer_link</frame_id>
       <enable_metrics>true</enable_metrics>
       <magnetometer>
         <x>
@@ -619,9 +565,10 @@
       <pose>0 0 0 0 0 0</pose>
       <always_on>1</always_on>
       <update_rate>10</update_rate>
-      <topic>scan</topic>
+      <topic>gz_scan</topic>
       <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
       <gz_frame_id>laser_frame</gz_frame_id>
+      <frame_id>laser_frame</frame_id>
       <ray>
         <scan>
           <horizontal>
@@ -649,86 +596,6 @@
         </noise>
       </ray>
       <visualize>true</visualize>
-    </sensor>
-  </gazebo>
-  <joint name="camera_joint" type="fixed">
-    <parent link="chassis_link"/>
-    <child link="camera_link"/>
-    <origin rpy="0 0.18 0" xyz="0.41000000000000003 0 0.55"/>
-  </joint>
-  <link name="camera_link">
-    <visual>
-      <geometry>
-        <box size="0.010 0.03 0.03"/>
-      </geometry>
-      <material name="sensor_blue"/>
-    </visual>
-    <visual>
-      <origin xyz="0 0 -0.05"/>
-      <geometry>
-        <cylinder length="0.1" radius="0.002"/>
-      </geometry>
-      <material name="sensor_blue"/>
-    </visual>
-  </link>
-  <joint name="camera_optical_joint" type="fixed">
-    <parent link="camera_link"/>
-    <child link="camera_link_optical"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
-  <link name="camera_link_optical">
-    </link>
-  <!-- gz model -m dragger -s rgb_camera -->
-  <gazebo reference="camera_link_optical">
-    <sensor name="rgb_camera" type="camera">
-      <pose>0 0 0 0 0 0</pose>
-      <always_on>true</always_on>
-      <topic>camera</topic>
-      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-      <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
-      <update_rate>30</update_rate>
-      <enable_metrics>false</enable_metrics>
-      <camera name="__default__">
-        <pose>0 0 0 0 0 0</pose>
-        <horizontal_fov>1.0469999999999999</horizontal_fov>
-        <image>
-          <width>320</width>
-          <height>240</height>
-          <format>RGB_INT8</format>
-          <anti_aliasing>4</anti_aliasing>
-        </image>
-        <camera_info_topic>__default__</camera_info_topic>
-        <trigger_topic/>
-        <triggered>false</triggered>
-        <clip>
-          <near>0.10000000000000001</near>
-          <far>100</far>
-        </clip>
-        <save enabled="false">
-          <path>__default__</path>
-        </save>
-        <visibility_mask>4294967295</visibility_mask>
-        <noise>
-          <type>none</type>
-          <mean>0</mean>
-          <stddev>0</stddev>
-        </noise>
-        <distortion>
-          <k1>0</k1>
-          <k2>0</k2>
-          <k3>0</k3>
-          <p1>0</p1>
-          <p2>0</p2>
-          <center>0.5 0.5</center>
-        </distortion>
-        <lens>
-          <type>stereographic</type>
-          <scale_to_hfov>true</scale_to_hfov>
-          <cutoff_angle>1.5707963267948966</cutoff_angle>
-          <env_texture_size>256</env_texture_size>
-        </lens>
-        <optical_frame_id>camera_link_optical</optical_frame_id>
-      </camera>
     </sensor>
   </gazebo>
   <joint name="gps_joint" type="fixed">
@@ -764,7 +631,7 @@
     <sensor name="gps_sensor" type="gps">
       <always_on>true</always_on>
       <!-- topic defined in .../config/gz_ros_bridge.yaml -->
-      <topic>navsat</topic>
+      <topic>gz_navsat/fix</topic>
       <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
       <gz_frame_id>gps_link</gz_frame_id>
       <frame_id>gps_link</frame_id>
@@ -807,5 +674,149 @@
       </gps>
     </sensor>
   </gazebo>
+  <joint name="camera_joint" type="fixed">
+    <parent link="chassis_link"/>
+    <child link="camera_link"/>
+    <origin rpy="0 0.18 0" xyz="0.41000000000000003 0 0.55"/>
+  </joint>
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.010 0.03 0.03"/>
+      </geometry>
+      <material name="sensor_blue"/>
+    </visual>
+    <visual>
+      <origin xyz="0 0 -0.05"/>
+      <geometry>
+        <cylinder length="0.1" radius="0.002"/>
+      </geometry>
+      <material name="sensor_blue"/>
+    </visual>
+  </link>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+  <link name="camera_link_optical">
+    </link>
+  <!-- gz model -m dragger -s rgb_camera -->
+  <gazebo reference="camera_link_optical">
+    <sensor name="rgb_camera" type="camera">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <topic>gz_camera</topic>
+      <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+      <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
+      <update_rate>10</update_rate>
+      <visualize>true</visualize>
+      <enable_metrics>false</enable_metrics>
+      <camera name="__default__">
+        <pose>0 0 0 0 0 0</pose>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>320</width>
+          <height>240</height>
+          <format>RGB_INT8</format>
+          <anti_aliasing>4</anti_aliasing>
+        </image>
+        <camera_info_topic>gz_camera_info</camera_info_topic>
+        <trigger_topic/>
+        <triggered>false</triggered>
+        <clip>
+          <near>0.10000000000000001</near>
+          <far>100</far>
+        </clip>
+        <save enabled="false">
+          <path>__default__</path>
+        </save>
+        <visibility_mask>4294967295</visibility_mask>
+        <noise>
+          <type>none</type>
+          <mean>0</mean>
+          <stddev>0</stddev>
+        </noise>
+        <distortion>
+          <k1>0</k1>
+          <k2>0</k2>
+          <k3>0</k3>
+          <p1>0</p1>
+          <p2>0</p2>
+          <center>0.5 0.5</center>
+        </distortion>
+        <lens>
+          <type>stereographic</type>
+          <scale_to_hfov>true</scale_to_hfov>
+          <cutoff_angle>1.5707963267948966</cutoff_angle>
+          <env_texture_size>256</env_texture_size>
+        </lens>
+        <optical_frame_id>camera_link_optical</optical_frame_id>
+      </camera>
+    </sensor>
+  </gazebo>
+  <!-- xacro:include filename="depth_camera.xacro" / -->
   <!-- xacro:include filename="face.xacro" / -->
+  <ros2_control name="DraggerRobot" type="system">
+    <!-- Wheel geometry information - see controllers_*.yaml -->
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- state_interface name="effort">
+                <param name="initial_value">0.0</param>
+            </state_interface -->
+    </joint>
+    <joint name="right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10</param>
+        <param name="max">10</param>
+      </command_interface>
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- state_interface name="effort">
+                <param name="initial_value">0.0</param>
+            </state_interface -->
+    </joint>
+    <!-- we need this for Rviz to reflect rotations of joints published by broad_cont in Gazebo -->
+    <joint name="left_caster_wheel_joint">
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+    <joint name="right_caster_wheel_joint">
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+    </joint>
+  </ros2_control>
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <!-- the following are just default parameters anyway. Skip them unless you want to reassign them:
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node> -->
+      <parameters>/home/sergei/robot_ws/install/articubot_one/share/articubot_one/config/gaz_ros2_ctl_use_sim.yaml</parameters>
+      <parameters>/home/sergei/robot_ws/install/articubot_one/share/articubot_one/config/controllers_sim.yaml</parameters>
+    </plugin>
+  </gazebo>
 </robot>
