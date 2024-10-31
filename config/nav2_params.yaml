@@ -192,6 +192,11 @@ local_costmap:
   local_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
+      unknown_cost_value: 0
+      lethal_cost_threshold: 100
+      #Added above to improve slam exploration - 
+      # see https://pastebin.com/spGSypvX
+      #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
       update_frequency: 5.0
       publish_frequency: 2.0
       global_frame: odom
@@ -235,6 +240,9 @@ global_costmap:
   global_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
+      unknown_cost_value: 0 # slightly less than 255 to be more explorative
+      lethal_cost_threshold: 100
+      #Added above to improve slam exploration
       update_frequency: 1.0
       publish_frequency: 1.0
       global_frame: map
