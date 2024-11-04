@@ -73,7 +73,7 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 20.0
+    controller_frequency: 24.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
@@ -192,12 +192,12 @@ local_costmap:
   local_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
-      unknown_cost_value: 0
-      lethal_cost_threshold: 100
+      #unknown_cost_value: 0
+      #lethal_cost_threshold: 100
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 5.0
+      update_frequency: 6.0
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_link
@@ -240,8 +240,8 @@ global_costmap:
   global_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
-      unknown_cost_value: 0 # slightly less than 255 to be more explorative
-      lethal_cost_threshold: 100
+      #unknown_cost_value: 0 # slightly less than 255 to be more explorative
+      #lethal_cost_threshold: 100
       #Added above to improve slam exploration
       update_frequency: 1.0
       publish_frequency: 1.0
@@ -291,7 +291,7 @@ map_saver:
 planner_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 20.0
+    expected_planner_frequency: 12.0
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
@@ -316,7 +316,7 @@ behavior_server:
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 10.0
+    cycle_frequency: 12.0
     behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
@@ -352,7 +352,7 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    smoothing_frequency: 20.0
+    smoothing_frequency: 12.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 2.0]
