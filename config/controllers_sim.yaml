@@ -19,7 +19,6 @@ diff_cont:
     publish_rate: 50.0
 
     # Name of frame to publish odometry in. Default: "/odom"
-    # in Gazebo will become /diff_cont/odom
     odom_frame_id: '/odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link

@@ -35,7 +35,8 @@ def generate_launch_description():
         namespace='/',
         parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str),
                     #'publish_frequency' : 5.0,  # Defaults to 20.0 Hz. Only affects non-static joints.
-                    'use_sim_time': use_sim_time
+                    #'frame_prefix': '',
+                    #'ignore_timestamp': 'false'
                     }]
     )
 
