@@ -86,8 +86,8 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      required_movement_radius: 2.0
+      movement_time_allowance: 20.0
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
@@ -97,8 +97,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.5
+      yaw_goal_tolerance: 0.5
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
       time_steps: 56
@@ -199,24 +199,24 @@ local_costmap:
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
       update_frequency: 6.0
       publish_frequency: 2.0
-      global_frame: odom
+      global_frame: map
       robot_base_frame: base_link
       rolling_window: true
       width: 3
       height: 3
-      resolution: 0.05
-      robot_radius: 0.22
+      resolution: 0.25
+      robot_radius: 0.7
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.70
+        inflation_radius: 0.5
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
         publish_voxel_map: True
         origin_z: 0.0
-        z_resolution: 0.05
+        z_resolution: 0.25
         z_voxels: 16
         max_obstacle_height: 2.0
         mark_threshold: 0
@@ -247,8 +247,8 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      robot_radius: 0.22
-      resolution: 0.05
+      robot_radius: 0.7
+      resolution: 0.25
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       obstacle_layer:
@@ -271,7 +271,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.7
+        inflation_radius: 0.5
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
