@@ -192,7 +192,7 @@ local_costmap:
   local_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
-      #unknown_cost_value: 0
+      unknown_cost_value: 255
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
@@ -201,17 +201,19 @@ local_costmap:
       publish_frequency: 2.0
       global_frame: map
       robot_base_frame: base_link
+      static_map: false
       rolling_window: true
-      width: 3
-      height: 3
+      width: 4
+      height: 4
       resolution: 0.25
+      transform_tolerance: 1.0
       robot_radius: 0.7
-      plugins: ["voxel_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         inflation_radius: 0.5
-      voxel_layer:
+      obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
         publish_voxel_map: True
@@ -240,7 +242,7 @@ global_costmap:
   global_costmap:
     ros__parameters:
       enable_stamped_cmd_vel: true
-      #unknown_cost_value: 0 # slightly less than 255 to be more explorative
+      unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration
       update_frequency: 1.0
@@ -251,6 +253,10 @@ global_costmap:
       resolution: 0.25
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.5
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -268,11 +274,10 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
-      inflation_layer:
-        plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.5
       always_send_full_costmap: True
+
+# See https://github.com/NVIDIA-AI-IOT/turtlebot3/blob/master/turtlebot_apps/turtlebot_navigation/param/costmap_common_params.yaml
+
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
 # If you'd rather set it in the yaml, remove the default "map" value in the tb3_simulation_launch.py
@@ -295,8 +300,8 @@ planner_server:
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.5
-      use_astar: false
+      tolerance: 1.0
+      use_astar: true
       allow_unknown: true
 
 smoother_server:
