@@ -76,7 +76,7 @@ def main():
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
     goal_pose.pose.position.x = 10.0
-    goal_pose.pose.position.y = 10.0
+    goal_pose.pose.position.y = 5.0
     goal_pose.pose.orientation.x = 0.0
     goal_pose.pose.orientation.y = 0.0
     goal_pose.pose.orientation.z = 0.0
@@ -87,8 +87,19 @@ def main():
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 10.0
+    goal_pose.pose.position.x = 5.0
     goal_pose.pose.position.y = 0.0
+    goal_pose.pose.orientation.x = 0.0
+    goal_pose.pose.orientation.y = 0.0
+    goal_pose.pose.orientation.z = 0.0
+    goal_pose.pose.orientation.w = 1.0
+    goal_poses.append(goal_pose)
+
+    goal_pose = PoseStamped()
+    goal_pose.header.frame_id = 'map'
+    goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+    goal_pose.pose.position.x = 3.0
+    goal_pose.pose.position.y = 3.0
     goal_pose.pose.orientation.x = 0.0
     goal_pose.pose.orientation.y = 0.0
     goal_pose.pose.orientation.z = 0.0
@@ -124,10 +135,12 @@ def main():
 
             # Some navigation timeout to demo cancellation
             if now - nav_start > Duration(seconds=600.0):
+                print('Timeout 10 minutes: canceling task')
                 navigator.cancelTask()
 
             # Some follow waypoints request change to demo preemption
-            if now - nav_start > Duration(seconds=60.0):
+            if now - nav_start > Duration(seconds=300.0):
+                print('Timeout 5 minutes: Executing alternative destination waypoint')
                 goal_pose_alt = PoseStamped()
                 goal_pose_alt.header.frame_id = 'map'
                 goal_pose_alt.header.stamp = now.to_msg()
@@ -153,7 +166,7 @@ def main():
     else:
         print('Goal has an invalid return status!')
 
-    navigator.lifecycleShutdown()
+    #navigator.lifecycleShutdown()
 
     exit(0)
 
