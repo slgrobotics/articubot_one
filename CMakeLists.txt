@@ -37,4 +37,10 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+# Install Python executables
+install(PROGRAMS
+  scripts/dragger_waypoint_follower.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

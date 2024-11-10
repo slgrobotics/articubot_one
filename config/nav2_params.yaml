@@ -345,6 +345,11 @@ behavior_server:
     min_rotational_vel: 0.4
     rotational_acc_lim: 3.2
 
+# See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
+                
+# The nav2_waypoint_follower namespace includes the following plugins: WaitAtWaypoint PhotoAtWaypoint InputAtWaypoint
+# which corresponds to a standard (ROS2 provided) action that the bot should perform when it reaches a waypoint.
+
 waypoint_follower:
   ros__parameters:
     enable_stamped_cmd_vel: true

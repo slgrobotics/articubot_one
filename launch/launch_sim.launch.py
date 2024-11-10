@@ -201,11 +201,28 @@ def generate_launch_description():
         ]
     )
 
+    # start the demo autonomy task (script)
+    # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
+    #waypoint_follower = Node(
+    #    package='nav2_simple_commander',
+    #    executable='example_waypoint_follower',
+    #    emulate_tty=True,
+    #    output='screen',
+    #)
+
+    waypoint_follower = Node(
+        package='articubot_one',
+        executable='dragger_waypoint_follower',
+        emulate_tty=True,
+        output='screen',
+    )
+
     # Launch them all!
     return LaunchDescription([
         rsp,
         joystick,
         twist_mux,
         gz_include,
-        nav_include
+        nav_include,
+        #waypoint_follower    # or, "ros2 run articubot_one dragger_waypoint_follower.py"
     ])
