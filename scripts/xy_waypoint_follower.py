@@ -28,12 +28,16 @@ from rclpy.duration import Duration
 
 """
 Basic navigation demo to go to poses.
+
+Note: When nodes are started, X, Y and Z are set to zero (see initial_pose.pose.position below)
+      The goal_pose.pose.position.* coordinates are relative to initial pose.
+      This script is good for sim, but for real use case the robot must be placed in the same spot 
+      when its ROS2 software is started
 """
 
-
-'''
+"""
 Follow waypoints using the ROS 2 Navigation Stack (Nav2)
-'''
+"""
 def main():
  
     # Start the ROS 2 Python Client Library

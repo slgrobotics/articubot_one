@@ -10,7 +10,7 @@ waypoints:
 - latitude:   33.1999100 # x=5.589655, y=7.575632 facing South
   longitude: -86.2997408
   yaw: -1.57
-- latitude:   33.1998040 # x=9.175912, y=-4.470233 facing South
+- latitude:   33.1998040 # x=9.175912, y=-4.470233 facing West
   longitude: -86.2996930
   yaw: 3.1459
 - latitude:   33.19983175 # x=-1.006668, y=-0.640607 facing North (near sim start)

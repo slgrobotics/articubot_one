@@ -179,15 +179,16 @@ def latLonYaw2Geopose(latitude: float, longitude: float, yaw: float = 0.0) -> Ge
 
 # ====================================================
 
-def main():
+def main(wpt_file_name):
 
     # Start the ROS 2 Python Client Library
     rclpy.init()
 
-    # TODO: allow to pass the waypoints file as an argument
     default_yaml_file_path = os.path.join(get_package_share_directory(
-        "articubot_one"), "config", "sim_waypoints.yaml")
+        "articubot_one"), "config", wpt_file_name + ".yaml")
     yaml_file_path = default_yaml_file_path
+
+    print("Waypoints file: " + yaml_file_path)
 
     gps_wpf = GpsWpCommander(yaml_file_path)
     gps_wpf.start_wpf()
@@ -196,6 +197,15 @@ def main():
 
     exit(0)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='GPS Waypoints Follower')
+    parser.add_argument('--file',
+                        metavar='.yaml',
+                        default=('sim_waypoints'),
+                        required=False,
+                        help='file name containing waypoints (e.g "sim_waypoints")')
+    args = parser.parse_args()
+    main(wpt_file_name=args.file)
 
