@@ -39,7 +39,8 @@ install(
 
 # Install Python executables
 install(PROGRAMS
-  scripts/dragger_waypoint_follower.py
+  scripts/gps_waypoint_follower.py
+  scripts/xy_waypoint_follower.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

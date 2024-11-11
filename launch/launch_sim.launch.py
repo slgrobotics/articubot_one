@@ -197,7 +197,7 @@ def generate_launch_description():
         actions=[
             navsat_localizer,
             slam_toolbox,
-            nav2
+            #nav2
         ]
     )
 
@@ -212,7 +212,7 @@ def generate_launch_description():
 
     waypoint_follower = Node(
         package='articubot_one',
-        executable='dragger_waypoint_follower',
+        executable='xy_waypoint_follower',
         emulate_tty=True,
         output='screen',
     )
@@ -224,5 +224,5 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         nav_include,
-        #waypoint_follower    # or, "ros2 run articubot_one dragger_waypoint_follower.py"
+        #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

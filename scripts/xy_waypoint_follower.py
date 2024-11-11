@@ -18,6 +18,8 @@
 #     https://github.com/ros-navigation/navigation2/tree/main/nav2_simple_commander/nav2_simple_commander
 #     https://automaticaddison.com/how-to-send-waypoints-to-the-ros-2-navigation-stack-nav-2/
 #
+# Run this script:
+#  cd ~/robot_ws; colcon build; ros2 run articubot_one xy_waypoint_follower.py
 
 from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
@@ -75,7 +77,7 @@ def main():
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 10.0
+    goal_pose.pose.position.x = 0.0
     goal_pose.pose.position.y = 5.0
     goal_pose.pose.orientation.x = 0.0
     goal_pose.pose.orientation.y = 0.0
@@ -84,6 +86,17 @@ def main():
     goal_poses.append(goal_pose)
 
     # additional goals can be appended
+    goal_pose = PoseStamped()
+    goal_pose.header.frame_id = 'map'
+    goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+    goal_pose.pose.position.x = 5.0
+    goal_pose.pose.position.y = 5.0
+    goal_pose.pose.orientation.x = 0.0
+    goal_pose.pose.orientation.y = 0.0
+    goal_pose.pose.orientation.z = 0.0
+    goal_pose.pose.orientation.w = 1.0
+    goal_poses.append(goal_pose)
+
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
@@ -98,8 +111,8 @@ def main():
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-    goal_pose.pose.position.x = 3.0
-    goal_pose.pose.position.y = 3.0
+    goal_pose.pose.position.x = 0.0
+    goal_pose.pose.position.y = 0.0
     goal_pose.pose.orientation.x = 0.0
     goal_pose.pose.orientation.y = 0.0
     goal_pose.pose.orientation.z = 0.0
