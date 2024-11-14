@@ -16,6 +16,7 @@
 
 # See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/launch/cartographer.launch.py
 #     ../config/cartographer_lds_2d.lua
+#     /opt/ros/jazzy/share/cartographer_ros/launch/
 
 # colcon build; ros2 launch articubot_one cartographer.launch.py use_sim_time:=true
 

@@ -15,6 +15,7 @@
 -- /* Author: Darby Lim */
 
 -- See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
+--     /opt/ros/jazzy/share/cartographer_ros/configuration_files/
 
 include "map_builder.lua"
 include "trajectory_builder.lua"
