@@ -15,6 +15,7 @@
 # Author: Darby Lim
 
 # See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/launch/cartographer.launch.py
+#     ../config/cartographer_lds_2d.lua
 
 # colcon build; ros2 launch articubot_one cartographer.launch.py use_sim_time:=true
 
@@ -69,8 +70,12 @@ def generate_launch_description():
             parameters=[{'use_sim_time': use_sim_time}],
             arguments=['-configuration_directory', cartographer_config_dir,
                        '-configuration_basename', configuration_basename],
-            #remappings=[('/odom','/diff_cont/odom')]
-            remappings=[('/odom','/odometry/local')]
+            remappings=[
+                ('/fix','/gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
+                #('/odom','/diff_cont/odom')
+                #('/odom','/odometry/local')
+                ('/odom','/odometry/global')
+                ]
             ),
 
         DeclareLaunchArgument(
