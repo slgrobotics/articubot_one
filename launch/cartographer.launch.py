@@ -45,7 +45,8 @@ def generate_launch_description():
     configuration_basename = LaunchConfiguration('configuration_basename',
                                                  default='cartographer_lds_2d.lua')
 
-    resolution = LaunchConfiguration('resolution', default='0.05')
+    resolution = LaunchConfiguration('resolution', default='0.1')
+    
     publish_period_sec = LaunchConfiguration('publish_period_sec', default='1.0')
 
     return LaunchDescription([
@@ -72,26 +73,21 @@ def generate_launch_description():
             arguments=['-configuration_directory', cartographer_config_dir,
                        '-configuration_basename', configuration_basename],
             remappings=[
-                ('/fix','/gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
-                #('/odom','/diff_cont/odom')
-                #('/odom','/odometry/local')
-                ('/odom','/odometry/global')
+                ('fix','/gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
+                ('imu','/imu/data'),
+                ('scan','/scan'),
+                #('odom','/diff_cont/odom')
+                #('odom','/odometry/local')
+                ('odom','/odometry/global')
                 ]
             ),
 
-        DeclareLaunchArgument(
-            'resolution',
-            default_value=resolution,
-            description='Resolution of a grid cell in the published occupancy grid'),
-
-        DeclareLaunchArgument(
-            'publish_period_sec',
-            default_value=publish_period_sec,
-            description='OccupancyGrid publishing period'),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/occupancy_grid.launch.py']),
-            launch_arguments={'use_sim_time': use_sim_time, 'resolution': resolution,
-                              'publish_period_sec': publish_period_sec}.items(),
-        )
+        Node(
+            package='cartographer_ros',
+            executable='cartographer_occupancy_grid_node',
+            name='cartographer_occupancy_grid_node',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
+            arguments=['-resolution', resolution,
+                       '-publish_period_sec', publish_period_sec])
     ])
