@@ -92,10 +92,11 @@ def generate_launch_description():
         arguments=[
             '-name', 'dragger',
             '-topic', '/robot_description',
-            '-x', '0.0',
-            '-y', '0.0',
-            '-z', '0.4',
-            '-Y', '0.333',
+            # Robot's starting position on the Grid:
+            '-x', '0.0', # positive - towards East
+            '-y', '0.0', # positive - towards North
+            '-z', '0.4', # let it gently settle on the ground plane
+            '-Y', '0.333', # yaw (heading) in radians, related to 0=East, e.g. 0.333 = 30 degrees towards North
             '-allow_renaming', 'true'],
         parameters=[{'use_sim_time': True}],
         output='screen')
@@ -197,7 +198,7 @@ def generate_launch_description():
         actions=[
             navsat_localizer,
             slam_toolbox,
-            #nav2
+            nav2
         ]
     )
 
