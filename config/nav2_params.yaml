@@ -47,7 +47,10 @@ bt_navigator:
     enable_stamped_cmd_vel: true
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /diff_cont/odom
+    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    #odom_topic: /odometry/gps     # can't use it, orientation is always 0
+    odom_topic: /odometry/local   # works
+    #odom_topic: /odometry/global  # works
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000
