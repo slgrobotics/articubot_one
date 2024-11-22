@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable
-from launch_ros.actions import Node, SetRemap
+from launch_ros.actions import Node, SetParameter
 from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -176,6 +176,39 @@ def generate_launch_description():
 
     # =========================================================================
 
+    map_server_params_file = os.path.join(package_path,'config','map_server_params.yaml')
+
+    map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')
+
+    map_server_remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
+
+    start_map_server = GroupAction(
+        actions=[
+            SetParameter('use_sim_time', True),
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='map_server',
+                namespace='/',
+                output='screen',
+                respawn=True,
+                respawn_delay=2.0,
+                parameters=[{'yaml_filename': map_yaml_file}],
+                arguments=['--ros-args', '--log-level', 'info', '--params-file', map_server_params_file],
+                remappings=map_server_remappings,
+            ),
+            Node(
+                package='nav2_lifecycle_manager',
+                executable='lifecycle_manager',
+                name='lifecycle_manager_map_server',
+                output='screen',
+                parameters=[
+                    #configured_params,
+                    {'autostart': True}, {'node_names': ['map_server']}],
+            ),
+        ]
+    )
+
     gz_include = GroupAction(
         actions=[
 
@@ -197,7 +230,8 @@ def generate_launch_description():
     nav_include = GroupAction(
         actions=[
             navsat_localizer,
-            slam_toolbox,
+            start_map_server,
+            #slam_toolbox,
             nav2
         ]
     )
