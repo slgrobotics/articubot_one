@@ -48,6 +48,11 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
     )
 
+    map_server = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
+    )
+
     controllers_params_file = os.path.join(package_path,'config','controllers_dragger.yaml')
 
     controller_manager = Node(
@@ -205,7 +210,8 @@ def generate_launch_description():
     nav_include = GroupAction(
         actions=[
             navsat_localizer,
-            slam_toolbox,
+            #slam_toolbox,
+            map_server,
             nav2
         ]
     )

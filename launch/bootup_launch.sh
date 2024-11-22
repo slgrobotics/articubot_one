@@ -1,11 +1,12 @@
 #!/bin/bash
 
 source /opt/ros/jazzy/setup.bash
-source /home/ros/robot_ws/install/setup.bash
 
 cd /home/ros/robot_ws
 colcon build
 cd /home/ros/launch
+
+source /home/ros/robot_ws/install/setup.bash
 
 ros2 launch /home/ros/robot_ws/src/articubot_one/launch/dragger.launch.py
 #ros2 launch /home/ros/robot_ws/src/articubot_one/launch/launch_sim_nav.launch.py
