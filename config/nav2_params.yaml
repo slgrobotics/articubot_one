@@ -213,7 +213,7 @@ local_costmap:
       resolution: 0.25
       transform_tolerance: 10.0
       #robot_radius: 0.7
-      footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
+      footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
