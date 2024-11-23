@@ -4,6 +4,7 @@
 
 amcl:
   ros__parameters:
+    enable_stamped_cmd_vel: true
     alpha1: 0.2
     alpha2: 0.2
     alpha3: 0.2
@@ -296,6 +297,7 @@ global_costmap:
 
 map_saver:
   ros__parameters:
+    enable_stamped_cmd_vel: true
     save_map_timeout: 5.0
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
@@ -377,7 +379,8 @@ velocity_smoother:
     min_velocity: [-0.5, 0.0, -2.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
-    odom_topic: "odom"
+    odom_topic: /odometry/local   # works
+    #odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
@@ -463,6 +466,7 @@ docking_server:
 
 loopback_simulator:
   ros__parameters:
+    enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
