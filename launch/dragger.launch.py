@@ -48,9 +48,13 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
     )
 
+    #map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')   # this is default anyway
+    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
                 ), launch_arguments={'use_sim_time': 'false'}.items()
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items()
     )
 
     controllers_params_file = os.path.join(package_path,'config','controllers_dragger.yaml')
@@ -210,8 +214,9 @@ def generate_launch_description():
     nav_include = GroupAction(
         actions=[
             navsat_localizer,
-            #slam_toolbox,
-            map_server,
+            # use either map_server OR slam_toolbox, as both are mappers
+            map_server,    # localization is left to GPS
+            #slam_toolbox, # localization via LIDAR
             nav2
         ]
     )

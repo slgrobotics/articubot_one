@@ -8,6 +8,8 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import SetParameter
 from launch_ros.actions import Node
 
+# See /opt/ros/jazzy/share/nav2_bringup/launch/localization_launch.py
+
 def generate_launch_description():
 
     # Get the launch directory
@@ -16,16 +18,21 @@ def generate_launch_description():
     package_path = get_package_share_directory(package_name)
 
     namespace = LaunchConfiguration('namespace')
+    map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
     log_level = LaunchConfiguration('log_level')
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')
+    map_yaml_file_default = os.path.join(package_path,'maps','empty_map.yaml')
 
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace', default_value='', description='Top-level namespace'
+    )
+
+    declare_map_yaml_cmd = DeclareLaunchArgument(
+        'map', default_value=map_yaml_file_default, description='Full path to map yaml file to load, default empty_map.yaml'
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -77,6 +84,7 @@ def generate_launch_description():
 
     # Declare the launch options
     ld.add_action(declare_namespace_cmd)
+    ld.add_action(declare_map_yaml_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_log_level_cmd)

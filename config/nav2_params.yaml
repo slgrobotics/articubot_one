@@ -218,6 +218,7 @@ local_costmap:
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
         inflation_radius: 0.5
       obstacle_layer:
@@ -266,6 +267,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.5
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -285,15 +287,6 @@ global_costmap:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       always_send_full_costmap: True
-
-# See https://github.com/NVIDIA-AI-IOT/turtlebot3/blob/master/turtlebot_apps/turtlebot_navigation/param/costmap_common_params.yaml
-
-# The yaml_filename does not need to be specified since it going to be set by defaults in launch.
-# If you'd rather set it in the yaml, remove the default "map" value in the *_launch.py
-# file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
-# map_server:
-#   ros__parameters:
-#     yaml_filename: "/home/ros/robot_ws/install/articubot_one/share/articubot_one/maps/empty_map.yaml"
 
 map_saver:
   ros__parameters:
