@@ -37,7 +37,7 @@ diff_cont:
 
     wheels_per_side: 1
 
-    wheel_separation: 0.580             # distance between left and right wheels
+    wheel_separation: 0.60             # distance between left and right wheels
     wheel_radius: 0.192
 
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
