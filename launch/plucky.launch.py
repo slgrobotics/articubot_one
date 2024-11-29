@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, GroupAction
+from launch.actions import IncludeLaunchDescription, TimerAction, GroupAction, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command
 from launch.actions import RegisterEventHandler
@@ -44,7 +44,7 @@ def generate_launch_description():
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'}.items()
     )
 
     #map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')   # this is default anyway
@@ -65,7 +65,7 @@ def generate_launch_description():
         remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
     )
 
-    delayed_controller_manager = TimerAction(period=3.0, actions=[controller_manager])
+    delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
 
     joint_broad_spawner = Node(
         package="controller_manager",
@@ -186,13 +186,16 @@ def generate_launch_description():
 
     nav_include = GroupAction(
         actions=[
+            LogInfo(msg='============ starting NAVIGATION ==============='),
             navsat_localizer,
             # use either map_server OR slam_toolbox, as both are mappers
-            #map_server,    # localization is left to GPS
-            slam_toolbox, # localization via LIDAR
+            map_server,    # localization is left to GPS
+            #slam_toolbox, # localization via LIDAR
             nav2
         ]
     )
+
+    delayed_nav = TimerAction(period=20.0, actions=[nav_include])
 
     # Launch them all!
     return LaunchDescription([
@@ -200,5 +203,6 @@ def generate_launch_description():
         # joystick,
         drive_include,
         sensors_include,
-        nav_include
+        delayed_nav
     ])
+
