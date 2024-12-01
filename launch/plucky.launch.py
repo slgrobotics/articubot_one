@@ -184,18 +184,19 @@ def generate_launch_description():
         ]
     )
 
-    nav_include = GroupAction(
+    localizers_include = GroupAction(
         actions=[
-            LogInfo(msg='============ starting NAVIGATION ==============='),
+            LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
             # use either map_server OR slam_toolbox, as both are mappers
             map_server,    # localization is left to GPS
             #slam_toolbox, # localization via LIDAR
-            nav2
         ]
     )
 
-    delayed_nav = TimerAction(period=20.0, actions=[nav_include])
+    delayed_loc = TimerAction(period=10.0, actions=[localizers_include])
+
+    delayed_nav = TimerAction(period=20.0, actions=[nav2])
 
     # Launch them all!
     return LaunchDescription([
@@ -203,6 +204,7 @@ def generate_launch_description():
         # joystick,
         drive_include,
         sensors_include,
+        delayed_loc,
         delayed_nav
     ])
 

@@ -3,8 +3,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction
-from launch.actions import RegisterEventHandler, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
+from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch_ros.actions import Node, SetParameter
 from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -45,7 +45,7 @@ def generate_launch_description():
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'true', 'autostart' : 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'true', 'autostart' : 'true'}.items()
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
@@ -203,15 +203,19 @@ def generate_launch_description():
         ]
     )
 
-    nav_include = GroupAction(
+    localizers_include = GroupAction(
         actions=[
+            LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
             # use either map_server OR slam_toolbox, as both are mappers
             map_server,    # localization is left to GPS
             #slam_toolbox, # localization via LIDAR
-            nav2
         ]
     )
+
+    delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
+
+    delayed_nav = TimerAction(period=8.0, actions=[nav2])
 
     # start the demo autonomy task (script)
     # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
@@ -235,6 +239,7 @@ def generate_launch_description():
         joystick,
         twist_mux,
         gz_include,
-        nav_include,
+        delayed_loc,
+        delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
