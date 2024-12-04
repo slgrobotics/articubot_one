@@ -18,11 +18,15 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    robot_model='plucky'
+
     package_path = get_package_share_directory(package_name)
+
+    robot_path = os.path.join(package_path, 'robots', robot_model)
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 
     # joystick = IncludeLaunchDescription(
@@ -40,14 +44,17 @@ def generate_launch_description():
                 )
     )
 
+    nav2_params_file = os.path.join(robot_path,'config','controllers.yaml')
+
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'
+                                     'params_file' : nav2_params_file }.items()
     )
 
-    #map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')   # this is default anyway
+    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
@@ -56,7 +63,7 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items()
     )
 
-    controllers_params_file = os.path.join(package_path,'config','controllers_plucky.yaml')
+    controllers_params_file = os.path.join(robot_path,'config','controllers.yaml')
 
     controller_manager = Node(
         package="controller_manager",

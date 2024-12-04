@@ -3,5 +3,5 @@ map_server:
     frame_id: map   
     topic_name: map
     #use_sim_time: true
-    #yaml_filename: "maps/empty_map.yaml"
+    #yaml_filename: "assets/maps/empty_map.yaml"
 

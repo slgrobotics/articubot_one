@@ -47,7 +47,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'}.items()
     )
 
-    #map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')   # this is default anyway
+    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(

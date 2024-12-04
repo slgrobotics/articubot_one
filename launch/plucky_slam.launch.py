@@ -16,7 +16,7 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_plucky.yaml')
+    slam_toolbox_params_file = os.path.join(package_path,'robots','plucky','config','mapper_params.yaml')
 
     slam_toolbox = IncludeLaunchDescription(
                 # see /opt/ros/jazzy/share/slam_toolbox/launch

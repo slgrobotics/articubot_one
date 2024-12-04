@@ -29,13 +29,16 @@ from nav2_common.launch import RewrittenYaml
 
 
 def generate_launch_description():
+
     # Get the launch directory
-    bringup_dir = get_package_share_directory('articubot_one')
+    #package_name='articubot_one' #<--- CHANGE ME
+
+    #package_path = get_package_share_directory(package_name)
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
-    params_file = LaunchConfiguration('params_file')
+    params_file = LaunchConfiguration('params_file')        # no default, must be supplied
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
@@ -91,7 +94,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'config', 'nav2_params.yaml'),
+        default_value='',
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 
@@ -322,7 +325,10 @@ def generate_launch_description():
     )
 
     # Create the launch description and populate
-    ld = LaunchDescription()
+    ld = LaunchDescription([
+        LogInfo(msg='============ starting NAVIGATION ==============='),
+        LogInfo(msg=params_file),
+    ])
 
     # Set environment variables
     ld.add_action(stdout_linebuf_envvar)
