@@ -16,18 +16,17 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    robot_model='plucky'
-    #robot_model='dragger'
+    robot_model='sim'
 
     robot_path = os.path.join(package_path, 'robots', robot_model)
 
-    nav2_params_file = os.path.join(robot_path,'config','controllers.yaml')
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true',
+                ), launch_arguments={'use_sim_time': 'true',
+                                     'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )
 
