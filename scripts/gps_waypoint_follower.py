@@ -185,7 +185,7 @@ def main(wpt_file_name):
     rclpy.init()
 
     default_yaml_file_path = os.path.join(get_package_share_directory(
-        "articubot_one"), "config", wpt_file_name + ".yaml")
+        "articubot_one"), "assets", "waypoints", wpt_file_name + ".yaml")
     yaml_file_path = default_yaml_file_path
 
     print("Waypoints file: " + yaml_file_path)

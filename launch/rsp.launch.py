@@ -3,8 +3,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, Command
-from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 
@@ -20,9 +20,18 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Produce the URDF string from collection of .xacro's:
-    xacro_file = os.path.join(package_path,'description','robot.urdf.xacro')
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, create1...
+    robot_model = LaunchConfiguration('robot_model', default='sim')
 
+    # define the launch argument that can be passed from the calling launch file or from the console:
+    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='sim')
+
+    robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
+
+    # Produce the URDF string from collection of .xacro's:
+    xacro_file = PythonExpression(["'", robot_model_path, "' + '/description/robot.urdf.xacro'"])
+
+    # Produce full XML/SDF description:
     robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
     
     # Create a robot_state_publisher node
@@ -66,6 +75,10 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use sim time if true'),
+
+        LogInfo(msg='============ starting ROBOT STATE PUBLISHER ==============='),
+        #LogInfo(msg=robot_model_path),
+        LogInfo(msg=xacro_file),
 
         node_robot_state_publisher,
 

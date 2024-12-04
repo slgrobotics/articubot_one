@@ -1,7 +1,7 @@
 controller_manager:     # target node name
   ros__parameters:
     update_rate: 30 # Hz
-    # use_sim_time: true
+    use_sim_time: false
 
     diff_cont:
       type: diff_drive_controller/DiffDriveController
@@ -37,7 +37,7 @@ diff_cont:
 
     wheels_per_side: 1
 
-    wheel_separation: 0.60             # distance between left and right wheels
+    wheel_separation: 0.580             # distance between left and right wheels
     wheel_radius: 0.192
 
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
@@ -113,4 +113,3 @@ diff_cont:
 #    extra_joints:
 #      - left_caster_wheel_joint
 #      - right_caster_wheel_joint
-

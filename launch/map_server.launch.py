@@ -25,7 +25,7 @@ def generate_launch_description():
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    map_yaml_file_default = os.path.join(package_path,'maps','empty_map.yaml')
+    map_yaml_file_default = os.path.join(package_path, 'assets', 'maps','empty_map.yaml')
 
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace', default_value='', description='Top-level namespace'

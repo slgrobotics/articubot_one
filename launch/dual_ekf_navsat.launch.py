@@ -15,8 +15,9 @@
 #     https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/launch/dual_ekf_navsat.launch.py
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from ament_index_python.packages import get_package_share_directory
+from launch.actions import DeclareLaunchArgument, LogInfo
 import launch_ros.actions
 import os
 import launch.actions
@@ -24,16 +25,33 @@ import launch.actions
 
 def generate_launch_description():
 
+    package_name='articubot_one' #<--- CHANGE ME
+
+    package_path = get_package_share_directory(package_name)
+
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    pkg_path = os.path.join(get_package_share_directory('articubot_one'))
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, create1...
+    robot_model = LaunchConfiguration('robot_model', default='sim')
+
+    # define the launch argument that can be passed from the calling launch file or from the console:
+    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='sim')
+
+    robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
     
-    rl_params_file = os.path.join(pkg_path,'config','dual_ekf_navsat_params.yaml')
-    nt_params_file = os.path.join(pkg_path,'config','navsat_transform.yaml')
+    #rl_params_file = os.path.join(package_path,'config','dual_ekf_navsat_params.yaml')
+    rl_params_file = PythonExpression(["'", robot_model_path, "' + '/config/dual_ekf_navsat_params.yaml'"])
+
+    #nt_params_file = os.path.join(package_path,'config','navsat_transform.yaml')
+    nt_params_file = PythonExpression(["'", robot_model_path, "' + '/config/navsat_transform.yaml'"])
 
     return LaunchDescription(
         [
+            LogInfo(msg='============ starting DUAL EKF NAVSAT ==============='),
+            LogInfo(msg=rl_params_file),
+            LogInfo(msg=nt_params_file),
+
             launch.actions.DeclareLaunchArgument(
                 "output_final_position", default_value="false"
             ),

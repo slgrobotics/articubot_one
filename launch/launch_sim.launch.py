@@ -17,11 +17,15 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    robot_model='sim'
+
     package_path = get_package_share_directory(package_name)
+
+    robot_path = os.path.join(package_path, 'robots', robot_model)
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': 'true'}.items()
+                ), launch_arguments={'use_sim_time': 'true', 'robot_model' : robot_model}.items()
     )
 
     joystick = IncludeLaunchDescription(
@@ -49,20 +53,15 @@ def generate_launch_description():
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
-    # -- set gazebo sim resource path for meshes and STLs:
+    # -- set gazebo sim resource path for worlds and meshes (STLs):
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=[
-            os.path.join(package_path, 'worlds'), ':' +
-            os.path.join(package_path, 'description')
+            os.path.join(package_path, 'assets', 'worlds'), ':' + os.path.join(package_path, 'assets')
             ]
         )
 
-    # -- where to find meshes:
-    gazebo_models_path = os.path.join(package_path, 'description')
-    os.environ["GAZEBO_MODEL_PATH"] = gazebo_models_path
-
-    # -- where to find the world SDF:
+    # Specify the world SDF:
     gazebo_arguments = LaunchDescription([
             DeclareLaunchArgument('world', default_value='test_robot_world',
                                   description='Gz sim Test World'),
@@ -152,7 +151,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         namespace='/',
         parameters=[{
-            'config_file': os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
+            'config_file': os.path.join(robot_path, 'config', 'gz_ros_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
         output='screen'
@@ -171,7 +170,7 @@ def generate_launch_description():
 
     navsat_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': 'true'}.items()
+                ), launch_arguments={'use_sim_time': 'true', 'robot_model' : robot_model}.items()
     )
 
     #map_yaml_file = os.path.join(package_path,'maps','empty_map.yaml')   # this is default anyway
@@ -236,10 +235,10 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rsp,
-        joystick,
+        #joystick,
         twist_mux,
         gz_include,
         delayed_loc,
-        delayed_nav
+        #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

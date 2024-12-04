@@ -55,13 +55,13 @@
     <xacro:arg name="sim_mode" default="false"/>
 
     <xacro:include filename="robot_core.xacro" />
-    <xacro:include filename="imu.xacro" />
-    <xacro:include filename="magnetometer.xacro" />
-    <xacro:include filename="lidar.xacro" />
-    <xacro:include filename="gps.xacro" />
-    <xacro:include filename="camera.xacro" />
-    <!-- xacro:include filename="depth_camera.xacro" / -->
-    <!-- xacro:include filename="face.xacro" / -->
+    <xacro:include filename="../../../description/imu.xacro" />
+    <xacro:include filename="../../../description/magnetometer.xacro" />
+    <xacro:include filename="../../../description/lidar.xacro" />
+    <xacro:include filename="../../../description/gps.xacro" />
+    <xacro:include filename="../../../description/camera.xacro" />
+    <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
+    <!-- xacro:include filename="../../../description/face.xacro" / -->
     
     <xacro:include filename="ros2_control.xacro" />
 
