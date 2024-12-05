@@ -18,11 +18,15 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
+    robot_model='plucky'
+
     package_path = get_package_share_directory(package_name)
+
+    robot_path = os.path.join(package_path, 'robots', robot_model)
 
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 
     # joystick = IncludeLaunchDescription(
@@ -36,15 +40,8 @@ def generate_launch_description():
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dragger_slam.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','slam_toolbox.launch.py')]
                 )
-    )
-
-    # You need to press "Startup" button in RViz when autostart=false
-    nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'}.items()
     )
 
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
@@ -52,11 +49,21 @@ def generate_launch_description():
 
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items()
+                ), launch_arguments={'use_sim_time': 'false'}.items()       # empty_map - default
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items() # warehouse
     )
 
-    controllers_params_file = os.path.join(package_path,'config','controllers_dragger.yaml')
+    nav2_params_file = os.path.join(robot_path,'config','controllers.yaml')
+
+    # You need to press "Startup" button in RViz when autostart=false
+    nav2 = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': 'false', 'autostart' : 'true'
+                                     'params_file' : nav2_params_file }.items()
+    )
+
+    controllers_params_file = os.path.join(robot_path,'config','controllers.yaml')
 
     controller_manager = Node(
         package="controller_manager",
@@ -153,8 +160,7 @@ def generate_launch_description():
         respawn_delay=10,
         parameters=[
             {'port' : '/dev/ttyUSBGPS' },
-            {'baud' : 115200 },
-            #{'baud' : 38400 },
+            {'baud' : 9600 },
             {'frame_id' : 'gps_link' },
             {'time_ref_source' : 'gps' },
             {'use_GNSS_time' : False },
@@ -208,3 +214,4 @@ def generate_launch_description():
         delayed_loc,
         delayed_nav
     ])
+
