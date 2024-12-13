@@ -3,7 +3,7 @@
 
     <xacro:include filename="../../../description/inertial_macros.xacro"/>
 
-	<!-- Values corrected for Plucky robot -->
+	<!-- Values corrected for Dragger robot -->
     <xacro:property name="chassis_length" value="0.90"/>
     <xacro:property name="chassis_width" value="0.40"/>
     <xacro:property name="chassis_height" value="0.50"/>

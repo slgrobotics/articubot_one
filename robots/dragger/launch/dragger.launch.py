@@ -50,7 +50,7 @@ def generate_launch_description():
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
                 ), launch_arguments={'use_sim_time': 'false'}.items()       # empty_map - default
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items() # warehouse
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'false'}.items() # warehouse
     )
 
     nav2_params_file = os.path.join(robot_path,'config','controllers.yaml')

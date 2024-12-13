@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- See common Gazebo pugins in the world file -->
+    
+    <!--
+        To re-generate robot.urdf manually for troubleshooting:
+          xacro ~/robot_ws/install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=true > ~/robot_ws/src/articubot_one/robots/turtle/description/robot.urdf
+    -->
+
+    <!-- See https://github.com/ROBOTIS-GIT/turtlebot3/tree/main/turtlebot3_description/urdf
+             ~/turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_description/urdf  -->
+
+    <xacro:include filename="../../../description/inertial_macros.xacro"/>
+
+    <xacro:arg name="sim_mode" default="false"/>
+
+	<!-- Values corrected for Plucky robot -->
+    <xacro:property name="chassis_length" value="0.90"/>
+    <xacro:property name="chassis_width" value="0.40"/>
+    <xacro:property name="chassis_height" value="0.50"/>
+    <xacro:property name="chassis_mass" value="30.0"/>
+    <xacro:property name="wheel_radius" value="0.192"/>
+    <xacro:property name="wheel_thickness" value="0.09"/>
+    <xacro:property name="wheel_mass" value="1.0"/>
+    <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>
+    <xacro:property name="wheel_offset_y" value="0.290"/>
+    <xacro:property name="wheel_offset_z" value="0.01"/>
+
+
+    <xacro:include filename="common_properties.urdf" />
+    <xacro:include filename="turtlebot3_create_1.urdf" />
+    <xacro:include filename="../../../description/imu.xacro" />
+    <xacro:include filename="../../../description/magnetometer.xacro" />
+    <xacro:include filename="../../../description/lidar.xacro" />
+
+</robot>

@@ -179,7 +179,7 @@ def generate_launch_description():
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
                 ), launch_arguments={'use_sim_time': 'true'}.items()
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items()
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'true'}.items() # warehouse
     )
 
     # =========================================================================
