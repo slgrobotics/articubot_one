@@ -4,34 +4,30 @@
     <!-- See common Gazebo pugins in the world file -->
     
     <!--
-        To re-generate robot.urdf manually for troubleshooting:
-          xacro ~/robot_ws/install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=true > ~/robot_ws/src/articubot_one/robots/turtle/description/robot.urdf
+        To re-generate robot.urdf.generated.xml manually for troubleshooting:
+          cd ~/robot_ws
+          colcon build
+          xacro install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=true > src/articubot_one/robots/turtle/description/robot.urdf.generated.xml
     -->
 
     <!-- See https://github.com/ROBOTIS-GIT/turtlebot3/tree/main/turtlebot3_description/urdf
+             https://github.com/slgrobotics/turtlebot3/commit/3df7ba0ea8944014ee9d2f29a438f830e2a0a031#diff-0de49a4761b9e2ca43e7f6e85e6f022224b347a9d374b30d4bf45ef4cc2fcf8b
              ~/turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_description/urdf  -->
 
-    <xacro:include filename="../../../description/inertial_macros.xacro"/>
+    <!-- xacro:include filename="../../../description/inertial_macros.xacro"/ -->
 
     <xacro:arg name="sim_mode" default="false"/>
 
-	<!-- Values corrected for Plucky robot -->
-    <xacro:property name="chassis_length" value="0.90"/>
-    <xacro:property name="chassis_width" value="0.40"/>
-    <xacro:property name="chassis_height" value="0.50"/>
-    <xacro:property name="chassis_mass" value="30.0"/>
-    <xacro:property name="wheel_radius" value="0.192"/>
-    <xacro:property name="wheel_thickness" value="0.09"/>
-    <xacro:property name="wheel_mass" value="1.0"/>
-    <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>
-    <xacro:property name="wheel_offset_y" value="0.290"/>
-    <xacro:property name="wheel_offset_z" value="0.01"/>
+    <!-- xacro:include filename="common_properties.urdf" / -->
 
+    <material name="Green">
+        <color rgba="0.0 0.8 0.0 1.0"/>
+    </material>
 
-    <xacro:include filename="common_properties.urdf" />
-    <xacro:include filename="turtlebot3_create_1.urdf" />
-    <xacro:include filename="../../../description/imu.xacro" />
+    <xacro:include filename="create_1.urdf.xacro" />
+
+    <!-- xacro:include filename="../../../description/imu.xacro" />
     <xacro:include filename="../../../description/magnetometer.xacro" />
-    <xacro:include filename="../../../description/lidar.xacro" />
+    <xacro:include filename="../../../description/turtle_sensors.xacro" / -->
 
 </robot>
