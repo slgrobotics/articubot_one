@@ -4,55 +4,13 @@
     <!-- See common Gazebo pugins in the world file -->
     
     <!--
-        To re-generate robot.urdf manually for troubleshooting:
-          xacro ~/robot_ws/install/articubot_one/share/articubot_one/description/robot.urdf.xacro sim_mode:=true > ~/robot_ws/src/articubot_one/description/robot.urdf
+        To re-generate robot.urdf.generated.xml manually for troubleshooting:
+          cd ~/robot_ws
+          colcon build
+          xacro install/articubot_one/share/articubot_one/robots/plucky/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/plucky/description/robot.urdf.generated.xml
     -->
 
-    <material name="white">
-        <color rgba="1 1 1 1" />
-    </material>
-
-    <material name="black">
-        <color rgba="0 0 0 1"/>
-    </material>
-
-    <material name="shadow_grey">
-        <color rgba="0.3 0.3 0.3 0.5"/>
-    </material>
-
-    <material name="red">
-        <color rgba="1 0 0 1"/>
-    </material>
-
-    <material name="green">
-        <color rgba="0 1 0 1"/>
-    </material>
-
-    <material name="blue">
-        <color rgba="0 0 1 1"/>
-    </material>
-
-    <material name="sensor_blue">
-        <color rgba="0.2 0.2 1 1"/>
-    </material>
-
-    <material name="sensor_yellow">
-        <color rgba="0.8 0.8 0.2 1"/>
-    </material>
-
-    <material name="body_color">
-        <color rgba="1 0.3 0.1 1"/>
-    </material>
-
-    <material name="port_red">
-        <color rgba="1 0.2 0.2 1"/>
-    </material>
-
-    <material name="starboard_green">
-        <color rgba="0.2 1 0.2 1"/>
-    </material>
-
-    <xacro:arg name="sim_mode" default="false"/>
+    <xacro:include filename="../../../description/common_properties.xacro" />
 
     <xacro:include filename="robot_core.xacro" />
     <xacro:include filename="../../../description/imu.xacro" />

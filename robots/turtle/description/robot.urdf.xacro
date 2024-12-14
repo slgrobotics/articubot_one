@@ -7,7 +7,7 @@
         To re-generate robot.urdf.generated.xml manually for troubleshooting:
           cd ~/robot_ws
           colcon build
-          xacro install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=true > src/articubot_one/robots/turtle/description/robot.urdf.generated.xml
+          xacro install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/turtle/description/robot.urdf.generated.xml
     -->
 
     <!-- See https://github.com/ROBOTIS-GIT/turtlebot3/tree/main/turtlebot3_description/urdf
