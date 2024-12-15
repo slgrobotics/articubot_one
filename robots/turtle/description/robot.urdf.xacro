@@ -20,9 +20,7 @@
 
     <!-- xacro:include filename="common_properties.urdf" / -->
 
-    <material name="Green">
-        <color rgba="0.0 0.8 0.0 1.0"/>
-    </material>
+    <xacro:include filename="../../../description/common_properties.xacro" />
 
     <xacro:include filename="create_1.urdf.xacro" />
 
