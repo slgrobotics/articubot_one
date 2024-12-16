@@ -37,6 +37,13 @@
   <xacro:macro name="create_base" params="diffdrive_update_rate:=40 wheel_separation:=0.262 wheel_radius:=0.033 wheel_width:=0.024 wheel_torque:=1.0 wheel_accel:=1.8 mass_kg:=3.5 base_diameter *mesh">
     <xacro:include filename="$(find articubot_one)/robots/turtle/description/create_base_gazebo.urdf.xacro" />
 
+    <link name="base_link">
+    <inertial>
+      <mass value="2" />
+      <origin xyz="0 0 0.0" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5" />
+    </inertial>
+
     <link name="base_footprint">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -46,6 +53,12 @@
       <material name="green" />
     </visual>
 
+    <joint name="base_footprint_joint" type="fixed">
+      <origin xyz="0 0 0.017" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="base_footprint" />
+    </joint>
+
     <collision>
       <origin xyz="0 0 0.017" rpy="0 0 0" />
       <geometry>
@@ -53,13 +66,6 @@
       </geometry>
     </collision>
     </link>
-
-    <link name="base_link">
-    <inertial>
-      <mass value="2" />
-      <origin xyz="0 0 0.0" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5" />
-    </inertial>
 
     <visual>
       <origin xyz=" 0 0 0.0308" rpy="0 0 0" />
@@ -115,12 +121,6 @@
       <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
     </inertial>
     </link>
-
-    <joint name="base_footprint_joint" type="fixed">
-      <origin xyz="0 0 0.017" rpy="0 0 0" />
-      <parent link="base_footprint" />
-      <child link="base_link" />
-    </joint>
 
     <joint name="base_wall_sensor_joint" type="fixed">
       <origin xyz="0.09 -0.120 0.042" rpy="0 0 -1.0" />

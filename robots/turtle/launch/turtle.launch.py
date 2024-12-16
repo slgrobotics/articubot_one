@@ -67,8 +67,8 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             # use either map_server OR slam_toolbox, as both are mappers
-            map_server,    # localization is left to GPS
-            #slam_toolbox, # localization via LIDAR
+            #map_server,    # localization is left to GPS
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
