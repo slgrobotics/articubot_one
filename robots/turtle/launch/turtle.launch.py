@@ -29,10 +29,10 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 
-    # joystick = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-    #             )
-    # )
+    joystick = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
+                )
+    )
 
     twist_mux = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
@@ -90,7 +90,8 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rsp,
-        # joystick,
+        twist_mux,
+        joystick,
         #delayed_loc,
         #delayed_nav,
         rviz

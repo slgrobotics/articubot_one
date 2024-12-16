@@ -10,9 +10,10 @@
           xacro install/articubot_one/share/articubot_one/robots/turtle/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/turtle/description/robot.urdf.generated.xml
     -->
 
-    <!-- See https://github.com/ROBOTIS-GIT/turtlebot3/tree/main/turtlebot3_description/urdf
-             https://github.com/slgrobotics/turtlebot3/commit/3df7ba0ea8944014ee9d2f29a438f830e2a0a031#diff-0de49a4761b9e2ca43e7f6e85e6f022224b347a9d374b30d4bf45ef4cc2fcf8b
-             ~/turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_description/urdf  -->
+    <!-- See https://github.com/slgrobotics/create_robot/tree/jazzy/create_description/urdf 
+
+             The AutonomyLab *.xacro files are moved here because robot_description topic is published on the Desktop, not the robot RPi
+    -->
 
     <!-- xacro:include filename="../../../description/inertial_macros.xacro"/ -->
 
