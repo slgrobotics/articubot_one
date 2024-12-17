@@ -201,11 +201,11 @@
 
     <joint name="scan_joint" type="fixed">
       <parent link="base_link"/>
-      <child link="base_scan"/>
+      <child link="laser_frame"/>
       <origin xyz="0.085 0 0.08" rpy="0 0 0"/>
     </joint>
 
-    <link name="base_scan">
+    <link name="laser_frame">
       <visual>
         <geometry>
           <cylinder radius="0.0375" length="0.025"/>

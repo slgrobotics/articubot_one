@@ -92,7 +92,7 @@ def generate_launch_description():
         rsp,
         twist_mux,
         joystick,
-        #delayed_loc,
+        delayed_loc,
         #delayed_nav,
         rviz
     ])
