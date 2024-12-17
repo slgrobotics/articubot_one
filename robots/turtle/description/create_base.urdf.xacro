@@ -16,6 +16,7 @@
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
+        <material name="grey"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
@@ -24,13 +25,15 @@
         </geometry>
       </collision>
     </link>
+
     <!-- joint name="${prefix}_wheel_joint" type="fixed" -->
     <joint name="${prefix}_wheel_joint" type="continuous">
-      <origin xyz="0 ${y_offset} 0.015" rpy="0 0 0"/>
-      <parent link="base_link"/>
+      <origin xyz="0 ${y_offset} ${-wheel_radius}" rpy="0 0 0"/>
+      <parent link="chassis_link"/>
       <child link="${prefix}_wheel_link"/>
       <axis xyz="0 1 0"/>
     </joint>
+
   </xacro:macro>
 
   <xacro:macro name="create_base" 
@@ -43,7 +46,7 @@
       <visual name="baselink_visual">
           <origin xyz="0 0 0"/>
           <geometry>
-              <sphere radius="0.04"/>
+              <sphere radius="0.01"/>
           </geometry>
           <material name="red"/>
       </visual>
@@ -52,7 +55,7 @@
     <!-- Define the center of the main robot chassis projected on the ground -->   
     <link name="base_footprint">
       <visual name="footprint_visual">
-          <origin xyz="0 0 0.001"/>
+          <origin xyz="0 0 0"/>
           <geometry>
               <cylinder radius="${base_diameter/2 + 0.01}" length="0.003"/>
           </geometry>
@@ -70,7 +73,7 @@
     <joint name="chassis_joint" type="fixed">
       <parent link="base_link"/>
       <child link="chassis_link"/>
-      <origin xyz="0 0 0"/>
+      <origin xyz="0 0 ${wheel_radius}"/>
     </joint>
 
     <!-- CHASSIS LINK -->
@@ -81,15 +84,15 @@
         <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
       </inertial>
       <visual>
-        <origin xyz=" 0 0 0.0308" rpy="0 0 0"/>
+        <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
         <geometry>
           <xacro:insert_block name="mesh"/>
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0.0 0.0 0.0308" rpy="0 0 0"/>
+        <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
         <geometry>
-          <cylinder length="0.0611632" radius="0.16495"/>
+          <cylinder length="0.0611632" radius="${base_diameter/2}"/>
         </geometry>
       </collision>
     </link>
@@ -136,34 +139,34 @@
 
     <joint name="base_wall_sensor_joint" type="fixed">
       <origin xyz="0.09 -0.120 0.042" rpy="0 0 -1.0"/>
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="wall_sensor_link"/>
     </joint>
     <joint name="base_left_cliff_sensor_joint" type="fixed">
       <origin xyz="0.07 0.14 0.01" rpy="0 ${PI/2} 0"/>
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="left_cliff_sensor_link"/>
     </joint>
     <joint name="base_right_cliff_sensor_joint" type="fixed">
       <origin xyz="0.07 -0.14 0.01" rpy="0 ${PI/2} 0"/>
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="right_cliff_sensor_link"/>
     </joint>
     <joint name="base_leftfront_cliff_sensor_joint" type="fixed">
       <origin xyz="0.15 0.04 0.01" rpy="0 ${PI/2} 0"/>
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="leftfront_cliff_sensor_link"/>
     </joint>
     <joint name="base_rightfront_cliff_sensor_joint" type="fixed">
       <origin xyz="0.15 -0.04 0.01" rpy="0 ${PI/2} 0"/>
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="rightfront_cliff_sensor_link"/>
     </joint>
 
     <xacro:create_wheel prefix="left" y_offset="${wheel_separation / 2}" wheel_radius="${wheel_radius}" wheel_width="${wheel_width}"/>
     <xacro:create_wheel prefix="right" y_offset="${wheel_separation / -2}" wheel_radius="${wheel_radius}" wheel_width="${wheel_width}"/>
 
-    <link name="front_wheel_link">
+    <link name="front_castor_link">
       <inertial>
         <origin xyz="0 0 0"/>
         <mass value="0.01"/>
@@ -174,6 +177,7 @@
         <geometry>
           <sphere radius="0.018"/>
         </geometry>
+        <material name="grey"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
@@ -185,14 +189,14 @@
 
     <!-- fixed because there's no transmission -->
     <joint name="front_castor_joint" type="fixed">
-      <origin xyz="0.13 0 0.0" rpy="0 0 0"/>
-      <parent link="base_link"/>
-      <child link="front_wheel_link"/>
+      <origin xyz="0.13 0 -0.048" rpy="0 0 0"/>
+      <parent link="chassis_link"/>
+      <child link="front_castor_link"/>
       <axis xyz="0 1 0"/>
     </joint>
 
     <joint name="imu_joint" type="fixed">
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="imu_link"/>
       <origin xyz="0.0 0 0.068" rpy="0 0 0"/>
     </joint>
@@ -200,9 +204,9 @@
     <link name="imu_link"/>
 
     <joint name="scan_joint" type="fixed">
-      <parent link="base_link"/>
+      <parent link="chassis_link"/>
       <child link="laser_frame"/>
-      <origin xyz="0.085 0 0.08" rpy="0 0 0"/>
+      <origin xyz="0.085 0 0.033" rpy="0 0 0"/>
     </joint>
 
     <link name="laser_frame">
