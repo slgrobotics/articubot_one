@@ -48,16 +48,21 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            DeclareLaunchArgument(
+                'use_sim_time', default_value='false',
+                description='Use simulation (Gazebo) clock if true'
+            ),
+            DeclareLaunchArgument(
+                "output_final_position", default_value="false"
+            ),
+            DeclareLaunchArgument(
+                "output_location", default_value="~/dual_ekf_navsat_example_debug.txt"
+            ),
+
             LogInfo(msg='============ starting DUAL EKF NAVSAT ==============='),
             LogInfo(msg=rl_params_file),
             LogInfo(msg=nt_params_file),
 
-            launch.actions.DeclareLaunchArgument(
-                "output_final_position", default_value="false"
-            ),
-            launch.actions.DeclareLaunchArgument(
-                "output_location", default_value="~/dual_ekf_navsat_example_debug.txt"
-            ),
             launch_ros.actions.Node(
                 package="robot_localization",
                 executable="ekf_node",
