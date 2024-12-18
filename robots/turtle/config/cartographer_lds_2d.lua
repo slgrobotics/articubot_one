@@ -43,7 +43,7 @@ options = {
 
   lookup_transform_timeout_sec = 0.3,
   submap_publish_period_sec = 0.1,
-  pose_publish_period_sec = 5e-2, -- 20 Hz (5e-3 - 200 Hz)
+  pose_publish_period_sec = 5e-2, -- 5e-2 = 20 Hz (5e-3 = 200 Hz)
   trajectory_publish_period_sec = 30e-3, -- 30 ms = 33 Hz
 
   rangefinder_sampling_ratio = 1.0,
@@ -74,7 +74,7 @@ TRAJECTORY_BUILDER_2D.adaptive_voxel_filter.min_num_points = 400
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.probability_grid_range_data_inserter.hit_probability = 0.53
 TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.probability_grid_range_data_inserter.miss_probability = 0.493
 -- slightly shorter rays
-TRAJECTORY_BUILDER_2D.max_range = 15.0
+TRAJECTORY_BUILDER_2D.max_range = 2.5
 -- wheel odometry is fine
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 20
 -- IMU is ok
