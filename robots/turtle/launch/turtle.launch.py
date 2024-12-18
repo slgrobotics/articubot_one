@@ -44,6 +44,11 @@ def generate_launch_description():
                 )
     )
 
+    cartographer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
+                ), launch_arguments={'use_sim_time': 'false'}.items()
+    )
+
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
@@ -66,9 +71,9 @@ def generate_launch_description():
     localizers_include = GroupAction(
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
-            # use either map_server OR slam_toolbox, as both are mappers
-            #map_server,    # localization is left to GPS
-            slam_toolbox, # localization via LIDAR
+            # use either cartographer OR slam_toolbox, as both are mappers
+            cartographer,
+            #slam_toolbox, # localization via LIDAR
         ]
     )
 
