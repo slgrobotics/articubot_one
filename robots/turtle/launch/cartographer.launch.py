@@ -78,6 +78,7 @@ def generate_launch_description():
                        '-configuration_basename', configuration_basename],
             remappings=[
                 #('imu','imu/data'),
+                #('imu','imu_raw'),
                 ('scan','scan'),
                 ('odom','diff_cont/odom')
                 ]
