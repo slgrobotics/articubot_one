@@ -73,12 +73,12 @@ def generate_launch_description():
             arguments=['-configuration_directory', cartographer_config_dir,
                        '-configuration_basename', configuration_basename],
             remappings=[
-                ('fix','/gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
-                ('imu','/imu/data'),
-                ('scan','/scan'),
-                #('odom','/diff_cont/odom')
-                #('odom','/odometry/local')
-                ('odom','/odometry/global')
+                ('fix','gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
+                ('imu','imu/data'),
+                ('scan','scan'),
+                #('odom','diff_cont/odom')
+                #('odom','odometry/local')
+                ('odom','odometry/global')
                 ]
             ),
 

@@ -77,8 +77,7 @@ def generate_launch_description():
             arguments=['-configuration_directory', cartographer_config_dir,
                        '-configuration_basename', configuration_basename],
             remappings=[
-                #('imu','imu/data'),
-                #('imu','imu_raw'),
+                ('imu','imu/data'),
                 ('scan','scan'),
                 ('odom','diff_cont/odom')
                 ]
