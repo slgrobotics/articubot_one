@@ -15,6 +15,7 @@
 -- /* Author: Darby Lim */
 
 -- See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
+--     https://github.com/ROBOTIS-GIT/turtlebot3/blob/main/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
 --     /opt/ros/jazzy/share/cartographer_ros/configuration_files/mir-100-mapping.lua (MiR100 Mobile Robot)
 
 include "map_builder.lua"
@@ -55,7 +56,7 @@ options = {
   landmarks_sampling_ratio = 1.0,
 }
 
--- Override some default parammeters from files in /opt/ros/jazzy/share/cartographer/configuration_files
+-- Override some default parameters from files in /opt/ros/jazzy/share/cartographer/configuration_files
 --    map_builder.lua
 --    map_builder_server.lua
 --    pose_graph.lua
