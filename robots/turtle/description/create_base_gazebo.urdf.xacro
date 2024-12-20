@@ -1,4 +1,7 @@
 <?xml version="1.0" ?>
+
+<!-- replaced with ros2_control.xacro -->
+
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="sim_create_base">
     <gazebo>

@@ -39,7 +39,8 @@
   <xacro:macro name="create_base" 
                params="diffdrive_update_rate:=40 wheel_separation wheel_radius:=0.033 wheel_width:=0.024 wheel_torque:=1.0 wheel_accel:=1.8 mass_kg:=3.5 base_diameter *mesh">
 
-    <xacro:include filename="$(find articubot_one)/robots/turtle/description/create_base_gazebo.urdf.xacro"/>
+    <!-- replaced with ros2_control.xacro -->
+    <!-- xacro:include filename="$(find articubot_one)/robots/turtle/description/create_base_gazebo.urdf.xacro"/ -->
 
     <!-- The coordinate frame called base_link is rigidly attached to the robot root body. -->
     <link name="base_link">
@@ -224,12 +225,6 @@
         <material name="sensor_blue"/>
       </visual>
     </link>
-
-    <!-- Simulation sensors -->
-    <xacro:sim_create_base/>
-    <xacro:sim_create_wall_sensor/>
-    <xacro:sim_create_cliff_sensors/>
-    <xacro:sim_imu/>
 
   </xacro:macro>
 

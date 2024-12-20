@@ -57,7 +57,7 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
-    nav2_params_file = os.path.join(robot_path,'config','controllers.yaml')
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(

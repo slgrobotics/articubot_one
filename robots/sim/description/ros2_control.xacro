@@ -3,7 +3,7 @@
 
     <ros2_control name="DraggerSimRobot" type="system">
 
-        <!-- Wheel geometry information - see controllers_*.yaml -->
+        <!-- Wheel geometry information - see controllers.yaml -->
 
         <hardware>
             <xacro:unless value="$(arg sim_mode)">

@@ -1,0 +1,116 @@
+controller_manager:     # target node name
+  ros__parameters:
+    update_rate: 30 # Hz
+    use_sim_time: true
+
+    diff_cont:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diff_cont:
+  ros__parameters:
+
+    # See http://wiki.ros.org/diff_drive_controller  
+    #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
+    #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
+
+    publish_rate: 50.0
+
+    # Name of frame to publish odometry in. Default: "/odom"
+    odom_frame_id: '/odom'
+
+    # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
+    base_frame_id: base_link
+    #base_frame_id: base_footprint
+
+    # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
+    # make it false, or there will be a lot of jumping and wheels will be sepatared from the body.
+    # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
+    enable_odom_tf: false
+
+    use_stamped_vel: true
+
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+
+    wheels_per_side: 1
+
+    wheel_separation: 0.580             # distance between left and right wheels
+    wheel_radius: 0.192
+  
+    # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
+    # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false
+    # for sim, hardware feedback is present, but adjustment is still required for turns.
+    wheel_separation_multiplier: 1.33
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    # Is there position feedback from hardware (wheel encoders), default to "true":
+    position_feedback: true
+    # If set to true the odometry of the robot will be calculated from the commanded values and not from feedback.
+    # default to "false":
+    open_loop: false
+
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+
+    # Timeout in seconds, after which input command on ``cmd_vel`` topic is considered staled:
+    cmd_vel_timeout: 1.0
+
+    # publish_limited_velocity: true
+    # velocity_rolling_window_size: 10
+
+    # Velocity and acceleration limits
+    # Whenever a min_* is unspecified, default to -max_*
+    linear:
+      x:
+        has_velocity_limits    : true
+        max_velocity           : 0.32 # m/s - experimental on actual robot
+        min_velocity           : -0.2 # m/s
+        has_acceleration_limits: true
+        max_acceleration       : 0.5  # m/s^2
+        min_acceleration       : -0.3 # m/s^2
+        has_jerk_limits        : true
+        max_jerk               : 0.8  # m/s^3
+    angular:
+      z:
+        has_velocity_limits    : true
+        max_velocity           : 0.25 # rad/s - experimental on actual robot
+        has_acceleration_limits: true
+        max_acceleration       : 0.5  # rad/s^2
+        has_jerk_limits        : true
+        max_jerk               : 0.5  # rad/s^3
+
+#
+# By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
+#    under /joint_states topic (position and velocity changing, effort 0)
+#    there is no need to configure joint_state_broadcaster explicitly,
+#    anything defined in rsp.launch.py will be published.
+#
+#joint_broad:
+#  ros__parameters:
+#    interfaces:
+##      - effort
+#      - position
+##      - velocity
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+##    extra_joints:
+##    map_interface_to_joint_state:
+##      effort: effort
+##      position: position
+##      velocity: velocity
+## "true" means the topic will be /joint_broad/joint_states, false - /joint_states:
+#    use_local_topics: false
+
+#joint_broad:
+#  ros__parameters:
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+#    extra_joints:
+#      - left_caster_wheel_joint
+#      - right_caster_wheel_joint
