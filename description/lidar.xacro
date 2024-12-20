@@ -38,7 +38,7 @@
         </xacro:inertial_cylinder>
     </link>
 
-    <!-- gz model -m dragger -s front_laser -->
+    <!-- gz model -m dragger -s laser_frame -->
     <gazebo reference="laser_frame">
         <!-- name must be "laser_frame", specifically for lasers. Must reference an actual link in .xacro -->
         <sensor name='laser_frame' type='gpu_lidar'>

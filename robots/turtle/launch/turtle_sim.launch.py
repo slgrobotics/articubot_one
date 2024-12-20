@@ -108,7 +108,7 @@ def generate_launch_description():
         executable='create',
         namespace='/',
         arguments=[
-            '-name', 'dragger',
+            '-name', 'turtle',
             '-topic', '/robot_description',
             # Robot's starting position on the Grid:
             '-x', '0.0', # positive - towards East
@@ -200,8 +200,8 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             # use either cartographer OR slam_toolbox, as both are mappers
-            cartographer,  # localization via LIDAR
-            #slam_toolbox, # localization via LIDAR
+            #cartographer,  # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 

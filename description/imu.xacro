@@ -23,7 +23,7 @@
         </visual>
     </link>
 
-    <!-- gz model -m dragger -s imu_sensor -->
+    <!-- gz model -m dragger -s imu_link -->
     <gazebo reference="imu_link">
         <sensor name="imu_link" type="imu">
         <always_on>1</always_on>

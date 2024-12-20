@@ -20,7 +20,7 @@
         </geometry>
       </collision>
       <xacro:inertial_cylinder mass="0.01" length="${wheel_width}" radius="${wheel_radius}">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
       </xacro:inertial_cylinder>
     </link>
 
@@ -77,12 +77,20 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-      <visual>
+
+      <visual name="chassis_gz_visual">
+        <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="model://meshes/create_1.dae"/>
+        </geometry>
+      </visual>
+      <visual name="chassis_rviz_visual">
         <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
         <geometry>
           <xacro:insert_block name="mesh"/>
         </geometry>
       </visual>
+
       <collision>
         <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
         <geometry>
@@ -90,7 +98,8 @@
         </geometry>
       </collision>
       <xacro:inertial_cylinder mass="${mass_kg}" length="0.0611632" radius="${base_diameter/2}">
-          <origin xyz="0 0 -0.015" rpy="0 0 0"/>
+        <!-- cheat: origin moved forward a bit, so that center mass is forward of the wheels axis -->  
+        <origin xyz="0.03 0 0" rpy="0 0 0"/>
       </xacro:inertial_cylinder>
     </link>
 
@@ -153,7 +162,7 @@
         </geometry>
       </collision>
       <xacro:inertial_sphere mass="0.01" radius="0.018">
-          <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
       </xacro:inertial_sphere>
     </link>
 
@@ -172,6 +181,95 @@
     </joint>
 
     <link name="imu_link"/>
+
+    <!-- gz model -m turtle -s imu_link -->
+    <gazebo reference="imu_link">
+        <sensor name="imu_link" type="imu">
+        <always_on>1</always_on>
+        <topic>gz_imu/data</topic>
+        <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+        <gz_frame_id>imu_link</gz_frame_id>
+        <frame_id>imu_link</frame_id>
+        <update_rate>250</update_rate>
+            <imu>
+                <orientation_reference_frame>
+                  <localization>ENU</localization>
+                  <!-- custom_rpy parent_frame='world'>1.570795 0 0</custom_rpy -->
+                </orientation_reference_frame>
+                <enable_orientation>1</enable_orientation>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
 
     <joint name="scan_joint" type="fixed">
       <parent link="chassis_link"/>
@@ -194,6 +292,48 @@
         <material name="sensor_blue"/>
       </visual>
     </link>
+
+    <!-- gz model -m turtle -s laser_frame -->
+    <gazebo reference="laser_frame">
+        <!-- name must be "laser_frame", specifically for lasers. Must reference an actual link in .xacro -->
+        <sensor name='laser_frame' type='gpu_lidar'>
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>1</always_on>
+          <!-- 6 Hz for LD14 - see "frequency" in dual_ekf_navsat_parameters.yaml -->
+          <update_rate>6</update_rate>
+          <topic>gz_scan</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>laser_frame</gz_frame_id>
+          <frame_id>laser_frame</frame_id>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-${pi}</min_angle>
+                <max_angle>${pi}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <resolution>1</resolution>
+                <min_angle>0.0</min_angle>
+                <max_angle>0.0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.3</min>
+              <max>12.0</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </ray>
+          <visualize>true</visualize>
+        </sensor>
+    </gazebo>
 
   </xacro:macro>
 
