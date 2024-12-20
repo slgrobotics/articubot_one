@@ -6,11 +6,6 @@
 
   <xacro:macro name="create_wheel" params="prefix y_offset wheel_radius wheel_width">
     <link name="${prefix}_wheel_link">
-      <inertial>
-        <origin xyz="0 0 0"/>
-        <mass value="0.01"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
         <geometry>
@@ -24,6 +19,9 @@
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
       </collision>
+      <xacro:inertial_cylinder mass="0.01" length="${wheel_width}" radius="${wheel_radius}">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:inertial_cylinder>
     </link>
 
     <!-- joint name="${prefix}_wheel_joint" type="fixed" -->
@@ -79,11 +77,6 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-      <inertial>
-        <mass value="${mass_kg}"/>
-        <origin xyz="0 0 0.0"/>
-        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
-      </inertial>
       <visual>
         <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
         <geometry>
@@ -96,46 +89,24 @@
           <cylinder length="0.0611632" radius="${base_diameter/2}"/>
         </geometry>
       </collision>
+      <xacro:inertial_cylinder mass="${mass_kg}" length="0.0611632" radius="${base_diameter/2}">
+          <origin xyz="0 0 -0.015" rpy="0 0 0"/>
+      </xacro:inertial_cylinder>
     </link>
 
     <link name="wall_sensor_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
     </link>
 
     <link name="left_cliff_sensor_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
     </link>
 
     <link name="right_cliff_sensor_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
     </link>
 
     <link name="leftfront_cliff_sensor_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01"/>
-      </inertial>
     </link>
 
     <link name="rightfront_cliff_sensor_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
     </link>
 
     <joint name="base_wall_sensor_joint" type="fixed">
@@ -168,11 +139,6 @@
     <xacro:create_wheel prefix="right" y_offset="${wheel_separation / -2}" wheel_radius="${wheel_radius}" wheel_width="${wheel_width}"/>
 
     <link name="front_castor_link">
-      <inertial>
-        <origin xyz="0 0 0"/>
-        <mass value="0.01"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
         <geometry>
@@ -186,6 +152,9 @@
           <sphere radius="0.018"/>
         </geometry>
       </collision>
+      <xacro:inertial_sphere mass="0.01" radius="0.018">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+      </xacro:inertial_sphere>
     </link>
 
     <!-- fixed because there's no transmission -->

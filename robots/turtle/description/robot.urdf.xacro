@@ -15,7 +15,7 @@
              The AutonomyLab *.xacro files are moved here because robot_description topic is published on the Desktop, not the robot RPi
     -->
 
-    <!-- xacro:include filename="../../../description/inertial_macros.xacro"/ -->
+    <xacro:include filename="../../../description/inertial_macros.xacro" />
 
     <xacro:include filename="../../../description/common_properties.xacro" />
 
