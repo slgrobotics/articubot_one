@@ -200,8 +200,8 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             # use either cartographer OR slam_toolbox, as both are mappers
-            #cartographer,  # localization via LIDAR
-            slam_toolbox, # localization via LIDAR
+            cartographer,  # localization via LIDAR
+            #slam_toolbox, # localization via LIDAR
         ]
     )
 
