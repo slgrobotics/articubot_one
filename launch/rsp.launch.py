@@ -71,12 +71,14 @@ def generate_launch_description():
 
     # Launch!
     return LaunchDescription([
+
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
             description='Use sim time if true'),
 
-        LogInfo(msg='============ starting ROBOT STATE PUBLISHER ==============='),
+        LogInfo(msg='============ starting ROBOT STATE PUBLISHER  use_sim_time:'),
+        LogInfo(msg=use_sim_time),
         #LogInfo(msg=robot_model_path),
         LogInfo(msg=xacro_file),
 

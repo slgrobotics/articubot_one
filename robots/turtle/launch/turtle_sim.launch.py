@@ -160,7 +160,7 @@ def generate_launch_description():
         #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
         #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
         arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
-        parameters=[{'use_sim_time': False}],
+        parameters=[{'use_sim_time': use_sim_time}],
         output='screen'
     )
 

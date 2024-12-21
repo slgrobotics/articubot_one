@@ -326,7 +326,8 @@ def generate_launch_description():
 
     # Create the launch description and populate
     ld = LaunchDescription([
-        LogInfo(msg='============ starting NAVIGATION ==============='),
+        LogInfo(msg='============ starting NAVIGATION  use_sim_time:'),
+        LogInfo(msg=use_sim_time),
         LogInfo(msg=params_file),
     ])
 

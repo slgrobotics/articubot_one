@@ -238,7 +238,7 @@ def generate_launch_description():
     # Launch them all!
     return LaunchDescription([
         rsp,
-        #joystick,
+        joystick,
         twist_mux,
         gz_include,
         delayed_loc,

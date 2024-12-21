@@ -59,7 +59,8 @@ def generate_launch_description():
                 "output_location", default_value="~/dual_ekf_navsat_example_debug.txt"
             ),
 
-            LogInfo(msg='============ starting DUAL EKF NAVSAT ==============='),
+            LogInfo(msg='============ starting DUAL EKF NAVSAT  use_sim_time:'),
+            LogInfo(msg=use_sim_time),
             LogInfo(msg=rl_params_file),
             LogInfo(msg=nt_params_file),
 
