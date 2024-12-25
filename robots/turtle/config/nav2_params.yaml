@@ -34,7 +34,7 @@ amcl:
     save_pose_rate: 0.5
     sigma_hit: 0.2
     tf_broadcast: true
-    transform_tolerance: 10.0
+    transform_tolerance: 1.0
     update_min_a: 0.2
     update_min_d: 0.25
     z_hit: 0.5
@@ -48,10 +48,8 @@ bt_navigator:
     enable_stamped_cmd_vel: true
     global_frame: map
     robot_base_frame: base_link
-    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
-    #odom_topic: /odometry/gps     # can't use it, orientation is always 0
-    odom_topic: /odometry/local   # works
-    #odom_topic: /odometry/global  # works
+    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    #odom_topic: /odometry/local
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000
@@ -77,7 +75,8 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 24.0
+    controller_frequency: 20.0
+    costmap_update_timeout: 0.30
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
@@ -90,7 +89,7 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 1.0
+      required_movement_radius: 0.5
       movement_time_allowance: 10.0
     # Goal checker parameters
     #precise_goal_checker:
@@ -101,8 +100,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 1.0
-      yaw_goal_tolerance: 0.5 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
@@ -122,7 +121,7 @@ controller_server:
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
-      transform_tolerance: 10.0
+      transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
@@ -202,32 +201,32 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 6.0
+      update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: map
+      global_frame: map     #  odom ?
       robot_base_frame: base_link
       static_map: false
       rolling_window: true
-      width: 50
-      height: 50
-      resolution: 0.25
+      width: 3
+      height: 3
+      resolution: 0.05
       transform_tolerance: 10.0
-      #robot_radius: 0.7
-      footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
+      robot_radius: 0.22
+      #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
-        inflation_radius: 0.5
+        inflation_radius: 0.70
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
         publish_voxel_map: True
         origin_z: 0.0
-        z_resolution: 0.25
-        z_voxels: 8
+        z_resolution: 0.05
+        z_voxels: 16
         max_obstacle_height: 2.0
         min_obstacle_height: 0.25 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.5 Meters.
         mark_threshold: 0
@@ -239,8 +238,8 @@ local_costmap:
           marking: True
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Half or more of maximum lidar data range
-          raytrace_min_range: 0.1  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 12.0 # Half or more of maximum lidar data range
+          raytrace_min_range: 0.3  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 9.0 # Half or more of maximum lidar data range
           obstacle_min_range: 0.3  # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -258,17 +257,12 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      #robot_radius: 0.7
-      footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
-      resolution: 0.25
+      #robot_radius: 0.22
+      #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
+      resolution: 0.05
       track_unknown_space: true
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      inflation_layer:
-        plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.5
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -280,12 +274,17 @@ global_costmap:
           marking: True
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Maximum lidar data range
-          raytrace_min_range: 0.1 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 12.0 # Quarter or more of maximum lidar data range
+          raytrace_min_range: 0.3 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 9.0 # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.3 # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
+        inflation_radius: 0.7
       always_send_full_costmap: True
 
 map_saver:
@@ -299,12 +298,13 @@ map_saver:
 planner_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 12.0
+    expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
+    costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 1.0
-      use_astar: true
+      tolerance: 0.5
+      use_astar: false
       allow_unknown: true
 
 smoother_server:
@@ -324,7 +324,7 @@ behavior_server:
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 12.0
+    cycle_frequency: 10.0
     behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
@@ -339,7 +339,7 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
-    transform_tolerance: 10.0
+    transform_tolerance: 0.1
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
@@ -365,7 +365,7 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    smoothing_frequency: 12.0
+    smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
     max_velocity: [0.5, 0.0, 2.0]
@@ -373,6 +373,7 @@ velocity_smoother:
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
     odom_topic: /odometry/local   # works
+    #odom_topic: "/diff_cont/odom"
     #odom_topic: "odom"
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
@@ -386,7 +387,7 @@ collision_monitor:
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel_nav"
     state_topic: "collision_monitor_state"
-    transform_tolerance: 10.0
+    transform_tolerance: 0.2
     source_timeout: 1.0
     base_shift_correction: True
     stop_pub_timeout: 2.0

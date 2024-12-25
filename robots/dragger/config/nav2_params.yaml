@@ -19,7 +19,7 @@ amcl:
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
     laser_max_range: 12.0
-    laser_min_range: -1.0
+    laser_min_range: 0.5
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 2000
@@ -239,9 +239,9 @@ local_costmap:
           marking: True
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Half or more of maximum lidar data range
-          raytrace_min_range: 0.1  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 12.0 # Half or more of maximum lidar data range
-          obstacle_min_range: 0.3  # > 0.0 avoid that lidar detect robot elements as obstacle
+          raytrace_min_range: 0.3  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 9.0 # Half or more of maximum lidar data range
+          obstacle_min_range: 0.5  # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -280,9 +280,9 @@ global_costmap:
           marking: True
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Maximum lidar data range
-          raytrace_min_range: 0.1 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 12.0 # Quarter or more of maximum lidar data range
-          obstacle_min_range: 0.3 # > 0.0 avoid that lidar detect robot elements as obstacle
+          raytrace_min_range: 0.3 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 9.0 # Quarter or more of maximum lidar data range
+          obstacle_min_range: 0.5 # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
