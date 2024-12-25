@@ -86,7 +86,7 @@
             <robot_param>robot_description</robot_param>
             <robot_param_node>robot_state_publisher</robot_param_node> -->
 
-            <parameters>$(find articubot_one)/robots/sim/config/controllers.yaml</parameters>
+            <parameters>$(find articubot_one)/robots/plucky/config/controllers.yaml</parameters>
         </plugin>
     </gazebo>
 
