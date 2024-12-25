@@ -5,10 +5,10 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
-from launch_ros.actions import Node, SetParameter
-from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+from launch.event_handlers import OnProcessStart
 
 def generate_launch_description():
 
@@ -17,7 +17,7 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
-    robot_model='sim'
+    robot_model='plucky'
 
     package_path = get_package_share_directory(package_name)
 
@@ -40,11 +40,23 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_online_async.yaml')
-
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'slam_params_file': slam_toolbox_params_file}.items()
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','slam_toolbox.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    cartographer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
+    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+
+    map_server = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
@@ -94,7 +106,7 @@ def generate_launch_description():
         executable='create',
         namespace='/',
         arguments=[
-            '-name', 'dragger',
+            '-name', 'plucky',
             '-topic', '/robot_description',
             # Robot's starting position on the Grid:
             '-x', '0.0', # positive - towards East
@@ -162,29 +174,9 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Obsolete: dual_ekf_navsat_params.yaml can subscribe to /diff_cont/odom directly
-    # Gazebo controller_manager is not subject to renaming through parameters, so we use topic relay here:
-    odom_relay = Node(
-        package='topic_tools',
-        executable='relay',
-        namespace='/',
-        parameters=[{ 'input_topic': '/diff_cont/odom', 'output_topic': '/odom'}],
-        # see what odom0 says in config/dual_ekf_navsat_params.yaml
-        #parameters=[{ 'input_topic': '/odometry/local', 'output_topic': '/odom'}],
-    )
-
     navsat_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
-    )
-
-    #map_yaml_file = os.path.join(package_path, 'assets', 'maps','empty_map.yaml')   # this is default anyway
-    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
-
-    map_server = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
     # =========================================================================
@@ -211,15 +203,16 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
-            # use either map_server OR slam_toolbox, as both are mappers
+            # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
             map_server,    # localization is left to GPS
+            #cartographer, # localization via LIDAR
             #slam_toolbox, # localization via LIDAR
         ]
     )
 
     delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
 
-    delayed_nav = TimerAction(period=8.0, actions=[nav2])
+    delayed_nav = TimerAction(period=10.0, actions=[nav2])
 
     # start the demo autonomy task (script)
     # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
@@ -230,12 +223,6 @@ def generate_launch_description():
     #    output='screen',
     #)
 
-    waypoint_follower = Node(
-        package='articubot_one',
-        executable='xy_waypoint_follower',
-        emulate_tty=True,
-        output='screen',
-    )
 
     # Launch them all!
     return LaunchDescription([
@@ -253,3 +240,4 @@ def generate_launch_description():
         #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
+
