@@ -61,26 +61,7 @@ diff_cont:
     # publish_limited_velocity: true
     # velocity_rolling_window_size: 10
 
-    # Velocity and acceleration limits
-    # Whenever a min_* is unspecified, default to -max_*
-    linear:
-      x:
-        has_velocity_limits    : true
-        max_velocity           : 0.32 # m/s - experimental on actual robot
-        min_velocity           : -0.2 # m/s
-        has_acceleration_limits: true
-        max_acceleration       : 0.5  # m/s^2
-        min_acceleration       : -0.3 # m/s^2
-        has_jerk_limits        : true
-        max_jerk               : 0.8  # m/s^3
-    angular:
-      z:
-        has_velocity_limits    : true
-        max_velocity           : 0.25 # rad/s - experimental on actual robot
-        has_acceleration_limits: true
-        max_acceleration       : 0.5  # rad/s^2
-        has_jerk_limits        : true
-        max_jerk               : 0.5  # rad/s^3
+    # Velocity and acceleration limits - no need for Plucky
 
 #
 # By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
