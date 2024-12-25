@@ -317,6 +317,7 @@ smoother_server:
       max_its: 1000
       do_refinement: True
 
+# See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
@@ -362,6 +363,7 @@ waypoint_follower:
       enabled: True
       waypoint_pause_duration: 200
 
+# See https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true
@@ -373,7 +375,7 @@ velocity_smoother:
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
     odom_topic: /odometry/local   # works
-    #odom_topic: "odom"
+    #odom_topic: /diff_cont/odom   # works
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0

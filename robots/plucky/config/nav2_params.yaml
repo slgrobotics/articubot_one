@@ -212,8 +212,8 @@ local_costmap:
       height: 50
       resolution: 0.05
       transform_tolerance: 10.0
-      #robot_radius: 0.7
-      footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
+      robot_radius: 0.5
+      #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
@@ -258,8 +258,8 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      #robot_radius: 0.7
-      footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
+      robot_radius: 0.5
+      #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
       resolution: 0.05
       track_unknown_space: true
       # Try: remove static_layer?
@@ -316,7 +316,7 @@ smoother_server:
       tolerance: 1.0e-10
       max_its: 1000
       do_refinement: True
-
+# See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
@@ -362,19 +362,21 @@ waypoint_follower:
       enabled: True
       waypoint_pause_duration: 200
 
+# See https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    smoothing_frequency: 12.0
+    smoothing_frequency: 4.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.5, 0.0, 2.0]
-    min_velocity: [-0.5, 0.0, -2.0]
-    max_accel: [2.5, 0.0, 3.2]
-    max_decel: [-2.5, 0.0, -3.2]
+    #feedback: "CLOSED_LOOP"
+    max_velocity: [25.0, 0.0, 20.0]
+    min_velocity: [-25.0, 0.0, -20.0]
+    max_accel: [25.0, 0.0, 32.0]
+    max_decel: [-25.0, 0.0, -32.0]
     odom_topic: /odometry/local   # works
-    #odom_topic: "odom"
-    odom_duration: 0.1
+    #odom_topic: /diff_cont/odom   # works
+    odom_duration: 0.2
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
 
