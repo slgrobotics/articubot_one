@@ -10,6 +10,12 @@ from launch.event_handlers import OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
+#
+# To launch sim:
+#
+# cd ~/robot_ws; colcon build; ros2 launch articubot_one sim.launch.py
+#
+
 def generate_launch_description():
 
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
@@ -156,7 +162,7 @@ def generate_launch_description():
         executable='parameter_bridge',
         namespace='/',
         parameters=[{
-            'config_file': os.path.join(robot_path, 'config', 'gz_ros_bridge.yaml'),
+            'config_file': os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
         output='screen'

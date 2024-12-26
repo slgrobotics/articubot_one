@@ -1,6 +1,10 @@
 #
 # Robot-specific SLAM Toolbox configuration file (Plucky version)
 #
+# See https://github.com/SteveMacenski/slam_toolbox/blob/jazzy/config/mapper_params_localization.yaml
+#
+# meld /opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml ~/robot_ws/src/articubot_one/robots/plucky/config/mapper_params.yaml
+#
 
 slam_toolbox:
   ros__parameters:
