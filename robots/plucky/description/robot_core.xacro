@@ -85,11 +85,24 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-        <visual name="chassis_visual">
-            <!-- origin xyz="${chassis_length/2} 0 ${chassis_height/4}"/ -->
-            <origin xyz="0 0 ${chassis_height/4}"/>
+        <visual name="chassis_visual_bottom">
+            <origin xyz="0 0 ${chassis_height/8}"/>
             <geometry>
-                <box size="${chassis_length} ${chassis_width} ${chassis_height/2}"/>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_visual_front">
+            <origin xyz="0.15 0 ${chassis_height/2-0.03}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <box size="0.25 ${chassis_width} 0.01"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_visual_back">
+            <origin xyz="-0.07 0 ${chassis_height/2-0.03}" rpy="0 -${pi/4} 0"/>
+            <geometry>
+                <box size="0.25 ${chassis_width} 0.01"/>
             </geometry>
             <material name="body_color"/>
         </visual>
