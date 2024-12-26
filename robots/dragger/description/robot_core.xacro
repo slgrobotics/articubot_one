@@ -121,7 +121,7 @@
             <material name="body_color"/>
         </visual>
         <visual name="chassis_caster_joint_right">
-            <origin xyz="${caster_wheel_offset_x} ${-chassis_width*0.51} ${caster_wheel_offset_z}" rpy="0 0 0"/>
+            <origin xyz="${caster_wheel_offset_x} ${-chassis_width*0.52} ${caster_wheel_offset_z}" rpy="0 0 0"/>
             <geometry>
                 <sphere radius="${caster_wheel_offset_z*1.1}"/>
             </geometry>
