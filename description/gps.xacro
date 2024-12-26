@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:property name="gps_offset_x" value="0.05"/>
-    <xacro:property name="gps_offset_z" value="0.65"/>
-
     <joint name="gps_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="gps_link"/>
-        <origin xyz="${gps_offset_x} 0 ${gps_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${gps_offset_x} ${gps_offset_y} ${gps_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="gps_link">

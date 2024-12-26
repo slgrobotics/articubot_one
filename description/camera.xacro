@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:property name="camera_offset_x" value="${chassis_length/2 - 0.04}"/>
-    <xacro:property name="camera_offset_z" value="0.55"/>
-
     <joint name="camera_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="camera_link"/>
