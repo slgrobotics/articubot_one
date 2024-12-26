@@ -62,7 +62,7 @@
             <origin xyz="0 0 0.01"/>
             <geometry>
                 <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
-                <cylinder radius="${wheel_offset_y + wheel_thickness / 2}" length="0.02"/>
+                <cylinder radius="${wheel_offset_y + wheel_thickness + 0.03}" length="0.01"/>
             </geometry>
             <material name="shadow_grey"/>
         </visual>
@@ -103,28 +103,42 @@
         <visual name="chassis_front_axle_left">
             <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
             <geometry>
-                <cylinder radius="${0.06}" length="${chassis_width*0.5}"/>
+                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
             </geometry>
             <material name="body_color"/>
         </visual>
         <visual name="chassis_front_axle_right">
             <origin xyz="${wheel_offset_x} ${-chassis_width*0.5} 0" rpy="${pi/2} 0 0"/>
             <geometry>
-                <cylinder radius="${0.06}" length="${chassis_width*0.5}"/>
+                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_holder_left">
+            <origin xyz="${caster_wheel_offset_x+0.09} ${caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <cylinder radius="0.012" length="0.23"/>
             </geometry>
             <material name="body_color"/>
         </visual>
         <visual name="chassis_caster_joint_left">
             <origin xyz="${caster_wheel_offset_x} ${caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
             <geometry>
-                <sphere radius="0.02"/>
+                <sphere radius="0.03"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_holder_right">
+            <origin xyz="${caster_wheel_offset_x+0.09} ${-caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <cylinder radius="0.012" length="0.23"/>
             </geometry>
             <material name="body_color"/>
         </visual>
         <visual name="chassis_caster_joint_right">
             <origin xyz="${caster_wheel_offset_x} ${-caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
             <geometry>
-                <sphere radius="0.02"/>
+                <sphere radius="0.03"/>
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -144,7 +158,7 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="left_wheel"/>
-        <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2} 0 0" />
+        <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2 - 0.15} 0 0" />
         <axis xyz="0 0 1">
           <limit>
             <lower>-1.79769e+308</lower>
@@ -218,7 +232,7 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="right_wheel"/>
-        <origin xyz="${wheel_offset_x} ${-wheel_offset_y} 0" rpy="${pi/2} 0 0" />
+        <origin xyz="${wheel_offset_x} ${-wheel_offset_y} 0" rpy="${pi/2 - 0.15} 0 0" />
         <axis xyz="0 0 -1">
           <limit>
             <lower>-1.79769e+308</lower>
