@@ -21,8 +21,6 @@
 
     <xacro:include filename="create_1.urdf.xacro" />
 
-    <!-- <xacro:include filename="../../../description/turtle_sensors.xacro" / -->
-
     <xacro:include filename="ros2_control.xacro" />
 
 </robot>
