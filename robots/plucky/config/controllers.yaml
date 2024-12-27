@@ -1,7 +1,7 @@
 controller_manager:     # target node name
   ros__parameters:
     update_rate: 30 # Hz
-    use_sim_time: false
+    #use_sim_time: false
 
     diff_cont:
       type: diff_drive_controller/DiffDriveController
