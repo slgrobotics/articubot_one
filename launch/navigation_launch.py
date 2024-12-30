@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# copied from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
+# originally from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
+# meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
 
 import os
 
@@ -39,11 +40,16 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')        # no default, must be supplied
+    odom_topic = LaunchConfiguration('odom_topic')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
+
+    # composition is used to run multiple Nav2 nodes in a single process to lower the memory utilization and CPU utilization of Nav2.
+    # This is specially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
+    # If you don’t use composition you will have a higher memory utilization and CPU utilization.
 
     lifecycle_nodes = [
         'controller_server',
@@ -98,6 +104,12 @@ def generate_launch_description():
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 
+    declare_odom_topic_cmd = DeclareLaunchArgument(
+        'odom_topic',
+        default_value='odometry/local',
+        description='Odometry topic to use',
+    )
+
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart',
         default_value='true',
@@ -127,6 +139,7 @@ def generate_launch_description():
     )
 
     load_nodes = GroupAction(
+        # run multiple Nav2 nodes in separate processes
         condition=IfCondition(PythonExpression(['not ', use_composition])),
         actions=[
             SetParameter('use_sim_time', use_sim_time),
@@ -138,7 +151,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'),('odom','odometry/local')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_smoother',
@@ -171,7 +184,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_bt_navigator',
@@ -205,7 +218,7 @@ def generate_launch_description():
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings
-                + [('cmd_vel', 'cmd_vel_nav')],
+                + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_collision_monitor',
@@ -241,6 +254,7 @@ def generate_launch_description():
     )
 
     load_composable_nodes = GroupAction(
+        # run multiple Nav2 nodes in a single process
         condition=IfCondition(use_composition),
         actions=[
             SetParameter('use_sim_time', use_sim_time),
@@ -252,7 +266,7 @@ def generate_launch_description():
                         plugin='nav2_controller::ControllerServer',
                         name='controller_server',
                         parameters=[configured_params],
-                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_smoother',
@@ -273,7 +287,7 @@ def generate_launch_description():
                         plugin='behavior_server::BehaviorServer',
                         name='behavior_server',
                         parameters=[configured_params],
-                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav')],
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_bt_navigator',
@@ -295,7 +309,7 @@ def generate_launch_description():
                         name='velocity_smoother',
                         parameters=[configured_params],
                         remappings=remappings
-                        + [('cmd_vel', 'cmd_vel_nav')],
+                        + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_collision_monitor',
@@ -329,6 +343,7 @@ def generate_launch_description():
         LogInfo(msg='============ starting NAVIGATION  use_sim_time:'),
         LogInfo(msg=use_sim_time),
         LogInfo(msg=params_file),
+        LogInfo(msg=odom_topic)
     ])
 
     # Set environment variables
@@ -338,6 +353,7 @@ def generate_launch_description():
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
+    ld.add_action(declare_odom_topic_cmd)
     ld.add_action(declare_autostart_cmd)
     ld.add_action(declare_use_composition_cmd)
     ld.add_action(declare_container_name_cmd)

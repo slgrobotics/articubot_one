@@ -58,8 +58,10 @@ def generate_launch_description():
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'autostart' : 'true',
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     #'use_composition': 'True',
+                                     #'odom_topic': 'diff_cont/odom',
+                                     'autostart' : 'false',
                                      'params_file' : nav2_params_file }.items()
     )
 
@@ -218,8 +220,8 @@ def generate_launch_description():
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
             # use either map_server OR slam_toolbox, as both are mappers
-            map_server,    # localization is left to GPS
-            #slam_toolbox, # localization via LIDAR
+            #map_server,    # localization is left to GPS
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
@@ -256,6 +258,6 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        #delayed_nav
+        delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

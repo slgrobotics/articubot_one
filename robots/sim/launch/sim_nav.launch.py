@@ -26,6 +26,8 @@ def generate_launch_description():
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': 'true',
+                                     #'use_composition': 'True',
+                                     #'odom_topic': 'diff_cont/odom',
                                      'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )

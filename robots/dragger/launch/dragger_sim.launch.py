@@ -70,8 +70,11 @@ def generate_launch_description():
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                #PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("nav2_bringup"),'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'autostart' : 'true',
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     #'use_composition': 'True',
+                                     #'odom_topic': 'diff_cont/odom',
+                                     'use_respawn': 'true',
+                                     'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )
 
