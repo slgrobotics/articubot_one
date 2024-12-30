@@ -339,12 +339,7 @@ def generate_launch_description():
     )
 
     # Create the launch description and populate
-    ld = LaunchDescription([
-        LogInfo(msg='============ starting NAVIGATION  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
-        LogInfo(msg=params_file),
-        LogInfo(msg=odom_topic)
-    ])
+    ld = LaunchDescription()
 
     # Set environment variables
     ld.add_action(stdout_linebuf_envvar)
@@ -363,5 +358,12 @@ def generate_launch_description():
     # Add the actions to launch all of the navigation nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
+
+    ld.add_action(GroupAction([
+        LogInfo(msg='============ starting NAVIGATION  use_sim_time / params_file / odom_topic :'),
+        LogInfo(msg=use_sim_time),
+        LogInfo(msg=params_file),
+        LogInfo(msg=odom_topic)
+    ]))
 
     return ld
