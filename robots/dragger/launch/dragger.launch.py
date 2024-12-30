@@ -38,7 +38,7 @@ def generate_launch_description():
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','slam_toolbox.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','dragger_slam_toolbox.launch.py')]
                 )
     )
 

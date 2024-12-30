@@ -39,7 +39,7 @@ def generate_launch_description():
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','slam_toolbox.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_slam_toolbox.launch.py')]
                 )
     )
 
@@ -73,8 +73,8 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             # use either cartographer OR slam_toolbox, as both are mappers
-            cartographer,
-            #slam_toolbox, # localization via LIDAR
+            #cartographer,
+            slam_toolbox, # localization via LIDAR
         ]
     )
 

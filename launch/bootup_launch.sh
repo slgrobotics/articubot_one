@@ -13,5 +13,5 @@ source /home/ros/robot_ws/install/setup.bash
 
 ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky.launch.py
 #ros2 launch /home/ros/robot_ws/src/articubot_one/robots/sim/launch/sim_nav.launch.py
-#ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/slam_toolbox.launch.py
+#ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky_slam_toolbox.launch.py
 #ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky.launch.py  --show-arguments

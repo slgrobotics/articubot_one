@@ -49,7 +49,7 @@ def generate_launch_description():
     slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_online_async.yaml')
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','slam_toolbox.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_slam_toolbox.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'slam_params_file': slam_toolbox_params_file}.items()
     )
 
@@ -208,8 +208,8 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             # use either cartographer OR slam_toolbox, as both are mappers
-            cartographer,  # localization via LIDAR
-            #slam_toolbox, # localization via LIDAR
+            #cartographer,  # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
