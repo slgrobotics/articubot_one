@@ -5,15 +5,23 @@
     <joint name="imu_joint" type="fixed">
       <parent link="chassis_link"/>
       <child link="imu_link"/>
-      <origin xyz="0.0 0 0.068" rpy="0 0 0"/>
+      <!-- we place IMU between the wheels -->
+      <origin xyz="${imu_offset_x} 0 ${imu_offset_z}" rpy="0 0 0"/>
     </joint>
 
-    <link name="imu_link"/>
+    <link name="imu_link">
+      <visual>
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+        <material name="sensor_blue"/>
+      </visual>
+    </link>
 
-    <joint name="scan_joint" type="fixed">
+    <joint name="laser_joint" type="fixed">
       <parent link="chassis_link"/>
       <child link="laser_frame"/>
-      <origin xyz="0.085 0 0.033" rpy="0 0 0"/>
+      <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="laser_frame">
