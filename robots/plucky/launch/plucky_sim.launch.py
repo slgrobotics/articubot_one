@@ -73,6 +73,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time,
                                      #'use_composition': 'True',
                                      #'odom_topic': 'diff_cont/odom',
+                                     #'use_respawn': 'true',
                                      'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )
@@ -212,9 +213,9 @@ def generate_launch_description():
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            map_server,    # localization is left to GPS
+            #map_server,    # localization is left to GPS
             #cartographer, # localization via LIDAR
-            #slam_toolbox, # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 

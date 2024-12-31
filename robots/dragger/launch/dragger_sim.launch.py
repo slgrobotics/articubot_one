@@ -73,7 +73,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time,
                                      #'use_composition': 'True',
                                      #'odom_topic': 'diff_cont/odom',
-                                     'use_respawn': 'true',
+                                     #'use_respawn': 'true',
                                      'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )
@@ -246,7 +246,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        delayed_nav
+        #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 

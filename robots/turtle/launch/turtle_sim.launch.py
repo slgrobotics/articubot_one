@@ -46,11 +46,9 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    slam_toolbox_params_file = os.path.join(package_path,'config','mapper_params_online_async.yaml')
-
     slam_toolbox = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_slam_toolbox.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'slam_params_file': slam_toolbox_params_file}.items()
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     cartographer = IncludeLaunchDescription(
@@ -74,7 +72,8 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
                                      #'use_composition': 'True',
-                                     'odom_topic': 'diff_cont/odom',
+                                     #'odom_topic': 'diff_cont/odom',
+                                     #'use_respawn': 'true',
                                      'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
     )
@@ -168,7 +167,7 @@ def generate_launch_description():
         #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
         #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
         arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
-        parameters=[{'use_sim_time': use_sim_time}],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
@@ -217,6 +216,16 @@ def generate_launch_description():
 
     delayed_nav = TimerAction(period=10.0, actions=[nav2])
 
+    # start the demo autonomy task (script)
+    # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
+    #waypoint_follower = Node(
+    #    package='nav2_simple_commander',
+    #    executable='example_waypoint_follower',
+    #    emulate_tty=True,
+    #    output='screen',
+    #)
+
+
     # Launch them all!
     return LaunchDescription([
 
@@ -231,5 +240,6 @@ def generate_launch_description():
         gz_include,
         delayed_loc,
         #delayed_nav
+        #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
