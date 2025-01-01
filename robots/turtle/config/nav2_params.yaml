@@ -18,8 +18,8 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 12.0
-    laser_min_range: -1.0
+    laser_max_range: 4.0
+    laser_min_range: 0.2
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 2000
@@ -89,7 +89,7 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.5
+      required_movement_radius: 0.1
       movement_time_allowance: 10.0
     # Goal checker parameters
     #precise_goal_checker:
@@ -100,8 +100,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
+      xy_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.05 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
@@ -131,7 +131,7 @@ controller_server:
         trajectory_step: 5
         time_step: 3
       AckermannConstraints:
-        min_turning_r: 0.2
+        min_turning_r: 0.1
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -219,28 +219,28 @@ local_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
-        inflation_radius: 0.70
+        inflation_radius: 0.20
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
         publish_voxel_map: True
         origin_z: 0.0
         z_resolution: 0.05
-        z_voxels: 16
-        max_obstacle_height: 2.0
-        min_obstacle_height: 0.25 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.5 Meters.
+        z_voxels: 8
+        max_obstacle_height: 1.0
+        min_obstacle_height: 0.05 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.05 Meters.
         mark_threshold: 0
         observation_sources: scan
         scan:
           topic: /scan
-          max_obstacle_height: 2.0
+          max_obstacle_height: 1.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 12.0 # Half or more of maximum lidar data range
-          raytrace_min_range: 0.3  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 9.0 # Half or more of maximum lidar data range
-          obstacle_min_range: 0.3  # > 0.0 avoid that lidar detect robot elements as obstacle
+          raytrace_max_range: 4.0 # Half or more of maximum lidar data range
+          raytrace_min_range: 0.1  # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 3.0 # Half or more of maximum lidar data range
+          obstacle_min_range: 0.1  # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -257,7 +257,7 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      #robot_radius: 0.22
+      robot_radius: 0.22
       #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
       resolution: 0.05
       track_unknown_space: true
@@ -269,14 +269,14 @@ global_costmap:
         observation_sources: scan
         scan:
           topic: /scan
-          max_obstacle_height: 2.0
+          max_obstacle_height: 1.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 12.0 # Maximum lidar data range
-          raytrace_min_range: 0.3 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 9.0 # Quarter or more of maximum lidar data range
-          obstacle_min_range: 0.3 # > 0.0 avoid that lidar detect robot elements as obstacle
+          raytrace_max_range: 4.0 # Maximum lidar data range
+          raytrace_min_range: 0.1 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 3.0 # Quarter or more of maximum lidar data range
+          obstacle_min_range: 0.1 # > 0.0 avoid that lidar detect robot elements as obstacle
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -284,7 +284,7 @@ global_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.7
+        inflation_radius: 0.20
       always_send_full_costmap: True
 
 map_saver:
@@ -303,7 +303,7 @@ planner_server:
     costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.5
+      tolerance: 0.1
       use_astar: false
       allow_unknown: true
 
@@ -408,8 +408,8 @@ collision_monitor:
     scan:
       type: "scan"
       topic: "scan"
-      min_height: 0.15
-      max_height: 2.0
+      min_height: 0.05
+      max_height: 1.0
       enabled: True
 
 docking_server:
