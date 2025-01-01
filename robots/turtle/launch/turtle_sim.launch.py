@@ -65,6 +65,14 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
+    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
+    # see mapper_params.yaml
+    odom_localizer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    )
+
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
@@ -206,6 +214,7 @@ def generate_launch_description():
     localizers_include = GroupAction(
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
+            odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             # use either cartographer OR slam_toolbox, as both are mappers
             #cartographer,  # localization via LIDAR
             slam_toolbox, # localization via LIDAR
