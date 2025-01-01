@@ -83,7 +83,8 @@ def generate_launch_description():
                 #('imu','imu/data'),
                 #('imu','imu_raw'),
                 ('scan','scan'),
-                ('odom','diff_cont/odom')
+                #('odom','diff_cont/odom')  # direct mapping
+                ('odom','odometry/local')   # ekf filter mapping
                 ]
             ),
 

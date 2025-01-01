@@ -52,8 +52,8 @@
               <horizontal>
                 <samples>360</samples>
                 <resolution>1</resolution>
-                <min_angle>-${PI}</min_angle>
-                <max_angle>${PI}</max_angle>
+                <min_angle>-${pi}</min_angle>
+                <max_angle>${pi}</max_angle>
               </horizontal>
               <vertical>
                 <samples>1</samples>

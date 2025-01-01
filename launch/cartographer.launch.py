@@ -79,9 +79,9 @@ def generate_launch_description():
                 ('fix','gps/filtered'),   # use_nav_sat=true  in config/cartographer_lds_2d.lua file
                 ('imu','imu/data'),
                 ('scan','scan'),
-                #('odom','diff_cont/odom')
-                #('odom','odometry/local')
-                ('odom','odometry/global')
+                #('odom','diff_cont/odom')  # direct mapping
+                #('odom','odometry/local')  # ekf filter mapping
+                ('odom','odometry/global')  # dual ekf filter mapping
                 ]
             ),
 

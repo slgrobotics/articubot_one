@@ -82,7 +82,8 @@ def generate_launch_description():
             remappings=[
                 ('imu','imu/data'),
                 ('scan','scan'),
-                ('odom','diff_cont/odom')
+                #('odom','diff_cont/odom')  # direct mapping
+                ('odom','odometry/local')   # ekf filter mapping
                 ]
             ),
 

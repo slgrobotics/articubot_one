@@ -172,7 +172,7 @@ def generate_launch_description():
 
     navsat_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
+                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 
     drive_include = GroupAction(
