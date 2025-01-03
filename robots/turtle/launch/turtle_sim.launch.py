@@ -66,6 +66,7 @@ def generate_launch_description():
     )
 
     # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see mapper_params.yaml
     odom_localizer = IncludeLaunchDescription(
@@ -73,6 +74,12 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
+    # alternative to odom_localizer for slam_toolbox
+    tf_localizer = Node(package = "tf2_ros", 
+                    executable = "static_transform_publisher",
+                    arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+    )
+    
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
@@ -215,6 +222,7 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            tf_localizer,
             # use either cartographer OR slam_toolbox, as both are mappers
             #cartographer,  # localization via LIDAR
             slam_toolbox, # localization via LIDAR
@@ -248,7 +256,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        #delayed_nav
+        delayed_nav,
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
