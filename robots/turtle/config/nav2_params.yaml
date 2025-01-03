@@ -217,9 +217,9 @@ local_costmap:
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
-        inflation_radius: 0.20
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
+        inflation_radius: 0.23  # must be larger than robot footprint
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -284,7 +284,7 @@ global_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.20
+        inflation_radius: 0.200.23  # must be larger than robot footprint
       always_send_full_costmap: True
 
 map_saver:
