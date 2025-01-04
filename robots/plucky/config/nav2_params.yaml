@@ -48,9 +48,9 @@ bt_navigator:
     enable_stamped_cmd_vel: true
     global_frame: map
     robot_base_frame: base_link
-    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
-    odom_topic: /odometry/local   # works
+    #odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
     bt_loop_duration: 10
     default_server_timeout: 20
@@ -316,6 +316,7 @@ smoother_server:
       tolerance: 1.0e-10
       max_its: 1000
       do_refinement: True
+
 # See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
   ros__parameters:
@@ -365,20 +366,20 @@ waypoint_follower:
 # See https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
-    enable_stamped_cmd_vel: true
-    smoothing_frequency: 4.0
-    scale_velocities: False
-    feedback: "OPEN_LOOP"
+    enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
+    smoothing_frequency: 10.0      # Rate to run smoother
+    scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
+    feedback: "OPEN_LOOP"         # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     #feedback: "CLOSED_LOOP"
-    max_velocity: [25.0, 0.0, 20.0]
-    min_velocity: [-25.0, 0.0, -20.0]
-    max_accel: [25.0, 0.0, 32.0]
-    max_decel: [-25.0, 0.0, -32.0]
-    odom_topic: /odometry/local   # works
-    #odom_topic: /diff_cont/odom   # works
-    odom_duration: 0.2
-    deadband_velocity: [0.0, 0.0, 0.0]
-    velocity_timeout: 1.0
+    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]
+    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]
+    max_accel: [2.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]
+    max_decel: [-2.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]
+    #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
+    odom_topic: /diff_cont/odom   # works
+    odom_duration: 0.5  # Period of time (s) to sample odometry information in for velocity estimation
+    deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
+    velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
 
 collision_monitor:
   ros__parameters:
