@@ -37,7 +37,7 @@ amcl:
     save_pose_rate: 0.5
     sigma_hit: 0.2
     tf_broadcast: true
-    transform_tolerance: 0.1
+    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
     update_min_a: 0.2
     update_min_d: 0.25
     z_hit: 0.5
@@ -132,7 +132,7 @@ controller_server:
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
-      transform_tolerance: 0.1
+      transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
@@ -222,7 +222,7 @@ local_costmap:
       width: 50
       height: 50
       resolution: 0.05
-      transform_tolerance: 0.1
+      transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.33
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
@@ -356,8 +356,8 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
-    transform_timeout: 0.1
-    transform_tolerance: 0.1
+    transform_timeout: 1.0
+    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0  # rad/s
     min_rotational_vel: 0.4  # rad/s
@@ -408,7 +408,7 @@ collision_monitor:
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel_nav"
     state_topic: "collision_monitor_state"
-    transform_tolerance: 0.1
+    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
     source_timeout: 1.0
     base_shift_correction: True
     stop_pub_timeout: 2.0
