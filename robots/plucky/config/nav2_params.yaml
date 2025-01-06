@@ -37,7 +37,7 @@ amcl:
     save_pose_rate: 0.5
     sigma_hit: 0.2
     tf_broadcast: true
-    transform_tolerance: 10.0
+    transform_tolerance: 0.1
     update_min_a: 0.2
     update_min_d: 0.25
     z_hit: 0.5
@@ -132,7 +132,7 @@ controller_server:
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
-      transform_tolerance: 10.0
+      transform_tolerance: 0.1
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
@@ -222,7 +222,7 @@ local_costmap:
       width: 50
       height: 50
       resolution: 0.05
-      transform_tolerance: 10.0
+      transform_tolerance: 0.1
       robot_radius: 0.33
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
@@ -317,8 +317,8 @@ planner_server:
     planner_plugins: ["GridBased"]
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 1.0
-      use_astar: true
+      tolerance: 0.5
+      use_astar: false
       allow_unknown: true
 
 # see https://docs.nav2.org/configuration/packages/configuring-smoother-server.html
@@ -335,13 +335,14 @@ smoother_server:
 # See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: true  # default false in Jazzy or older
     local_costmap_topic: local_costmap/costmap_raw
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 12.0
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    cycle_frequency: 12.0  # Frequency to run behavior plugins.
+    action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
     spin:
       plugin: "nav2_behaviors::Spin"
     backup:
@@ -355,11 +356,12 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
-    transform_tolerance: 10.0
+    transform_timeout: 0.1
+    transform_tolerance: 0.1
     simulate_ahead_time: 2.0
-    max_rotational_vel: 1.0
-    min_rotational_vel: 0.4
-    rotational_acc_lim: 3.2
+    max_rotational_vel: 1.0  # rad/s
+    min_rotational_vel: 0.4  # rad/s
+    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2)
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -406,7 +408,7 @@ collision_monitor:
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel_nav"
     state_topic: "collision_monitor_state"
-    transform_tolerance: 10.0
+    transform_tolerance: 0.1
     source_timeout: 1.0
     base_shift_correction: True
     stop_pub_timeout: 2.0
