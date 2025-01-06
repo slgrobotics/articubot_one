@@ -2,6 +2,7 @@
 # copied from /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
 #
 # see https://docs.nav2.org/configuration/index.html
+#     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
