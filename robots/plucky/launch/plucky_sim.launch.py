@@ -155,7 +155,7 @@ def generate_launch_description():
         arguments=["diff_cont", "--controller-manager", "/controller_manager"],
         # remappings don't work here. Use relay.
         #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
-        #remappings=[('/diff_cont/odom','/odom')]
+        #remappings=[('diff_cont/odom','odom')]
     )
 
     # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
@@ -175,13 +175,13 @@ def generate_launch_description():
         )
     )
 
+    rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
+
     rviz = Node(
         package='rviz2',
         executable='rviz2',
         namespace='/',
-        #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
-        #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
-        arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
+        arguments=['-d', rviz_config],
         parameters=[{'use_sim_time': True}],
         output='screen'
     )
@@ -208,7 +208,7 @@ def generate_launch_description():
     gz_include = GroupAction(
         actions=[
 
-            #SetRemap(src='/diff_cont/odom', dst='/odom'),
+            #SetRemap(src='diff_cont/odom', dst='odom'),
 
             gazebo_resource_path,
             gazebo_arguments,
@@ -263,7 +263,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        delayed_nav
+        #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 

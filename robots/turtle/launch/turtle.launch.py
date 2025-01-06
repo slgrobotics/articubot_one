@@ -100,13 +100,13 @@ def generate_launch_description():
 
     delayed_nav = TimerAction(period=10.0, actions=[nav2])
 
+    rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
+
     rviz = Node(
         package='rviz2',
         executable='rviz2',
         namespace='/',
-        #arguments=['-d', os.path.join(package_path, 'config', 'view_bot.rviz')],
-        #arguments=['-d', os.path.join(package_path, 'config', 'map.rviz')],
-        arguments=['-d', os.path.join(package_path, 'config', 'main.rviz')],
+        arguments=['-d', rviz_config],
         parameters=[{'use_sim_time': False}],
         output='screen'
     )
