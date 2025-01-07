@@ -85,6 +85,7 @@ controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
     controller_frequency: 24.0
+    costmap_update_timeout: 0.30
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
     #odom_topic: /odometry/local   # works
@@ -101,7 +102,7 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 1.0
+      required_movement_radius: 0.1
       movement_time_allowance: 10.0
     # Goal checker parameters
     #precise_goal_checker:
@@ -112,8 +113,8 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 1.0
-      yaw_goal_tolerance: 0.5 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
+      xy_goal_tolerance: 0.3
+      yaw_goal_tolerance: 0.05 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
@@ -143,7 +144,7 @@ controller_server:
         trajectory_step: 5
         time_step: 3
       AckermannConstraints:
-        min_turning_r: 0.2
+        min_turning_r: 0.1
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -232,7 +233,7 @@ local_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
-        inflation_radius: 0.331
+        inflation_radius: 0.331  # must be larger than robot footprint
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -277,11 +278,6 @@ global_costmap:
       track_unknown_space: true
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
-      inflation_layer:
-        plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.331
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -299,6 +295,11 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
+        inflation_radius: 0.331  # must be larger than robot footprint
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
@@ -316,9 +317,10 @@ planner_server:
     enable_stamped_cmd_vel: true
     expected_planner_frequency: 12.0
     planner_plugins: ["GridBased"]
+    costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.5
+      tolerance: 0.2
       use_astar: false
       allow_unknown: true
 
@@ -386,9 +388,9 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 10.0      # Rate to run smoother
+    smoothing_frequency: 10.0     # Rate to run smoother
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
-    #feedback: "OPEN_LOOP"         # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
+    #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"
     max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]
     min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]
