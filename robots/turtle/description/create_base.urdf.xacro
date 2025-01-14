@@ -23,7 +23,7 @@
     </link>
 
     <!-- joint name="${prefix}_wheel_joint" type="fixed" -->
-    <joint name="${prefix}_wheel_joint" type="continuous">
+    <joint name="wheel_${prefix}_joint" type="continuous">
       <origin xyz="0 ${y_offset} ${-wheel_radius}" rpy="0 0 0"/>
       <parent link="chassis_link"/>
       <child link="${prefix}_wheel_link"/>
@@ -33,10 +33,7 @@
   </xacro:macro>
 
   <xacro:macro name="create_base" 
-               params="diffdrive_update_rate:=40 wheel_separation wheel_radius:=0.033 wheel_width:=0.024 wheel_torque:=1.0 wheel_accel:=1.8 mass_kg:=3.5 base_diameter *mesh">
-
-    <!-- replaced with ros2_control.xacro -->
-    <!-- xacro:include filename="$(find articubot_one)/robots/turtle/description/create_base_gazebo.urdf.xacro"/ -->
+               params="wheel_separation base_diameter wheel_radius wheel_width mass_kg *mesh">
 
     <!-- The coordinate frame called base_link is rigidly attached to the robot root body. -->
     <link name="base_link">

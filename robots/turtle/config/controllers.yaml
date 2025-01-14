@@ -32,12 +32,12 @@ diff_cont:
 
     use_stamped_vel: true
 
-    left_wheel_names: ["left_wheel_joint"]
-    right_wheel_names: ["right_wheel_joint"]
+    left_wheel_names: ["wheel_left_joint"]
+    right_wheel_names: ["wheel_right_joint"]
 
     wheels_per_side: 1
 
-    wheel_separation: 0.26             # distance between left and right wheels
+    wheel_separation: 0.258  # distance between left and right wheels - as defined in ~/create_robot_ws/src/libcreate/src/types.cpp
     wheel_radius: 0.033
   
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
@@ -96,8 +96,8 @@ diff_cont:
 #      - position
 ##      - velocity
 #    joints:
-#      - left_wheel_joint
-#      - right_wheel_joint
+#      - wheel_left_joint
+#      - wheel_right_joint
 ##    extra_joints:
 ##    map_interface_to_joint_state:
 ##      effort: effort
@@ -109,8 +109,8 @@ diff_cont:
 #joint_broad:
 #  ros__parameters:
 #    joints:
-#      - left_wheel_joint
-#      - right_wheel_joint
+#      - wheel_left_joint
+#      - wheel_right_joint
 #    extra_joints:
 #      - left_caster_wheel_joint
 #      - right_caster_wheel_joint

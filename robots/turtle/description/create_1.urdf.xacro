@@ -13,7 +13,9 @@
 
   <xacro:include filename="create_1_gazebo.urdf.xacro" />
 
-  <xacro:create_base wheel_separation="0.26" base_diameter="0.3302">
+  <!-- wheel_separation - distance between left and right wheels, defined in ~/create_robot_ws/src/libcreate/src/types.cpp -->
+
+  <xacro:create_base wheel_separation="0.258" base_diameter="0.3302" wheel_radius="0.033" wheel_width="0.024" mass_kg="3.5">
     <mesh filename="package://articubot_one/assets/meshes/create_1.dae" />
   </xacro:create_base>
 

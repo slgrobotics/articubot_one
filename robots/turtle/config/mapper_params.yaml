@@ -51,7 +51,9 @@ slam_toolbox:
     max_laser_range: 4.0  # for rastering images
     minimum_time_interval: 0.5
     transform_timeout: 0.2
-    tf_buffer_duration: 30.0
+    tf_buffer_duration: 300.0    # Duration to store TF messages for lookup. Set high if running offline at multiple times speed in synchronous mode.
+    #tf_buffer_duration: 30.0    # mapper_params_online_async.yaml
+    #tf_buffer_duration: 14400.  # mapper_params_offline.yaml
     stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
     #enable_interactive_mode: true
 

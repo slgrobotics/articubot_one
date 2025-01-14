@@ -6,12 +6,18 @@
         <!-- Wheel geometry information - see controllers.yaml -->
 
         <hardware>
+            <xacro:unless value="$(arg sim_mode)">
+                <!-- Actual Create 1 base hardware driver runs on the Turtlebot Raspberry Pi 3B
+                     It publishes /joint_states [wheel_left_joint, wheel_right_joint] <- ! note the names !
+                     see https://github.com/slgrobotics/robots_bringup/tree/main/Docs/Create1 -->
+            </xacro:unless>
+
             <xacro:if value="$(arg sim_mode)">
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </xacro:if>
         </hardware>
 
-        <joint name="left_wheel_joint">
+        <joint name="wheel_left_joint">
             <command_interface name="velocity">
                 <param name="min">-10</param>
                 <param name="max">10</param>
@@ -27,7 +33,7 @@
             </state_interface -->
         </joint>
 
-        <joint name="right_wheel_joint">
+        <joint name="wheel_right_joint">
             <command_interface name="velocity">
                 <param name="min">-10</param>
                 <param name="max">10</param>

@@ -222,7 +222,7 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
-            tf_localizer,
+            #tf_localizer,
             # use either cartographer OR slam_toolbox, as both are mappers
             #cartographer,  # localization via LIDAR
             slam_toolbox, # localization via LIDAR
