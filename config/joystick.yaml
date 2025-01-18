@@ -13,17 +13,24 @@ teleop_twist_joy_node:
     axis_linear:  # Left thumb stick vertical
       x: 1
     scale_linear:
-      x: 0.7
+      # x: 0.7  Adjust linear normal and turbo speeds
+      x: 1.0
     scale_linear_turbo:
+      # x: 1.5
       x: 1.5
 
-    axis_angular:  # Left thumb stick horizontal
-      yaw: 0
-    scale_angular:
-      yaw: 0.4
 
-    # teleop_twist_joy:teleop_node will block /cmd_vel_joy unless one of these buttons are held:
-    enable_button: 0        # "A"
-    enable_turbo_button: 3  # "Y"
+    axis_angular:  # Left thumb stick horizontal
+      yaw: 3
+    scale_angular:
+      # yaw: 0.4  Adjust turn rate
+      yaw: 0.7
+    scale_angular_turbo:  # Add turbo rate 1.5x normal
+      yaw: 1.0
 
     require_enable_button: true
+      # teleop_twist_joy:teleop_node will block /cmd_vel_joy unless one of these buttons are held:
+    enable_button: 4        # "Left Bumper"
+    enable_turbo_button: 5  # "Right Bumper"
+
+
