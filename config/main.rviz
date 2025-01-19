@@ -358,7 +358,7 @@ Visualization Manager:
         Value: false
       Enabled: true
       Keep: 1
-      Name: Odometry
+      Name: Odometry_Wheels
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -396,8 +396,47 @@ Visualization Manager:
           Value: true
         Value: false
       Enabled: true
+      Keep: 200
+      Name: Odometry_Local
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.1
+        Color: 87; 227; 137
+        Head Length: 0.1
+        Head Radius: 0.01
+        Shaft Length: 0.2
+        Shaft Radius: 0.005
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odometry/local
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: false
+      Enabled: true
       Keep: 100
-      Name: Odometry
+      Name: Odometry_Global
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -424,7 +463,7 @@ Visualization Manager:
       Color Scheme: costmap
       Draw Behind: false
       Enabled: true
-      Name: Map
+      Name: Map_Global_Costmap
       Topic:
         Depth: 5
         Durability Policy: Volatile
