@@ -33,6 +33,7 @@ def generate_launch_description():
         #'default_nav_to_pose_bt_xml': os.path.join(robot_path,"behavior_trees","navigate_to_pose_w_replanning_and_recovery.xml")
     }
 
+    # file with substituted parameters, will be something like /tmp/tmpxl0yjxcq
     configured_params = RewrittenYaml(
             source_file=nav2_params_file,
             root_key='',
