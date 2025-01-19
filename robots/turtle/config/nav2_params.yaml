@@ -3,6 +3,7 @@
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
+#     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
@@ -56,14 +57,22 @@ bt_navigator:
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/local
     bt_loop_duration: 10
-    default_server_timeout: 20
+    default_server_timeout: 30
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
+
+    # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+    #default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+    #default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml"
+    #default_nav_to_pose_bt_xml: "nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml"
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+
+      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -87,7 +96,7 @@ controller_server:
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/local   # works
     min_x_velocity_threshold: 0.0001
-    min_y_velocity_threshold: 0.0001
+    min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.0001
     failure_tolerance: 0.3
     progress_checker_plugins: ["progress_checker"]
@@ -292,11 +301,17 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+        enabled: true
+        subscribe_to_updates: true
+        transform_tolerance: 0.1
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
+        enabled: true
+        cost_scaling_factor: 1.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.23  # must be larger than robot footprint
+        inflate_unknown: false
+        inflate_around_unknown: true
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
@@ -345,14 +360,19 @@ behavior_server:
     behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
     spin:
       plugin: "nav2_behaviors::Spin"
+      enable_stamped_cmd_vel: true
     backup:
       plugin: "nav2_behaviors::BackUp"
+      enable_stamped_cmd_vel: true
     drive_on_heading:
       plugin: "nav2_behaviors::DriveOnHeading"
+      enable_stamped_cmd_vel: true
     wait:
       plugin: "nav2_behaviors::Wait"
+      enable_stamped_cmd_vel: true
     assisted_teleop:
       plugin: "nav2_behaviors::AssistedTeleop"
+      enable_stamped_cmd_vel: true
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
@@ -452,6 +472,7 @@ docking_server:
     dock_plugins: ['simple_charging_dock']
     simple_charging_dock:
       plugin: 'opennav_docking::SimpleChargingDock'
+      enable_stamped_cmd_vel: true
       docking_threshold: 0.05
       staging_x_offset: -0.7
       use_external_detection_pose: true
@@ -487,6 +508,5 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
-    scan_frame_id: "laser_frame"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
-    #scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+    scan_frame_id: "laser_frame"
     update_duration: 0.02

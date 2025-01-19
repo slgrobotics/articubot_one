@@ -1,0 +1,24 @@
+<!--
+  See /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees
+      https://docs.nav2.org/behavior_trees/trees/odometry_calibration.html
+
+  This Behavior Tree drives in a 2 meters square 3 times for odometry calibration experiments
+  The robot will be making left turns (CCW)
+-->
+
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Repeat num_cycles="3">
+      <Sequence name="Drive in a square">
+        <DriveOnHeading dist_to_travel="2.0" speed="0.2" time_allowance="12"/>
+        <Spin spin_dist="1.570796" is_recovery="false"/>
+        <DriveOnHeading dist_to_travel="2.0" speed="0.2" time_allowance="12"/>
+        <Spin spin_dist="1.570796" is_recovery="false"/>
+        <DriveOnHeading dist_to_travel="2.0" speed="0.2" time_allowance="12"/>
+        <Spin spin_dist="1.570796" is_recovery="false"/>
+        <DriveOnHeading dist_to_travel="2.0" speed="0.2" time_allowance="12"/>
+        <Spin spin_dist="1.570796" is_recovery="false"/>
+      </Sequence>
+    </Repeat>
+  </BehaviorTree>
+</root>

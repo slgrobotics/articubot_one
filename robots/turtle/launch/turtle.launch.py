@@ -72,17 +72,9 @@ def generate_launch_description():
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
     )
     
-    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
-
-    # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time,
-                                     #'use_composition': 'True',
-                                     #'odom_topic': 'diff_cont/odom',
-                                     #'use_respawn': 'true',
-                                     'autostart' : 'true',
-                                     'params_file' : nav2_params_file }.items()
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time }.items()
     )
 
     localizers_include = GroupAction(
@@ -123,7 +115,7 @@ def generate_launch_description():
         joystick,
         twist_mux,
         delayed_loc,
-        delayed_nav,
+        #delayed_nav,
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
         rviz
     ])
