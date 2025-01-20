@@ -63,6 +63,7 @@ bt_navigator:
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+    # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
     default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
     default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
     navigate_to_pose:
@@ -97,7 +98,7 @@ controller_server:
     min_x_velocity_threshold: 0.0001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.0001
-    failure_tolerance: 0.3
+    failure_tolerance: 0.5
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
@@ -117,7 +118,7 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.1
+      xy_goal_tolerance: 0.3
       yaw_goal_tolerance: 0.05 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
@@ -225,8 +226,8 @@ local_costmap:
       robot_base_frame: base_link
       static_map: false
       rolling_window: true
-      width: 3
-      height: 3
+      width: 10
+      height: 10
       resolution: 0.05
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.22
@@ -359,19 +360,14 @@ behavior_server:
     behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
     spin:
       plugin: "nav2_behaviors::Spin"
-      enable_stamped_cmd_vel: true
     backup:
       plugin: "nav2_behaviors::BackUp"
-      enable_stamped_cmd_vel: true
     drive_on_heading:
       plugin: "nav2_behaviors::DriveOnHeading"
-      enable_stamped_cmd_vel: true
     wait:
       plugin: "nav2_behaviors::Wait"
-      enable_stamped_cmd_vel: true
     assisted_teleop:
       plugin: "nav2_behaviors::AssistedTeleop"
-      enable_stamped_cmd_vel: true
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
@@ -471,7 +467,6 @@ docking_server:
     dock_plugins: ['simple_charging_dock']
     simple_charging_dock:
       plugin: 'opennav_docking::SimpleChargingDock'
-      enable_stamped_cmd_vel: true
       docking_threshold: 0.05
       staging_x_offset: -0.7
       use_external_detection_pose: true
