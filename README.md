@@ -12,6 +12,10 @@ To see how different robots co-exist within this package, look into the _robots_
 
 Adding a new robot should be as easy as copying an existing folder (e.g. _plucky_), renaming the copy and modifying files to fit your needs.
 
+## Note: Purpose and Limitations of this Project
+
+This software is not ready for production use. It has neither been developed nor tested for a specific use case. However, the license conditions of the applicable Open Source licenses allow you to adapt the software to your needs. Before using it in a safety relevant setting, make sure that the software fulfills your requirements and adjust it according to any applicable safety standards, e.g., ISO 26262.
+
 -----------------------
 
 The inspiration (and the origin of some code here) is _Articulated Robotics_ by Josh Newans, a mechatronics engineer from Newcastle, Australia.
