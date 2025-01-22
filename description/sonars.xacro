@@ -13,10 +13,12 @@
     
      -->
 
+    <xacro:property name="sonars_angle_offset" value="${pi/20}"/>
+
     <joint name="sonar_F_L_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_F_L_frame"/>
-        <origin xyz="${sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${sonars_angle_offset}"/>
     </joint>
 
     <!-- the name "sonar_F_L_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -75,7 +77,7 @@
     <joint name="sonar_F_R_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_F_R_frame"/>
-        <origin xyz="${sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${-sonars_angle_offset}"/>
     </joint>
 
     <!-- the name "sonar_F_R_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -134,7 +136,7 @@
     <joint name="sonar_B_L_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_B_L_frame"/>
-        <origin xyz="${-sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi}"/>
+        <origin xyz="${-sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi-sonars_angle_offset}"/>
     </joint>
 
     <!-- the name "sonar_B_L_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -193,7 +195,7 @@
     <joint name="sonar_B_R_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_B_R_frame"/>
-        <origin xyz="${-sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi}"/>
+        <origin xyz="${-sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi+sonars_angle_offset}"/>
     </joint>
 
     <!-- the name "sonar_B_R_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
