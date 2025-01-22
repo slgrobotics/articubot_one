@@ -14,11 +14,32 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
+
 - ros_topic_name: "sonar_F_L"
   gz_topic_name: "gz_sonar_F_L"
   ros_type_name: "sensor_msgs/msg/LaserScan"
+  #ros_type_name: "sensor_msgs/msg/Range"    - this doesn't work
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
+
+- ros_topic_name: "sonar_F_R"
+  gz_topic_name: "gz_sonar_F_R"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "sonar_B_L"
+  gz_topic_name: "gz_sonar_B_L"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "sonar_B_R"
+  gz_topic_name: "gz_sonar_B_R"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
 
 - ros_topic_name: "pointcloud2d"
   gz_topic_name: "pointcloud2d"

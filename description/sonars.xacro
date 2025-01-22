@@ -89,10 +89,52 @@
         </visual>
     </link>
 
+    <!-- gz model -m dragger -s sonar_F_R_frame -->
+    <gazebo reference="sonar_F_R_frame">
+        <!-- name must be "sonar_F_R_frame", specifically for sonars. Must reference an actual link in .xacro -->
+        <sensor name='sonar_F_R_frame' type='gpu_lidar'>
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>1</always_on>
+          <!-- 6 Hz for LD14 - see "frequency" in dual_ekf_navsat_parameters.yaml -->
+          <update_rate>6</update_rate>
+          <topic>gz_sonar_F_R</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>sonar_F_R_frame</gz_frame_id>
+          <frame_id>sonar_F_R_frame</frame_id>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>10</samples>
+                <resolution>1</resolution>
+                <min_angle>-${pi/40}</min_angle>
+                <max_angle>${pi/40}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <resolution>1</resolution>
+                <min_angle>0.0</min_angle>
+                <max_angle>0.0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.3</min>
+              <max>3.0</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </ray>
+          <visualize>true</visualize>
+        </sensor>
+    </gazebo>
+
     <joint name="sonar_B_L_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_B_L_frame"/>
-        <origin xyz="${-sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${-sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi}"/>
     </joint>
 
     <!-- the name "sonar_B_L_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -106,10 +148,52 @@
         </visual>
     </link>
 
+    <!-- gz model -m dragger -s sonar_B_R_frame -->
+    <gazebo reference="sonar_B_L_frame">
+        <!-- name must be "sonar_B_L_frame", specifically for sonars. Must reference an actual link in .xacro -->
+        <sensor name='sonar_B_L_frame' type='gpu_lidar'>
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>1</always_on>
+          <!-- 6 Hz for LD14 - see "frequency" in dual_ekf_navsat_parameters.yaml -->
+          <update_rate>6</update_rate>
+          <topic>gz_sonar_B_L</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>sonar_B_L_frame</gz_frame_id>
+          <frame_id>sonar_B_L_frame</frame_id>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>10</samples>
+                <resolution>1</resolution>
+                <min_angle>-${pi/40}</min_angle>
+                <max_angle>${pi/40}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <resolution>1</resolution>
+                <min_angle>0.0</min_angle>
+                <max_angle>0.0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.3</min>
+              <max>3.0</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </ray>
+          <visualize>true</visualize>
+        </sensor>
+    </gazebo>
+
     <joint name="sonar_B_R_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="sonar_B_R_frame"/>
-        <origin xyz="${-sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${-sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi}"/>
     </joint>
 
     <!-- the name "sonar_B_R_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
@@ -122,5 +206,47 @@
             <material name="sensor_blue"/>
         </visual>
     </link>
+
+    <!-- gz model -m dragger -s sonar_B_R_frame -->
+    <gazebo reference="sonar_B_R_frame">
+        <!-- name must be "sonar_B_R_frame", specifically for sonars. Must reference an actual link in .xacro -->
+        <sensor name='sonar_B_R_frame' type='gpu_lidar'>
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>1</always_on>
+          <!-- 6 Hz for LD14 - see "frequency" in dual_ekf_navsat_parameters.yaml -->
+          <update_rate>6</update_rate>
+          <topic>gz_sonar_B_R</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>sonar_B_R_frame</gz_frame_id>
+          <frame_id>sonar_B_R_frame</frame_id>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>10</samples>
+                <resolution>1</resolution>
+                <min_angle>-${pi/40}</min_angle>
+                <max_angle>${pi/40}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <resolution>1</resolution>
+                <min_angle>0.0</min_angle>
+                <max_angle>0.0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.3</min>
+              <max>3.0</max>
+              <resolution>0.01</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </ray>
+          <visualize>true</visualize>
+        </sensor>
+    </gazebo>
 
 </robot>
