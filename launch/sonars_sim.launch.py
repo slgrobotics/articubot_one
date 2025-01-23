@@ -33,7 +33,7 @@ def generate_launch_description():
                                 max_range: m.range_max, \
                                 min_range: m.range_min, \
                                 radiation_type: 0, \
-                                range: 1.2345, \
+                                range: "m.ranges[3]", \
                                 variance: 0.01 \
                               } \
                          ']
