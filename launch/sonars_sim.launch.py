@@ -14,8 +14,7 @@ def generate_launch_description():
 
 
     # Note: radiation_type ULTRASOUND=0 INFRARED=1
-    #   range: m.ranges[0],  - this doesn't work, See https://github.com/ros-tooling/topic_tools/blob/jazzy/topic_tools/topic_tools/relay_field.py
-
+    # See https://github.com/ros-tooling/topic_tools/blob/jazzy/topic_tools/topic_tools/relay_field.py
 
     sonar_F_L_node = Node(
                 package='topic_tools',
@@ -30,6 +29,76 @@ def generate_launch_description():
                                         stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
                                         frame_id: m.header.frame_id \
                                       }, \
+                                field_of_view: 0.1, \
+                                max_range: m.range_max, \
+                                min_range: m.range_min, \
+                                radiation_type: 0, \
+                                range: "m.ranges[3]", \
+                                variance: 0.01 \
+                              } \
+                         ']
+            )
+
+    sonar_F_R_node = Node(
+                package='topic_tools',
+                executable='relay_field',
+                name='sonar_F_R_relay',
+                output='screen',
+                respawn=True,
+                respawn_delay=2.0,
+                arguments=['/sonar_F_R_sim', '/sonar_F_R', 'sensor_msgs/msg/Range', \
+                            '{ \
+                                header: { \
+                                        stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
+                                        frame_id: m.header.frame_id \
+                                      }, \
+                                field_of_view: 0.1, \
+                                max_range: m.range_max, \
+                                min_range: m.range_min, \
+                                radiation_type: 0, \
+                                range: "m.ranges[3]", \
+                                variance: 0.01 \
+                              } \
+                         ']
+            )
+
+    sonar_B_L_node = Node(
+                package='topic_tools',
+                executable='relay_field',
+                name='sonar_B_L_relay',
+                output='screen',
+                respawn=True,
+                respawn_delay=2.0,
+                arguments=['/sonar_B_L_sim', '/sonar_B_L', 'sensor_msgs/msg/Range', \
+                            '{ \
+                                header: { \
+                                        stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
+                                        frame_id: m.header.frame_id \
+                                      }, \
+                                field_of_view: 0.1, \
+                                max_range: m.range_max, \
+                                min_range: m.range_min, \
+                                radiation_type: 0, \
+                                range: "m.ranges[3]", \
+                                variance: 0.01 \
+                              } \
+                         ']
+            )
+
+    sonar_B_R_node = Node(
+                package='topic_tools',
+                executable='relay_field',
+                name='sonar_B_R_relay',
+                output='screen',
+                respawn=True,
+                respawn_delay=2.0,
+                arguments=['/sonar_B_R_sim', '/sonar_B_R', 'sensor_msgs/msg/Range', \
+                            '{ \
+                                header: { \
+                                        stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
+                                        frame_id: m.header.frame_id \
+                                      }, \
+                                field_of_view: 0.1, \
                                 max_range: m.range_max, \
                                 min_range: m.range_min, \
                                 radiation_type: 0, \
@@ -44,5 +113,8 @@ def generate_launch_description():
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(sonar_F_L_node)
+    ld.add_action(sonar_F_R_node)
+    ld.add_action(sonar_B_L_node)
+    ld.add_action(sonar_B_R_node)
 
     return ld

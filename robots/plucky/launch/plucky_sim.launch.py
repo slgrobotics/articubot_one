@@ -241,6 +241,9 @@ def generate_launch_description():
         ]
     )
 
+    # relay_field crashes if sim sonar (lidar) topics are not present yet. 
+    delayed_sonars = TimerAction(period=5.0, actions=[sonar_nodes])
+
     delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
 
     delayed_nav = TimerAction(period=10.0, actions=[nav2])
@@ -268,7 +271,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        sonar_nodes,
+        delayed_sonars,
         #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

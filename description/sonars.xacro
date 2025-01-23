@@ -47,7 +47,7 @@
           <ray>
             <scan>
               <horizontal>
-                <samples>10</samples>
+                <samples>7</samples>
                 <resolution>1</resolution>
                 <min_angle>-${pi/40}</min_angle>
                 <max_angle>${pi/40}</max_angle>
@@ -106,7 +106,7 @@
           <ray>
             <scan>
               <horizontal>
-                <samples>10</samples>
+                <samples>7</samples>
                 <resolution>1</resolution>
                 <min_angle>-${pi/40}</min_angle>
                 <max_angle>${pi/40}</max_angle>
@@ -165,7 +165,7 @@
           <ray>
             <scan>
               <horizontal>
-                <samples>10</samples>
+                <samples>7</samples>
                 <resolution>1</resolution>
                 <min_angle>-${pi/40}</min_angle>
                 <max_angle>${pi/40}</max_angle>
@@ -224,7 +224,7 @@
           <ray>
             <scan>
               <horizontal>
-                <samples>10</samples>
+                <samples>7</samples>
                 <resolution>1</resolution>
                 <min_angle>-${pi/40}</min_angle>
                 <max_angle>${pi/40}</max_angle>
