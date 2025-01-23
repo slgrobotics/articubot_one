@@ -198,6 +198,11 @@ def generate_launch_description():
         output='screen'
     )
 
+    sonar_nodes = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','sonars_sim.launch.py')]
+                )
+    )
+
     navsat_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
@@ -263,7 +268,8 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        delayed_nav
+        sonar_nodes,
+        #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
