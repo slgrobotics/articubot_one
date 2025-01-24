@@ -254,9 +254,11 @@ local_costmap:
         max_obstacle_height: 1.6
         min_obstacle_height: 0.2 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.2 Meters.
         mark_threshold: 0
-        observation_sources: scan
+
+        observation_sources: scan sonar_F_L sonar_F_R sonar_B_L sonar_B_R
+
         scan:
-          topic: /scan
+          topic: scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -265,15 +267,46 @@ local_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
-      static_layer:
-        plugin: "nav2_costmap_2d::StaticLayer"
-        map_subscribe_transient_local: True
+
+        sonar_F_L:
+          sensor_frame: sonar_F_L_frame
+          data_type: "Range"
+          topic: sonar_F_L
+          clearing: True
+          marking: True
+
+        sonar_F_R:
+          sensor_frame: sonar_F_R_frame
+          data_type: "Range"
+          topic: sonar_F_R
+          clearing: True
+          marking: True
+
+        sonar_B_L:
+          sensor_frame: sonar_B_L_frame
+          data_type: "Range"
+          topic: sonar_B_L
+          clearing: True
+          marking: True
+
+        sonar_B_R:
+          sensor_frame: sonar_B_R_frame
+          data_type: "Range"
+          topic: sonar_B_R
+          clearing: True
+          marking: True
+
       sonar_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["/sonar"]
+        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
         mark_threshold: 0.7
         inflate_cone: 0.99
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-costmaps.html
@@ -299,7 +332,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: scan
           max_obstacle_height: 1.6
           clearing: True
           marking: True
