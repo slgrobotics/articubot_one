@@ -85,34 +85,24 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-        <!-- <visual name="chassis_visual_bottom">
-            <origin xyz="0 0 ${chassis_height/8}"/>
+        <visual name="chassis_gz_visual">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/>
+                <!-- <mesh filename="file://$(find stingray)/description/Stingray.stl" scale="0.001 0.001 0.001"/> -->
+                <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
-            <material name="body_color"/>
+            <material name="grey"/>
         </visual>
-        <visual name="chassis_visual_front">
-            <origin xyz="0.15 0 ${chassis_height/2-0.03}" rpy="0 ${pi/4} 0"/>
+        <visual name="chassis_rviz_visual">
+             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <box size="0.25 ${chassis_width} 0.01"/>
+                <!-- box size="${chassis_length} ${chassis_width} ${chassis_height}"/ -->
+                <!-- <mesh filename="file://$(find stingray)/description/meshes/Stingray.stl" scale="0.001 0.001 0.001"/> -->
+                <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
-            <material name="body_color"/>
+            <material name="grey"/>
         </visual>
-        <visual name="chassis_visual_back">
-            <origin xyz="-0.07 0 ${chassis_height/2-0.03}" rpy="0 -${pi/4} 0"/>
-            <geometry>
-                <box size="0.25 ${chassis_width} 0.01"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_top_visual">
-            <origin xyz="${wheel_offset_x} 0 ${chassis_height*3/4}"/>
-            <geometry>
-                <box size="${chassis_top_length} ${chassis_width} ${chassis_height/2}"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual> -->
+
         <visual name="chassis_front_axle_left">
             <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
             <geometry>
