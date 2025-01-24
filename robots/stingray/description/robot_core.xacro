@@ -85,7 +85,7 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-        <visual name="chassis_visual_bottom">
+        <!-- <visual name="chassis_visual_bottom">
             <origin xyz="0 0 ${chassis_height/8}"/>
             <geometry>
                 <box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/>
@@ -112,7 +112,7 @@
                 <box size="${chassis_top_length} ${chassis_width} ${chassis_height/2}"/>
             </geometry>
             <material name="body_color"/>
-        </visual>
+        </visual> -->
         <visual name="chassis_front_axle_left">
             <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
             <geometry>
