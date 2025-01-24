@@ -238,12 +238,14 @@ local_costmap:
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.34  # must be larger than robot footprint
+
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -257,7 +259,7 @@ local_costmap:
         observation_sources: scan
 
         scan:
-          topic: scan
+          topic: "/scan"
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -270,40 +272,15 @@ local_costmap:
       sonar_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
         phi: 1.2
         no_readings_timeout: 0.0
         mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        inflate_cone: 0.99    # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
         clear_on_max_reading: false # default false. Clear on max reading
-        input_sensor_type: VARIABLE # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
-
-        observation_sources: sonar_F_L sonar_F_R sonar_B_L sonar_B_R
-
-        sonar_F_L:
-          sensor_frame: sonar_F_L_frame
-          data_type: "Range"
-          topic: sonar_F_L
-          clearing: True
-          marking: True
-        sonar_F_R:
-          sensor_frame: sonar_F_R_frame
-          data_type: "Range"
-          topic: sonar_F_R
-          clearing: True
-          marking: True
-        sonar_B_L:
-          sensor_frame: sonar_B_L_frame
-          data_type: "Range"
-          topic: sonar_B_L
-          clearing: True
-          marking: True
-        sonar_B_R:
-          sensor_frame: sonar_B_R_frame
-          data_type: "Range"
-          topic: sonar_B_R
-          clearing: True
-          marking: True
+        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -329,12 +306,13 @@ global_costmap:
       track_unknown_space: true
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
+
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
-          topic: scan
+          topic: "/scan"
           max_obstacle_height: 1.6
           clearing: True
           marking: True
@@ -347,40 +325,15 @@ global_costmap:
       sonar_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
         phi: 1.2
         no_readings_timeout: 0.0
         mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        inflate_cone: 0.99    # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
         clear_on_max_reading: false # default false. Clear on max reading
-        input_sensor_type: VARIABLE # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
-
-        observation_sources: sonar_F_L sonar_F_R sonar_B_L sonar_B_R
-
-        sonar_F_L:
-          sensor_frame: sonar_F_L_frame
-          data_type: "Range"
-          topic: sonar_F_L
-          clearing: True
-          marking: True
-        sonar_F_R:
-          sensor_frame: sonar_F_R_frame
-          data_type: "Range"
-          topic: sonar_F_R
-          clearing: True
-          marking: True
-        sonar_B_L:
-          sensor_frame: sonar_B_L_frame
-          data_type: "Range"
-          topic: sonar_B_L
-          clearing: True
-          marking: True
-        sonar_B_R:
-          sensor_frame: sonar_B_R_frame
-          data_type: "Range"
-          topic: sonar_B_R
-          clearing: True
-          marking: True
+        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -388,6 +341,7 @@ global_costmap:
         enabled: true
         subscribe_to_updates: true
         transform_tolerance: 0.5
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
