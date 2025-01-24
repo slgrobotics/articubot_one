@@ -243,7 +243,7 @@ local_costmap:
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.331  # must be larger than robot footprint
+        inflation_radius: 0.34  # must be larger than robot footprint
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -254,8 +254,7 @@ local_costmap:
         max_obstacle_height: 1.6
         min_obstacle_height: 0.2 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.2 Meters.
         mark_threshold: 0
-
-        observation_sources: scan sonar_F_L sonar_F_R sonar_B_L sonar_B_R
+        observation_sources: scan
 
         scan:
           topic: scan
@@ -268,40 +267,43 @@ local_costmap:
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
 
+      sonar_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
+        phi: 1.2
+        no_readings_timeout: 0.0
+        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        inflate_cone: 0.99    # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        clear_on_max_reading: false # default false. Clear on max reading
+        input_sensor_type: VARIABLE # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+
+        observation_sources: sonar_F_L sonar_F_R sonar_B_L sonar_B_R
+
         sonar_F_L:
           sensor_frame: sonar_F_L_frame
           data_type: "Range"
           topic: sonar_F_L
           clearing: True
           marking: True
-
         sonar_F_R:
           sensor_frame: sonar_F_R_frame
           data_type: "Range"
           topic: sonar_F_R
           clearing: True
           marking: True
-
         sonar_B_L:
           sensor_frame: sonar_B_L_frame
           data_type: "Range"
           topic: sonar_B_L
           clearing: True
           marking: True
-
         sonar_B_R:
           sensor_frame: sonar_B_R_frame
           data_type: "Range"
           topic: sonar_B_R
           clearing: True
           marking: True
-
-      sonar_layer:
-        plugin: "nav2_costmap_2d::RangeSensorLayer"
-        enabled: True
-        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
-        mark_threshold: 0.7
-        inflate_cone: 0.99
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -326,7 +328,7 @@ global_costmap:
       resolution: 0.05
       track_unknown_space: true
       # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -341,6 +343,45 @@ global_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+
+      sonar_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"]
+        phi: 1.2
+        no_readings_timeout: 0.0
+        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        inflate_cone: 0.99    # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        clear_on_max_reading: false # default false. Clear on max reading
+        input_sensor_type: VARIABLE # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+
+        observation_sources: sonar_F_L sonar_F_R sonar_B_L sonar_B_R
+
+        sonar_F_L:
+          sensor_frame: sonar_F_L_frame
+          data_type: "Range"
+          topic: sonar_F_L
+          clearing: True
+          marking: True
+        sonar_F_R:
+          sensor_frame: sonar_F_R_frame
+          data_type: "Range"
+          topic: sonar_F_R
+          clearing: True
+          marking: True
+        sonar_B_L:
+          sensor_frame: sonar_B_L_frame
+          data_type: "Range"
+          topic: sonar_B_L
+          clearing: True
+          marking: True
+        sonar_B_R:
+          sensor_frame: sonar_B_R_frame
+          data_type: "Range"
+          topic: sonar_B_R
+          clearing: True
+          marking: True
+
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
@@ -352,7 +393,7 @@ global_costmap:
         enabled: true
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.331  # must be larger than robot footprint
+        inflation_radius: 0.34  # must be larger than robot footprint
         inflate_unknown: false
         inflate_around_unknown: true
       always_send_full_costmap: True
