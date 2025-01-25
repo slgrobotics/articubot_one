@@ -4,10 +4,14 @@
     <xacro:include filename="../../../description/inertial_macros.xacro"/>
 
 	<!-- Values corrected for stingray robot -->
-    <xacro:property name="chassis_length" value="0.48"/>
-    <xacro:property name="chassis_width" value="0.42"/>
-    <xacro:property name="chassis_height" value="0.45"/>
-    <xacro:property name="chassis_mass" value="10.0"/>
+    <!-- <xacro:property name="chassis_length" value="0.48"/> -->
+    <!-- <xacro:property name="chassis_width" value="0.42"/> -->
+    <!-- <xacro:property name="chassis_height" value="0.45"/> -->
+    <!-- <xacro:property name="chassis_mass" value="10.0"/> -->
+    <xacro:property name="chassis_length" value="0.266"/>
+    <xacro:property name="chassis_width" value="0.228"/>
+    <xacro:property name="chassis_height" value="0.081"/>
+    <xacro:property name="chassis_mass" value="0.98"/>
     <xacro:property name="chassis_top_length" value="0.095"/>
     <xacro:property name="wheel_radius" value="0.192"/>
     <xacro:property name="wheel_thickness" value="0.045"/>
@@ -59,7 +63,7 @@
     <!-- Define the center of the main robot chassis projected on the ground -->   
     <link name="base_footprint">
         <visual name="footprint_visual">
-            <origin xyz="0 0 0.01"/>
+            <origin xyz="0 0 0.001"/>
             <geometry>
                 <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
                 <cylinder radius="${wheel_offset_y + wheel_thickness + 0.03}" length="0.01"/>
@@ -91,7 +95,7 @@
                 <!-- <mesh filename="file://$(find stingray)/description/Stingray.stl" scale="0.001 0.001 0.001"/> -->
                 <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
-            <material name="grey"/>
+            <material name="acrylic"/>
         </visual>
         <visual name="chassis_rviz_visual">
              <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -100,8 +104,19 @@
                 <!-- <mesh filename="file://$(find stingray)/description/meshes/Stingray.stl" scale="0.001 0.001 0.001"/> -->
                 <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
-            <material name="grey"/>
+            <material name="acrylic"/>
         </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+		        <!-- collision doesn't need to be a mesh, a box is sufficient -->
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_box>
+
 
         <visual name="chassis_front_axle_left">
             <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
