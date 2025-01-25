@@ -110,6 +110,12 @@ def generate_launch_description():
         arguments=["diff_cont"]
     )
 
+    sonar_f_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["range_sensor_broadcaster_F_L"]
+    )
+
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
@@ -121,6 +127,13 @@ def generate_launch_description():
         event_handler=OnProcessStart(
             target_action=joint_broad_spawner,
             on_start=[diff_drive_spawner],
+        )
+    )
+
+    delayed_sonar_f_l_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=diff_drive_spawner,
+            on_start=[sonar_f_l_spawner],
         )
     )
 
@@ -203,7 +216,8 @@ def generate_launch_description():
             twist_mux,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner
+            delayed_joint_broad_spawner,
+            delayed_sonar_f_l_spawner
         ]
     )
 
