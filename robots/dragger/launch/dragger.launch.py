@@ -22,24 +22,26 @@ def generate_launch_description():
 
     robot_path = os.path.join(package_path, 'robots', robot_model)
 
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
     # joystick = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-    #             )
+    #             ), launch_arguments={'use_sim_time': use_sim_time}.items()
     # )
 
     twist_mux = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     slam_toolbox = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','dragger_slam_toolbox.launch.py')]
-                )
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
@@ -47,8 +49,8 @@ def generate_launch_description():
 
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false'}.items()       # empty_map - default
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': 'false'}.items() # warehouse
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
@@ -56,7 +58,7 @@ def generate_launch_description():
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': 'false',
+                ), launch_arguments={'use_sim_time': use_sim_time,
                                      #'use_composition': 'True',
                                      #'odom_topic': 'diff_cont/odom',
                                      'autostart' : 'true',
@@ -69,7 +71,13 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controllers_params_file],
-        remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+        remappings=[
+            ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+            ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
+            ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
+            ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
+            ('sonar_broadcaster_B_R/range', 'sonar_B_R')
+        ]
     )
 
     delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
@@ -77,7 +85,7 @@ def generate_launch_description():
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad"],
+        arguments=["joint_broad"]
     )
 
     diff_drive_spawner = Node(
@@ -86,17 +94,48 @@ def generate_launch_description():
         arguments=["diff_cont"]
     )
 
+    sonar_f_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_F_L"]
+    )
+
+    sonar_f_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_F_R"]
+    )
+
+    sonar_b_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_L"]
+    )
+
+    sonar_b_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_R"]
+    )
+
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
-            on_start=[joint_broad_spawner],
+            on_start=[joint_broad_spawner]
         )
     )
 
     delayed_diff_drive_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner],
+            on_start=[diff_drive_spawner]
+        )
+    )
+
+    delayed_sonars_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=diff_drive_spawner,
+            on_start=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner]
         )
     )
 
@@ -180,7 +219,8 @@ def generate_launch_description():
             twist_mux,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner
+            delayed_joint_broad_spawner,
+            delayed_sonars_spawner
         ]
     )
 
@@ -208,6 +248,12 @@ def generate_launch_description():
 
     # Launch them all!
     return LaunchDescription([
+
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'),
+
         rsp,
         # joystick,
         drive_include,
