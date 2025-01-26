@@ -93,7 +93,13 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controllers_params_file],
-        remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+        remappings=[
+            ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+            ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
+            ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
+            ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
+            ('sonar_broadcaster_B_R/range', 'sonar_B_R')
+        ]
     )
 
     delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
