@@ -9,16 +9,16 @@ controller_manager:     # target node name
     joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    range_sensor_broadcaster_F_L:
+    sonar_broadcaster_F_L:
       type: range_sensor_broadcaster/RangeSensorBroadcaster
 
-    range_sensor_broadcaster_F_R:
+    sonar_broadcaster_F_R:
       type: range_sensor_broadcaster/RangeSensorBroadcaster
 
-    range_sensor_broadcaster_B_L:
+    sonar_broadcaster_B_L:
       type: range_sensor_broadcaster/RangeSensorBroadcaster
 
-    range_sensor_broadcaster_B_R:
+    sonar_broadcaster_B_R:
       type: range_sensor_broadcaster/RangeSensorBroadcaster
 
 diff_cont:
@@ -112,7 +112,7 @@ diff_cont:
 #     https://github.com/ros-controls/ros2_controllers/blob/master/range_sensor_broadcaster/src/range_sensor_broadcaster.cpp
 #     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/PluckyWheelsROS
 #     https://github.com/slgrobotics/diffdrive_arduino/tree/main
-range_sensor_broadcaster_F_L:
+sonar_broadcaster_F_L:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_F_L_frame'
@@ -122,7 +122,7 @@ range_sensor_broadcaster_F_L:
     sensor_name: 'sonar_F_L'
     variance: 0.01
 
-range_sensor_broadcaster_F_R:
+sonar_broadcaster_F_R:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_F_R_frame'
@@ -132,7 +132,7 @@ range_sensor_broadcaster_F_R:
     sensor_name: 'sonar_F_R'
     variance: 0.01
 
-range_sensor_broadcaster_B_L:
+sonar_broadcaster_B_L:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_B_L_frame'
@@ -142,7 +142,7 @@ range_sensor_broadcaster_B_L:
     sensor_name: 'sonar_B_L'
     variance: 0.01
 
-range_sensor_broadcaster_B_R:
+sonar_broadcaster_B_R:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_B_R_frame'

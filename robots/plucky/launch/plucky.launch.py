@@ -101,7 +101,7 @@ def generate_launch_description():
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad"],
+        arguments=["joint_broad"]
     )
 
     diff_drive_spawner = Node(
@@ -113,27 +113,45 @@ def generate_launch_description():
     sonar_f_l_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["range_sensor_broadcaster_F_L"]
+        arguments=["sonar_broadcaster_F_L"]
+    )
+
+    sonar_f_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_F_R"]
+    )
+
+    sonar_b_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_L"]
+    )
+
+    sonar_b_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_R"]
     )
 
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
-            on_start=[joint_broad_spawner],
+            on_start=[joint_broad_spawner]
         )
     )
 
     delayed_diff_drive_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner],
+            on_start=[diff_drive_spawner]
         )
     )
 
-    delayed_sonar_f_l_spawner = RegisterEventHandler(
+    delayed_sonars_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=diff_drive_spawner,
-            on_start=[sonar_f_l_spawner],
+            on_start=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner]
         )
     )
 
@@ -217,7 +235,7 @@ def generate_launch_description():
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
-            delayed_sonar_f_l_spawner
+            delayed_sonars_spawner
         ]
     )
 
