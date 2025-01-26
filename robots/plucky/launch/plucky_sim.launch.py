@@ -272,7 +272,7 @@ def generate_launch_description():
         gz_include,
         delayed_loc,
         delayed_sonars,
-        #delayed_nav
+        delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
