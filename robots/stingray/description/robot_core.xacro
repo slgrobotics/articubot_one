@@ -12,7 +12,7 @@
     <xacro:property name="chassis_width" value="0.228"/>
     <xacro:property name="chassis_height" value="0.081"/>
     <xacro:property name="chassis_mass" value="0.98"/>
-    <xacro:property name="chassis_top_length" value="0.095"/>
+    <!-- <xacro:property name="chassis_top_length" value="0.095"/> -->
     <!-- <xacro:property name="wheel_radius" value="0.192"/> -->
     <!-- <xacro:property name="wheel_thickness" value="0.045"/> -->
     <!-- <xacro:property name="wheel_mass" value="1.0"/> -->
@@ -68,7 +68,7 @@
     <!-- Define the center of the main robot chassis projected on the ground -->   
     <link name="base_footprint">
         <visual name="footprint_visual">
-            <origin xyz="0 0 0.001"/>
+            <origin xyz="0 0 0.0001"/>
             <geometry>
                 <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
                 <cylinder radius="${wheel_offset_y + wheel_thickness + 0.03}" length="0.01"/>
@@ -121,59 +121,6 @@
         <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_box>
-
-
-        <visual name="chassis_front_axle_left">
-            <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
-            <geometry>
-                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_front_axle_right">
-            <origin xyz="${wheel_offset_x} ${-chassis_width*0.5} 0" rpy="${pi/2} 0 0"/>
-            <geometry>
-                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_caster_holder_left">
-            <origin xyz="${caster_wheel_offset_x+0.09} ${caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
-            <geometry>
-                <cylinder radius="0.012" length="0.23"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_caster_joint_left">
-            <origin xyz="${caster_wheel_offset_x} ${caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="0.03"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_caster_holder_right">
-            <origin xyz="${caster_wheel_offset_x+0.09} ${-caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
-            <geometry>
-                <cylinder radius="0.012" length="0.23"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_caster_joint_right">
-            <origin xyz="${caster_wheel_offset_x} ${-caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="0.03"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <collision>
-            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
-            <geometry>
-                <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
-            </geometry>
-        </collision>
-        <xacro:inertial_box mass="0.5" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
-            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
-        </xacro:inertial_box>
     </link>
 
     <!-- LEFT WHEEL LINK -->
@@ -191,40 +138,40 @@
     </joint>
 
     <link name="left_wheel">
-        <visual name="left_wheel_tire_gz_visual">
+        <!-- <visual name="left_wheel_tire_gz_visual">
             <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
             <geometry>
                 <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
             </geometry>
             <material name="port_red"/>
-        </visual>
-        <visual name="left_wheel_tire_rviz_visual">
+        </visual> -->
+        <!-- <visual name="left_wheel_tire_rviz_visual">
             <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
             </geometry>
             <material name="port_red"/>
-        </visual>
-        <visual name="left_wheel_solid_visual">
+        </visual> -->
+        <!-- <visual name="left_wheel_solid_visual">
             <geometry>
                 <cylinder radius="${wheel_radius}" length="${wheel_thickness/10.0}"/>
             </geometry>
             <material name="port_red"/>
-        </visual>
-        <visual name="left_wheel_axis_visual">
+        </visual> -->
+        <!-- <visual name="left_wheel_axis_visual">
             <geometry>
                 <cylinder radius="${wheel_radius*0.05}" length="${wheel_thickness*1.1}"/>
             </geometry>
             <material name="blue"/>
-        </visual>
-        <visual name="left_wheel_marker_visual">
+        </visual> -->
+        <!-- <visual name="left_wheel_marker_visual">
             <origin xyz="0 ${wheel_radius*0.7} 0" rpy="0 0 0" />
             <geometry>
                 <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
             </geometry>
             <material name="blue"/>
-        </visual>
-        <collision>
+        </visual> -->
+        <!-- <collision>
             <geometry>
                 <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
             </geometry>
@@ -244,14 +191,13 @@
                     </ode>
                 </contact>
             </surface>
-        </collision>
-        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
+        </collision> -->
+        <!-- <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
+        </xacro:inertial_cylinder> -->
     </link>
 
     <!-- RIGHT WHEEL LINK -->
-
     <joint name="right_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="right_wheel"/>
