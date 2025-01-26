@@ -244,7 +244,7 @@
             </geometry>
             <material name="blue"/>
         </visual>
-        <collision>
+        <!-- <collision>
             <geometry>
                 <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
             </geometry>
@@ -264,7 +264,7 @@
                     </ode>
                 </contact>
             </surface>
-        </collision>
+        </collision> -->
         <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
