@@ -237,13 +237,13 @@
             </geometry>
             <material name="blue"/>
         </visual>
-        <visual name="right_wheel_marker_visual">
+        <!-- <visual name="right_wheel_marker_visual">
             <origin xyz="0 ${-wheel_radius*0.7} 0" rpy="0 0 0" />
             <geometry>
                 <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
             </geometry>
             <material name="blue"/>
-        </visual>
+        </visual> -->
         <!-- <collision>
             <geometry>
                 <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
