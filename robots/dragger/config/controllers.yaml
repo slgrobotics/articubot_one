@@ -9,6 +9,18 @@ controller_manager:     # target node name
     joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+    sonar_broadcaster_F_L:
+      type: range_sensor_broadcaster/RangeSensorBroadcaster
+
+    sonar_broadcaster_F_R:
+      type: range_sensor_broadcaster/RangeSensorBroadcaster
+
+    sonar_broadcaster_B_L:
+      type: range_sensor_broadcaster/RangeSensorBroadcaster
+
+    sonar_broadcaster_B_R:
+      type: range_sensor_broadcaster/RangeSensorBroadcaster
+
 diff_cont:
   ros__parameters:
 
@@ -113,3 +125,50 @@ diff_cont:
 #    extra_joints:
 #      - left_caster_wheel_joint
 #      - right_caster_wheel_joint
+
+# Dragger has four sensors on all four corners.
+# see https://control.ros.org/jazzy/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html
+#     https://github.com/ros-controls/ros2_controllers/blob/master/range_sensor_broadcaster/src/range_sensor_broadcaster.cpp
+#     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/DraggerROS
+#     https://github.com/slgrobotics/diffdrive_arduino/tree/main
+#     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/ParkingSensorI2C
+sonar_broadcaster_F_L:
+  ros__parameters:
+    field_of_view: 0.1
+    frame_id: 'sonar_F_L_frame'
+    max_range: 2.5
+    min_range: 0.01
+    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
+    sensor_name: 'sonar_F_L'
+    variance: 0.01
+
+sonar_broadcaster_F_R:
+  ros__parameters:
+    field_of_view: 0.1
+    frame_id: 'sonar_F_R_frame'
+    max_range: 2.5
+    min_range: 0.01
+    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
+    sensor_name: 'sonar_F_R'
+    variance: 0.01
+
+sonar_broadcaster_B_L:
+  ros__parameters:
+    field_of_view: 0.1
+    frame_id: 'sonar_B_L_frame'
+    max_range: 2.5
+    min_range: 0.01
+    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
+    sensor_name: 'sonar_B_L'
+    variance: 0.01
+
+sonar_broadcaster_B_R:
+  ros__parameters:
+    field_of_view: 0.1
+    frame_id: 'sonar_B_R_frame'
+    max_range: 2.5
+    min_range: 0.01
+    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
+    sensor_name: 'sonar_B_R'
+    variance: 0.01
+
