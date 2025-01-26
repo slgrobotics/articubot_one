@@ -3,6 +3,7 @@
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
+#     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
@@ -53,19 +54,27 @@ bt_navigator:
     enable_stamped_cmd_vel: true
     global_frame: map
     robot_base_frame: base_link
-    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
-    odom_topic: /odometry/local   # works
+    #odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
+
+    # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+    # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
+    default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+
+      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -114,7 +123,7 @@ controller_server:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 1.0
-      yaw_goal_tolerance: 0.5 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
+      yaw_goal_tolerance: 0.1 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
@@ -228,11 +237,12 @@ local_costmap:
       #robot_radius: 0.7
       footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.5  # must be larger than robot footprint
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
@@ -258,6 +268,12 @@ local_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+      sonar_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["/sonar"]
+        mark_threshold: 0.7
+        inflate_cone: 0.99
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-costmaps.html
@@ -295,11 +311,17 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+        enabled: true
+        subscribe_to_updates: true
+        transform_tolerance: 0.5
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
+        enabled: true
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.5  # must be larger than robot footprint
+        inflate_unknown: false
+        inflate_around_unknown: true
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
@@ -343,7 +365,7 @@ behavior_server:
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 12.0
+    cycle_frequency: 12.0  # Frequency to run behavior plugins.
     action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced
     behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
     spin:
@@ -490,6 +512,5 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
-    scan_frame_id: "laser_frame"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
-    #scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+    scan_frame_id: "laser_frame"
     update_duration: 0.02

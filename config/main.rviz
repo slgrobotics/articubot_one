@@ -5,8 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /LaserScan1/Topic1
-        - /Odometry1/Shape1
-        - /Odometry2/Shape1
       Splitter Ratio: 0.5
     Tree Height: 606
   - Class: rviz_common/Selection
@@ -85,6 +83,14 @@ Visualization Manager:
           Value: true
         right_wheel:
           Value: true
+        sonar_B_L_frame:
+          Value: true
+        sonar_B_R_frame:
+          Value: true
+        sonar_F_L_frame:
+          Value: true
+        sonar_F_R_frame:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -115,6 +121,14 @@ Visualization Manager:
                 right_caster_wheel:
                   {}
                 right_wheel:
+                  {}
+                sonar_B_L_frame:
+                  {}
+                sonar_B_R_frame:
+                  {}
+                sonar_F_L_frame:
+                  {}
+                sonar_F_R_frame:
                   {}
       Update Interval: 0
       Value: true
@@ -200,6 +214,26 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        sonar_B_L_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_B_R_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_F_L_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        sonar_F_R_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Mass Properties:
         Inertia: false
         Mass: false
@@ -223,9 +257,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 255; 0
-      Max Intensity: 2.5581648349761963
+      Max Intensity: 3.879384756088257
       Min Color: 255; 0; 0
-      Min Intensity: -2.799567699432373
+      Min Intensity: -5.590389251708984
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -358,7 +392,7 @@ Visualization Manager:
         Value: false
       Enabled: true
       Keep: 1
-      Name: Odometry
+      Name: Odometry_Wheels
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -396,8 +430,47 @@ Visualization Manager:
           Value: true
         Value: false
       Enabled: true
+      Keep: 200
+      Name: Odometry_Local
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 87; 227; 137
+        Head Length: 0.10000000149011612
+        Head Radius: 0.009999999776482582
+        Shaft Length: 0.20000000298023224
+        Shaft Radius: 0.004999999888241291
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odometry/local
+      Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: false
+      Enabled: true
       Keep: 100
-      Name: Odometry
+      Name: Odometry_Global
       Position Tolerance: 0.10000000149011612
       Shape:
         Alpha: 1
@@ -424,7 +497,7 @@ Visualization Manager:
       Color Scheme: costmap
       Draw Behind: false
       Enabled: true
-      Name: Map
+      Name: Map_Global_Costmap
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -512,6 +585,62 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /waypoints
+      Value: true
+    - Alpha: 0.5
+      Buffer Length: 1
+      Class: rviz_default_plugins/Range
+      Color: 255; 255; 255
+      Enabled: true
+      Name: Range
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sonar_B_L
+      Value: true
+    - Alpha: 0.5
+      Buffer Length: 1
+      Class: rviz_default_plugins/Range
+      Color: 255; 255; 255
+      Enabled: true
+      Name: Range
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sonar_B_R
+      Value: true
+    - Alpha: 0.5
+      Buffer Length: 1
+      Class: rviz_default_plugins/Range
+      Color: 255; 255; 255
+      Enabled: true
+      Name: Range
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sonar_F_L
+      Value: true
+    - Alpha: 0.5
+      Buffer Length: 1
+      Class: rviz_default_plugins/Range
+      Color: 255; 255; 255
+      Enabled: true
+      Name: Range
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /sonar_F_R
       Value: true
   Enabled: true
   Global Options:

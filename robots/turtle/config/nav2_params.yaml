@@ -3,6 +3,7 @@
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
+#     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
@@ -56,14 +57,22 @@ bt_navigator:
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/local
     bt_loop_duration: 10
-    default_server_timeout: 20
+    default_server_timeout: 30
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
+
+    # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+    # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
+    default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+
+      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -87,9 +96,9 @@ controller_server:
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/local   # works
     min_x_velocity_threshold: 0.0001
-    min_y_velocity_threshold: 0.0001
+    min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.0001
-    failure_tolerance: 0.3
+    failure_tolerance: 0.5
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
@@ -109,7 +118,7 @@ controller_server:
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.1
+      xy_goal_tolerance: 0.3
       yaw_goal_tolerance: 0.05 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
     FollowPath:
@@ -217,8 +226,8 @@ local_costmap:
       robot_base_frame: base_link
       static_map: false
       rolling_window: true
-      width: 3
-      height: 3
+      width: 10
+      height: 10
       resolution: 0.05
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.22
@@ -292,11 +301,17 @@ global_costmap:
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+        enabled: true
+        subscribe_to_updates: true
+        transform_tolerance: 0.1
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
+        enabled: true
+        cost_scaling_factor: 1.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         inflation_radius: 0.23  # must be larger than robot footprint
+        inflate_unknown: false
+        inflate_around_unknown: true
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
@@ -487,6 +502,5 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
-    scan_frame_id: "laser_frame"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
-    #scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+    scan_frame_id: "laser_frame"
     update_duration: 0.02

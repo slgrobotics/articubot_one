@@ -3,6 +3,7 @@
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
+#     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
@@ -61,11 +62,19 @@ bt_navigator:
     default_server_timeout: 20
     wait_for_service_timeout: 1000
     action_server_result_timeout: 900.0
+
+    # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+    # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
+    default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
     navigate_to_pose:
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
     navigate_through_poses:
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+
+      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -228,12 +237,15 @@ local_costmap:
       robot_radius: 0.33
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 3.0
-        inflation_radius: 0.331  # must be larger than robot footprint
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
+        inflation_radius: 0.34  # must be larger than robot footprint
+
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -245,8 +257,9 @@ local_costmap:
         min_obstacle_height: 0.2 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.2 Meters.
         mark_threshold: 0
         observation_sources: scan
+
         scan:
-          topic: /scan
+          topic: "/scan"
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -255,9 +268,24 @@ local_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+
+      sonar_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+        phi: 1.2
+        no_readings_timeout: 0.0
+        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        clear_on_max_reading: false # default false. Clear on max reading
+        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-costmaps.html
@@ -277,13 +305,14 @@ global_costmap:
       resolution: 0.05
       track_unknown_space: true
       # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
+
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: "/scan"
           max_obstacle_height: 1.6
           clearing: True
           marking: True
@@ -292,14 +321,35 @@ global_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+
+      sonar_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+        phi: 1.2
+        no_readings_timeout: 0.0
+        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        clear_on_max_reading: false # default false. Clear on max reading
+        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+        enabled: true
+        subscribe_to_updates: true
+        transform_tolerance: 0.5
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
+        enabled: true
         cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.331  # must be larger than robot footprint
+        inflation_radius: 0.34  # must be larger than robot footprint
+        inflate_unknown: false
+        inflate_around_unknown: true
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
@@ -490,6 +540,5 @@ loopback_simulator:
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"
-    scan_frame_id: "laser_frame"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
-    #scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+    scan_frame_id: "laser_frame"
     update_duration: 0.02

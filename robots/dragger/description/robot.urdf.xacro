@@ -24,6 +24,11 @@
     <xacro:property name="laser_offset_z" value="0.57"/>
     <xacro:include filename="../../../description/lidar.xacro" />
 
+    <xacro:property name="sonars_offset_x" value="${chassis_length/2 + 0.005}"/>
+    <xacro:property name="sonars_offset_y" value="${chassis_width/2 - 0.02}"/>
+    <xacro:property name="sonars_offset_z" value="0.05"/>
+    <xacro:include filename="../../../description/sonars.xacro" />
+
     <xacro:property name="gps_offset_x" value="0.05"/>
     <xacro:property name="gps_offset_y" value="0.0"/>
     <xacro:property name="gps_offset_z" value="0.65"/>

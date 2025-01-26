@@ -93,7 +93,13 @@ def generate_launch_description():
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controllers_params_file],
-        remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+        remappings=[
+            ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+            ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
+            ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
+            ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
+            ('sonar_broadcaster_B_R/range', 'sonar_B_R')
+        ]
     )
 
     delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
@@ -101,7 +107,7 @@ def generate_launch_description():
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["joint_broad"],
+        arguments=["joint_broad"]
     )
 
     diff_drive_spawner = Node(
@@ -110,17 +116,48 @@ def generate_launch_description():
         arguments=["diff_cont"]
     )
 
+    sonar_f_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_F_L"]
+    )
+
+    sonar_f_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_F_R"]
+    )
+
+    sonar_b_l_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_L"]
+    )
+
+    sonar_b_r_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["sonar_broadcaster_B_R"]
+    )
+
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
-            on_start=[joint_broad_spawner],
+            on_start=[joint_broad_spawner]
         )
     )
 
     delayed_diff_drive_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner],
+            on_start=[diff_drive_spawner]
+        )
+    )
+
+    delayed_sonars_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=diff_drive_spawner,
+            on_start=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner]
         )
     )
 
@@ -203,7 +240,8 @@ def generate_launch_description():
             twist_mux,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner
+            delayed_joint_broad_spawner,
+            delayed_sonars_spawner
         ]
     )
 
