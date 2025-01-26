@@ -123,9 +123,8 @@
         </xacro:inertial_box>
     </link>
 
-    <!-- LEFT WHEEL LINK -->
-
-    <joint name="left_wheel_joint" type="continuous">
+    <!-- LEFT WHEEL JOINT -->
+    <!-- <joint name="left_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="left_wheel"/>
         <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2 - 0.15} 0 0" />
@@ -135,9 +134,16 @@
             <upper>1.79769e+308</upper>
           </limit>
         </axis>
+    </joint> -->
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="0.0 0.13 0.0" rpy="-${pi/2} 0.0 0.0"/>
+        <axis xyz="0 0 1"/>
     </joint>
-
-    <link name="left_wheel">
+        
+    <!-- LEFT WHEEL LINK -->
+    <link name="left_wheel_link">
         <!-- <visual name="left_wheel_tire_gz_visual">
             <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
             <geometry>
@@ -265,9 +271,9 @@
                 </contact>
             </surface>
         </collision> -->
-        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
+        <!-- <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0 0 0" rpy="0 0 0"/>
-        </xacro:inertial_cylinder>
+        </xacro:inertial_cylinder> -->
     </link>
 
     <!-- CASTER WHEELS LINKS -->
