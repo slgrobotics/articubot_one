@@ -14,10 +14,10 @@
 
     <xacro:include filename="robot_core.xacro" />
 
-    <xacro:property name="imu_offset_x" value="${wheel_offset_x}"/>
-    <xacro:property name="imu_offset_z" value="0.01"/>
+    <xacro:property name="imu_offset_x" value="0.0"/>
+    <xacro:property name="imu_offset_z" value="0.0"/>
     <xacro:include filename="../../../description/imu.xacro" />
-
+    
     <xacro:include filename="../../../description/magnetometer.xacro" />
 
     <xacro:property name="laser_offset_x" value="${wheel_offset_x}"/>

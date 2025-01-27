@@ -14,7 +14,8 @@
     <link name="imu_link">
         <visual>
             <geometry>
-                <box size="0.1 0.1 0.1"/>
+                <!-- <box size="0.1 0.1 0.1"/> -->
+                <box size="0.016 0.020 0.004"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>

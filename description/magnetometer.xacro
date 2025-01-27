@@ -17,9 +17,9 @@
     <link name="magnetometer_link">
         <visual>
             <geometry>
-                <box size="0.1 0.1 0.1"/>
+                <box size="0.01 0.01 0.01"/>
             </geometry>
-            <material name="sensor_blue"/>
+            <material name="sensor_yellow"/>
         </visual>
     </link>
 
