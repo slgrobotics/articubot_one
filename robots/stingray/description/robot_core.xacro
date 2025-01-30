@@ -15,6 +15,9 @@
     <xacro:property name="wheel_offset" value="0.13"/>
     <xacro:property name="wheel_separation" value="0.26"/>
     <xacro:property name="caster_radius" value="0.028"/>
+    <xacro:property name="caster_x_offset" value="-0.207"/>
+    <xacro:property name="caster_z_offset" value="-0.035"/>
+    <xacro:property name="caster_mass" value="0.022"/>
 
     <xacro:property name="wheel_offset_x" value="0.13"/>
     <xacro:property name="wheel_offset_y" value="0.0"/>
@@ -178,6 +181,41 @@
         <xacro:inertial_cylinder mass="0.141" length="${wheel_thickness}" radius="${wheel_radius}">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_cylinder>
+    </link>
+
+    <!-- CASTER WHEEL center JHP -->
+    <!-- CASTER WHEEL JOINT-->
+
+    <joint name="caster_wheel_joint" type="fixed">
+        <origin xyz="${caster_x_offset} 0.0 ${caster_z_offset}" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="caster_wheel_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+
+    <!-- CASTER WHEEL LINK -->
+    <link name="caster_wheel_link">
+        <visual name="">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <sphere radius="${caster_radius}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+<!-- 
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <sphere radius="${caster_radius}"/>
+            </geometry>
+        </collision>
+ -->
+<!-- 
+        <xacro:inertial_sphere mass="${caster_mass}" radius="${caster_radius}">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_sphere>
+ -->
     </link>
 
     <!-- CASTER WHEELS LINKS -->
