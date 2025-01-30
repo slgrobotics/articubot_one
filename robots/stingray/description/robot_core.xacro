@@ -203,19 +203,16 @@
             </geometry>
             <material name="white"/>
         </visual>
-<!-- 
+
         <collision>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
                 <sphere radius="${caster_radius}"/>
             </geometry>
         </collision>
- -->
-<!-- 
         <xacro:inertial_sphere mass="${caster_mass}" radius="${caster_radius}">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_sphere>
- -->
     </link>
 
     <!-- CASTER WHEELS LINKS -->
