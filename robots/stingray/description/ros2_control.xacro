@@ -36,18 +36,19 @@
             <state_interface name="position" />
         </joint>
 
-        <xacro:if value="$(arg sim_mode)">
+        <!-- <xacro:if value="$(arg sim_mode)"> -->
             <!-- we need this for Rviz to reflect rotations of joints published by broad_cont in Gazebo -->
-            <joint name="left_caster_wheel_joint">
+            <!-- <joint name="left_caster_wheel_joint">
                 <state_interface name="velocity" />
                 <state_interface name="position" />
-            </joint>
+            </joint> -->
 
-            <joint name="right_caster_wheel_joint">
+            <!-- <joint name="right_caster_wheel_joint">
                 <state_interface name="velocity" />
                 <state_interface name="position" />
-            </joint>
-        </xacro:if>
+            </joint> -->
+        <!-- </xacro:if> -->
+        
 
     </ros2_control>
 
