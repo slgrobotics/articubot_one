@@ -52,7 +52,7 @@
     </material>
 
     <material name="acrylic">
-        <color rgba="1.0 1.0 1.0 0.3"/>
+        <color rgba="1.0 1.0 1.0 0.5"/>
     </material>
 
     <xacro:arg name="sim_mode" default="false"/>
