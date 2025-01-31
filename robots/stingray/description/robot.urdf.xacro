@@ -22,7 +22,7 @@
 
     <xacro:property name="laser_offset_x" value="${wheel_offset_x}"/>
     <xacro:property name="laser_offset_z" value="0.50"/>
-    <xacro:include filename="../../../description/lidar.xacro" />
+    <xacro:include filename="../../../description/JP_lidar.xacro" />
 
     <xacro:property name="gps_offset_x" value="${wheel_offset_x}"/>
     <xacro:property name="gps_offset_y" value="-0.16"/>
