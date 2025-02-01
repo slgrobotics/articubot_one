@@ -9,26 +9,19 @@
     <xacro:property name="chassis_height" value="0.081"/>
     <xacro:property name="chassis_mass" value="0.98"/>
     <xacro:property name="chassis_offset" value="0.0455"/>
+    <xacro:property name="front_panel_offset" value="0.090"/>
+
     <xacro:property name="wheel_radius" value="0.0615"/>
     <xacro:property name="wheel_thickness" value="0.02"/>
     <xacro:property name="wheel_mass" value="0.058"/>
     <xacro:property name="wheel_offset_x" value="0.13"/>
     <xacro:property name="wheel_separation" value="0.26"/>
+
     <xacro:property name="caster_radius" value="0.028"/>
     <xacro:property name="caster_x_offset" value="-0.207"/>
     <xacro:property name="caster_z_offset" value="-0.035"/>
     <xacro:property name="caster_mass" value="0.022"/>
-<!-- 
-    <xacro:property name="wheel_offset_x" value="0.13"/>
-    <xacro:property name="wheel_offset_y" value="0.0"/>
-    <xacro:property name="wheel_offset_z" value="0.0"/>
-    <xacro:property name="caster_wheel_radius" value="0.05"/>
-    <xacro:property name="caster_wheel_thickness" value="0.02"/>
-    <xacro:property name="caster_wheel_mass" value="0.3"/>
-    <xacro:property name="caster_wheel_offset_x" value="${-chassis_length/2 - 0.08}"/>
-    <xacro:property name="caster_wheel_offset_y" value="0.175"/>
-    <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
- -->
+
     <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
     <xacro:if value="$(arg sim_mode)">
         <xacro:property name="caster_joint_type" value="continuous"/>

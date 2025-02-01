@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
     <!-- See common Gazebo pugins in the world file -->
-    
+
     <!--
         To re-generate robot.urdf.generated.xml manually for troubleshooting:
           cd ~/robot_ws
@@ -29,9 +29,9 @@
     <xacro:property name="gps_offset_z" value="0.45"/>
     <xacro:include filename="../../../description/gps.xacro" />
 
-    <xacro:property name="camera_offset_x" value="${wheel_offset_x + 0.05}"/>
-    <xacro:property name="camera_offset_z" value="0.45"/>
-    <xacro:include filename="../../../description/camera.xacro" />
+    <xacro:property name="camera_offset_x" value="${front_panel_offset}"/>
+    <xacro:property name="camera_offset_z" value="0.01525"/>
+    <xacro:include filename="../../../description/JP_camera.xacro" />
 
     <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
     <!-- xacro:include filename="../../../description/face.xacro" / -->
