@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:property name="lidar_mass" value="0.207"/>
+    <xacro:property name="lidar_mass" value="0.164"/>
     <xacro:property name="lidar_radius" value="0.03025"/>
     <xacro:property name="lidar_height" value="0.016"/>
     <xacro:property name="lidar_stand_height" value="0.0424"/>

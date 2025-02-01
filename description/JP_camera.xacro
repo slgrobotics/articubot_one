@@ -4,6 +4,7 @@
     <xacro:property name="camera_height" value="0.040"/>
     <xacro:property name="camera_width" value="0.040"/>
     <xacro:property name="camera_depth" value="0.0016"/>
+    <xacro:property name="camera_mass" value="0.012"/>
     <xacro:property name="camera_lens_radius" value="0.009"/>
     <xacro:property name="camera_lens_length" value="0.0256"/>    
 
@@ -27,6 +28,9 @@
                 <box size="${camera_height} ${camera_width} ${camera_depth}"/>
             </geometry>
         </collision>
+        <xacro:inertial_box mass="${camera_mass}" x="${camera_depth}" y="${camera_width}" z="${camera_height}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_box>    
     </link>
 
     <joint name="camera_lens_joint" type="fixed">
