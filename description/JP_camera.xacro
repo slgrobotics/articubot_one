@@ -24,6 +24,7 @@
             <material name="blue"/>
         </visual>
         <collision>
+            <origin xyz="0 0 0" rpy="0 ${-pi/2} 0"/>
             <geometry>
                 <box size="${camera_height} ${camera_width} ${camera_depth}"/>
             </geometry>
@@ -47,6 +48,7 @@
             <material name="black"/>
         </visual>
         <collision>
+            <origin xyz="${camera_lens_length/2} 0.0 0.0" rpy="0.0 ${pi/2} 0.0"/>
             <geometry>
                 <cylinder radius="${camera_lens_radius}" length="${camera_lens_length}"/>
             </geometry>

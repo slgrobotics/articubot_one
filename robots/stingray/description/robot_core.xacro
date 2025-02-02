@@ -92,14 +92,14 @@
         <visual name="chassis_gz_visual">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
+                <!-- <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/> -->
+                <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="acrylic"/>
         </visual>
         <visual name="chassis_rviz_visual">
              <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <!-- box size="${chassis_length} ${chassis_width} ${chassis_height}"/ -->
                 <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="acrylic"/>
@@ -113,7 +113,7 @@
             </geometry>
         </collision>
         <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <origin xyz="${-chassis_offset} 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_box>
     </link>
 
