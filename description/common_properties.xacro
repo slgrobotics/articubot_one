@@ -39,6 +39,10 @@
         <color rgba="0.8 0.8 0.2 1"/>
     </material>
 
+    <material name="sensor_green">
+        <color rgba="0.0 0.8 0.0 1"/>
+    </material>
+
     <material name="body_color">
         <color rgba="0.6 0.5 0.2 0.85"/>
     </material>

@@ -19,7 +19,7 @@
             <geometry>
                 <box size="0.01 0.01 0.01"/>
             </geometry>
-            <material name="sensor_yellow"/>
+            <material name="sensor_green"/>
         </visual>
     </link>
 

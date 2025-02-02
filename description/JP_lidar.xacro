@@ -7,7 +7,6 @@
     <xacro:property name="lidar_stand_height" value="0.0424"/>
     <xacro:property name="lidar_offset_x" value="0.045"/>
 
-
     <joint name="laser_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="laser_frame"/>
@@ -19,7 +18,7 @@
             <geometry>
                 <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
             </geometry>
-            <material name="red"/>
+            <material name="blue"/>
         </visual>
         <collision>
             <geometry>
@@ -32,8 +31,8 @@
     </link>
 
     <gazebo reference="laser_frame">
-        <material>Gazebo/Red</material>
-	    <sensor name="laser_frame" type="gpu_lidar">
+        <material>Gazebo/Blue</material>
+    	    <sensor name="laser_frame" type="gpu_lidar">
             <pose> 0.0 0.0 0.0 0.0 0.0 0.0 </pose>
             <visualize>true</visualize>
             <update_rate>10</update_rate>

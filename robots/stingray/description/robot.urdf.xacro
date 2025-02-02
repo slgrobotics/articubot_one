@@ -24,10 +24,10 @@
     <xacro:property name="laser_offset_z" value="0.50"/>
     <xacro:include filename="../../../description/JP_lidar.xacro" />
 
-    <xacro:property name="gps_offset_x" value="${wheel_offset_x}"/>
-    <xacro:property name="gps_offset_y" value="-0.16"/>
-    <xacro:property name="gps_offset_z" value="0.45"/>
-    <xacro:include filename="../../../description/gps.xacro" />
+    <xacro:property name="gps_offset_x" value="0.0"/>
+    <xacro:property name="gps_offset_y" value="0.0"/>
+    <xacro:property name="gps_offset_z" value="0.02"/>
+    <xacro:include filename="../../../description/JP_gps.xacro" />
 
     <xacro:property name="camera_offset_x" value="${front_panel_offset}"/>
     <xacro:property name="camera_offset_z" value="0.01525"/>
