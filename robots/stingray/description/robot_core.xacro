@@ -92,8 +92,7 @@
         <visual name="chassis_gz_visual">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
-                <!-- <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/> -->
-                <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="acrylic"/>
         </visual>
