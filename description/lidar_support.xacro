@@ -18,13 +18,13 @@
             <material name="black"/>
         </visual>
         <visual name="lidar_support_rviz_visual">
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${pi/2}"/>
+            <!-- <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${pi/2}"/> -->
+            <origin xyz="${lidar_support_offset_x} ${lidar_support_offset_y} ${lidar_support_offset_z}" rpy="0.0 0.0 ${pi/2}"/>
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/LIDAR_support.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="black"/>
         </visual>
-
     </link>
 </robot>
 
