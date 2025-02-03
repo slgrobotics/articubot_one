@@ -6,9 +6,10 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch.event_handlers import OnProcessStart
+from nav2_common.launch import ReplaceString
 
 #
 # To launch Create 1 Turtle sim:
@@ -20,6 +21,8 @@ def generate_launch_description():
 
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+
+    namespace='/'
 
     package_name='articubot_one' #<--- CHANGE ME
 
@@ -120,9 +123,9 @@ def generate_launch_description():
     # see arguments:  ros2 run ros_gz_sim create --helpshort
     spawn_sim_robot = Node(package='ros_gz_sim',
         executable='create',
-        namespace='/',
+        namespace=namespace,
         arguments=[
-            '-name', 'turtle',
+            '-name', robot_model,
             '-topic', '/robot_description',
             # Robot's starting position on the Grid:
             '-x', '0.0', # positive - towards East
@@ -136,14 +139,14 @@ def generate_launch_description():
     joint_broad_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        namespace='/',
+        namespace=namespace,
         arguments=["joint_broad", "--controller-manager", "/controller_manager"],
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        namespace='/',
+        namespace=namespace,
         arguments=["diff_cont", "--controller-manager", "/controller_manager"],
         # remappings don't work here. Use relay.
         #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
@@ -172,19 +175,27 @@ def generate_launch_description():
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        namespace='/',
+        namespace=namespace,
         arguments=['-d', rviz_config],
         parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
-    bridge = Node(
+
+    gz_model_name = robot_model  # see spawn_sim_robot 'name' above, it becomes "gz model" for all gz queries
+
+    namespaced_gz_bridge_config_path = ReplaceString(
+        source_file=os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
+        replacements={"<model_name>": gz_model_name, "<namespace>": namespace, "///": "/", "//": "/"},
+    )
+
+    gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        namespace='/',
+        namespace=namespace,
         parameters=[{
-            'config_file': os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
+            'config_file': namespaced_gz_bridge_config_path,
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
         output='screen'
@@ -204,7 +215,7 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             rviz,
-            bridge,
+            gz_bridge,
             #odom_relay,
             #gps_fix_translator
         ]
@@ -248,7 +259,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        #delayed_nav,
+        delayed_nav,
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 

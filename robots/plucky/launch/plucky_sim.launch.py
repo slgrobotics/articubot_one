@@ -206,7 +206,6 @@ def generate_launch_description():
             'config_file': namespaced_gz_bridge_config_path,
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
-
         output='screen'
     )
 

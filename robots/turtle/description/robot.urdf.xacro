@@ -23,4 +23,6 @@
 
     <xacro:include filename="ros2_control.xacro" />
 
+    <xacro:include filename="../../../description/battery.xacro" />
+
 </robot>
