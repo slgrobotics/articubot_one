@@ -2,39 +2,39 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
     <xacro:include filename="../../../description/inertial_macros.xacro"/>
-
-	<!-- Values corrected for stingray robot -->
+    <!-- CHASSIS -->
     <xacro:property name="chassis_length" value="0.266"/>
     <xacro:property name="chassis_width" value="0.228"/>
     <xacro:property name="chassis_height" value="0.081"/>
-    <xacro:property name="chassis_mass" value="2.466"/>
     <xacro:property name="chassis_offset" value="0.0455"/>
     <xacro:property name="front_panel_offset" value="0.090"/>
+    <xacro:property name="chassis_mass" value="2.466"/>
     <!-- <xacro:property name="chassis_mass" value="${stingray_total_mass}-2*${wheel_mass}-${caster_mass}-${lidar_mass}"
     - ${OTHER_COMPONENTS_TO_BE_DETERMINED}/> -->
     <!-- <xacro:property name="stingray_total_mass" value="2.915"/> -->
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
     <!-- <xacro:property name="battery_mass" value="0.765"/> -->    
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
-
+    <!-- WHEELS -->
     <xacro:property name="wheel_radius" value="0.0615"/>
     <xacro:property name="wheel_thickness" value="0.02"/>
     <xacro:property name="wheel_mass" value="2.63"/>
     <xacro:property name="wheel_offset_x" value="0.13"/>
     <xacro:property name="wheel_separation" value="0.26"/>
-
+    <!-- CASTER -->
     <xacro:property name="caster_radius" value="0.028"/>
     <xacro:property name="caster_x_offset" value="-0.207"/>
     <xacro:property name="caster_z_offset" value="-0.035"/>
     <xacro:property name="caster_mass" value="0.022"/>
-
     <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
+<!-- 
     <xacro:if value="$(arg sim_mode)">
         <xacro:property name="caster_joint_type" value="continuous"/>
     </xacro:if>
     <xacro:unless value="$(arg sim_mode)">
         <xacro:property name="caster_joint_type" value="fixed"/>
     </xacro:unless>
+ -->
 
     <!-- ********************** ROBOT BASE *********************************  -->
     <!-- The coordinate frame called base_link is rigidly attached to the robot root body.
