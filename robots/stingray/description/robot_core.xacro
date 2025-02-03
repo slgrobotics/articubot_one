@@ -2,6 +2,8 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
     <xacro:include filename="../../../description/inertial_macros.xacro"/>
+    <!-- TEMPLATE -->
+    <xacro:property name="TEMPLATE" value="0.0"/>
     <!-- CHASSIS -->
     <xacro:property name="chassis_length" value="0.266"/>
     <xacro:property name="chassis_width" value="0.228"/>

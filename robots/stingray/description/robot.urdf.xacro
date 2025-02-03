@@ -34,6 +34,8 @@
     <xacro:include filename="../../../description/imu.xacro" />
     <!-- MAG -->
     <xacro:include filename="../../../description/magnetometer.xacro" />
+    <!-- BATTERY -->
+    <xacro:include filename="../../../description/battery.xacro" />
     <!-- OPTIONAL -->
     <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
     <!-- xacro:include filename="../../../description/face.xacro" / -->
