@@ -1,4 +1,4 @@
-## Robot Package - Turtle, Plucky, Dragger
+## Robots Package - Turtle, Plucky, Dragger
 
 This is an on-board software, normally residing under Ubuntu Server on a Raspberry Pi. It runs under ROS2 Jazzy *base*.
 
