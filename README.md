@@ -6,7 +6,7 @@ Its Gazebo Simulation side runs on a Ubuntu 24.04 desktop (no robot hardware req
 
 For actual physical robots look at https://github.com/slgrobotics/robots_bringup
 
-The idea behind this package is to create a working well-organized "code sample", which could be easily ammended with more robots.
+The idea behind this package is to create a working, well-organized "_code sample_", which could be easily ammended with more robots.
 
 To see how different robots co-exist within this package, look into the _robots_ folder.
 
