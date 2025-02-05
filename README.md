@@ -24,9 +24,12 @@ This software is not ready for production use. It has neither been developed nor
 
 ### Credits:
 
-The inspiration (and the origin of some code here) is _Articulated Robotics_ by Josh Newans, a mechatronics engineer from Newcastle, Australia.
+1. The inspiration (and the origin of some code here) is _Articulated Robotics_ by Josh Newans, a mechatronics engineer from Newcastle, Australia. Here is his work:
+- https://articulatedrobotics.xyz/category/getting-ready-to-build-a-ros-robot
 
-Here is his work: https://articulatedrobotics.xyz/category/getting-ready-to-build-a-ros-robot
+2. This project wouldn't be possible without expert help and inspiration from members of:
+- [HomeBrew Robotics Club](https://www.hbrobotics.org/)
+- [Robotics Society ​of Southern California](https://www.rssc.org/)
 
 -----------------------
 
