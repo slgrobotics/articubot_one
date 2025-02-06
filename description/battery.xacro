@@ -13,6 +13,12 @@
             Modify robot.urdf.xacro to include the customized version. 
   -->
 
+  <ros2_control type="system">
+    <sensor name="battery_state">
+        <state_interface name="voltage" />
+    </sensor>
+  </ros2_control>
+
   <gazebo>
     <plugin name="gz::sim::systems::LinearBatteryPlugin" filename="gz-sim-linearbatteryplugin-system">
       <!--Li-ion battery spec from LIR18650 datasheet-->

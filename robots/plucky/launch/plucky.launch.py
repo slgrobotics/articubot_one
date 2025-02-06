@@ -110,6 +110,12 @@ def generate_launch_description():
         arguments=["joint_broad"]
     )
 
+    battery_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["battery_state_broadcaster"]
+    )
+
     diff_drive_spawner = Node(
         package="controller_manager",
         executable="spawner",
@@ -144,6 +150,13 @@ def generate_launch_description():
         event_handler=OnProcessStart(
             target_action=controller_manager,
             on_start=[joint_broad_spawner]
+        )
+    )
+
+    delayed_battery_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=controller_manager,
+            on_start=[battery_state_broadcaster_spawner]
         )
     )
 
@@ -241,6 +254,7 @@ def generate_launch_description():
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
+            delayed_battery_state_broadcaster_spawner,
             delayed_sonars_spawner
         ]
     )
