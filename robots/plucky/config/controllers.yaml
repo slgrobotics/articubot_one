@@ -112,7 +112,7 @@ diff_cont:
 
 battery_state_broadcaster:
   ros__parameters:
-    sensor_name: "battery_state"
+    sensor_name: "main_battery"
     design_capacity: 100.0
     # https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/BatteryState.msg
     power_supply_technology: 2

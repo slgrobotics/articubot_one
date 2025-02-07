@@ -13,8 +13,8 @@
             Modify robot.urdf.xacro to include the customized version. 
   -->
 
-  <ros2_control type="system">
-    <sensor name="battery_state">
+  <ros2_control name="BatteryState" type="diffdrive_arduino/DiffDriveArduino">
+    <sensor name="main_battery">
         <state_interface name="voltage" />
     </sensor>
   </ros2_control>

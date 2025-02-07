@@ -18,7 +18,7 @@
                 <param name="enc_counts_per_rev">2506</param>
                 <param name="wheels_pwm_factor">1.0</param>
                 <!-- See https://docs.ros.org/en/jazzy/p/sensor_msgs/interfaces/msg/BatteryState.html -->
-                <param name="battery_name">LiFePo4_20Ah</param>
+                <param name="battery_name">main_battery</param>
                 <param name="battery_num_cells">4</param>
                 <param name="battery_technology">4</param>
                 <param name="battery_design_capacity">20</param>
