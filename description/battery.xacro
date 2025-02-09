@@ -15,7 +15,13 @@
 
   <ros2_control name="BatteryState" type="diffdrive_arduino/DiffDriveArduino">
     <sensor name="main_battery">
-        <state_interface name="voltage" />
+        <!-- See diffdrive_arduino/src/diffdrive_arduino.cpp export_state_interfaces()-->
+        <state_interface name="voltage"/>
+        <state_interface name="temperature"/>
+        <state_interface name="current"/>
+        <state_interface name="charge"/>
+        <state_interface name="capacity"/>
+        <state_interface name="percentage"/>
     </sensor>
   </ros2_control>
 
