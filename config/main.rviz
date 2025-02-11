@@ -257,9 +257,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 255; 0
-      Max Intensity: 3.879384756088257
+      Max Intensity: 2.5389015674591064
       Min Color: 255; 0; 0
-      Min Intensity: -5.590389251708984
+      Min Intensity: -2.8075737953186035
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -642,6 +642,34 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /sonar_F_R
       Value: true
+    - Align Bottom: false
+      Background Alpha: 0.800000011920929
+      Background Color: 0; 0; 0
+      Class: rviz_2d_overlay_plugins/TextOverlay
+      Enabled: true
+      Foreground Alpha: 0.800000011920929
+      Foreground Color: 25; 255; 240
+      Invert Shadow: false
+      Name: TextOverlay
+      Overtake BG Color Properties: false
+      Overtake FG Color Properties: false
+      Overtake Position Properties: false
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /battery_display_text
+      Value: true
+      font: DejaVu Sans Mono
+      height: 128
+      hor_alignment: left
+      hor_dist: 0
+      line width: 2
+      text size: 12
+      ver_alignment: top
+      ver_dist: 0
+      width: 128
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
