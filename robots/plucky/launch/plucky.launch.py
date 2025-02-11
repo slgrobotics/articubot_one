@@ -95,6 +95,7 @@ def generate_launch_description():
         parameters=[controllers_params_file],
         remappings=[
             ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+            ('battery_state_broadcaster/battery_state', 'battery/battery_state'),
             ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
             ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
             ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
