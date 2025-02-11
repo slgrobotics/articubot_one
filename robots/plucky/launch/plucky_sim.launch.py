@@ -189,6 +189,15 @@ def generate_launch_description():
         output='screen'
     )
 
+    rviz_overlay = Node(
+        package='battery_state_rviz_overlay',
+        executable='battery_state_rviz_overlay',
+        namespace=namespace,
+        parameters=[{'use_sim_time': True}],
+        output='screen',
+        remappings=[('battery_state','battery/battery_state')]
+    )
+
     # Bridge ROS topics and Gazebo messages for establishing communication
 
     gz_model_name = robot_model  # see spawn_sim_robot 'name' above, it becomes "gz model" for all gz queries
@@ -233,6 +242,7 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             rviz,
+            rviz_overlay,
             gz_bridge,
             #odom_relay,
             #gps_fix_translator
