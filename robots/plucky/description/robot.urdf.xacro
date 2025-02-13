@@ -38,6 +38,8 @@
     <xacro:property name="camera_offset_z" value="0.45"/>
     <xacro:include filename="../../../description/camera.xacro" />
 
+    <xacro:include filename="../../../description/battery.xacro" />
+
     <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
     <!-- xacro:include filename="../../../description/face.xacro" / -->
     

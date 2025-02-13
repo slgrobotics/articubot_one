@@ -9,6 +9,9 @@ controller_manager:     # target node name
     joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
+    battery_state_broadcaster:
+      type: battery_state_broadcaster/BatteryStateBroadcaster
+
     sonar_broadcaster_F_L:
       type: range_sensor_broadcaster/RangeSensorBroadcaster
 
@@ -106,6 +109,27 @@ diff_cont:
 #    extra_joints:
 #      - left_caster_wheel_joint
 #      - right_caster_wheel_joint
+
+battery_state_broadcaster:
+  ros__parameters:
+    sensor_name: "main_battery"
+    frame_id: "battery_frame"
+    power_supply_technology: 4
+    design_capacity: 20.0
+    location: "robot Plucky"
+    serial_number: "3.0001"
+    # https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/BatteryState.msg
+    # https://github.com/ipa320/ros_battery_monitoring/blob/main/battery_state_broadcaster/src/BatteryStateBroadcaster.cpp
+    state_interfaces:
+      - voltage
+      - temperature
+      - current
+      - charge
+      - capacity
+      - percentage
+      - power_supply_status
+      - power_supply_health
+      - present
 
 # Plucky has four sensors on all four corners.
 # see https://control.ros.org/jazzy/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html

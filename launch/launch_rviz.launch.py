@@ -13,6 +13,8 @@ def generate_launch_description():
     # For any real robot (not a sim), launch on workstation:
     #   ros2 launch articubot_one launch_rviz.launch.py use_sim_time:=false
 
+    namespace='/'
+
     package_name='articubot_one' #<--- CHANGE ME
 
     package_path = get_package_share_directory(package_name)
@@ -24,10 +26,33 @@ def generate_launch_description():
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        namespace='/',
+        namespace=namespace,
         arguments=['-d', rviz_config],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen'
+    )
+
+    rviz_overlay = Node(
+        package='battery_state_rviz_overlay',
+        executable='battery_state_rviz_overlay',
+        namespace=namespace,
+        parameters=[{
+            'use_sim_time': use_sim_time,
+            # see https://github.com/slgrobotics/ros_battery_monitoring/blob/main/battery_state_rviz_overlay/src/battery_state_rviz_overlay_parameters.yaml
+            'width' : 450,
+            'height' : 10,
+            'line_height' : 25,
+            'horizontal_distance' : 20,
+            'vertical_distance' : 20,
+            'font' : 'DejaVu Sans Mono',
+            'text_size' : 15.0,
+            'horizontal_alignment' : 0,
+            'vertical_alignment' : 3,
+            'bg_color_a' : 0.1,
+            'fg_color_rgba' : '0.0 0.8 0.6 1.0'
+        }],
+        output='screen',
+        remappings=[('battery_state','battery/battery_state')]
     )
 
     joystick = IncludeLaunchDescription(
@@ -43,5 +68,6 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         joystick,
-        rviz
+        rviz,
+        rviz_overlay
     ])

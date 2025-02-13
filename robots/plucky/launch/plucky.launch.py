@@ -95,6 +95,7 @@ def generate_launch_description():
         parameters=[controllers_params_file],
         remappings=[
             ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+            ('battery_state_broadcaster/battery_state', 'battery/battery_state'),
             ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
             ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
             ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
@@ -108,6 +109,12 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["joint_broad"]
+    )
+
+    battery_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["battery_state_broadcaster"]
     )
 
     diff_drive_spawner = Node(
@@ -144,6 +151,13 @@ def generate_launch_description():
         event_handler=OnProcessStart(
             target_action=controller_manager,
             on_start=[joint_broad_spawner]
+        )
+    )
+
+    delayed_battery_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=controller_manager,
+            on_start=[battery_state_broadcaster_spawner]
         )
     )
 
@@ -241,6 +255,7 @@ def generate_launch_description():
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
+            delayed_battery_state_broadcaster_spawner,
             delayed_sonars_spawner
         ]
     )
@@ -285,4 +300,3 @@ def generate_launch_description():
         delayed_loc,
         delayed_nav
     ])
-
