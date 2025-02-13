@@ -29,7 +29,7 @@ def generate_launch_description():
     param_substitutions = {
         # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
         #'default_nav_through_poses_bt_xml': os.path.join(robot_path,"behavior_trees","navigate_through_poses_w_replanning_and_recovery.xml"),
-        'default_nav_to_pose_bt_xml': os.path.join(robot_path,"behavior_trees","odometry_calibration.xml"),
+        #'default_nav_to_pose_bt_xml': os.path.join(robot_path,"behavior_trees","odometry_calibration.xml"),
         #'default_nav_to_pose_bt_xml': os.path.join(robot_path,"behavior_trees","navigate_to_pose_w_replanning_and_recovery.xml")
     }
 

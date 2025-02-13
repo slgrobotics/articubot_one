@@ -23,7 +23,7 @@
         <origin xyz="${sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${sonars_angle_offset}"/>
     </joint>
 
-    <!-- the name "sonar_F_L_frame" should correspond to scan topic header->frame_id as defined in *.launch.py -->
+    <!-- the name "sonar_F_L_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
     <link name="sonar_F_L_frame">
         <visual>
             <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
@@ -82,7 +82,7 @@
         <origin xyz="${sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${-sonars_angle_offset}"/>
     </joint>
 
-    <!-- the name "sonar_F_R_frame" should correspond to scan topic header->frame_id as defined in *.launch.py -->
+    <!-- the name "sonar_F_R_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
     <link name="sonar_F_R_frame">
         <visual>
             <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
@@ -141,7 +141,7 @@
         <origin xyz="${-sonars_offset_x} ${sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi-sonars_angle_offset}"/>
     </joint>
 
-    <!-- the name "sonar_B_L_frame" should correspond to scan topic header->frame_id as defined in *.launch.py -->
+    <!-- the name "sonar_B_L_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
     <link name="sonar_B_L_frame">
         <visual>
             <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
@@ -200,7 +200,7 @@
         <origin xyz="${-sonars_offset_x} ${-sonars_offset_y} ${sonars_offset_z}" rpy="0 0 ${pi+sonars_angle_offset}"/>
     </joint>
 
-    <!-- the name "sonar_B_R_frame" should correspond to scan topic header->frame_id as defined in *.launch.py -->
+    <!-- the name "sonar_B_R_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
     <link name="sonar_B_R_frame">
         <visual>
             <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
