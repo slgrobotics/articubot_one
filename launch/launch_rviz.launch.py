@@ -36,7 +36,21 @@ def generate_launch_description():
         package='battery_state_rviz_overlay',
         executable='battery_state_rviz_overlay',
         namespace=namespace,
-        parameters=[{'use_sim_time': use_sim_time}],
+        parameters=[{
+            'use_sim_time': use_sim_time,
+            # see https://github.com/slgrobotics/ros_battery_monitoring/blob/main/battery_state_rviz_overlay/src/battery_state_rviz_overlay_parameters.yaml
+            'width' : 450,
+            'height' : 10,
+            'line_height' : 25,
+            'horizontal_distance' : 20,
+            'vertical_distance' : 20,
+            'font' : 'DejaVu Sans Mono',
+            'text_size' : 15.0,
+            'horizontal_alignment' : 0,
+            'vertical_alignment' : 3,
+            'bg_color_a' : 0.1,
+            'fg_color_rgba' : '0.0 0.8 0.6 1.0'
+        }],
         output='screen',
         remappings=[('battery_state','battery/battery_state')]
     )

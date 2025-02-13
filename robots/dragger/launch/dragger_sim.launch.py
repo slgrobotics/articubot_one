@@ -39,11 +39,6 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
-    )
-
     twist_mux = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
@@ -163,24 +158,9 @@ def generate_launch_description():
         )
     )
 
-    rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
-
-    rviz = Node(
-        package='rviz2',
-        executable='rviz2',
-        namespace=namespace,
-        arguments=['-d', rviz_config],
-        parameters=[{'use_sim_time': True}],
-        output='screen'
-    )
-
-    rviz_overlay = Node(
-        package='battery_state_rviz_overlay',
-        executable='battery_state_rviz_overlay',
-        namespace=namespace,
-        parameters=[{'use_sim_time': True}],
-        output='screen',
-        remappings=[('battery_state','battery/battery_state')]
+    rviz_and_joystick = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','launch_rviz.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -226,8 +206,6 @@ def generate_launch_description():
             spawn_sim_robot,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
-            rviz,
-            rviz_overlay,
             gz_bridge,
             #odom_relay,
             #gps_fix_translator
@@ -271,7 +249,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         rsp,
-        joystick,
+        rviz_and_joystick,
         twist_mux,
         gz_include,
         delayed_loc,
