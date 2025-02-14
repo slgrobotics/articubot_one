@@ -9,6 +9,9 @@
   direction: GZ_TO_ROS  # can be BIDIRECTIONAL or ROS_TO_GZ
 
 - ros_topic_name: "battery/battery_state"
+  # gz topic --echo --topic /model/plucky/battery/lithium_battery/state
+  # Note: make sure percentage is reported by GZ in 0..1 range, as ROS2 message requires that.
+  #       see <fix_issue_225>false</fix_issue_225> in battery.xacro
   # <model_name> and <namespace> must be replaced by launch file:
   gz_topic_name: /model/<model_name>/battery/<namespace>/lithium_battery/state
   ros_type_name: "sensor_msgs/msg/BatteryState"
