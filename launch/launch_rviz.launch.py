@@ -55,6 +55,16 @@ def generate_launch_description():
         remappings=[('battery_state','battery/battery_state')]
     )
 
+    battery_pie_chart_relay = Node(
+        package='topic_tools',
+        executable='relay_field',
+        name='battery_pie_chart_relay',
+        output='screen',
+        respawn=True,
+        respawn_delay=2.0,
+        arguments=['battery/battery_state', 'battery/percentage', 'std_msgs/Float32', '{ data: m.percentage }', '--qos-reliability', 'reliable' ]
+    )
+
     joystick = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
@@ -68,6 +78,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         joystick,
+        battery_pie_chart_relay,
         rviz,
         rviz_overlay
     ])
