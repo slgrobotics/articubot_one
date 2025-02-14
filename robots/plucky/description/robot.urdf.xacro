@@ -38,6 +38,8 @@
     <xacro:property name="camera_offset_z" value="0.45"/>
     <xacro:include filename="../../../description/camera.xacro" />
 
+    <xacro:property name="open_circuit_voltage" value="12.592"/>
+    <xacro:property name="battery_capacity" value="20.0"/>
     <xacro:include filename="../../../description/battery.xacro" />
 
     <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
