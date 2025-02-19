@@ -25,6 +25,7 @@
 
     <gazebo reference="magnetometer_link">
         <sensor name="magnetometer" type="magnetometer">
+          <pose>0 0 0 0 0 0</pose>
           <always_on>1</always_on>
           <update_rate>100</update_rate>
           <visualize>true</visualize>

@@ -23,6 +23,7 @@
     <!-- gz model -m dragger -s imu_link -->
     <gazebo reference="imu_link">
         <sensor name="imu_link" type="imu">
+        <pose>0 0 0 0 0 0</pose>
         <always_on>1</always_on>
         <topic>gz_imu/data</topic>
         <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
