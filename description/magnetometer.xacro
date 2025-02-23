@@ -4,20 +4,21 @@
     <xacro:property name="magnetometer_offset_x" value="${wheel_offset_x}"/>
     <xacro:property name="magnetometer_offset_z" value="0.03"/>
 
-    <!-- ******************* MAGNETOMETER SETUP ****************************  -->
-    <!-- Each sensor must be attached to a link.                              -->
+    <!-- ******************* MAGNETOMETER SETUP ********************************  -->
+    <!-- we are using IMU parameters here, as magnetometer is usually part of IMU -->
+    <!-- Each sensor must be attached to a link.                                  -->
 
     <joint name="magnetometer_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="magnetometer_link"/>
-        <!-- we place Magnetometer next to IMU between the wheels -->
-        <origin xyz="${wheel_offset_x} 0 ${magnetometer_offset_z}" rpy="0 0 0"/>
+        <!-- we want to place Magnetometer next to IMU between the wheels, at center mass -->
+        <origin xyz="${imu_offset_x} 0 ${imu_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="magnetometer_link">
         <visual>
             <geometry>
-                <box size="0.1 0.1 0.1"/>
+              <cylinder radius="${imu_visual_size * 0.85}" length="${imu_visual_size / 4}"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>

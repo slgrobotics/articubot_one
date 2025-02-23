@@ -7,14 +7,14 @@
     <joint name="imu_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="imu_link"/>
-        <!-- we place IMU between the wheels -->
+        <!-- we want to place IMU closely between the wheels, at center mass -->
         <origin xyz="${imu_offset_x} 0 ${imu_offset_z}" rpy="0 0 0"/>
     </joint>
 
     <link name="imu_link">
         <visual>
             <geometry>
-                <box size="0.1 0.1 0.1"/>
+                <box size="${imu_visual_size} ${imu_visual_size} ${imu_visual_size}"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>
