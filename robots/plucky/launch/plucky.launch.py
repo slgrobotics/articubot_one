@@ -303,8 +303,8 @@ def generate_launch_description():
         actions=[
             ldlidar_node,
             gps_node,
-            #mpu9250driver_node
-            bno055_driver_node
+            mpu9250driver_node
+            #bno055_driver_node
         ]
     )
 
