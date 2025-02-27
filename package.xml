@@ -9,6 +9,23 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>xacro</depend>
+  <depend>controller_manager</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>gz_ros2_control</depend>
+  <depend>topic_tools</depend>
+  <depend>twist_mux</depend>
+  <depend>robot_localization</depend>
+  <depend>imu_tools</depend>
+  <depend>slam_toolbox</depend>
+  <depend>navigation2</depend>
+  <depend>rmw_cyclonedds_cpp</depend>
+  <depend>cartographer_ros</depend>
+  <depend>rviz_satellite</depend>
+  <depend>battery_state_rviz_overlay</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
