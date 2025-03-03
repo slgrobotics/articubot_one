@@ -90,22 +90,32 @@ def generate_launch_description():
         respawn=True,
         respawn_delay=4,
         parameters=[{
+            # see https://github.com/flynneva/bno055
+            #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
             'ros_topic_prefix': '',
             'connection_type': 'i2c',
             'i2c_bus': 1,
-            'i2c_addr': 0x28,
+            'i2c_addr': 0x28,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
             'data_query_frequency': 20,
             'calib_status_frequency': 0.1,
             'frame_id': 'imu_link',
-            'operation_mode': 0x0C,
-            'placement_axis_remap': 'P2',
+            'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
+            'placement_axis_remap': 'P1', # P1 - default, ENU
             'acc_factor': 100.0,
             'mag_factor': 16000000.0,
             'gyr_factor': 900.0,
+            'grav_factor': 100.0,
             'set_offsets': False, # set to true to use offsets below
             'offset_acc': [0xFFEC, 0x00A5, 0xFFE8],
             'offset_mag': [0xFFB4, 0xFE9E, 0x027D],
-            'offset_gyr': [0x0002, 0xFFFF, 0xFFFF]
+            'offset_gyr': [0x0002, 0xFFFF, 0xFFFF],
+            # Sensor standard deviation [x,y,z]
+            # Used to calculate covariance matrices
+            # defaults are used if parameters below are not provided
+            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]
+            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s]
+            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad]
+            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]
         }],
         remappings=[("imu", "imu/data")]
     )

@@ -3,15 +3,15 @@
 
   <xacro:include filename="create_base.urdf.xacro" />
 
-  <xacro:property name="imu_offset_x" value="0"/>
+  <xacro:property name="imu_offset_x" value="-0.04"/>
   <xacro:property name="imu_offset_z" value="0"/>
+  <xacro:property name="imu_visual_size" value="0.01"/>
+  <xacro:include filename="../../../description/imu.xacro" />
 
   <xacro:property name="laser_offset_x" value="0.085"/>
   <xacro:property name="laser_offset_z" value="0.033"/>
 
   <xacro:include filename="create_sensors.urdf.xacro" />
-
-  <xacro:include filename="create_1_gazebo.urdf.xacro" />
 
   <!-- wheel_separation - distance between left and right wheels, defined in ~/create_robot_ws/src/libcreate/src/types.cpp -->
 

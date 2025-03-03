@@ -153,7 +153,7 @@ controller_server:
         trajectory_step: 5
         time_step: 3
       AckermannConstraints:
-        min_turning_r: 0.1
+        min_turning_r: 0.01
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -412,6 +412,9 @@ behavior_server:
     transform_timeout: 1.0
     transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
+    acceleration_limit: 2.5 # m/s^2
+    deceleration_limit: -2.5 # m/s^2
+    minimum_speed: 0.1 # m/s
     max_rotational_vel: 1.0  # rad/s
     min_rotational_vel: 0.4  # rad/s
     rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2)
