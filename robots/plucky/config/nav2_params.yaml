@@ -243,6 +243,7 @@ local_costmap:
       rolling_window: true # Default: false.  "true" allows the costmap to move with the robot, providing a local view around the robot.
       width: 5 # meters (must be int) 5 means 2.5 meters around the robot. Sufficiently large area around the robot for local planning.
       height: 5 # meters (must be int) usually same as width.
+      map_vis_z: -0.19 # place local costmap at the floor level (wheels radius below base_link)
       resolution: 0.05 # meters/cell. Default: 0.1
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.33
@@ -255,7 +256,7 @@ local_costmap:
         observation_sources: scan
 
         scan:
-          topic: "/scan"
+          topic: "/scan" # must have the / prefix
           max_obstacle_height: 2.0
           clearing: True # Default: False. "True" allows the obstacle layer to clear free space in the costmap based on laser data.
           marking: True # allow the obstacle layer to mark obstacles in the costmap.
@@ -268,7 +269,7 @@ local_costmap:
       range_sensor_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
         phi: 1.2
@@ -325,7 +326,7 @@ global_costmap:
         enabled: True
         observation_sources: scan
         scan:
-          topic: "/scan"
+          topic: "/scan" # must have the / prefix
           max_obstacle_height: 1.6
           clearing: True # Default: False. True allows the obstacle layer to clear free space in the costmap based on laser scan data.
           marking: True # Default: True - allows the obstacle layer to mark obstacles in the costmap based on laser scan data.
@@ -338,7 +339,7 @@ global_costmap:
       range_sensor_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
         phi: 1.2
