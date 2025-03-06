@@ -364,34 +364,38 @@ global_costmap:
 map_saver:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    save_map_timeout: 5.0
-    free_thresh_default: 0.25
-    occupied_thresh_default: 0.65
-    map_subscribe_transient_local: True
+    save_map_timeout: 5.0 # Default: 2.0
+    free_thresh_default: 0.25 # Increasing this means being more strict about what counts as empty space.
+    occupied_thresh_default: 0.65 # Occupied space minimum probability threshold value for occupancy grid.
+    map_subscribe_transient_local: True # Setting this to true means getting more reliable, complete map data but might take slightly longer.
 
 # see https://docs.nav2.org/configuration/packages/configuring-planner-server.html
 planner_server:
-  ros__parameters:
+  ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 12.0
+    expected_planner_frequency: 12.0 # Default: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.2
-      use_astar: false
-      allow_unknown: true
+      tolerance: 0.3 # Default: 0.5 meters. A tolerance around the goal.
+      use_astar: false # False means the default Dijkstra’s algorithm.
+      allow_unknown: true # Allowing planning in unknown space gives more flexibility if the map is not fully explored.
 
 # see https://docs.nav2.org/configuration/packages/configuring-smoother-server.html
 smoother_server:
-  ros__parameters:
+  ros__parameters: # smoother server refines the paths created by the Planner Server
     enable_stamped_cmd_vel: true
     smoother_plugins: ["simple_smoother"]
     simple_smoother:
+      # see https://docs.nav2.org/configuration/packages/configuring-simple-smoother.html
       plugin: "nav2_smoother::SimpleSmoother"
       tolerance: 1.0e-10
       max_its: 1000
-      do_refinement: True
+      do_refinement: True # Whether to smooth the smoothed path recursively to refine the quality further
+      refinement_num: 2 # Number of times to recursively attempt to smooth, must be >= 1
+      w_data: 0.2   # Weight to apply to path data given (bounds it)
+      w_smooth: 0.3 # Weight to apply to smooth the path (smooths it)
 
 # See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
@@ -401,9 +405,9 @@ behavior_server:
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 12.0  # Frequency to run behavior plugins.
+    cycle_frequency: 12.0  # Default: 10.0  Frequency to run behavior plugins.
     action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
     backup:
@@ -417,15 +421,15 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
-    transform_timeout: 1.0
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+    transform_timeout: 0.8   # Default: 0.1
+    transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5 # m/s^2
+    acceleration_limit: 2.5  # m/s^2
     deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1 # m/s
-    max_rotational_vel: 1.0  # rad/s
-    min_rotational_vel: 0.4  # rad/s
-    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2)
+    minimum_speed: 0.1       # m/s
+    max_rotational_vel: 1.0  # rad/s Default: 1.0
+    min_rotational_vel: 0.4  # rad/s Default: 0.4
+    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -433,47 +437,49 @@ behavior_server:
 # which corresponds to a standard (ROS2 provided) action that the bot should perform when it reaches a waypoint.
 
 waypoint_follower:
-  ros__parameters:
+  ros__parameters: # see https://docs.nav2.org/configuration/packages/configuring-waypoint-follower.html#default-plugin
     enable_stamped_cmd_vel: true
-    loop_rate: 20
-    stop_on_failure: false
-    action_server_result_timeout: 900.0
-    waypoint_task_executor_plugin: "wait_at_waypoint"
+    loop_rate: 2 # Default: 20
+    stop_on_failure: false # false allows the robot to continue to the next waypoint even if one fails.
+    #action_server_result_timeout: 900.0 # 15 minutes. Default 10 seconds - see https://github.com/ros2/rcl/pull/1012
+    waypoint_task_executor_plugin: "wait_at_waypoint" # plugin could be WaitAtWaypoint, PhotoAtWaypoint or InputAtWaypoint
     wait_at_waypoint:
       plugin: "nav2_waypoint_follower::WaitAtWaypoint"
       enabled: True
-      waypoint_pause_duration: 200
+      waypoint_pause_duration: 5 # Sets a 5-second pause at each waypoint
 
 # See https://docs.nav2.org/configuration/packages/configuring-velocity-smoother.html
 #     https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 10.0     # Rate to run smoother
+    smoothing_frequency: 12.0     # Rate to run smoother. Default: 20.0 Hz
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
-    feedback: "CLOSED_LOOP"
-    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]
-    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]
-    max_accel: [2.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]
-    max_decel: [-2.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]
+    feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
+    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
+    max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
     odom_topic: /diff_cont/odom   # works
-    odom_duration: 0.5  # Period of time (s) to sample odometry information in for velocity estimation
+    odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
+#     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
+# Collision Monitor operates directly with sensor data, bypassing the usual costmap and planning systems.
 collision_monitor:
   ros__parameters:
     enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
-    cmd_vel_out_topic: "cmd_vel_nav"
-    state_topic: "collision_monitor_state"
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-    source_timeout: 1.0
+    cmd_vel_out_topic: "cmd_vel_nav" # Default: “cmd_vel”. The topic where safety-checked commands are sent. 
+    state_topic: "collision_monitor_state" # Where to publish information about active safety behaviors.
+    transform_tolerance: 0.5  # Default: 0.1  Delay in transform (tf) data that is tolerable in seconds
+    source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
     base_shift_correction: True
     stop_pub_timeout: 2.0
     # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
@@ -483,17 +489,31 @@ collision_monitor:
       type: "polygon"
       action_type: "approach"
       footprint_topic: "/local_costmap/published_footprint"
-      time_before_collision: 1.2
+      time_before_collision: 1.2 # Default: 2.0  Increasing this value makes the robot more cautious but might make it stop unnecessarily far from obstacles.
       simulation_time_step: 0.1
       min_points: 6
       visualize: False
       enabled: True
-    observation_sources: ["scan"]
+    observation_sources: ["scan", "sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"] # scan, pointcloud, range or polygon
     scan:
       type: "scan"
-      topic: "scan"
-      min_height: 0.15
-      max_height: 2.0
+      topic: "/scan"
+      enabled: True
+    sonar_F_L:
+      type: "range"
+      topic: "/sonar_F_L"
+      enabled: True
+    sonar_F_R:
+      type: "range"
+      topic: "/sonar_F_R"
+      enabled: True
+    sonar_B_L:
+      type: "range"
+      topic: "/sonar_B_L"
+      enabled: True
+    sonar_B_R:
+      type: "range"
+      topic: "/sonar_B_R"
       enabled: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
