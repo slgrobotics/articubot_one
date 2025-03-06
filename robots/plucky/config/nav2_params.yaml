@@ -23,8 +23,8 @@ amcl:
     global_frame_id: "map"
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
-    laser_max_range: 12.0
-    laser_min_range: 0.35
+    laser_max_range: -1.0 # use range reported by the sensor
+    laser_min_range: -1.0
     laser_model_type: "likelihood_field"
     max_beams: 60
     max_particles: 2000
@@ -38,14 +38,14 @@ amcl:
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
     save_pose_rate: 0.5
     sigma_hit: 0.2
-    tf_broadcast: true
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-    update_min_a: 0.2
-    update_min_d: 0.25
+    tf_broadcast: true # Broadcasting the map->odom transform is why we use ACML.
+    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds. Default 1.0
+    update_min_a: 0.05 # Radians. Default 0.2=11.5 degrees. Less is better for slow or precise movements.
+    update_min_d: 0.05 # Meters. Default 0.25. Less is better for slow-moving robots.
     z_hit: 0.5
     z_max: 0.05
     z_rand: 0.5
-    z_short: 0.05
+    z_short: 0.05 # Default 0.005. Greater value compensates for short readings, such as small obstacles or reflective surfaces
     scan_topic: scan
 
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
@@ -54,23 +54,24 @@ bt_navigator:
     enable_stamped_cmd_vel: true
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
-    #odom_topic: /odometry/gps     # can't use it, orientation is always 0
-    #odom_topic: /odometry/local   # works
+    odom_topic: /odometry/local   # works. Default "odom"
     #odom_topic: /odometry/global  # works
+    #odom_topic: /odometry/filtered  # Addison recommended, here is one of the remapped - likely /odometry/local
+    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    #odom_topic: /odometry/gps     # can't use it, because orientation is always 0
     bt_loop_duration: 10
     default_server_timeout: 20
-    wait_for_service_timeout: 1000
-    action_server_result_timeout: 900.0
+    wait_for_service_timeout: 1000  # ms, during initialization
+    action_server_result_timeout: 900.0 # timeout value for action servers to discard a goal handle if a result hasn’t been produced. The high value of 900 seconds (15 minutes) allows for long-running navigation tasks.
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
     # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
     default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
     default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
-    navigate_to_pose:
+    navigate_to_pose: # Go to a single location
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
-    navigate_through_poses:
+    navigate_through_poses: # Follow a series of waypoints 
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
 
       # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
@@ -87,22 +88,27 @@ bt_navigator:
     error_code_names:
       - compute_path_error_code
       - follow_path_error_code
+      - smoother_error_code
+      - navigate_to_pose_error_code
+      - navigate_through_poses_error_code
+
+    transform_tolerance: 0.5 # Default: 0.1 - How old position information can be before it’s considered outdated.
 
 # See https://docs.ros.org/en/jazzy/p/nav2_mppi_controller/index.html
 #     https://docs.nav2.org/configuration/packages/configuring-controller-server.html
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 24.0
+    controller_frequency: 6.0 # Default: 20.0. Laser scans come at 6 Hz
     costmap_update_timeout: 0.30
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
     #odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
-    min_x_velocity_threshold: 0.0001
-    min_y_velocity_threshold: 0.0001
-    min_theta_velocity_threshold: 0.0001
-    failure_tolerance: 0.5
+    min_x_velocity_threshold: 0.001 # Default 0.0001  To filter odometry noise in the x direction
+    min_y_velocity_threshold: 0.5 # Large for differential drive robots that can’t move sideways.
+    min_theta_velocity_threshold: 0.001 # Default 0.0001  To filter odometry rotational noise
+    failure_tolerance: 0.5 # Seconds. Default 0.0 Allowing the controller to fail for up to 0.5 seconds before the FollowPath action fails provides some tolerance for temporary failures.
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
@@ -111,41 +117,46 @@ controller_server:
     # Progress checker parameters
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.1
-      movement_time_allowance: 10.0
+      required_movement_radius: 0.5 # Default: 0.5 meters. A movement radius of 0.5 meters is a good threshold for determining if the robot has made sufficient progress
+      movement_time_allowance: 10.0 # Default: 10.0 seconds. If the robot doesn’t move the required radius within this time, it’s considered stuck. 
     # Goal checker parameters
     #precise_goal_checker:
     #  plugin: "nav2_controller::SimpleGoalChecker"
     #  xy_goal_tolerance: 0.25
     #  yaw_goal_tolerance: 0.25
     #  stateful: True
+
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.3
-      yaw_goal_tolerance: 0.05 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
+      xy_goal_tolerance: 0.35 # Default: 0.25 meters
+      yaw_goal_tolerance: 0.2 # default: 0.05 - the tolerance in radians for the controller in yaw/rotation when achieving its goal
       latch_xy_goal_tolerance: true # default: false - If goal tolerance is latched, if the robot ever reaches the goal xy location it will simply rotate in place, even if it ends up outside the goal tolerance while it is doing so.
+
     FollowPath:
+      # plugin: "nav2_rotation_shim_controller::RotationShimController"
+      # primary_controller: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      # see https://github.com/automaticaddison/yahboom_rosmaster/blob/main/yahboom_rosmaster_navigation/config/rosmaster_x3_nav2_regulated_pure_pursuit_controller.yaml
       plugin: "nav2_mppi_controller::MPPIController"
-      time_steps: 56
-      model_dt: 0.05
-      batch_size: 2000
+      time_steps: 20 # Default: 56
+      model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
+      batch_size: 2000 # Default: 1000
       ax_max: 3.0
       ax_min: -3.0
-      ay_max: 3.0
+      ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
       az_max: 3.5
       vx_std: 0.2
-      vy_std: 0.2
-      wz_std: 0.4
+      vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
+      wz_std: 0.4 # Default: 0.2
       vx_max: 0.5
       vx_min: -0.35
-      vy_max: 0.5
+      vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-      temperature: 0.3
-      gamma: 0.015
+      temperature: 0.3 # Higher values make selection more random, potentially finding creative solutions
+      gamma: 0.015 # cost sensitivity setting
       motion_model: "DiffDrive"
       visualize: true
       regenerate_noises: true
@@ -157,66 +168,66 @@ controller_server:
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
-        "PathAngleCritic", "PreferForwardCritic"]
-      ConstraintCritic:
+        "PathAngleCritic", "PreferForwardCritic", "TwirlingCritic"]
+      ConstraintCritic: # robot limits - command only what robot can physically do
         enabled: true
         cost_power: 1
         cost_weight: 4.0
-      GoalCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 1.4
-      GoalAngleCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 3.0
-        threshold_to_consider: 0.5
-      PreferForwardCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 5.0
-        threshold_to_consider: 0.5
-      CostCritic:
+      CostCritic: # obstacle avoidance
         enabled: true
         cost_power: 1
         cost_weight: 3.81
         critical_cost: 300.0
-        consider_footprint: true
+        consider_footprint: true # Default false
         collision_cost: 1000000.0
-        near_goal_distance: 1.0
+        near_goal_distance: 1.0 # when the robot can get a bit closer to obstacles while trying to reach its final destination.
         trajectory_point_step: 2
-      PathAlignCritic:
+      GoalCritic: # getting to destination
         enabled: true
         cost_power: 1
-        cost_weight: 14.0
+        cost_weight: 5.0
+        threshold_to_consider: 0.5 # meters. Default 1.4 - When the robot starts really focusing on getting to the exact goal point, not on following the path.
+      GoalAngleCritic: # final rotation
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5 # meters. Default 0.5
+      PathAlignCritic: # staying on path
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0 # Default 10.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
-        threshold_to_consider: 0.5
+        threshold_to_consider: 0.5 # meters. Stop worrying about strict path following when robot is very close to the goal.
         offset_from_furthest: 20
         use_path_orientations: false
-      PathFollowCritic:
+      PathAngleCritic: # path direction
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0 # Default 2.2
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5 # meters. Stop caring about path direction and focus on final positioning.
+        max_angle_to_furthest: 1.0
+        mode: 0
+      PathFollowCritic: # forward progress
         enabled: true
         cost_power: 1
         cost_weight: 5.0
         offset_from_furthest: 5
-        threshold_to_consider: 1.4
-      PathAngleCritic:
+        threshold_to_consider: 1.4 # meters. When to switch from path following to focusing on the final approach.
+      PreferForwardCritic: # forward motion. Encourages the robot to drive forward.
         enabled: true
         cost_power: 1
-        cost_weight: 2.0
-        offset_from_furthest: 4
-        threshold_to_consider: 0.5
-        max_angle_to_furthest: 1.0
-        mode: 0
-      # TwirlingCritic:
-      #   enabled: true
-      #   twirling_cost_power: 1
-      #   twirling_cost_weight: 10.0
+        cost_weight: 5.0 # how much the robot prefers forward motion.
+        threshold_to_consider: 0.5 # meters. When to stop caring about forward motion to allow any adjustments needed for final positioning
+      TwirlingCritic: # smooth rotation. Prevent unnecessary dancing and spinning.
+        enabled: true
+        twirling_cost_power: 1
+        twirling_cost_weight: 10.0
 
 # see https://docs.nav2.org/configuration/packages/configuring-costmaps.html
 local_costmap:
-  local_costmap:
+  local_costmap: # robot’s immediate awareness of its surroundings - “safety bubble” that travels with the robot.
     ros__parameters:
       enable_stamped_cmd_vel: true
       unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
@@ -224,116 +235,84 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 6.0
-      publish_frequency: 2.0
-      global_frame: map
+      update_frequency: 6.0 # Default: 5.0 Matches Laser scan frequency
+      publish_frequency: 6.0
+      global_frame: odom # Default: map.  "odom" keeps the local costmap consistent with the robot’s movement.
       robot_base_frame: base_link
       static_map: false
-      rolling_window: true
-      width: 50
-      height: 50
-      resolution: 0.05
+      rolling_window: true # Default: false.  "true" allows the costmap to move with the robot, providing a local view around the robot.
+      width: 5 # meters (must be int) 5 means 2.5 meters around the robot. Sufficiently large area around the robot for local planning.
+      height: 5 # meters (must be int) usually same as width.
+      map_vis_z: -0.19 # place local costmap at the floor level (wheels radius below base_link)
+      resolution: 0.05 # meters/cell. Default: 0.1
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.33
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
-      # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
-
-      inflation_layer:
-        plugin: "nav2_costmap_2d::InflationLayer"
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 3.0
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.34  # must be larger than robot footprint
+      plugins: ["obstacle_layer", "range_sensor_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
       obstacle_layer:
-        plugin: "nav2_costmap_2d::VoxelLayer"
+        plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        publish_voxel_map: True
-        origin_z: 0.0
-        z_resolution: 0.1
-        z_voxels: 16
-        max_obstacle_height: 1.6
-        min_obstacle_height: 0.2 # IGNORING GROUND AS OBSTACLE AND SMALL THING UNDER 0.2 Meters.
-        mark_threshold: 0
         observation_sources: scan
 
         scan:
-          topic: "/scan"
+          topic: "/scan" # must have the / prefix
           max_obstacle_height: 2.0
-          clearing: True
-          marking: True
+          clearing: True # Default: False. "True" allows the obstacle layer to clear free space in the costmap based on laser data.
+          marking: True # allow the obstacle layer to mark obstacles in the costmap.
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Half or more of maximum lidar data range
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
 
-      sonar_layer:
+      range_sensor_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
         phi: 1.2
         no_readings_timeout: 0.0
         mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        clear_threshold: 0.2  # Cells with a probability below this threshold are marked as free in the costmap.
         inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
-        clear_on_max_reading: false # default false. Clear on max reading
+        clear_on_max_reading: true # Default: false. True allows the range sensor to clear obstacles from the costmap when the sensor reports its maximum range reading.
         input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
-      static_layer:
-        plugin: "nav2_costmap_2d::StaticLayer"
-        map_subscribe_transient_local: True
+      denoise_layer:
+        plugin: "nav2_costmap_2d::DenoiseLayer"
+        enabled: true
+        minimal_group_size: 2
+        group_connectivity_type: 8
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        # see http://wiki.ros.org/costmap_2d/hydro/inflation
+        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
+        inflation_radius: 1.75  # Default: 0.55  Must be larger than robot footprint
+        inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
+        inflate_around_unknown: false # will not inflate costs around unknown cells.
 
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-costmaps.html
 global_costmap:
-  global_costmap:
+  global_costmap: # creates a global occupancy grid that represents the entire environment. Used to generate high-level paths.
     ros__parameters:
       enable_stamped_cmd_vel: true
       unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration
-      update_frequency: 1.0
-      publish_frequency: 1.0
+      update_frequency: 6.0 # Default: 5.0
+      publish_frequency: 6.0 # Default: 1.0
       global_frame: map
       robot_base_frame: base_link
-      robot_radius: 0.33
+      robot_radius: 0.4
       #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
-      resolution: 0.05
-      track_unknown_space: true
-      # Try: remove static_layer?
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer", "sonar_layer"]
-
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: True
-        observation_sources: scan
-        scan:
-          topic: "/scan"
-          max_obstacle_height: 1.6
-          clearing: True
-          marking: True
-          data_type: "LaserScan"
-          raytrace_max_range: 12.0 # Maximum lidar data range
-          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
-          obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
-          obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
-
-      sonar_layer:
-        plugin: "nav2_costmap_2d::RangeSensorLayer"
-        enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"]
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
-        phi: 1.2
-        no_readings_timeout: 0.0
-        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
-        clear_on_max_reading: false # default false. Clear on max reading
-        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+      resolution: 0.05 # Default: 0.1
+      track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
+      plugins: ["static_layer", "obstacle_layer", "range_sensor_layer", "inflation_layer"]
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -342,48 +321,81 @@ global_costmap:
         subscribe_to_updates: true
         transform_tolerance: 0.5
 
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: "/scan" # must have the / prefix
+          max_obstacle_height: 1.6
+          clearing: True # Default: False. True allows the obstacle layer to clear free space in the costmap based on laser scan data.
+          marking: True # Default: True - allows the obstacle layer to mark obstacles in the costmap based on laser scan data.
+          data_type: "LaserScan"
+          raytrace_max_range: 12.0 # Maximum lidar data range
+          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
+          obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+
+      range_sensor_layer:
+        plugin: "nav2_costmap_2d::RangeSensorLayer"
+        enabled: True
+        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.55
+        phi: 1.2
+        no_readings_timeout: 0.0
+        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
+        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
+        clear_on_max_reading: true # Default false. True allows the range sensor to clear obstacles from the costmap when the sensor reports its maximum range reading.
+        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
+
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
-        cost_scaling_factor: 3.0
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.34  # must be larger than robot footprint
-        inflate_unknown: false
-        inflate_around_unknown: true
+        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
+        inflation_radius: 1.75  # Default: 0.55  Must be larger than robot footprint
+        inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
+        inflate_around_unknown: false # will not inflate costs around unknown cells.
+
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
 map_saver:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    save_map_timeout: 5.0
-    free_thresh_default: 0.25
-    occupied_thresh_default: 0.65
-    map_subscribe_transient_local: True
+    save_map_timeout: 5.0 # Default: 2.0
+    free_thresh_default: 0.25 # Increasing this means being more strict about what counts as empty space.
+    occupied_thresh_default: 0.65 # Occupied space minimum probability threshold value for occupancy grid.
+    map_subscribe_transient_local: True # Setting this to true means getting more reliable, complete map data but might take slightly longer.
 
 # see https://docs.nav2.org/configuration/packages/configuring-planner-server.html
 planner_server:
-  ros__parameters:
+  ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 12.0
+    expected_planner_frequency: 12.0 # Default: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.2
-      use_astar: false
-      allow_unknown: true
+      tolerance: 0.3 # Default: 0.5 meters. A tolerance around the goal.
+      use_astar: false # False means the default Dijkstra’s algorithm.
+      allow_unknown: true # Allowing planning in unknown space gives more flexibility if the map is not fully explored.
 
 # see https://docs.nav2.org/configuration/packages/configuring-smoother-server.html
 smoother_server:
-  ros__parameters:
+  ros__parameters: # smoother server refines the paths created by the Planner Server
     enable_stamped_cmd_vel: true
     smoother_plugins: ["simple_smoother"]
     simple_smoother:
+      # see https://docs.nav2.org/configuration/packages/configuring-simple-smoother.html
       plugin: "nav2_smoother::SimpleSmoother"
       tolerance: 1.0e-10
       max_its: 1000
-      do_refinement: True
+      do_refinement: True # Whether to smooth the smoothed path recursively to refine the quality further
+      refinement_num: 2 # Number of times to recursively attempt to smooth, must be >= 1
+      w_data: 0.2   # Weight to apply to path data given (bounds it)
+      w_smooth: 0.3 # Weight to apply to smooth the path (smooths it)
 
 # See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
@@ -393,9 +405,9 @@ behavior_server:
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
-    cycle_frequency: 12.0  # Frequency to run behavior plugins.
+    cycle_frequency: 12.0  # Default: 10.0  Frequency to run behavior plugins.
     action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced
-    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait", "assisted_teleop"]
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
     backup:
@@ -409,15 +421,15 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_link
-    transform_timeout: 1.0
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+    transform_timeout: 0.8   # Default: 0.1
+    transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5 # m/s^2
+    acceleration_limit: 2.5  # m/s^2
     deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1 # m/s
-    max_rotational_vel: 1.0  # rad/s
-    min_rotational_vel: 0.4  # rad/s
-    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2)
+    minimum_speed: 0.1       # m/s
+    max_rotational_vel: 1.0  # rad/s Default: 1.0
+    min_rotational_vel: 0.4  # rad/s Default: 0.4
+    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -425,48 +437,51 @@ behavior_server:
 # which corresponds to a standard (ROS2 provided) action that the bot should perform when it reaches a waypoint.
 
 waypoint_follower:
-  ros__parameters:
+  ros__parameters: # see https://docs.nav2.org/configuration/packages/configuring-waypoint-follower.html#default-plugin
     enable_stamped_cmd_vel: true
-    loop_rate: 20
-    stop_on_failure: false
-    action_server_result_timeout: 900.0
-    waypoint_task_executor_plugin: "wait_at_waypoint"
+    loop_rate: 2 # Default: 20
+    stop_on_failure: false # false allows the robot to continue to the next waypoint even if one fails.
+    #action_server_result_timeout: 900.0 # 15 minutes. Default 10 seconds - see https://github.com/ros2/rcl/pull/1012
+    waypoint_task_executor_plugin: "wait_at_waypoint" # plugin could be WaitAtWaypoint, PhotoAtWaypoint or InputAtWaypoint
     wait_at_waypoint:
       plugin: "nav2_waypoint_follower::WaitAtWaypoint"
       enabled: True
-      waypoint_pause_duration: 200
+      waypoint_pause_duration: 5 # Sets a 5-second pause at each waypoint
 
 # See https://docs.nav2.org/configuration/packages/configuring-velocity-smoother.html
 #     https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 10.0     # Rate to run smoother
+    smoothing_frequency: 12.0     # Rate to run smoother. Default: 20.0 Hz
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
-    feedback: "CLOSED_LOOP"
-    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]
-    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]
-    max_accel: [2.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]
-    max_decel: [-2.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]
+    feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
+    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
+    max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
     odom_topic: /diff_cont/odom   # works
-    odom_duration: 0.5  # Period of time (s) to sample odometry information in for velocity estimation
+    odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
+#     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
+#     https://github.com/ros-navigation/navigation2/blob/main/nav2_collision_monitor/params/collision_monitor_params.yaml
+# Collision Monitor operates directly with sensor data, bypassing the usual costmap and planning systems.
 collision_monitor:
   ros__parameters:
     enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
-    cmd_vel_out_topic: "cmd_vel_nav"
-    state_topic: "collision_monitor_state"
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-    source_timeout: 1.0
-    base_shift_correction: True
+    cmd_vel_out_topic: "cmd_vel_nav" # Default: “cmd_vel”. The topic where safety-checked commands are sent. 
+    state_topic: "collision_monitor_state" # Where to publish information about active safety behaviors.
+    transform_tolerance: 0.5  # Default: 0.1  Delay in transform (tf) data that is tolerable in seconds
+    source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
+    base_shift_correction: True # true makes collision detection more accurate but uses more CPU power. Like taking a photo from a moving car.
     stop_pub_timeout: 2.0
     # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
     # and robot footprint for "approach" action type.
@@ -475,34 +490,54 @@ collision_monitor:
       type: "polygon"
       action_type: "approach"
       footprint_topic: "/local_costmap/published_footprint"
-      time_before_collision: 1.2
-      simulation_time_step: 0.1
+      time_before_collision: 1.2 # Default: 2.0  Increasing this value makes the robot more cautious but might make it stop unnecessarily far from obstacles.
+      simulation_time_step: 0.1  # How often to check for collisions during the prediction. 
       min_points: 6
       visualize: False
       enabled: True
-    observation_sources: ["scan"]
+    observation_sources: ["scan", "sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"] # scan, pointcloud, range or polygon
     scan:
       type: "scan"
-      topic: "scan"
-      min_height: 0.15
-      max_height: 2.0
+      topic: "/scan"
       enabled: True
+    sonar_F_L:
+      type: "range"
+      topic: "/sonar_F_L"
+      enabled: True
+    sonar_F_R:
+      type: "range"
+      topic: "/sonar_F_R"
+      enabled: True
+    sonar_B_L:
+      type: "range"
+      topic: "/sonar_B_L"
+      enabled: True
+    sonar_B_R:
+      type: "range"
+      topic: "/sonar_B_R"
+      enabled: True
+#    pointcloud:
+#      type: "pointcloud"
+#      topic: "/intel_realsense_r200_depth/points"
+#      min_height: 0.1
+#      max_height: 0.5
+#      enabled: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 50.0
-    initial_perception_timeout: 5.0
-    wait_charge_timeout: 5.0
-    dock_approach_timeout: 30.0
-    undock_linear_tolerance: 0.05
-    undock_angular_tolerance: 0.1
+    controller_frequency: 10.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
+    initial_perception_timeout: 5.0 # Timeout (s) to wait to obtain initial perception of the dock.
+    wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
+    dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.
+    undock_linear_tolerance: 0.05 # Tolerance (m) to exit the undocking control loop at staging pose.
+    undock_angular_tolerance: 0.1 # Angular Tolerance (rad) to exist undocking loop at staging pose.
     max_retries: 3
     base_frame: "base_link"
-    fixed_frame: "odom"
-    dock_backwards: false
-    dock_prestaging_tolerance: 0.5
+    fixed_frame: "odom" # Fixed frame to use, recommended to be a smooth odometry frame not map.
+    dock_backwards: false # Whether the robot is docking with the dock forward or backward in motion.
+    dock_prestaging_tolerance: 0.5 # L2 distance in X,Y,Theta from the staging pose to bypass navigation.
 
     # Types of docks
     dock_plugins: ['simple_charging_dock']
@@ -529,6 +564,7 @@ docking_server:
     #   type: 'simple_charging_dock'
     #   frame: map
     #   pose: [0.0, 0.0, 0.0]
+    #   id: 'c67f50cb-e152-4720-85cc-5eb20bd85ce8'
 
     controller:
       k_phi: 3.0
@@ -538,7 +574,8 @@ docking_server:
 
 # see https://docs.nav2.org/configuration/packages/configuring-loopback-sim.html
 loopback_simulator:
-  ros__parameters:
+  ros__parameters: # Loopback Simulator computes the robot’s odometry based on the command velocity’s output request
+                   # needed when neither physical robot nor Gazebo sim is available
     enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
