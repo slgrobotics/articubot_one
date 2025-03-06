@@ -469,6 +469,7 @@ velocity_smoother:
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
 #     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
+#     https://github.com/ros-navigation/navigation2/blob/main/nav2_collision_monitor/params/collision_monitor_params.yaml
 # Collision Monitor operates directly with sensor data, bypassing the usual costmap and planning systems.
 collision_monitor:
   ros__parameters:
@@ -480,7 +481,7 @@ collision_monitor:
     state_topic: "collision_monitor_state" # Where to publish information about active safety behaviors.
     transform_tolerance: 0.5  # Default: 0.1  Delay in transform (tf) data that is tolerable in seconds
     source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
-    base_shift_correction: True
+    base_shift_correction: True # true makes collision detection more accurate but uses more CPU power. Like taking a photo from a moving car.
     stop_pub_timeout: 2.0
     # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
     # and robot footprint for "approach" action type.
@@ -490,7 +491,7 @@ collision_monitor:
       action_type: "approach"
       footprint_topic: "/local_costmap/published_footprint"
       time_before_collision: 1.2 # Default: 2.0  Increasing this value makes the robot more cautious but might make it stop unnecessarily far from obstacles.
-      simulation_time_step: 0.1
+      simulation_time_step: 0.1  # How often to check for collisions during the prediction. 
       min_points: 6
       visualize: False
       enabled: True
@@ -515,22 +516,28 @@ collision_monitor:
       type: "range"
       topic: "/sonar_B_R"
       enabled: True
+#    pointcloud:
+#      type: "pointcloud"
+#      topic: "/intel_realsense_r200_depth/points"
+#      min_height: 0.1
+#      max_height: 0.5
+#      enabled: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 50.0
-    initial_perception_timeout: 5.0
-    wait_charge_timeout: 5.0
-    dock_approach_timeout: 30.0
-    undock_linear_tolerance: 0.05
-    undock_angular_tolerance: 0.1
+    controller_frequency: 10.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
+    initial_perception_timeout: 5.0 # Timeout (s) to wait to obtain initial perception of the dock.
+    wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
+    dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.
+    undock_linear_tolerance: 0.05 # Tolerance (m) to exit the undocking control loop at staging pose.
+    undock_angular_tolerance: 0.1 # Angular Tolerance (rad) to exist undocking loop at staging pose.
     max_retries: 3
     base_frame: "base_link"
-    fixed_frame: "odom"
-    dock_backwards: false
-    dock_prestaging_tolerance: 0.5
+    fixed_frame: "odom" # Fixed frame to use, recommended to be a smooth odometry frame not map.
+    dock_backwards: false # Whether the robot is docking with the dock forward or backward in motion.
+    dock_prestaging_tolerance: 0.5 # L2 distance in X,Y,Theta from the staging pose to bypass navigation.
 
     # Types of docks
     dock_plugins: ['simple_charging_dock']
@@ -557,6 +564,7 @@ docking_server:
     #   type: 'simple_charging_dock'
     #   frame: map
     #   pose: [0.0, 0.0, 0.0]
+    #   id: 'c67f50cb-e152-4720-85cc-5eb20bd85ce8'
 
     controller:
       k_phi: 3.0
@@ -566,7 +574,8 @@ docking_server:
 
 # see https://docs.nav2.org/configuration/packages/configuring-loopback-sim.html
 loopback_simulator:
-  ros__parameters:
+  ros__parameters: # Loopback Simulator computes the robot’s odometry based on the command velocity’s output request
+                   # needed when neither physical robot nor Gazebo sim is available
     enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
