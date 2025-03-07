@@ -246,7 +246,7 @@ local_costmap:
       map_vis_z: -0.19 # place local costmap at the floor level (wheels radius below base_link)
       resolution: 0.05 # meters/cell. Default: 0.1
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-      robot_radius: 0.33
+      robot_radius: 0.4
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       plugins: ["obstacle_layer", "range_sensor_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
@@ -309,7 +309,7 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       robot_radius: 0.4
-      #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
+      #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
       plugins: ["static_layer", "obstacle_layer", "range_sensor_layer", "inflation_layer"]
