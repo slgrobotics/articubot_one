@@ -62,7 +62,9 @@ bt_navigator:
     bt_loop_duration: 10
     default_server_timeout: 20
     wait_for_service_timeout: 1000  # ms, during initialization
-    action_server_result_timeout: 900.0 # timeout value for action servers to discard a goal handle if a result hasn’t been produced. The high value of 900 seconds (15 minutes) allows for long-running navigation tasks.
+    #action_server_result_timeout: 900.0 # timeout value for action servers to discard a goal handle if a result hasn’t been produced.
+                                         # Default: 900.0 The high value of 900 seconds (15 minutes) allows for long-running navigation tasks.
+                                         # ros2 param get bt_navigator action_server_result_timeout
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
@@ -406,7 +408,8 @@ behavior_server:
     local_footprint_topic: local_costmap/published_footprint
     global_footprint_topic: global_costmap/published_footprint
     cycle_frequency: 12.0  # Default: 10.0  Frequency to run behavior plugins.
-    action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced
+    #action_server_result_timeout: 10.0  # discard a goal handle if a result has not been produced  Default 10 seconds - see https://github.com/ros2/rcl/pull/1012
+                                         # ros2 param get behavior_server action_server_result_timeout
     behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
     spin:
       plugin: "nav2_behaviors::Spin"
@@ -441,7 +444,7 @@ waypoint_follower:
     enable_stamped_cmd_vel: true
     loop_rate: 2 # Default: 20
     stop_on_failure: false # false allows the robot to continue to the next waypoint even if one fails.
-    #action_server_result_timeout: 900.0 # 15 minutes. Default 10 seconds - see https://github.com/ros2/rcl/pull/1012
+    #action_server_result_timeout: 900.0 # Default: 900 (15 minutes). ros2 param get waypoint_follower action_server_result_timeout
     waypoint_task_executor_plugin: "wait_at_waypoint" # plugin could be WaitAtWaypoint, PhotoAtWaypoint or InputAtWaypoint
     wait_at_waypoint:
       plugin: "nav2_waypoint_follower::WaitAtWaypoint"
