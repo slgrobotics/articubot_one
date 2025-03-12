@@ -162,12 +162,12 @@ def generate_launch_description():
         respawn=True,
         respawn_delay=10,
         parameters=[
-          {'product_name': 'LDLiDAR_LD14'},
+          {'product_name': 'LDLiDAR_LD14P'},  # LDLiDAR_LD14P setting works for LD-19P LIDAR
           {'laser_scan_topic_name': 'scan'},
           {'point_cloud_2d_topic_name': 'pointcloud2d'},
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
-          {'serial_baudrate' : 115200},
+          {'serial_baudrate' : 230400}, # LD-19P has 230400 baud rate
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': False},
           {'angle_crop_min': 135.0},
