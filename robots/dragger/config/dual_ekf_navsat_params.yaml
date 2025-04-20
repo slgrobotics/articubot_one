@@ -3,6 +3,8 @@
 # see https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/config/dual_ekf_navsat_params.yaml
 #     https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
 #     https://github.com/jimdinunzio/trucksaurus/blob/humble/linorobot2_base/config/ekf_gps.yaml
+#     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/dual_ekf_navsat_example.yaml
+#     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml
 
 # For parameter descriptions, please refer to the template parameter files for each node.
 
@@ -149,10 +151,10 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  false, false,  true,
+                  true, true,  false,
                   false, false, false,
-                  false, false, false,
-                  false, false, false]
+                  true, true, true,
+                  true, true, true]
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -265,7 +267,7 @@ ekf_filter_node_map:
     odom0: /diff_cont/odom 
     odom0_config: [false, false, false,
                    false, false, false,
-                    true,  true, false,
+                    true,  true, true,
                    false, false, true,
                    false, false, false]
     odom0_queue_size: 10
@@ -286,10 +288,10 @@ ekf_filter_node_map:
     # We trust IMU compass data (yaw) to be accurate:
     imu0: imu/data
     imu0_config: [false, false, false,
-                  false, false,  true,
+                  true, true,  true,
                   false, false, false,
-                  false, false, false,
-                  false, false, false]
+                  true, true, true,
+                  true, true, true]
 #    imu0_nodelay: false
 
 # If using a real robot you might want to set this to true,
