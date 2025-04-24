@@ -43,8 +43,14 @@
     <xacro:property name="battery_capacity" value="20.0"/>
     <xacro:include filename="../../../description/battery.xacro" />
 
-    <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
-    <!-- xacro:include filename="../../../description/face.xacro" / -->
+    <xacro:property name="depth_camera_offset_x" value="${wheel_offset_x}"/>
+    <xacro:property name="depth_camera_offset_z" value="0.45"/>
+    <xacro:include filename="../../../description/depth_camera.xacro"/>
+
+    <xacro:unless value="$(arg sim_mode)">
+        <xacro:arg name="parent_frame" default="depth_camera_link_optical" />
+        <xacro:include filename="$(find depthai_descriptions)/urdf/depthai_descr.urdf.xacro"/>
+    </xacro:unless>
     
     <xacro:include filename="ros2_control.xacro" />
 

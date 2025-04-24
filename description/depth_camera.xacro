@@ -35,8 +35,11 @@
         <origin xyz="${depth_camera_offset_x} 0 ${depth_camera_offset_z}" rpy="0 0 0"/>
     </joint>
 
-    <link name="depth_camera_link_optical">
-    </link>
+    <xacro:if value="$(arg sim_mode)">
+      <!-- OAK-D depthai_descr.urdf.xacro generates its own "parent_frame", in our case we want it to be "depth_camera_link_optical" -->
+      <link name="depth_camera_link_optical">
+      </link>
+    </xacro:if>
 
     <!-- gz model -m dragger -s depth_camera -->
 	  <gazebo reference="depth_camera_link">
