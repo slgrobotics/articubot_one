@@ -250,7 +250,8 @@ local_costmap:
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       #robot_radius: 0.4
       footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
-      plugins: ["obstacle_layer", "range_sensor_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
+      #plugins: ["obstacle_layer", "range_sensor_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
+      plugins: ["obstacle_layer", "denoise_layer", "inflation_layer"] # less "range_sensor_layer" here, as it is not very reliable on Dragger.
 
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -314,8 +315,7 @@ global_costmap:
       footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
-      #plugins: ["static_layer", "obstacle_layer", "range_sensor_layer", "inflation_layer"]
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"] # keep range_sensor_layer for obstacle avoidance and local costmap
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"] # no "range_sensor_layer" here, it is for obstacle avoidance and local costmap
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -338,19 +338,6 @@ global_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
-
-      range_sensor_layer:
-        plugin: "nav2_costmap_2d::RangeSensorLayer"
-        enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
-        phi: 1.2
-        no_readings_timeout: 0.0
-        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
-        clear_on_max_reading: true # Default false. True allows the range sensor to clear obstacles from the costmap when the sensor reports its maximum range reading.
-        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
