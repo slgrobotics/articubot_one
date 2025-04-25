@@ -151,10 +151,10 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true, true,  false,
+                  true, true,  true,
                   false, false, false,
                   true, true, true,
-                  true, true, true]
+                  false, true, true]  # having true in "x_accel" cell makes sim crazy
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -219,8 +219,8 @@ ekf_filter_node_odom:
 # unspecified.
 
 #                                x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
-#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
+#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
+#    process_noise_covariance: [1e-2, 1e-2, 1e-2, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
 
 # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
 # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
@@ -229,8 +229,8 @@ ekf_filter_node_odom:
 #if unspecified.
 
 #                                   x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
-#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
+#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
+#    initial_estimate_covariance: [1e-2, 1e-2, 1e-2, 1.0, 1.0,   1e-2, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
 
 ekf_filter_node_map:
   ros__parameters:
@@ -291,7 +291,7 @@ ekf_filter_node_map:
                   true, true,  true,
                   false, false, false,
                   true, true, true,
-                  true, true, true]
+                  false, true, true]  # having true in "x_accel" cell makes sim crazy
 #    imu0_nodelay: false
 
 # If using a real robot you might want to set this to true,
@@ -306,10 +306,10 @@ ekf_filter_node_map:
 
     use_control: false
 #                                x,   y,    z, roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    process_noise_covariance: [1.0, 1.0, 1e-3, 0.3, 0.3,   0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
-#    process_noise_covariance: [1.0, 1.0, 1e-3, 0.3, 0.3,   0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
+#    process_noise_covariance: [1.0, 1.0, 1e-3, 0.3, 0.3,   0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
+#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3,   0.01, 1e-3, 1e-3, 1e-3, 0.3,   0.3,    0.3, 1e-3, 1e-3, 1e-3]
 
 #                                   x,   y,    z, roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    initial_estimate_covariance: [1.0, 1.0, 1e-9, 1.0,  1.0,  1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
-#    initial_estimate_covariance: [1.0, 1.0, 1e-9, 1.0,  1.0,  1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
+#    initial_estimate_covariance: [1.0, 1.0, 1e-9, 1.0,  1.0,  1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
+#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0,  1.0,  1e-9, 1e-9, 1e-9, 1e-9, 1.0,   1.0,    1.0, 1e-9, 1e-9, 1e-9]
 
