@@ -264,7 +264,7 @@ ekf_filter_node_map:
     # Since per REP 105 the position of the robot in the odom frame has to be continuous over time, 
     # in this filter we just want to fuse the robot’s speed measured by its wheels published /odom, 
     # and the imu heading published on /imu/data:
-    odom0: /diff_cont/odom 
+    odom0: diff_cont/odom 
     odom0_config: [false, false, false,
                    false, false, false,
                     true,  true, true,
