@@ -6,19 +6,6 @@
         <!-- Wheel geometry information - see controllers.yaml -->
 
         <hardware>
-            <xacro:unless value="$(arg sim_mode)">
-                <!-- Values corrected for Dragger robot -->
-                <plugin>diffdrive_arduino/DiffDriveArduino</plugin>
-                <param name="left_wheel_name">left_wheel_joint</param>
-                <param name="right_wheel_name">right_wheel_joint</param>
-                <param name="loop_rate">30</param>
-                <param name="device">/dev/ttyACM0</param>
-                <param name="baud_rate">115200</param>
-                <param name="timeout">1000</param>
-                <param name="enc_counts_per_rev">2506</param>
-                <param name="wheels_pwm_factor">1.0</param>
-            </xacro:unless>
-
             <xacro:if value="$(arg sim_mode)">
                 <plugin>gz_ros2_control/GazeboSimSystem</plugin>
             </xacro:if>
@@ -35,31 +22,13 @@
             <state_interface name="velocity" />
             <state_interface name="position" />
         </joint>
-
-        <!-- <xacro:if value="$(arg sim_mode)"> -->
-            <!-- we need this for Rviz to reflect rotations of joints published by broad_cont in Gazebo -->
-            <!-- <joint name="left_caster_wheel_joint">
-                <state_interface name="velocity" />
-                <state_interface name="position" />
-            </joint> -->
-
-            <!-- <joint name="right_caster_wheel_joint">
-                <state_interface name="velocity" />
-                <state_interface name="position" />
-            </joint> -->
-        <!-- </xacro:if> -->
         
-
     </ros2_control>
 
     <gazebo>
         <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
 
-            <!-- the following are just default parameters anyway. Skip them unless you want to reassign them:
-            <robot_param>robot_description</robot_param>
-            <robot_param_node>robot_state_publisher</robot_param_node> -->
-
-            <parameters>$(find articubot_one)/robots/stingray/config/controllers.yaml</parameters>
+            <parameters>/home/ubuntu/ros_ws/install/articubot_one/share/articubot_one/robots/stingray/config/controllers.yaml</parameters>
         </plugin>
     </gazebo>
 

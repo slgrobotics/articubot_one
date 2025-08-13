@@ -32,14 +32,14 @@ from nav2_common.launch import RewrittenYaml
 def generate_launch_description():
 
     # Get the launch directory
-    #package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one' #<--- CHANGE ME
 
-    #package_path = get_package_share_directory(package_name)
+    package_path = get_package_share_directory(package_name)
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
-    params_file = LaunchConfiguration('params_file')        # no default, must be supplied
+    params_file = LaunchConfiguration('/home/ubuntu/ros_ws/src/articubot_one/robots/stingray/config/nav2_params.yaml') # no default, must be supplied
     odom_topic = LaunchConfiguration('odom_topic')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
@@ -100,7 +100,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value='',
+        default_value='/home/ubuntu/ros_ws/src/articubot_one/robots/stingray/config/nav2_params.yaml',
         description='Full path to the ROS2 parameters file to use for all launched nodes',
     )
 

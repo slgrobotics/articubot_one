@@ -3,12 +3,16 @@
 
     <!-- LIDAR SUPPORT JOINT -->
     <joint name="lidar_support_joint" type="fixed">
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="lidar_support_link"/>
         <origin xyz="0.0 0.0 0.0"/>
     </joint>
 
     <!-- LIDAR SUPPORT LINK -->
+    <!-- 'Front' of YDLidar is the drive motor end
+    which in this instance points to the left of the robot 
+    thus the rotation of the support link by pi/2 radians
+    -->
     <link name="lidar_support_link">
         <visual name="lidar_support__gz_visual">
             <origin xyz="${lidar_support_offset_x} ${lidar_support_offset_y} ${lidar_support_offset_z}" rpy="0.0 0.0 ${pi/2}"/>
@@ -18,7 +22,6 @@
             <material name="black"/>
         </visual>
         <visual name="lidar_support_rviz_visual">
-            <!-- <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 ${pi/2}"/> -->
             <origin xyz="${lidar_support_offset_x} ${lidar_support_offset_y} ${lidar_support_offset_z}" rpy="0.0 0.0 ${pi/2}"/>
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/LIDAR_support.stl" scale="0.001 0.001 0.001"/>

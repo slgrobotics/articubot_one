@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:property name="battery_length" value="0.170"/>
+    <xacro:property name="battery_width" value="0.050"/>
+    <xacro:property name="battery_height" value="0.040"/>
+    <xacro:property name="battery_mass" value="0.765"/>
+    <xacro:property name="battery_offset_x" value="-0.05654"/>
+    <xacro:property name="battery_offset_y" value="0.0"/>
+    <xacro:property name="battery_offset_z" value="${chassis_height/2 + battery_height/2}"/>
+
+    <joint name="battery_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="battery_link"/>
+        <origin xyz="${battery_offset_x} ${battery_offset_y} ${battery_offset_z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="battery_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 ${pi/2}"/>
+            <geometry>
+                <box size="${battery_length} ${battery_width} ${battery_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 ${pi/2}"/>
+            <geometry>
+                <box size="${battery_length} ${battery_width} ${battery_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${battery_mass}" x="${battery_length}" y="${battery_width}" z="${battery_height}">
+            <origin xyz="0.0 0.0 0.0" rpy="0 0 ${pi/2}"/>
+        </xacro:inertial_box>
+
+
+
+    </link>
+
+</robot>

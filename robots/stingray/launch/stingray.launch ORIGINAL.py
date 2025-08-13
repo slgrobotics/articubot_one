@@ -46,19 +46,18 @@ def generate_launch_description():
     )
 
     cartographer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','stingray_cartographer.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
-    #map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
+    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
-
 
     # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
@@ -69,34 +68,60 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
+    # alternative to odom_localizer for slam_toolbox
+    tf_localizer = Node(package = "tf2_ros", 
+                    executable = "static_transform_publisher",
+                    arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+    )
+
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-        ), launch_arguments={'use_sim_time': use_sim_time,
-            #'use_composition': 'True',
-            'odom_topic': 'diff_cont/odom',
-            #'use_respawn': 'true',
-            'autostart' : 'true',
-            'params_file' : nav2_params_file }.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     #'use_composition': 'True',
+                                     'odom_topic': 'diff_cont/odom',
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items()
     )
 
-    # roboclaw_params_file = '/home/ubuntu/ros2_roboclaw_driver/src/ros2_roboclaw_driver/config/motor_driver.yaml'
+    controllers_params_file = os.path.join(robot_path,'config','controllers.yaml')
 
-    # roboclaw_node = Node(
-    #     package="ros2_roboclaw_driver",
-    #     executable="ros2_roboclaw_driver_node",
-    #     name="ros2_roboclaw_driver",
-    #     output="screen",
-    #     respawn=False,
-    #     parameters=[roboclaw_params_file],
-    # )
+    controller_manager = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[controllers_params_file],
+        remappings=[('/tf','/diff_cont/tf')]   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
+    )
 
-    joint_state_publisher_node = Node(
-        package="joint_state_publisher",
-        executable="joint_state_publisher",
-        name="joint_state_publisher"
+    delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
+
+    joint_broad_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_broad"],
+    )
+
+    diff_drive_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["diff_cont"]
+    )
+
+    delayed_joint_broad_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=controller_manager,
+            on_start=[joint_broad_spawner],
+        )
+    )
+
+    delayed_diff_drive_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=joint_broad_spawner,
+            on_start=[diff_drive_spawner],
+        )
     )
 
     ydlidar_node = Node(
@@ -164,9 +189,9 @@ def generate_launch_description():
     drive_include = GroupAction(
         actions=[
             twist_mux,
-            # delayed_controller_manager,
-            # delayed_diff_drive_spawner,
-            # delayed_joint_broad_spawner
+            delayed_controller_manager,
+            delayed_diff_drive_spawner,
+            delayed_joint_broad_spawner
         ]
     )
 
@@ -181,11 +206,12 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            #tf_localizer,
             #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            map_server,    # localization is left to GPS
-            # cartographer, # localization via LIDAR
-            # slam_toolbox, # localization via LIDAR
+            #map_server,    # localization is left to GPS
+            #cartographer, # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
@@ -201,10 +227,9 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'
         ),
         rsp,
-        # joystick,
+        joystick,
         drive_include,
-        sensors_include,
-        # roboclaw_node,
+        # sensors_include,
         delayed_loc,
         delayed_nav
     ])

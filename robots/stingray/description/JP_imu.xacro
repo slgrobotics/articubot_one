@@ -8,7 +8,7 @@
         <parent link="chassis_link"/>
         <child link="imu_link"/>
         <!-- we place IMU between the wheels -->
-        <origin xyz="${imu_offset_x} 0 ${imu_offset_z}" rpy="0 0 0"/>
+        <origin xyz="${imu_offset_x} ${imu_offset_y} ${imu_offset_z}" rpy="${imu_rotation_x} ${imu_rotation_y} ${imu_rotation_z}"/>
     </joint>
 
     <link name="imu_link">

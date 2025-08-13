@@ -39,8 +39,8 @@ slam_toolbox:
     # or at the dock, but they are mutually exclusive, if pose is given
     # will use pose
     map_file_name: stingray_map_serial   # will be saved in the directory where the robot was launched
-    # map_start_pose: [0.0, 0.0, 0.0]
-    #map_start_at_dock: true
+    map_start_pose: [0.0, 0.0, 0.0]
+    # map_start_at_dock: true
 
     debug_logging: false
     throttle_scans: 1

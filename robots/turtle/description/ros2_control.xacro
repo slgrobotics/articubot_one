@@ -58,7 +58,7 @@
             <robot_param>robot_description</robot_param>
             <robot_param_node>robot_state_publisher</robot_param_node> -->
 
-            <parameters>$(find articubot_one)/robots/turtle/config/controllers.yaml</parameters>
+            <parameters>/home/ubuntu/ros_ws/install/articubot_one/share/articubot_one/robots/turtle/config/controllers.yaml</parameters>
         </plugin>
     </gazebo>
 

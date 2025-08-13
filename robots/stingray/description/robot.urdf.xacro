@@ -1,5 +1,19 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- robot.urdf.xacro
+    imports 
+        robot_core.xacro
+        common_properties.xacro
+        individual sensors - each with their positions
+            JP_lidar.xacro
+            JP_imu.xacro
+            JP_camera.xacro
+        other components
+            battery.xacro
+            ros2_control.xacro   
+    -->
+   
     <!-- See common Gazebo pugins in the world file -->
     <!--
         To re-generate robot.urdf.generated.xml manually for troubleshooting:
@@ -8,37 +22,42 @@
           xacro install/articubot_one/share/articubot_one/robots/stingray/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/stingray/description/robot.urdf.generated.xml
     -->
     <!-- COMMON -->
-    <xacro:include filename="../../../description/common_properties.xacro" />
+    <xacro:include filename="$(find articubot_one)/description/common_properties.xacro" />
+
     <!-- CORE -->
     <xacro:include filename="robot_core.xacro" />
-    <!-- CAMERA -->
+
+    <!-- USB FISHEYE CAMERA -->
     <xacro:property name="camera_offset_x" value="${front_panel_offset}"/>
     <xacro:property name="camera_offset_z" value="0.01525"/>
-    <xacro:include filename="../../../description/JP_camera.xacro" />
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_camera.xacro" />
+    <xacro:property name="camera_rotation_y" value="-0.1571"/>    <!-- =9 degrees -->
+
     <!-- LIDAR -->
-    <xacro:property name="lidar_support_offset_x" value="0.0"/>
-    <xacro:property name="lidar_support_offset_y" value="0.0"/>
+    <xacro:property name="lidar_support_offset_x" value="0.042"/>
+    <xacro:property name="lidar_support_offset_y" value="-0.02"/>
     <xacro:property name="lidar_support_offset_z" value="${chassis_height/2 + 0.00375}"/>
-    <xacro:include filename="../../../description/lidar_support.xacro" />
-    <xacro:property name="laser_offset_x" value="${wheel_offset_x}"/>
-    <xacro:property name="laser_offset_z" value="0.50"/>
-    <xacro:include filename="../../../description/JP_lidar.xacro" />
-    <!-- GPS -->
-    <xacro:property name="gps_offset_x" value="0.0"/>
-    <xacro:property name="gps_offset_y" value="0.0"/>
-    <xacro:property name="gps_offset_z" value="0.02"/>
-    <xacro:include filename="../../../description/JP_gps.xacro" />
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/lidar_support.xacro"/>
+
+    <!-- <xacro:property name="laser_offset_x" value="${wheel_offset_x}"/> -->
+    <!-- <xacro:property name="laser_offset_z" value="0.50"/> -->
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_lidar.xacro" />
+
     <!-- IMU -->
     <xacro:property name="imu_offset_x" value="0.0"/>
+    <xacro:property name="imu_offset_y" value="0.0"/>
     <xacro:property name="imu_offset_z" value="0.0"/>
-    <xacro:include filename="../../../description/imu.xacro" />
-    <!-- MAG -->
-    <xacro:include filename="../../../description/magnetometer.xacro" />
+    <xacro:property name="imu_rotation_x" value="0.0"/>
+    <xacro:property name="imu_rotation_y" value="0.0"/>
+    <xacro:property name="imu_rotation_z" value="0.0"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_imu.xacro"/>
+
     <!-- BATTERY -->
-    <xacro:include filename="../../../description/battery.xacro" />
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/Zeee_LiPo_battery.xacro" />
+
     <!-- OPTIONAL -->
     <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
-    <!-- xacro:include filename="../../../description/face.xacro" / -->
+
     <!-- ROS2 CONTROL -->
     <xacro:include filename="ros2_control.xacro" />
 </robot>

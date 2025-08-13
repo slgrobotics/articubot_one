@@ -30,13 +30,13 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     # Robot specific files reside under "robots" directory - dragger, plucky, create1...
-    robot_model = LaunchConfiguration('robot_model', default='')
+    robot_model = LaunchConfiguration('robot_model', default='stingray')
 
     # define the launch argument that must be passed from the calling launch file or from the console:
     robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
 
     robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
-    
+
     rl_params_file = PythonExpression(["'", robot_model_path, "' + '/config/ekf_odom_params.yaml'"])
 
     return LaunchDescription(

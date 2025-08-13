@@ -88,7 +88,9 @@
             <enable_metrics>false</enable_metrics>
             <camera name='__default__'>
                 <pose>0 0 0 0 0 0</pose>
-                <horizontal_fov>1.047</horizontal_fov>
+                <!-- <horizontal_fov>${pi/2}</horizontal_fov> -->
+                <horizontal_fov>1.40</horizontal_fov>
+                <!-- <vertical_fov>${pi}</horizontal_fov> -->
                 <image>
                     <width>640</width>
                     <height>480</height>

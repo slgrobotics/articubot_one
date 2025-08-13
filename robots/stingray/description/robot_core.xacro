@@ -1,9 +1,20 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:include filename="../../../description/inertial_macros.xacro"/>
+    <!-- robot_core.xacro -->
+    <!-- This file contains the core components of the 
+    Stingray robot, including the chassis, wheels, and joints.
+    It is included in the main robot.urdf.xacro file 
+    to modularize the robot description. 
+    Additional components such as sensors and actuators
+    are in robot.urdf.xacro -->
+
     <!-- TEMPLATE -->
     <xacro:property name="TEMPLATE" value="0.0"/>
+
+    <!-- INERTIAL -->
+    <xacro:include filename="../../../description/inertial_macros.xacro"/>
+
     <!-- CHASSIS -->
     <xacro:property name="chassis_length" value="0.266"/>
     <xacro:property name="chassis_width" value="0.228"/>
@@ -11,12 +22,13 @@
     <xacro:property name="chassis_offset" value="0.0455"/>
     <xacro:property name="front_panel_offset" value="0.090"/>
     <xacro:property name="chassis_mass" value="2.466"/>
-    <!-- <xacro:property name="chassis_mass" value="${stingray_total_mass}-2*${wheel_mass}-${caster_mass}-${lidar_mass}"
-    - ${OTHER_COMPONENTS_TO_BE_DETERMINED}/> -->
+    <!-- <xacro:property name="chassis_mass" value="${stingray_total_mass}-2*${wheel_mass}-${caster_mass}-${lidar_mass}" -->
+    <!-- ${OTHER_COMPONENTS_TO_BE_DETERMINED}/> -->
     <!-- <xacro:property name="stingray_total_mass" value="2.915"/> -->
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
     <!-- <xacro:property name="battery_mass" value="0.765"/> -->    
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
+
     <!-- WHEELS -->
     <xacro:property name="wheel_radius" value="0.0615"/>
     <xacro:property name="wheel_thickness" value="0.02"/>
@@ -28,15 +40,6 @@
     <xacro:property name="caster_x_offset" value="-0.207"/>
     <xacro:property name="caster_z_offset" value="-0.035"/>
     <xacro:property name="caster_mass" value="0.022"/>
-    <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
-<!-- 
-    <xacro:if value="$(arg sim_mode)">
-        <xacro:property name="caster_joint_type" value="continuous"/>
-    </xacro:if>
-    <xacro:unless value="$(arg sim_mode)">
-        <xacro:property name="caster_joint_type" value="fixed"/>
-    </xacro:unless>
- -->
 
     <!-- ********************** ROBOT BASE *********************************  -->
     <!-- The coordinate frame called base_link is rigidly attached to the robot root body.
@@ -50,7 +53,7 @@
         <visual name="baselink_visual">
             <origin xyz="0 0 0"/>
             <geometry>
-                <box size="0.01 0.01 0.01"/>
+                <sphere radius="0.005"/>
             </geometry>
             <material name="red"/>
         </visual>
@@ -61,14 +64,19 @@
          The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole height respecitvely.
          The translation component of the frame should be the barycenter of the feet projections on the floor.
          With respect to the odom frame, the roll and pitch angles should be zero and the yaw angle should correspond to the base_link yaw angle.
-         Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. -->
+         Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. 
+    -->
+    <!-- base_footprint radius = ~0.19 -->
 
     <!-- Define the center of the main robot chassis projected on the ground -->   
     <link name="base_footprint">
         <visual name="footprint_visual">
-            <origin xyz="-${chassis_offset + caster_radius} 0.0 0.0"/>
+            <!-- <origin xyz="-${chassis_offset + caster_radius} 0.0 0.0"/> -->
+            <origin xyz="-${chassis_offset} 0.0 0.0"/>
             <geometry>
-                <box size="${chassis_length + (caster_radius * 2)} ${wheel_separation + wheel_thickness} 0.001"/>
+                <!-- <box size="${chassis_length + (caster_radius * 2)} ${wheel_separation + wheel_thickness} 0.001"/> -->
+                <cylinder radius="0.19" length="0.001"/>
+
             </geometry>
             <material name="shadow_gray"/>
         </visual>
@@ -106,7 +114,6 @@
             <material name="acrylic"/>
         </visual>
         <collision>
-            <!-- <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/> -->
             <origin xyz="${-chassis_offset} 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
 		        <!-- collision doesn't need to be a mesh, a box is sufficient -->
@@ -120,7 +127,7 @@
 
     <!-- LEFT WHEEL JOINT -->
     <joint name="left_wheel_joint" type="continuous">
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="left_wheel_link"/>
         <origin xyz="0.0 ${wheel_offset_x} 0.0" rpy="-${pi/2} 0.0 0.0"/>
         <axis xyz="0 0 1"/>
@@ -188,7 +195,7 @@
     <!-- CASTER WHEEL JOINT-->
     <joint name="caster_wheel_joint" type="fixed">
         <origin xyz="${caster_x_offset} 0.0 ${caster_z_offset}" rpy="0.0 0.0 0.0"/>
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="caster_wheel_link"/>
         <axis xyz="0.0 0.0 0.0"/>
         <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
@@ -222,6 +229,5 @@
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_sphere>
     </link>
-
 
 </robot>
