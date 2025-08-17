@@ -82,7 +82,12 @@ def generate_launch_description():
             'params_file' : nav2_params_file }.items()
     )
 
+    # import yaml
+
     # roboclaw_params_file = '/home/ubuntu/ros2_roboclaw_driver/src/ros2_roboclaw_driver/config/motor_driver.yaml'
+
+    # with open(roboclaw_params_file, 'r') as f:
+    #     roboclaw_params = yaml.safe_load(f)['motor_driver_node']['ros__parameters']
 
     # roboclaw_node = Node(
     #     package="ros2_roboclaw_driver",
@@ -90,8 +95,24 @@ def generate_launch_description():
     #     name="ros2_roboclaw_driver",
     #     output="screen",
     #     respawn=False,
-    #     parameters=[roboclaw_params_file],
+    #     parameters=[roboclaw_params],
     # )
+
+    roboclaw = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("ros2_roboclaw_driver"), 
+                "launch", "ros2_roboclaw_driver.launch.py"
+            )
+        ),
+        launch_arguments={
+            "params_file": os.path.join(
+                get_package_share_directory("ros2_roboclaw_driver"),
+                "config",
+                "motor_driver.yaml"
+            )
+        }.items(),
+    )
 
     joint_state_publisher_node = Node(
         package="joint_state_publisher",
@@ -104,7 +125,7 @@ def generate_launch_description():
         executable='ydlidar_ros2_driver_node',
         name='ydlidar_ros2_driver',
         output='screen',
-        respawn=True,
+        respawn=False,
         respawn_delay=10,
         parameters=['/home/ubuntu/ros_ws/src/ydlidar_ros2_driver/params/ydlidar.yaml'
         ],
@@ -124,15 +145,15 @@ def generate_launch_description():
 
     bno055_driver_node = Node(
         package='bno055',
-        namespace='',
+        # namespace='',
         executable='bno055',
         name='bno055',
         output='screen',
         respawn=True,
         respawn_delay=4,
         parameters=[{
-            # see https://github.com/flynneva/bno055
-            #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
+            #   https://github.com/flynneva/bno055
+            #   https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
             'ros_topic_prefix': 'bno055',
             'connection_type': 'i2c',
             'i2c_bus': 1,
@@ -204,7 +225,7 @@ def generate_launch_description():
         # joystick,
         drive_include,
         sensors_include,
-        # roboclaw_node,
+        roboclaw,
         delayed_loc,
-        delayed_nav
+        # delayed_nav
     ])
