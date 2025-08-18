@@ -99,13 +99,13 @@
 
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
-        <visual name="chassis_gz_visual">
+        <!-- <visual name="chassis_gz_visual">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="model://meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="acrylic"/>
-        </visual>
+        </visual> -->
         <visual name="chassis_rviz_visual">
              <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <geometry>
