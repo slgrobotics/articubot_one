@@ -194,7 +194,7 @@ def generate_launch_description():
     sensors_include = GroupAction(
         actions=[
             ydlidar_node,
-            bno055_driver_node
+            # bno055_driver_node
         ]
     )
 

@@ -1,7 +1,7 @@
 controller_manager:     # target node name
   ros__parameters:
     update_rate: 30 # Hz
-    #use_sim_time: false
+    use_sim_time: false
 
     diff_cont:
       type: diff_drive_controller/DiffDriveController
@@ -22,7 +22,7 @@ diff_cont:
     odom_frame_id: 'odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
-    base_frame_id: base_link
+    base_frame_id: base_footprint
     #base_frame_id: base_footprint
 
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
@@ -37,8 +37,8 @@ diff_cont:
 
     wheels_per_side: 1
 
-    wheel_separation: 0.60             # distance between left and right wheels
-    wheel_radius: 0.192
+    wheel_separation: 0.26             # distance between left and right wheels
+    wheel_radius: 0.062         # diameter 0.124/2
 
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
     # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false

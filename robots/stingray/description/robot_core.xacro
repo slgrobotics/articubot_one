@@ -30,7 +30,7 @@
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
 
     <!-- WHEELS -->
-    <xacro:property name="wheel_radius" value="0.0615"/>
+    <xacro:property name="wheel_radius" value="0.062"/>
     <xacro:property name="wheel_thickness" value="0.02"/>
     <xacro:property name="wheel_mass" value="2.63"/>
     <xacro:property name="wheel_offset_x" value="0.13"/>
