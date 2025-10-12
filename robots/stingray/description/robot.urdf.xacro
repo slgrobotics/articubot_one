@@ -9,7 +9,7 @@
             JP_lidar.xacro
             JP_imu.xacro
             JP_camera.xacro
-        other components
+            OAK-D camera
             battery.xacro
             ros2_control.xacro   
     -->
@@ -28,10 +28,12 @@
     <xacro:include filename="robot_core.xacro" />
 
     <!-- USB FISHEYE CAMERA -->
+    <!-- 
     <xacro:property name="camera_offset_x" value="${front_panel_offset}"/>
     <xacro:property name="camera_offset_z" value="0.01525"/>
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_camera.xacro" />
-    <xacro:property name="camera_rotation_y" value="-0.1571"/>    <!-- =9 degrees -->
+    <xacro:property name="camera_rotation_y" value="-0.1571"/>    =9 degrees 
+    -->
 
     <!-- LIDAR -->
     <xacro:property name="lidar_support_offset_x" value="0.042"/>
@@ -44,6 +46,7 @@
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_lidar.xacro" />
 
     <!-- IMU -->
+    <!-- BNO055 IMU is placed at the center of the wheel axis = base_link -->
     <xacro:property name="imu_offset_x" value="0.0"/>
     <xacro:property name="imu_offset_y" value="0.0"/>
     <xacro:property name="imu_offset_z" value="0.0"/>
@@ -55,9 +58,14 @@
     <!-- BATTERY -->
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/Zeee_LiPo_battery.xacro" />
 
-    <!-- OPTIONAL -->
-    <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
+    <!-- OAK-D Camera -->
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/oakd.xacro" />
+    <xacro:oakd_link mount_point="front_panel"/>
+   <xacro:oakd_joint x="0.023" y="0.01" z="0.030" roll="0" pitch="0" yaw="0" mount_point="front_panel"/>
+    <!-- RealSense Camera -->
+    <!-- <xacro:include filename="../../../description/RealSenseD455.xacro" /> -->
 
     <!-- ROS2 CONTROL -->
     <xacro:include filename="ros2_control.xacro" />
+
 </robot>

@@ -59,7 +59,6 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
-
     # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
@@ -82,27 +81,11 @@ def generate_launch_description():
             'params_file' : nav2_params_file }.items()
     )
 
-    # import yaml
-
-    # roboclaw_params_file = '/home/ubuntu/ros2_roboclaw_driver/src/ros2_roboclaw_driver/config/motor_driver.yaml'
-
-    # with open(roboclaw_params_file, 'r') as f:
-    #     roboclaw_params = yaml.safe_load(f)['motor_driver_node']['ros__parameters']
-
-    # roboclaw_node = Node(
-    #     package="ros2_roboclaw_driver",
-    #     executable="ros2_roboclaw_driver_node",
-    #     name="ros2_roboclaw_driver",
-    #     output="screen",
-    #     respawn=False,
-    #     parameters=[roboclaw_params],
-    # )
-
     roboclaw = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
-                get_package_share_directory("ros2_roboclaw_driver"), 
-                "launch", "ros2_roboclaw_driver.launch.py"
+                get_package_share_directory("roboclaw_driver"), 
+                "launch", "roboclaw_driver.launch.py"
             )
         ),
         launch_arguments={
@@ -129,7 +112,7 @@ def generate_launch_description():
         respawn_delay=10,
         parameters=['/home/ubuntu/ros_ws/src/ydlidar_ros2_driver/params/ydlidar.yaml'
         ],
-	arguments=['--ros-args', '--log-level', 'debug']
+	arguments=['--ros-args', '--log-level', 'info']
 
 #          {'product_name': 'YDLIDAR X2L'},
 #          {'laser_scan_topic_name': 'scan'},
@@ -204,9 +187,9 @@ def generate_launch_description():
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            map_server,    # localization is left to GPS
+            # map_server,    # localization is left to GPS
             # cartographer, # localization via LIDAR
-            # slam_toolbox, # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
@@ -227,5 +210,5 @@ def generate_launch_description():
         sensors_include,
         roboclaw,
         delayed_loc,
-        # delayed_nav
+        delayed_nav
     ])

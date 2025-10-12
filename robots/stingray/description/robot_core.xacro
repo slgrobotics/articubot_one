@@ -18,7 +18,7 @@
     <!-- CHASSIS -->
     <xacro:property name="chassis_length" value="0.266"/>
     <xacro:property name="chassis_width" value="0.228"/>
-    <xacro:property name="chassis_height" value="0.081"/>
+    <xacro:property name="chassis_height" value="0.086"/>
     <xacro:property name="chassis_offset" value="0.0455"/>
     <xacro:property name="front_panel_offset" value="0.090"/>
     <xacro:property name="chassis_mass" value="2.466"/>
@@ -30,6 +30,17 @@
     <!-- <xacro:property name="wheel_motor_assembly" value="0.375"/> -->
 
     <!-- WHEELS -->
+    <!--
+    https://www.pololu.com/product/4753
+    50:1 37Dx70L mm 12V 64 CPM Encoder 6mm D output shaft.
+    50 x 64 = 3200 counts/rev
+    Wheel 4 7/8" dia = 0.123825m dia x π = 0.3890m circ = m/rev
+    [= my tape measurement of 38.95mm circ]
+    Wheel radius = 0.123825m dia / 2 = 0.0619125 = 0.062m
+    1m / 0.39 m/R = 2.57 R/m
+    2.57 R/m x 3200 C/R = 8226 C/m 
+    -->
+    
     <xacro:property name="wheel_radius" value="0.062"/>
     <xacro:property name="wheel_thickness" value="0.02"/>
     <xacro:property name="wheel_mass" value="2.63"/>

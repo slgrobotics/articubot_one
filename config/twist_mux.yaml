@@ -1,28 +1,15 @@
 # See https://github.com/ros-teleop/twist_mux/tree/rolling/config
 
-#
-# /opt/ros/jazzy/share/twist_mux/config/twist_mux_topics.yaml
-#
-# Input topics handled/muxed.
-# For each topic:
-# - name    : name identifier to select the topic (*sub-namespace, see below)
-# - topic   : input topic of geometry_msgs::Twist type
-# - timeout : timeout in seconds to start discarding old messages, and use 0.0 speed instead
-# - priority: priority in the range [0, 255]; the higher the more priority over other topics
-
 twist_mux:
   ros__parameters:
+    use_stamped: false
+    
     topics:
-      generic:
-        topic   : cmd_vel
-        timeout : 0.5
-        priority: 10
       navigation:
         topic   : cmd_vel_nav
         timeout : 0.5
         priority: 20
       joystick:
-        #topic   : joy_vel
         topic   : cmd_vel_joy
         timeout : 0.5
         priority: 100
@@ -39,24 +26,10 @@ twist_mux:
         timeout : 0.5
         priority: 100
 
-#
-# /opt/ros/jazzy/share/twist_mux/config/twist_mux_locks.yaml
-#
-# Locks to stop the twist inputs.
-# For each lock:
-# - topic   : input topic that provides the lock; it must be of type std_msgs::Bool?!!!
-# - timeout : == 0.0 -> not used
-#              > 0.0 -> the lock is supposed to published at a certain frequency in order
-#                       to detect that the publisher is alive; the timeout in seconds allows
-#                       to detect that, and if the publisher dies we will enable the lock
-# - priority: priority in the range [0, 255], so all the topics with priority lower than it
-#             will be stopped/disabled
-
     locks:
       pause:
         topic   : pause_navigation
         timeout : 0.0
-        # Same priority as joystick control, so it'll not block it.
         priority: 100
       loop_closure:
         topic   : stop_closing_loop

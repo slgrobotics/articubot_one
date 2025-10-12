@@ -26,7 +26,8 @@ def generate_launch_description():
         namespace='/',
         output='screen',
         parameters=[twist_mux_params, {'use_sim_time': use_sim_time, 'use_stamped': True}],
-        remappings=[('cmd_vel_out','diff_cont/cmd_vel')]
+        # remappings=[('cmd_vel_out','diff_cont/cmd_vel')]
+        remappings=[('cmd_vel_out','cmd_vel')]
     )
 
     # See https://www.youtube.com/watch?v=PN_AxCug5lg
@@ -49,7 +50,8 @@ def generate_launch_description():
         remappings={('twist', 'diff_cont/cmd_vel')},
         parameters=[{
             'use_sim_time': use_sim_time,
-            'use_stamped': 'true',
+            # 'use_stamped': 'true',
+            'use_stamped': 'false',
             'frame_id': 'base_link',
             'scale': 1.0,
             'vertical_position': 2.0}]

@@ -20,6 +20,7 @@ amcl:
     beam_skip_threshold: 0.3
     do_beamskip: false
     global_frame_id: "map"
+    initial_pose_qos: RELIABLE
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
     laser_max_range: 12.0
@@ -34,7 +35,8 @@ amcl:
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
     resample_interval: 1
-    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    # robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    robot_model_type: "differential"
     save_pose_rate: 0.5
     sigma_hit: 0.2
     tf_broadcast: true
@@ -46,6 +48,9 @@ amcl:
     z_rand: 0.5
     z_short: 0.05
     scan_topic: scan
+    qos_overrides:
+      /initialpose:
+      reliability: reliable
 
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
 bt_navigator:
@@ -84,7 +89,8 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 24.0
+    # controller_frequency: 24.0
+    controller_frequency: 20.0
     costmap_update_timeout: 0.30
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
@@ -225,15 +231,15 @@ local_costmap:
       height: 50
       resolution: 0.05
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
-      robot_radius: 0.33
-      #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
+      # robot_radius: 0.225
+      footprint: "[[-0.24, -0.14], [-0.24, 0.14], [0.11, 0.14], [0.11, -0.14]]"
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.331  # must be larger than robot footprint
+        cost_scaling_factor: 1.5
+        inflation_radius: 0.30  # must be larger than robot footprint
       obstacle_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -272,8 +278,9 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      robot_radius: 0.33
+      # robot_radius: 0.225
       #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
+      footprint: "[[-0.24, -0.14], [-0.24, 0.14], [0.11, 0.14], [0.11, -0.14]]"
       resolution: 0.05
       track_unknown_space: true
       # Try: remove static_layer?
@@ -297,9 +304,9 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
+        cost_scaling_factor: 1.5
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        inflation_radius: 0.331  # must be larger than robot footprint
+        inflation_radius: 0.30  # must be larger than robot footprint
       always_send_full_costmap: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html

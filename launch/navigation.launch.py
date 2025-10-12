@@ -28,6 +28,10 @@ from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode, ParameterFile
 from nav2_common.launch import RewrittenYaml
 
+# added per GPT-5-Chat to add default map launch
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
 
 def generate_launch_description():
 
@@ -39,13 +43,15 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
-    params_file = LaunchConfiguration('/home/ubuntu/ros_ws/src/articubot_one/robots/stingray/config/nav2_params.yaml') # no default, must be supplied
+    # params_file = LaunchConfiguration('/home/ubuntu/ros_ws/src/articubot_one/robots/stingray/config/nav2_params.yaml') # no default, must be supplied
+    params_file = LaunchConfiguration('params_file')
     odom_topic = LaunchConfiguration('odom_topic')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
+    map_file = LaunchConfiguration('map')  # ADD THIS LINE
 
     # composition is used to run multiple Nav2 nodes in a single process to lower the memory utilization and CPU utilization of Nav2.
     # This is specially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
@@ -136,6 +142,19 @@ def generate_launch_description():
 
     declare_log_level_cmd = DeclareLaunchArgument(
         'log_level', default_value='info', description='log level'
+    )
+
+    declare_map_cmd = DeclareLaunchArgument(
+        'map',
+        default_value=os.path.join(package_path, 'maps', 'Study1.yaml'),
+        description='Full path to map yaml file to load'
+    )
+
+    map_server_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'map_server_launch.py')
+        ),
+        launch_arguments={'map': map_file, 'use_sim_time': use_sim_time}.items(),
     )
 
     load_nodes = GroupAction(

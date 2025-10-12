@@ -7,6 +7,7 @@
     <xacro:property name="lidar_support_height" value="0.0424"/>
     <xacro:property name="lidar_offset_x" value="0.045"/>
     <xacro:property name="lidar_offset_y" value="0.0"/>
+    <xacro:property name="lidar_offset_z" value="${(chassis_height/2) + (lidar_support_height) + (lidar_height/2) + 0.015}"/>
     <xacro:property name="lidar_rotation_x" value="${pi}"/>
     <xacro:property name="lidar_rotation_y" value="0.0"/>
     <xacro:property name="lidar_rotation_z" value="${pi/2}"/>
@@ -14,7 +15,7 @@
     <joint name="laser_joint" type="fixed">
         <parent link="lidar_support_link"/>
         <child link="laser_frame"/>
-        <origin xyz="${lidar_offset_x} ${lidar_offset_y} ${(chassis_height/2) + (lidar_support_height) + (lidar_height/2)}" rpy="${lidar_rotation_x} ${lidar_rotation_y} ${lidar_rotation_z}"/>
+        <origin xyz="${lidar_offset_x} ${lidar_offset_y} ${lidar_offset_z}" rpy="${lidar_rotation_x} ${lidar_rotation_y} ${lidar_rotation_z}"/>
     </joint>
 
     <link name="laser_frame">
