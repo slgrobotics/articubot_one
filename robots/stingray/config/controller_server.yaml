@@ -1,0 +1,36 @@
+controller_server:
+  ros__parameters:
+
+    # List of controller plugins to load
+    controller_plugins: ["FollowPath"]
+
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: False
+
+      # --- Required critics list ---
+      critics:
+        - RotateToGoal
+        - Oscillation
+        - BaseObstacle
+        - GoalAlign
+        - PathAlign
+        - PathDist
+        - GoalDist
+
+      # Optional tuning for critics
+      BaseObstacle.scale: 0.02
+      PathAlign.scale:   32.0
+      GoalAlign.scale:   24.0
+      PathDist.scale:    32.0
+      GoalDist.scale:    24.0
+
+      # Safety / velocity limits (example values)
+      max_vel_x: 0.26
+      min_vel_x: 0.0
+      max_vel_theta: 1.0
+      min_speed_theta: 0.0
+      acc_lim_x: 2.5
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_theta: -3.2

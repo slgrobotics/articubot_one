@@ -1,0 +1,37 @@
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 10.0        # how often to update the costmap
+      publish_frequency: 5.0        # how often to publish costmap to RViz
+      global_frame: odom            # 👈 set to odom since we don’t yet have map_server+AMCL
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      always_send_full_costmap: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+
+      # Robot footprint (expanded correctly for YAML parser)
+      footprint: "[[-0.24, -0.14], [-0.24, 0.14], [0.10, 0.14], [0.10, -0.14]]"
+
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        enabled: False   # 👈 disable for now, since no map_server is running
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: scan
+          sensor_frame: lidar_link   # adjust to your LiDAR frame
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: LaserScan
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 1.5
+        inflation_radius: 0.30

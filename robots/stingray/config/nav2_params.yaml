@@ -40,7 +40,7 @@ amcl:
     save_pose_rate: 0.5
     sigma_hit: 0.2
     tf_broadcast: true
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+    transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
     update_min_a: 0.2
     update_min_d: 0.25
     z_hit: 0.5
@@ -140,7 +140,7 @@ controller_server:
       wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.7
-      transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+      transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
       temperature: 0.3
       gamma: 0.015
       motion_model: "DiffDrive"
@@ -230,7 +230,7 @@ local_costmap:
       width: 50
       height: 50
       resolution: 0.05
-      transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+      transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
       # robot_radius: 0.225
       footprint: "[[-0.24, -0.14], [-0.24, 0.14], [0.11, 0.14], [0.11, -0.14]]"
       # Try: remove static_layer?
@@ -282,6 +282,7 @@ global_costmap:
       #footprint: "[[-0.495, -0.388], [-0.495, 0.388], [0.495, 0.388], [0.495, -0.388]]"
       footprint: "[[-0.24, -0.14], [-0.24, 0.14], [0.11, 0.14], [0.11, -0.14]]"
       resolution: 0.05
+      transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
       track_unknown_space: true
       # Try: remove static_layer?
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -367,7 +368,7 @@ behavior_server:
     global_frame: map
     robot_base_frame: base_link
     transform_timeout: 1.0
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+    transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0  # rad/s
     min_rotational_vel: 0.4  # rad/s
@@ -418,7 +419,7 @@ collision_monitor:
     cmd_vel_in_topic: "cmd_vel_smoothed"
     cmd_vel_out_topic: "cmd_vel_nav"
     state_topic: "collision_monitor_state"
-    transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+    transform_tolerance: 1.0  # delay in transform (tf) data that is tolerable in seconds
     source_timeout: 1.0
     base_shift_correction: True
     stop_pub_timeout: 2.0

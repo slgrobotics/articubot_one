@@ -43,7 +43,8 @@ def generate_launch_description():
         output='screen',
         namespace='/',
         parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str),
-                    #'publish_frequency' : 5.0,  # Defaults to 20.0 Hz. Only affects non-static joints.
+                    'use_sim_time': use_sim_time,  # ADD THIS LINE
+                    'publish_frequency' : 5.0,  # Defaults to 20.0 Hz. Only affects non-static joints.
                     #'frame_prefix': '',
                     #'ignore_timestamp': 'false'
                     }]

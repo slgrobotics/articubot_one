@@ -189,7 +189,7 @@ def generate_launch_description():
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
             # map_server,    # localization is left to GPS
             # cartographer, # localization via LIDAR
-            slam_toolbox, # localization via LIDAR
+            # slam_toolbox, # localization via LIDAR
         ]
     )
 
@@ -210,5 +210,5 @@ def generate_launch_description():
         sensors_include,
         roboclaw,
         delayed_loc,
-        delayed_nav
+        # delayed_nav
     ])

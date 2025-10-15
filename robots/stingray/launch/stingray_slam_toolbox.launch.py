@@ -23,7 +23,8 @@ def generate_launch_description():
 
     slam_toolbox = IncludeLaunchDescription(
                 # see /opt/ros/jazzy/share/slam_toolbox/launch
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
+                # PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','localization_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'slam_params_file': slam_toolbox_params_file}.items()
     )
 

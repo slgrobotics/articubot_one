@@ -112,7 +112,7 @@ def generate_launch_description():
 
     declare_odom_topic_cmd = DeclareLaunchArgument(
         'odom_topic',
-        default_value='odometry/local',
+        default_value='odom',             #odometry/local >> odom
         description='Odometry topic to use',
     )
 
