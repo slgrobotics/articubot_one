@@ -95,11 +95,7 @@ def generate_launch_description():
         parameters=[controllers_params_file],
         remappings=[
             ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
-            ('battery_state_broadcaster/battery_state', 'battery/battery_state'),
-            ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
-            ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
-            ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
-            ('sonar_broadcaster_B_R/range', 'sonar_B_R')
+            ('battery_state_broadcaster/battery_state', 'battery/battery_state')
         ]
     )
 
@@ -123,30 +119,6 @@ def generate_launch_description():
         arguments=["diff_cont"]
     )
 
-    sonar_f_l_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["sonar_broadcaster_F_L"]
-    )
-
-    sonar_f_r_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["sonar_broadcaster_F_R"]
-    )
-
-    sonar_b_l_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["sonar_broadcaster_B_L"]
-    )
-
-    sonar_b_r_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["sonar_broadcaster_B_R"]
-    )
-
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
@@ -165,13 +137,6 @@ def generate_launch_description():
         event_handler=OnProcessStart(
             target_action=joint_broad_spawner,
             on_start=[diff_drive_spawner]
-        )
-    )
-
-    delayed_sonars_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=diff_drive_spawner,
-            on_start=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner]
         )
     )
 
@@ -266,43 +231,19 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
-    gps_node = Node(
-        package='nmea_navsat_driver',
-        executable='nmea_serial_driver',
-        output='screen',
-        respawn=True,
-        respawn_delay=10,
-        parameters=[
-            {'port' : '/dev/ttyUSBGPS' },
-            {'baud' : 9600 },
-            {'frame_id' : 'gps_link' },
-            {'time_ref_source' : 'gps' },
-            {'use_GNSS_time' : False },
-            {'useRMC' : False }
-        ],
-        remappings=[("fix", "gps/fix")]
-    )
-
-    navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
-    )
-
     drive_include = GroupAction(
         actions=[
             twist_mux,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
-            delayed_battery_state_broadcaster_spawner,
-            delayed_sonars_spawner
+            delayed_battery_state_broadcaster_spawner
         ]
     )
 
     sensors_include = GroupAction(
         actions=[
             ldlidar_node,
-            gps_node,
             mpu9250driver_node
             #bno055_driver_node
         ]
@@ -313,9 +254,7 @@ def generate_launch_description():
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #tf_localizer,
-            #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            #map_server,    # localization is left to GPS
             #cartographer, # localization via LIDAR
             slam_toolbox, # localization via LIDAR
         ]

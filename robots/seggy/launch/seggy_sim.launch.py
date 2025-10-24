@@ -198,16 +198,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    sonar_nodes = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','sonars_sim.launch.py')]
-                )
-    )
-
-    navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
-    )
-
     # =========================================================================
 
     gz_include = GroupAction(
@@ -223,7 +213,6 @@ def generate_launch_description():
             delayed_joint_broad_spawner,
             gz_bridge,
             #odom_relay,
-            #gps_fix_translator
         ]
     )
 
@@ -232,16 +221,11 @@ def generate_launch_description():
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #tf_localizer,
-            #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            #map_server,    # localization is left to GPS
             #cartographer, # localization via LIDAR
             slam_toolbox, # localization via LIDAR
         ]
     )
-
-    # relay_field crashes if sim sonar (lidar) topics are not present yet. 
-    delayed_sonars = TimerAction(period=5.0, actions=[sonar_nodes])
 
     delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
 
@@ -270,7 +254,6 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        delayed_sonars,
         #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
