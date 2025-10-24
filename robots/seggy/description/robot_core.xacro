@@ -1,0 +1,401 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:include filename="../../../description/inertial_macros.xacro"/>
+
+	<!-- Values corrected for Seggy robot -->
+    <xacro:property name="chassis_length" value="0.48"/>
+    <xacro:property name="chassis_width" value="0.42"/>
+    <xacro:property name="chassis_height" value="0.45"/>
+    <xacro:property name="chassis_mass" value="10.0"/>
+    <xacro:property name="chassis_top_length" value="0.095"/>
+    <xacro:property name="wheel_radius" value="0.192"/>
+    <xacro:property name="wheel_thickness" value="0.045"/>
+    <xacro:property name="wheel_mass" value="1.0"/>
+    <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>
+    <xacro:property name="wheel_offset_y" value="0.280"/>
+    <xacro:property name="wheel_offset_z" value="0.01"/>
+    <xacro:property name="caster_wheel_radius" value="0.05"/>
+    <xacro:property name="caster_wheel_thickness" value="0.02"/>
+    <xacro:property name="caster_wheel_mass" value="0.3"/>
+    <xacro:property name="caster_wheel_offset_x" value="${-chassis_length/2 - 0.08}"/>
+    <xacro:property name="caster_wheel_offset_y" value="0.175"/>
+    <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
+
+    <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
+    <xacro:if value="$(arg sim_mode)">
+        <xacro:property name="caster_joint_type" value="continuous"/>
+    </xacro:if>
+
+    <xacro:unless value="$(arg sim_mode)">
+        <xacro:property name="caster_joint_type" value="fixed"/>
+    </xacro:unless>
+
+    <!-- ********************** ROBOT BASE *********************************  -->
+    <!-- The coordinate frame called base_link is rigidly attached to the robot root body.
+         It is recommended to choose the robot waist as its root body.
+         The base_link can be attached to the root in any arbitrary position or orientation;
+         for every hardware platform there will be a different place on the base that provides an obvious point of reference.
+         Note that REP 103 [1] specifies a preferred orientation for frames.
+         See https://www.ros.org/reps/rep-0120.html#base-link -->
+
+    <link name="base_link">
+        <visual name="baselink_visual">
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <sphere radius="0.04"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+    </link>
+    
+    <!-- ****************** ROBOT BASE FOOTPRINT ***************************  -->
+    <!-- The base_footprint is the representation of the robot position on the floor. 
+         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole height respecitvely.
+         The translation component of the frame should be the barycenter of the feet projections on the floor.
+         With respect to the odom frame, the roll and pitch angles should be zero and the yaw angle should correspond to the base_link yaw angle.
+         Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. -->
+
+    <!-- Define the center of the main robot chassis projected on the ground -->   
+    <link name="base_footprint">
+        <visual name="footprint_visual">
+            <origin xyz="0 0 0.01"/>
+            <geometry>
+                <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
+                <cylinder radius="${wheel_offset_y + wheel_thickness + 0.03}" length="0.01"/>
+            </geometry>
+            <material name="shadow_grey"/>
+        </visual>
+     </link>
+
+    <!-- The base footprint of the robot is located underneath the chassis -->
+    <joint name="base_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_footprint" />
+        <origin xyz="0 0 -${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+    
+    <!-- ********************** ROBOT BODY *********************************  -->
+
+    <joint name="chassis_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="chassis_link"/>
+        <origin xyz="${-wheel_offset_x} 0 ${-wheel_offset_z}"/>
+    </joint>
+
+    <!-- CHASSIS LINK -->
+    <link name="chassis_link">
+        <visual name="chassis_visual_bottom">
+            <origin xyz="0 0 ${chassis_height/8}"/>
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_visual_front">
+            <origin xyz="0.15 0 ${chassis_height/2-0.03}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <box size="0.25 ${chassis_width} 0.01"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_visual_back">
+            <origin xyz="-0.07 0 ${chassis_height/2-0.03}" rpy="0 -${pi/4} 0"/>
+            <geometry>
+                <box size="0.25 ${chassis_width} 0.01"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_top_visual">
+            <origin xyz="${wheel_offset_x} 0 ${chassis_height*3/4}"/>
+            <geometry>
+                <box size="${chassis_top_length} ${chassis_width} ${chassis_height/2}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_front_axle_left">
+            <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
+            <geometry>
+                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_front_axle_right">
+            <origin xyz="${wheel_offset_x} ${-chassis_width*0.5} 0" rpy="${pi/2} 0 0"/>
+            <geometry>
+                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_holder_left">
+            <origin xyz="${caster_wheel_offset_x+0.09} ${caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <cylinder radius="0.012" length="0.23"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_joint_left">
+            <origin xyz="${caster_wheel_offset_x} ${caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.03"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_holder_right">
+            <origin xyz="${caster_wheel_offset_x+0.09} ${-caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <geometry>
+                <cylinder radius="0.012" length="0.23"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <visual name="chassis_caster_joint_right">
+            <origin xyz="${caster_wheel_offset_x} ${-caster_wheel_offset_y*0.9} ${caster_wheel_offset_z}" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.03"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="0.5" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
+            <origin xyz="0 0 ${chassis_height/2}" rpy="0 0 0"/>
+        </xacro:inertial_box>
+    </link>
+
+    <!-- LEFT WHEEL LINK -->
+
+    <joint name="left_wheel_joint" type="continuous">
+        <parent link="chassis_link"/>
+        <child link="left_wheel"/>
+        <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2 - 0.15} 0 0" />
+        <axis xyz="0 0 1">
+          <limit>
+            <lower>-1.79769e+308</lower>
+            <upper>1.79769e+308</upper>
+          </limit>
+        </axis>
+    </joint>
+
+    <link name="left_wheel">
+        <visual name="left_wheel_tire_gz_visual">
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
+            </geometry>
+            <material name="port_red"/>
+        </visual>
+        <visual name="left_wheel_tire_rviz_visual">
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
+            </geometry>
+            <material name="port_red"/>
+        </visual>
+        <visual name="left_wheel_solid_visual">
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness/10.0}"/>
+            </geometry>
+            <material name="port_red"/>
+        </visual>
+        <visual name="left_wheel_axis_visual">
+            <geometry>
+                <cylinder radius="${wheel_radius*0.05}" length="${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <visual name="left_wheel_marker_visual">
+            <origin xyz="0 ${wheel_radius*0.7} 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry>
+            <max_contacts>1</max_contacts>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0.4</mu>
+                    <mu2>0.6</mu2>
+                    </ode>
+                </friction>
+                <bounce/>
+                <contact>
+                    <ode>
+                    <min_depth>0.005</min_depth>
+                    <kp>1e8</kp>
+                    </ode>
+                </contact>
+            </surface>
+        </collision>
+        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <!-- RIGHT WHEEL LINK -->
+
+    <joint name="right_wheel_joint" type="continuous">
+        <parent link="chassis_link"/>
+        <child link="right_wheel"/>
+        <origin xyz="${wheel_offset_x} ${-wheel_offset_y} 0" rpy="${pi/2 - 0.15} 0 0" />
+        <axis xyz="0 0 -1">
+          <limit>
+            <lower>-1.79769e+308</lower>
+            <upper>1.79769e+308</upper>
+          </limit>
+        </axis>
+    </joint>
+
+    <link name="right_wheel">
+        <visual name="right_wheel_tire_gz_visual">
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
+            <geometry>
+                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
+            </geometry>
+            <material name="starboard_green"/>
+        </visual>
+        <visual name="right_wheel_tire_rviz_visual">
+            <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
+            <geometry>
+                <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
+            </geometry>
+            <material name="starboard_green"/>
+        </visual>
+        <visual name="right_wheel_solid_visual">
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness/10.0}"/>
+            </geometry>
+            <material name="starboard_green"/>
+        </visual>
+        <visual name="right_wheel_axis_visual">
+            <geometry>
+                <cylinder radius="${wheel_radius*0.05}" length="${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <visual name="right_wheel_marker_visual">
+            <origin xyz="0 ${-wheel_radius*0.7} 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+            </geometry>
+            <max_contacts>1</max_contacts>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0.4</mu>
+                    <mu2>0.6</mu2>
+                    </ode>
+                </friction>
+                <bounce/>
+                <contact>
+                    <ode>
+                    <min_depth>0.005</min_depth>
+                    <kp>1e8</kp>
+                    </ode>
+                </contact>
+            </surface>
+        </collision>
+        <xacro:inertial_cylinder mass="${wheel_mass}" length="${wheel_thickness}" radius="${wheel_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <!-- CASTER WHEELS LINKS -->
+
+    <joint name="left_caster_wheel_joint" type="${caster_joint_type}">
+        <parent link="chassis_link"/>
+        <child link="left_caster_wheel"/>
+        <origin xyz="${caster_wheel_offset_x} ${caster_wheel_offset_y} ${caster_wheel_offset_z}" rpy="${pi/2} 0 0" />
+        <axis xyz="0 0 1"/>
+    </joint>
+
+
+    <link name="left_caster_wheel">
+        <visual name="left_caster_visual">
+            <geometry>
+               <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
+            </geometry>
+            <material name="port_red"/>
+        </visual>
+        <visual name="left_caster_marker_visual">
+            <geometry>
+                <box size="${caster_wheel_radius*0.5} ${caster_wheel_radius*0.5} ${caster_wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
+            </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0</mu>
+                    <mu2>0</mu2>
+                    <slip1>1.0</slip1>
+                    <slip2>1.0</slip2>
+                    </ode>
+                </friction>
+            </surface>
+        </collision>
+        <xacro:inertial_cylinder mass="${caster_wheel_mass}" length="${caster_wheel_thickness}" radius="${caster_wheel_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <joint name="right_caster_wheel_joint" type="${caster_joint_type}">
+        <parent link="chassis_link"/>
+        <child link="right_caster_wheel"/>
+        <origin xyz="${caster_wheel_offset_x} ${-caster_wheel_offset_y} ${caster_wheel_offset_z}" rpy="${pi/2} 0 0" />
+        <axis xyz="0 0 -1"/>
+    </joint>
+
+
+    <link name="right_caster_wheel">
+        <visual name="right_caster_visual">
+            <geometry>
+               <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
+            </geometry>
+            <material name="starboard_green"/>
+        </visual>
+        <visual name="right_caster_marker_visual">
+            <geometry>
+                <box size="${caster_wheel_radius*0.5} ${caster_wheel_radius*0.5} ${caster_wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${caster_wheel_radius}" length="${caster_wheel_thickness}"/>
+            </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                    <mu>0</mu>
+                    <mu2>0</mu2>
+                    <slip1>1.0</slip1>
+                    <slip2>1.0</slip2>
+                    </ode>
+                </friction>
+            </surface>
+        </collision>
+        <xacro:inertial_cylinder mass="${caster_wheel_mass}" length="${caster_wheel_thickness}" radius="${caster_wheel_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+</robot>

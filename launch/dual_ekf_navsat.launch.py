@@ -32,7 +32,7 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, create1...
+    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, create1...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # define the launch argument that must be passed from the calling launch file or from the console:
