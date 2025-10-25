@@ -12,18 +12,6 @@ controller_manager:     # target node name
     battery_state_broadcaster:
       type: battery_state_broadcaster/BatteryStateBroadcaster
 
-    sonar_broadcaster_F_L:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_F_R:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_B_L:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_B_R:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
 diff_cont:
   ros__parameters:
 
