@@ -6,6 +6,7 @@
         <!-- Wheel geometry information - see controllers.yaml -->
 
         <hardware>
+            <!-- See https://github.com/slgrobotics/diffdrive_arduino-->
             <xacro:unless value="$(arg sim_mode)">
                 <!-- Values corrected for Seggy robot -->
                 <plugin>diffdrive_arduino/DiffDriveArduino</plugin>
@@ -16,6 +17,8 @@
                 <param name="baud_rate">115200</param>
                 <param name="timeout">1000</param>
                 <param name="enc_counts_per_rev">60</param>
+                <!-- Arduino expects wheel speed setpoints in the range -100..100 (percent of max speed)
+                     Use wheels_pwm_factor parameter (multiplier) to bring interface speed input into this range -->
                 <param name="wheels_pwm_factor">60.0</param>
                 <!-- See https://docs.ros.org/en/jazzy/p/sensor_msgs/interfaces/msg/BatteryState.html -->
                 <param name="battery_name">main_battery</param>
