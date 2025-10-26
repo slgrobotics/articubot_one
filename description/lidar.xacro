@@ -4,26 +4,41 @@
     <!-- ********************* LIDAR SETUP *********************************  -->
     <!-- Each sensor must be attached to a link.                              -->
 
+    <xacro:arg name="lidar_offset_x" default="0"/>
+    <xacro:arg name="lidar_offset_z" default="0"/>
+    <xacro:arg name="lidar_min_angle" default="-3.14159"/>
+    <xacro:arg name="lidar_max_angle" default="3.14159"/>
+    <xacro:arg name="lidar_base_length" default="0.003"/>
+
+    <xacro:property name="_lidar_base_length" value="$(arg lidar_base_length)"/>
+
     <joint name="laser_joint" type="fixed">
         <parent link="chassis_link"/>
         <child link="laser_frame"/>
-        <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 0"/>
+        <origin xyz="$(arg lidar_offset_x) 0 $(arg lidar_offset_z)" rpy="0 0 0"/>
     </joint>
 
     <!-- the name "laser_frame" should correspond to /scan topic header->frame_id as defined in *.launch.py -->
     <link name="laser_frame">
-        <visual>
+        <visual name="lidar_visual_scanner">
             <geometry>
-                <cylinder radius="0.05" length="0.04"/>
+                <cylinder radius="0.03" length="0.02"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>
-        <visual>
-            <origin xyz="0 0 -0.05"/>
+        <visual name="lidar_visual_motor">
+            <origin xyz="0.03 0 -0.01"/>
             <geometry>
-                <cylinder radius="0.03" length="0.1"/>
+                <cylinder radius="0.012" length="0.01"/>
             </geometry>
             <material name="sensor_blue"/>
+        </visual>
+        <visual name="lidar_visual_base">
+            <origin xyz="0 0 -${_lidar_base_length/2+0.01}"/>
+            <geometry>
+                <cylinder radius="0.02" length="${_lidar_base_length}"/>
+            </geometry>
+            <material name="body_color"/>
         </visual>
         <collision>
             <geometry>
@@ -52,14 +67,14 @@
               <horizontal>
                 <samples>360</samples>
                 <resolution>1</resolution>
-                <min_angle>-${pi}</min_angle>
-                <max_angle>${pi}</max_angle>
+                <min_angle>$(arg lidar_min_angle)</min_angle>
+                <max_angle>$(arg lidar_max_angle)</max_angle>
               </horizontal>
               <vertical>
                 <samples>1</samples>
                 <resolution>1</resolution>
-                <min_angle>0.0</min_angle>
-                <max_angle>0.0</max_angle>
+                <min_angle>0</min_angle>
+                <max_angle>0</max_angle>
               </vertical>
             </scan>
             <range>

@@ -10,7 +10,10 @@
            https://gazebosim.org/api/sim/7/battery.html
 
       Note: This is generic SIM battery. Copy to robots/<robot_model>/description/. and customize.
-            Modify robot.urdf.xacro to include the customized version. 
+            Modify robot.urdf.xacro to include the customized version.
+
+      parameters: open_circuit_voltage
+                  battery_capacity
   -->
 
   <ros2_control name="BatteryState" type="diffdrive_arduino/DiffDriveArduino">
