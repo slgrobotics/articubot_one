@@ -101,7 +101,7 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 6.0 # Default: 20.0. Laser scans come at 6 Hz
+    controller_frequency: 30.0 # Default: 20.0. Laser scans come at 6 Hz, odometry at 60 Hz.
     costmap_update_timeout: 0.30
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
@@ -237,8 +237,8 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 6.0 # Default: 5.0 Matches Laser scan frequency
-      publish_frequency: 6.0
+      update_frequency: 30.0 # Default: 5.0 Matches Laser scan frequency
+      publish_frequency: 12.0 # Default: 5.0 Matches Laser scan frequency (6 Hz)
       global_frame: odom # Default: map.  "odom" keeps the local costmap consistent with the robot’s movement.
       robot_base_frame: base_link
       static_map: false
@@ -250,7 +250,7 @@ local_costmap:
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.4
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
-      plugins: ["obstacle_layer", "range_sensor_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
+      plugins: ["obstacle_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -267,20 +267,6 @@ local_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
-
-      range_sensor_layer:
-        plugin: "nav2_costmap_2d::RangeSensorLayer"
-        enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
-        phi: 1.2
-        no_readings_timeout: 0.0
-        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        clear_threshold: 0.2  # Cells with a probability below this threshold are marked as free in the costmap.
-        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
-        clear_on_max_reading: true # Default: false. True allows the range sensor to clear obstacles from the costmap when the sensor reports its maximum range reading.
-        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
       denoise_layer:
         plugin: "nav2_costmap_2d::DenoiseLayer"
@@ -306,7 +292,7 @@ global_costmap:
       unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration
-      update_frequency: 6.0 # Default: 5.0
+      update_frequency: 30.0 # Default: 5.0
       publish_frequency: 6.0 # Default: 1.0
       global_frame: map
       robot_base_frame: base_link
@@ -314,7 +300,7 @@ global_costmap:
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
-      plugins: ["static_layer", "obstacle_layer", "range_sensor_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -337,19 +323,6 @@ global_costmap:
           raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
           obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
-
-      range_sensor_layer:
-        plugin: "nav2_costmap_2d::RangeSensorLayer"
-        enabled: True
-        topics: ["/sonar_F_L", "/sonar_F_R", "/sonar_B_L", "/sonar_B_R"] # must have the / prefix
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
-        phi: 1.2
-        no_readings_timeout: 0.0
-        mark_threshold: 0.7   # Probability above which cells are marked as occupied. Default 0.8
-        inflate_cone: 1.0     # Inflate the triangular area covered by the sensor (percentage, default 1.0)
-        clear_on_max_reading: true # Default false. True allows the range sensor to clear obstacles from the costmap when the sensor reports its maximum range reading.
-        input_sensor_type: "ALL" # Default ALL. ALL (automatic selection), VARIABLE (min range != max range), or FIXED (min range == max range)
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -375,7 +348,7 @@ map_saver:
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 12.0 # Default: 20.0
+    expected_planner_frequency: 30.0 # Default: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
@@ -442,7 +415,7 @@ behavior_server:
 waypoint_follower:
   ros__parameters: # see https://docs.nav2.org/configuration/packages/configuring-waypoint-follower.html#default-plugin
     enable_stamped_cmd_vel: true
-    loop_rate: 2 # Default: 20
+    loop_rate: 20 # Default: 20
     stop_on_failure: false # false allows the robot to continue to the next waypoint even if one fails.
     #action_server_result_timeout: 900.0 # Default: 900 (15 minutes). ros2 param get waypoint_follower action_server_result_timeout
     waypoint_task_executor_plugin: "wait_at_waypoint" # plugin could be WaitAtWaypoint, PhotoAtWaypoint or InputAtWaypoint
@@ -456,12 +429,12 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 12.0     # Rate to run smoother. Default: 20.0 Hz
+    smoothing_frequency: 24.0     # Rate to run smoother. Default: 20.0 Hz
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
-    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
-    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_velocity: [0.3, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.3, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
@@ -498,39 +471,23 @@ collision_monitor:
       min_points: 6
       visualize: False
       enabled: True
-    observation_sources: ["scan", "sonar_F_L", "sonar_F_R", "sonar_B_L", "sonar_B_R"] # scan, pointcloud, range or polygon
+    observation_sources: ["scan"] # scan, pointcloud, range or polygon - comma separated list
     scan:
       type: "scan"
       topic: "/scan"
       enabled: True
-    sonar_F_L:
-      type: "range"
-      topic: "/sonar_F_L"
-      enabled: True
-    sonar_F_R:
-      type: "range"
-      topic: "/sonar_F_R"
-      enabled: True
-    sonar_B_L:
-      type: "range"
-      topic: "/sonar_B_L"
-      enabled: True
-    sonar_B_R:
-      type: "range"
-      topic: "/sonar_B_R"
-      enabled: True
 #    pointcloud:
 #      type: "pointcloud"
-#      topic: "/intel_realsense_r200_depth/points"
+#      topic: "/stereo/points"  # OAK-D point cloud topic
 #      min_height: 0.1
-#      max_height: 0.5
+#      max_height: 1.0
 #      enabled: True
 
 # see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 10.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
+    controller_frequency: 60.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
     initial_perception_timeout: 5.0 # Timeout (s) to wait to obtain initial perception of the dock.
     wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
     dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.

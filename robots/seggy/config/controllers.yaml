@@ -1,6 +1,7 @@
 controller_manager:     # target node name
   ros__parameters:
-    update_rate: 30 # Hz
+    #update_rate: 30 # Hz
+    update_rate: 60 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
     #use_sim_time: false
 
     diff_cont:
@@ -19,7 +20,7 @@ diff_cont:
     #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
     #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
 
-    publish_rate: 50.0
+    publish_rate: 60.0 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
 
     # Name of frame to publish odometry in. Default: "/odom"
     odom_frame_id: 'odom'
@@ -29,7 +30,7 @@ diff_cont:
     #base_frame_id: base_footprint
 
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
-    # make it false, or there will be a lot of jumping and wheels will be sepatared from the body.
+    # make it false, or there will be a lot of jumping and wheels will be separated from the body.
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
     enable_odom_tf: false
 
@@ -69,17 +70,17 @@ diff_cont:
     linear:
       x:
         has_velocity_limits    : true
-        max_velocity           : 0.32 # m/s - experimental on actual robot
+        max_velocity           : 0.3  # m/s - experimental on actual robot (3 rad/sec wheel speed, 25 cm wheel radius)
         min_velocity           : -0.2 # m/s
         has_acceleration_limits: true
-        max_acceleration       : 2.0  # m/s^2
-        min_acceleration       : -2.0 # m/s^2
+        max_acceleration       : 3.0  # m/s^2
+        min_acceleration       : -3.0 # m/s^2
         has_jerk_limits        : true
         max_jerk               : 1.0  # m/s^3
     angular:
       z:
         has_velocity_limits    : true
-        max_velocity           : 0.25 # rad/s - experimental on actual robot
+        max_velocity           : 0.2  # rad/s - limit robot turn rate to ~12 deg/sec
         has_acceleration_limits: true
         max_acceleration       : 1.0  # rad/s^2
         has_jerk_limits        : true

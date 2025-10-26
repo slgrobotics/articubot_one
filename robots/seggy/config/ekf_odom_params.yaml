@@ -8,7 +8,8 @@ ekf_filter_node_odom:
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
 # computation until it receives at least one message from one of the inputs. It will then run continuously at the
 # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-    frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    #frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    frequency: 60.0 # at max speed we have about 30 ticks per second from wheels encoders. IMU is much higher.
 
 # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
 # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
@@ -145,9 +146,9 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  false, false,  true,
                   false, false, false,
                   false, false, false,
+                  false, false, true,
                   false, false, false]
 
         #        [x_pos   , y_pos    , z_pos,
@@ -158,7 +159,7 @@ ekf_filter_node_odom:
 
 # If using a real robot you might want to set this to true,
 # since usually absolute measurements from real imu's are not very accurate:
-    imu0_differential: false
+    imu0_differential: true
 
     imu0_relative: false
     imu0_queue_size: 10
