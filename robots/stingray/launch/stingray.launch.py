@@ -25,6 +25,8 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+
     rsp = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
@@ -50,13 +52,30 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
+    map_yaml_file = os.path.join(package_path,'assets','maps','open_area_map.yaml')   # this is default anyway
     #map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
+                # ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+                ), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
+    )
+
+  # Add this after the map_server definition:
+    # amcl_node = Node(
+    #     package='nav2_amcl',
+    #     executable='amcl',
+    #     name='amcl',
+    #     output='screen',
+    #     parameters=[nav2_params_file],
+    #     arguments=['--ros-args', '--log-level', 'info']
+    # )
+
+    # AMCL localization (includes both map_server and amcl nodes)
+    amcl_localization = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','stingray_localization.launch.py')]
+        # ), launch_arguments={'use_sim_time': use_sim_time}.items() # empty_map - default
+        ), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # open_area_map
     )
 
     # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
@@ -68,7 +87,6 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
@@ -90,7 +108,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             "params_file": os.path.join(
-                get_package_share_directory("ros2_roboclaw_driver"),
+                get_package_share_directory("roboclaw_driver"),
                 "config",
                 "motor_driver.yaml"
             )
@@ -185,17 +203,19 @@ def generate_launch_description():
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            amcl_localization,
             #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
-            # map_server,    # localization is left to GPS
+            # map_server,       # localization is left to GPS
+            # amcl_node,        # standalone AMCL node
             # cartographer, # localization via LIDAR
-            slam_toolbox, # localization via LIDAR
+            # slam_toolbox, # localization via LIDAR
         ]
     )
 
-    delayed_loc = TimerAction(period=10.0, actions=[localizers_include])
+    delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
 
-    delayed_nav = TimerAction(period=20.0, actions=[nav2])
+    delayed_nav = TimerAction(period=15.0, actions=[nav2])
 
 # Launch them all!
     return LaunchDescription([

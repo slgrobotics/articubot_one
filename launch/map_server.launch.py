@@ -25,14 +25,14 @@ def generate_launch_description():
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    map_yaml_file_default = os.path.join(package_path, 'assets', 'maps','empty_map.yaml')
+    map_yaml_file_default = os.path.join(package_path, 'assets', 'maps','open_area_map.yaml')
 
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace', default_value='', description='Top-level namespace'
     )
 
     declare_map_yaml_cmd = DeclareLaunchArgument(
-        'map', default_value=map_yaml_file_default, description='Full path to map yaml file to load, default empty_map.yaml'
+        'map', default_value=map_yaml_file_default, description='Full path to map yaml file to load, default open_area_map.yaml'
     )
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(

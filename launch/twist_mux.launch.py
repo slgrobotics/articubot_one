@@ -25,7 +25,7 @@ def generate_launch_description():
         executable="twist_mux",
         namespace='/',
         output='screen',
-        parameters=[twist_mux_params, {'use_sim_time': use_sim_time, 'use_stamped': True}],
+        parameters=[twist_mux_params, {'use_sim_time': use_sim_time, 'use_stamped': False}],
         # remappings=[('cmd_vel_out','diff_cont/cmd_vel')]
         remappings=[('cmd_vel_out','cmd_vel')]
     )
@@ -51,7 +51,7 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': use_sim_time,
             # 'use_stamped': 'true',
-            'use_stamped': 'false',
+            'use_stamped': False,
             'frame_id': 'base_link',
             'scale': 1.0,
             'vertical_position': 2.0}]
@@ -70,7 +70,7 @@ def generate_launch_description():
                     ('joy_vel_out', 'joy_vel')},
         parameters=[joystick_params_file, {
             'use_sim_time': use_sim_time,
-            'use_stamped': 'true'
+            'use_stamped': False
             }]
     )
 
@@ -80,7 +80,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("twist_mux"),'launch','twist_mux_launch.py')]
                 ), launch_arguments={
                     'use_sim_time': use_sim_time,
-                    'use_stamped': 'true',
+                    'use_stamped': 'false',
                     'cmd_vel_out': 'diff_cont/cmd_vel',
                     'config_topics': twist_mux_params,
                     }.items()

@@ -8,7 +8,7 @@
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
 amcl:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     alpha1: 0.2
     alpha2: 0.2
     alpha3: 0.2
@@ -50,7 +50,7 @@ amcl:
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
 bt_navigator:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     global_frame: map
     robot_base_frame: base_link
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
@@ -83,7 +83,7 @@ bt_navigator:
 #     https://docs.nav2.org/configuration/packages/configuring-controller-server.html
 controller_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     controller_frequency: 24.0
     costmap_update_timeout: 0.30
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
@@ -209,7 +209,7 @@ controller_server:
 local_costmap:
   local_costmap:
     ros__parameters:
-      enable_stamped_cmd_vel: true
+      enable_stamped_cmd_vel: false
       unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration - 
@@ -264,7 +264,7 @@ local_costmap:
 global_costmap:
   global_costmap:
     ros__parameters:
-      enable_stamped_cmd_vel: true
+      enable_stamped_cmd_vel: false
       unknown_cost_value: 255 # slightly less than 255 to be more explorative, 0 - to prohibit planning into un-scanned space
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration
@@ -305,7 +305,7 @@ global_costmap:
 # see https://docs.nav2.org/configuration/packages/configuring-map-server.html
 map_saver:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     save_map_timeout: 5.0
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
@@ -314,7 +314,7 @@ map_saver:
 # see https://docs.nav2.org/configuration/packages/configuring-planner-server.html
 planner_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     expected_planner_frequency: 12.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
@@ -327,7 +327,7 @@ planner_server:
 # see https://docs.nav2.org/configuration/packages/configuring-smoother-server.html
 smoother_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     smoother_plugins: ["simple_smoother"]
     simple_smoother:
       plugin: "nav2_smoother::SimpleSmoother"
@@ -338,7 +338,7 @@ smoother_server:
 # See https://docs.nav2.org/configuration/packages/configuring-behavior-server.html
 behavior_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true  # default false in Jazzy or older
+    enable_stamped_cmd_vel: false  # default false in Jazzy or older
     local_costmap_topic: local_costmap/costmap_raw
     global_costmap_topic: global_costmap/costmap_raw
     local_footprint_topic: local_costmap/published_footprint
@@ -373,7 +373,7 @@ behavior_server:
 
 waypoint_follower:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     loop_rate: 20
     stop_on_failure: false
     action_server_result_timeout: 900.0
@@ -387,7 +387,7 @@ waypoint_follower:
 #     https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
-    enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
+    enable_stamped_cmd_vel: false  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
     smoothing_frequency: 12.0     # Rate to run smoother
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
@@ -405,7 +405,7 @@ velocity_smoother:
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
 collision_monitor:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     cmd_vel_in_topic: "cmd_vel_smoothed"
@@ -438,7 +438,7 @@ collision_monitor:
 # see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
 docking_server:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     controller_frequency: 50.0
     initial_perception_timeout: 5.0
     wait_charge_timeout: 5.0
@@ -486,7 +486,7 @@ docking_server:
 # see https://docs.nav2.org/configuration/packages/configuring-loopback-sim.html
 loopback_simulator:
   ros__parameters:
-    enable_stamped_cmd_vel: true
+    enable_stamped_cmd_vel: false
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     map_frame_id: "map"

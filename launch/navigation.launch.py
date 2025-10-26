@@ -51,7 +51,7 @@ def generate_launch_description():
     container_name_full = (namespace, '/', container_name)
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
-    map_file = LaunchConfiguration('map')  # ADD THIS LINE
+    # map_file = LaunchConfiguration('map')  # ADD THIS LINE
 
     # composition is used to run multiple Nav2 nodes in a single process to lower the memory utilization and CPU utilization of Nav2.
     # This is specially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
@@ -66,7 +66,7 @@ def generate_launch_description():
         'collision_monitor',
         'bt_navigator',
         'waypoint_follower',
-        'docking_server',
+        # 'docking_server',
     ]
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
@@ -125,7 +125,7 @@ def generate_launch_description():
 
     declare_use_composition_cmd = DeclareLaunchArgument(
         'use_composition',
-        default_value='False',
+        default_value='True',
         description='Use composed bringup if True',
     )
 
@@ -145,18 +145,18 @@ def generate_launch_description():
         'log_level', default_value='info', description='log level'
     )
 
-    declare_map_cmd = DeclareLaunchArgument(
-        'map',
-        default_value=os.path.join(package_path, 'maps', 'Study1.yaml'),
-        description='Full path to map yaml file to load'
-    )
+    # declare_map_cmd = DeclareLaunchArgument(
+    #     'map',
+    #     default_value=os.path.join(package_path, 'maps', 'Study1.yaml'),
+    #     description='Full path to map yaml file to load'
+    # )
 
-    map_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('nav2_bringup'), 'launch', 'map_server_launch.py')
-        ),
-        launch_arguments={'map': map_file, 'use_sim_time': use_sim_time}.items(),
-    )
+    # map_server_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(
+    #         os.path.join(get_package_share_directory('package_path'), 'launch', 'map_server.launch.py')
+    #     ),
+    #     launch_arguments={'map': map_file, 'use_sim_time': use_sim_time}.items(),
+    # )
 
     load_nodes = GroupAction(
         # run multiple Nav2 nodes in separate processes
@@ -251,17 +251,17 @@ def generate_launch_description():
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings,
             ),
-            Node(
-                package='opennav_docking',
-                executable='opennav_docking',
-                name='docking_server',
-                output='screen',
-                respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings,
-            ),
+            # Node(
+            #     package='opennav_docking',
+            #     executable='opennav_docking',
+            #     name='docking_server',
+            #     output='screen',
+            #     respawn=use_respawn,
+            #     respawn_delay=2.0,
+            #     parameters=[configured_params],
+            #     arguments=['--ros-args', '--log-level', log_level],
+            #     remappings=remappings,
+            # ),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
@@ -338,13 +338,13 @@ def generate_launch_description():
                         parameters=[configured_params],
                         remappings=remappings,
                     ),
-                    ComposableNode(
-                        package='opennav_docking',
-                        plugin='opennav_docking::DockingServer',
-                        name='docking_server',
-                        parameters=[configured_params],
-                        remappings=remappings,
-                    ),
+                    # ComposableNode(
+                    #     package='opennav_docking',
+                    #     plugin='opennav_docking::DockingServer',
+                    #     name='docking_server',
+                    #     parameters=[configured_params],
+                    #     remappings=remappings,
+                    # ),
                     ComposableNode(
                         package='nav2_lifecycle_manager',
                         plugin='nav2_lifecycle_manager::LifecycleManager',
@@ -374,10 +374,12 @@ def generate_launch_description():
     ld.add_action(declare_container_name_cmd)
     ld.add_action(declare_use_respawn_cmd)
     ld.add_action(declare_log_level_cmd)
+    # ld.add_action(declare_map_cmd)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(load_nodes)
     ld.add_action(load_composable_nodes)
+    # ld.add_action(map_server_cmd)
 
     ld.add_action(GroupAction([
         LogInfo(msg='============ starting NAVIGATION  use_sim_time / params_file / odom_topic :'),
