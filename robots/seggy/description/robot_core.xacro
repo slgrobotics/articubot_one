@@ -4,22 +4,22 @@
     <xacro:include filename="../../../description/inertial_macros.xacro"/>
 
 	<!-- Values corrected for Seggy robot -->
-    <xacro:property name="chassis_length" value="0.48"/>
-    <xacro:property name="chassis_width" value="0.42"/>
+    <xacro:property name="chassis_length" value="0.38"/>
+    <xacro:property name="chassis_width" value="0.37"/>
     <xacro:property name="chassis_height" value="0.45"/>
     <xacro:property name="chassis_mass" value="10.0"/>
     <xacro:property name="chassis_top_length" value="0.095"/>
-    <xacro:property name="wheel_radius" value="0.192"/>
-    <xacro:property name="wheel_thickness" value="0.045"/>
+    <xacro:property name="wheel_radius" value="0.12"/>
+    <xacro:property name="wheel_thickness" value="0.065"/>
     <xacro:property name="wheel_mass" value="1.0"/>
     <xacro:property name="wheel_offset_x" value="${chassis_length/2 - wheel_radius - 0.01}"/>
-    <xacro:property name="wheel_offset_y" value="0.280"/>
+    <xacro:property name="wheel_offset_y" value="0.23"/>
     <xacro:property name="wheel_offset_z" value="0.01"/>
     <xacro:property name="caster_wheel_radius" value="0.05"/>
-    <xacro:property name="caster_wheel_thickness" value="0.02"/>
+    <xacro:property name="caster_wheel_thickness" value="0.03"/>
     <xacro:property name="caster_wheel_mass" value="0.3"/>
-    <xacro:property name="caster_wheel_offset_x" value="${-chassis_length/2 - 0.08}"/>
-    <xacro:property name="caster_wheel_offset_y" value="0.175"/>
+    <xacro:property name="caster_wheel_offset_x" value="${-chassis_length/2 - 0.0}"/>
+    <xacro:property name="caster_wheel_offset_y" value="0.11"/>
     <xacro:property name="caster_wheel_offset_z" value="${wheel_offset_z - wheel_radius + caster_wheel_radius}"/>
 
     <!-- we need the following because (unlike sim) real Dragger doesn't have a controller reporting caster's position -->
@@ -114,16 +114,16 @@
             <material name="body_color"/>
         </visual>
         <visual name="chassis_front_axle_left">
-            <origin xyz="${wheel_offset_x} ${chassis_width*0.5} 0" rpy="-${pi/2} 0 0"/>
+            <origin xyz="${wheel_offset_x} ${chassis_width*0.35} 0" rpy="-${pi/2} 0 0"/>
             <geometry>
-                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
+                <cylinder radius="0.03" length="${chassis_width*0.6}"/>
             </geometry>
             <material name="body_color"/>
         </visual>
         <visual name="chassis_front_axle_right">
-            <origin xyz="${wheel_offset_x} ${-chassis_width*0.5} 0" rpy="${pi/2} 0 0"/>
+            <origin xyz="${wheel_offset_x} ${-chassis_width*0.35} 0" rpy="${pi/2} 0 0"/>
             <geometry>
-                <cylinder radius="0.03" length="${chassis_width*0.5}"/>
+                <cylinder radius="0.03" length="${chassis_width*0.6}"/>
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -171,7 +171,7 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="left_wheel"/>
-        <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2 - 0.15} 0 0" />
+        <origin xyz="${wheel_offset_x} ${wheel_offset_y} 0" rpy="-${pi/2} 0 0" />
         <axis xyz="0 0 1">
           <limit>
             <lower>-1.79769e+308</lower>
@@ -245,7 +245,7 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="right_wheel"/>
-        <origin xyz="${wheel_offset_x} ${-wheel_offset_y} 0" rpy="${pi/2 - 0.15} 0 0" />
+        <origin xyz="${wheel_offset_x} ${-wheel_offset_y} 0" rpy="${pi/2} 0 0" />
         <axis xyz="0 0 -1">
           <limit>
             <lower>-1.79769e+308</lower>
