@@ -6,9 +6,11 @@
 	<!-- Values corrected for Seggy robot -->
     <xacro:property name="chassis_length" value="0.38"/>
     <xacro:property name="chassis_width" value="0.37"/>
-    <xacro:property name="chassis_height" value="0.45"/>
-    <xacro:property name="chassis_mass" value="10.0"/>
-    <xacro:property name="chassis_top_length" value="0.095"/>
+    <xacro:property name="chassis_height" value="0.12"/>
+    <xacro:property name="chassis_mass" value="8.0"/>
+    <xacro:property name="chassis_top_length" value="0.37"/>
+    <xacro:property name="chassis_top_width" value="0.49"/>
+    <xacro:property name="chassis_top_offset" value="0.35"/>
     <xacro:property name="wheel_radius" value="0.12"/>
     <xacro:property name="wheel_thickness" value="0.065"/>
     <xacro:property name="wheel_mass" value="1.0"/>
@@ -92,24 +94,17 @@
             </geometry>
             <material name="body_color"/>
         </visual>
-        <visual name="chassis_visual_front">
-            <origin xyz="0.15 0 ${chassis_height/2-0.03}" rpy="0 ${pi/4} 0"/>
+        <visual name="chassis_visual_support">
+            <origin xyz="0 0 ${chassis_top_offset/2}" rpy="${pi/2} 0 0"/>
             <geometry>
-                <box size="0.25 ${chassis_width} 0.01"/>
-            </geometry>
-            <material name="body_color"/>
-        </visual>
-        <visual name="chassis_visual_back">
-            <origin xyz="-0.07 0 ${chassis_height/2-0.03}" rpy="0 -${pi/4} 0"/>
-            <geometry>
-                <box size="0.25 ${chassis_width} 0.01"/>
+                <box size="0.15 ${chassis_top_offset} 0.02"/>
             </geometry>
             <material name="body_color"/>
         </visual>
         <visual name="chassis_top_visual">
-            <origin xyz="${wheel_offset_x} 0 ${chassis_height*3/4}"/>
+            <origin xyz="${wheel_offset_x} 0 ${chassis_top_offset}"/>
             <geometry>
-                <box size="${chassis_top_length} ${chassis_width} ${chassis_height/2}"/>
+                <box size="${chassis_top_length} ${chassis_top_width} 0.02"/>
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -128,9 +123,9 @@
             <material name="body_color"/>
         </visual>
         <visual name="chassis_caster_holder_left">
-            <origin xyz="${caster_wheel_offset_x+0.09} ${caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <origin xyz="${caster_wheel_offset_x+0.05} ${caster_wheel_offset_y*0.77} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
             <geometry>
-                <cylinder radius="0.012" length="0.23"/>
+                <cylinder radius="0.009" length="0.12"/>
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -142,9 +137,9 @@
             <material name="body_color"/>
         </visual>
         <visual name="chassis_caster_holder_right">
-            <origin xyz="${caster_wheel_offset_x+0.09} ${-caster_wheel_offset_y*0.85} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
+            <origin xyz="${caster_wheel_offset_x+0.05} ${-caster_wheel_offset_y*0.77} ${caster_wheel_offset_z*0.42}" rpy="0 ${pi/4} 0"/>
             <geometry>
-                <cylinder radius="0.012" length="0.23"/>
+                <cylinder radius="0.009" length="0.12"/>
             </geometry>
             <material name="body_color"/>
         </visual>
