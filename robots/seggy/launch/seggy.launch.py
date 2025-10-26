@@ -50,6 +50,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
+    # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
@@ -155,9 +156,10 @@ def generate_launch_description():
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
           {'laser_scan_dir': True},
-          {'enable_angle_crop_func': False},
-          {'angle_crop_min': 135.0},
-          {'angle_crop_max': 225.0}
+          # Seggy has vertical bar behind the LiDAR, so we crop angles around 180 degrees:
+          {'enable_angle_crop_func': True},
+          {'angle_crop_min': 170.0},
+          {'angle_crop_max': 190.0}
         ]
     )
 
@@ -172,7 +174,7 @@ def generate_launch_description():
         parameters=[
           {
               #"print" : True,
-              "frequency" : 30,
+              "frequency" : 60,
               "i2c_address" : 0x68,
               "i2c_port" : 1,
               "frame_id" : "imu_link",
@@ -192,45 +194,6 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
-    bno055_driver_node = Node(
-        package='bno055',
-        namespace='',
-        executable='bno055',
-        name='bno055',
-        output='screen',
-        respawn=True,
-        respawn_delay=4,
-        parameters=[{
-            # see https://github.com/flynneva/bno055
-            #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
-            'ros_topic_prefix': '',
-            'connection_type': 'i2c',
-            'i2c_bus': 1,
-            'i2c_addr': 0x28,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
-            'data_query_frequency': 20,
-            'calib_status_frequency': 0.1,
-            'frame_id': 'imu_link', 
-            'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
-            'placement_axis_remap': 'P1', # P1 - default, ENU
-            'acc_factor': 100.0,
-            'mag_factor': 16000000.0,
-            'gyr_factor': 900.0,
-            'grav_factor': 100.0,
-            'set_offsets': False, # set to true to use offsets below
-            'offset_acc': [0xFFEC, 0x00A5, 0xFFE8],
-            'offset_mag': [0xFFB4, 0xFE9E, 0x027D],
-            'offset_gyr': [0x0002, 0xFFFF, 0xFFFF],
-            # Sensor standard deviation [x,y,z]
-            # Used to calculate covariance matrices
-            # defaults are used if parameters below are not provided
-            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]
-            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s]
-            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad]
-            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]
-        }],
-        remappings=[("imu", "imu/data")]
-    )
-
     drive_include = GroupAction(
         actions=[
             twist_mux,
@@ -245,7 +208,6 @@ def generate_launch_description():
         actions=[
             ldlidar_node,
             mpu9250driver_node
-            #bno055_driver_node
         ]
     )
 
