@@ -13,7 +13,7 @@ def generate_launch_description():
     # For any real robot (not a sim), launch on workstation:
     #   ros2 launch articubot_one launch_rviz.launch.py use_sim_time:=false
 
-    namespace='/'
+    namespace=''
 
     package_name='articubot_one' #<--- CHANGE ME
 
@@ -57,12 +57,15 @@ def generate_launch_description():
 
     battery_pie_chart_relay = Node(
         package='topic_tools',
+        namespace=namespace,
         executable='relay_field',
+        # executable='transform',
         name='battery_pie_chart_relay',
         output='screen',
         respawn=True,
         respawn_delay=2.0,
         arguments=['battery/battery_state', 'battery/percentage', 'std_msgs/Float32', '{ data: m.percentage }', '--qos-reliability', 'reliable' ]
+        #arguments=['battery/battery_state', '--field percentage', 'battery/percentage', 'std_msgs/Float32', '--qos-reliability', 'reliable' ]
     )
 
     joystick = IncludeLaunchDescription(

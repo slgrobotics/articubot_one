@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-
+    namespace=''
 
     return LaunchDescription([
 
@@ -13,7 +13,7 @@ def generate_launch_description():
             package='v4l2_camera',
             executable='v4l2_camera_node',
             output='screen',
-            namespace='camera',
+            namespace=namespace,
             parameters=[{
                 'image_size': [640,480],
                 'time_per_frame': [1, 6],

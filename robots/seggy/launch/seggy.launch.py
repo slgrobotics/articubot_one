@@ -3,17 +3,18 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
-from launch_ros.actions import Node
+from launch_ros.actions import ComposableNodeContainer, Node
 
 def generate_launch_description():
 
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+
+    namespace=''
 
     package_name='articubot_one' #<--- CHANGE ME
 
@@ -77,11 +78,22 @@ def generate_launch_description():
     
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        package='rclcpp_components',
+        namespace=namespace,
+        executable='component_container_mt',
+        name='nav2_container',
+        composable_node_descriptions=[],
+        output='screen'
+    )
+
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
-                                     #'use_composition': 'True',
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
                                      'odom_topic': 'diff_cont/odom',
                                      #'use_respawn': 'true',
                                      'autostart' : 'true',
@@ -92,6 +104,7 @@ def generate_launch_description():
 
     controller_manager = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="ros2_control_node",
         parameters=[controllers_params_file],
         remappings=[
@@ -104,18 +117,21 @@ def generate_launch_description():
 
     joint_broad_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["joint_broad"]
     )
 
     battery_state_broadcaster_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["battery_state_broadcaster"]
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["diff_cont"]
     )
@@ -143,6 +159,7 @@ def generate_launch_description():
 
     ldlidar_node = Node(
         package='ldlidar_sl_ros2',
+        namespace=namespace,
         executable='ldlidar_sl_ros2_node',
         name='ldlidar_publisher_ld14',
         output='screen',
@@ -165,6 +182,7 @@ def generate_launch_description():
 
     mpu9250driver_node = Node(
         package="mpu9250",
+        namespace=namespace,
         executable="mpu9250",
         name="mpu9250",
         output='screen',
@@ -239,6 +257,7 @@ def generate_launch_description():
         drive_include,
         sensors_include,
         delayed_loc,
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         delayed_nav
     ])
 

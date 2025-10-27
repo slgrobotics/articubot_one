@@ -15,6 +15,8 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
+    namespace=''
+
     package_name='articubot_one' #<--- CHANGE ME
 
     robot_model='plucky'
@@ -91,6 +93,7 @@ def generate_launch_description():
 
     controller_manager = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="ros2_control_node",
         parameters=[controllers_params_file],
         remappings=[
@@ -107,42 +110,49 @@ def generate_launch_description():
 
     joint_broad_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["joint_broad"]
     )
 
     battery_state_broadcaster_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["battery_state_broadcaster"]
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["diff_cont"]
     )
 
     sonar_f_l_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["sonar_broadcaster_F_L"]
     )
 
     sonar_f_r_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["sonar_broadcaster_F_R"]
     )
 
     sonar_b_l_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["sonar_broadcaster_B_L"]
     )
 
     sonar_b_r_spawner = Node(
         package="controller_manager",
+        namespace=namespace,
         executable="spawner",
         arguments=["sonar_broadcaster_B_R"]
     )
@@ -177,6 +187,7 @@ def generate_launch_description():
 
     ldlidar_node = Node(
         package='ldlidar_sl_ros2',
+        namespace=namespace,
         executable='ldlidar_sl_ros2_node',
         name='ldlidar_publisher_ld14',
         output='screen',
@@ -198,6 +209,7 @@ def generate_launch_description():
 
     mpu9250driver_node = Node(
         package="mpu9250",
+        namespace=namespace,
         executable="mpu9250",
         name="mpu9250",
         output='screen',
@@ -229,7 +241,7 @@ def generate_launch_description():
 
     bno055_driver_node = Node(
         package='bno055',
-        namespace='',
+        namespace=namespace,
         executable='bno055',
         name='bno055',
         output='screen',
@@ -268,6 +280,7 @@ def generate_launch_description():
 
     gps_node = Node(
         package='nmea_navsat_driver',
+        namespace=namespace,
         executable='nmea_serial_driver',
         output='screen',
         respawn=True,

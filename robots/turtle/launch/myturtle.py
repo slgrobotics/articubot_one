@@ -9,9 +9,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    namespace=''
+
     create_driver_node = Node(
         package='create_driver',
-        namespace='',
+        namespace=namespace,
         executable='create_driver',
         name='create_driver',
         output='screen',
@@ -36,7 +38,7 @@ def generate_launch_description():
 
     xv_11_driver_node = Node(
         package='xv_11_driver',
-        namespace='',
+        namespace=namespace,
         executable='xv_11_driver',
         name='xv_11_driver',
         output='screen',
@@ -52,6 +54,7 @@ def generate_launch_description():
 
     mpu9250driver_node = Node(
         package="mpu9250",
+        namespace=namespace,
         executable="mpu9250",
         name="mpu9250",
         output='screen',
@@ -83,7 +86,7 @@ def generate_launch_description():
 
     bno055_driver_node = Node(
         package='bno055',
-        namespace='',
+        namespace=namespace,
         executable='bno055',
         name='bno055',
         output='screen',

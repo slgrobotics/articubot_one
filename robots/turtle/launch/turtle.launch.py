@@ -13,6 +13,8 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
+    namespace=''
+
     package_name='articubot_one' #<--- CHANGE ME
 
     robot_model='turtle'
@@ -96,8 +98,8 @@ def generate_launch_description():
 
     rviz = Node(
         package='rviz2',
+        namespace=namespace,
         executable='rviz2',
-        namespace='/',
         arguments=['-d', rviz_config],
         parameters=[{'use_sim_time': False}],
         output='screen'

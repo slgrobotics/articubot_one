@@ -9,6 +9,8 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
+    namespace=''
+
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     package_name='articubot_one' #<--- CHANGE ME
@@ -22,8 +24,8 @@ def generate_launch_description():
 
     twist_mux = Node(
         package="twist_mux",
+        namespace=namespace,
         executable="twist_mux",
-        namespace='/',
         output='screen',
         parameters=[twist_mux_params, {'use_sim_time': use_sim_time, 'use_stamped': True}],
         remappings=[('cmd_vel_out','diff_cont/cmd_vel')]
@@ -43,8 +45,8 @@ def generate_launch_description():
 
     twist_marker = Node(
         package='twist_mux',
+        namespace=namespace,
         executable='twist_marker',
-        namespace='/',
         output='screen',
         remappings={('twist', 'diff_cont/cmd_vel')},
         parameters=[{
@@ -61,8 +63,8 @@ def generate_launch_description():
     # currently doesn't support 'use_stamped'
     joystick_relay = Node(
         package='twist_mux',
+        namespace=namespace,
         executable='joystick_relay.py',
-        namespace='/',
         output='screen',
         remappings={('joy_vel_in', 'cmd_vel_joy'),
                     ('joy_vel_out', 'joy_vel')},
