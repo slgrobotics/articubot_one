@@ -203,7 +203,6 @@ def generate_launch_description():
         package='ros_gz_bridge',
         namespace=namespace,
         executable='parameter_bridge',
-        namespace=namespace,
         parameters=[{
             'config_file': namespaced_gz_bridge_config_path,
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
