@@ -452,8 +452,8 @@ velocity_smoother:
     min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
-    #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
-    odom_topic: /diff_cont/odom   # works
+    odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
+    #odom_topic: /diff_cont/odom   # works
     odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop

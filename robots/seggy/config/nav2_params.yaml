@@ -103,9 +103,9 @@ controller_server:
     enable_stamped_cmd_vel: true
     controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
     costmap_update_timeout: 0.30
-    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
-    #odom_topic: /odometry/local   # works
+    odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
     min_x_velocity_threshold: 0.001 # Default 0.0001  To filter odometry noise in the x direction
     min_y_velocity_threshold: 0.5 # Large for differential drive robots that can’t move sideways.
@@ -437,8 +437,8 @@ velocity_smoother:
     min_velocity: [-0.3, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
-    #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
-    odom_topic: /diff_cont/odom   # works
+    odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
+    #odom_topic: /diff_cont/odom   # works
     odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
