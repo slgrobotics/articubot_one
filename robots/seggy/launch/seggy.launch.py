@@ -119,21 +119,24 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["joint_broad"]
+        arguments=["joint_broad"],
+        output="screen"
     )
 
     battery_state_broadcaster_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["battery_state_broadcaster"]
+        arguments=["battery_state_broadcaster", "--controller-ros-args", "-r", "battery_state_broadcaster/battery_state:=battery/battery_state"],
+        output="screen"
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["diff_cont"]
+        arguments=["diff_cont", "--controller-ros-args", "-r", "/tf:=/diff_cont/tf"],
+        output="screen"
     )
 
     delayed_joint_broad_spawner = RegisterEventHandler(
