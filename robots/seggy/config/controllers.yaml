@@ -32,6 +32,7 @@ diff_cont:
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
     # make it false, or there will be a lot of jumping and wheels will be separated from the body.
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
+    # Note the "--remap /tf:=diff_cont/tf" in launch file to isolate TFs, if published.
     enable_odom_tf: false
 
     use_stamped_vel: true

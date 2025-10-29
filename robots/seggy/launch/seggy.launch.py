@@ -132,7 +132,7 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["diff_cont", "--controller-ros-args", "--remap /tf:=diff_cont/tf", "--controller-ros-args", "--remap /tf_static:=diff_cont/tf_static"],
+        arguments=["diff_cont", "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
         output="screen"
     )
 
@@ -257,7 +257,6 @@ def generate_launch_description():
         drive_include,
         sensors_include,
         delayed_loc,
-        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
-        delayed_nav
+        #container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        #delayed_nav
     ])
-
