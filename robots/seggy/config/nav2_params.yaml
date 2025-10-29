@@ -180,7 +180,7 @@ controller_server:
         cost_power: 1
         cost_weight: 3.81
         critical_cost: 300.0
-        consider_footprint: true # Default false
+        #consider_footprint: true # Default false  TODO: used to work with "true" before Oct 2025
         collision_cost: 1000000.0
         near_goal_distance: 1.0 # when the robot can get a bit closer to obstacles while trying to reach its final destination.
         trajectory_point_step: 2
