@@ -18,7 +18,7 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
-    robot_model='dragger'
+    robot_model='seggy'
 
     package_path = get_package_share_directory(package_name)
 
@@ -42,10 +42,16 @@ def generate_launch_description():
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','dragger_slam_toolbox.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy_slam_toolbox.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
+    cartographer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
@@ -55,6 +61,21 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
+    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # also, produces odom_topic: /odometry/local which can be used by Nav2
+    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
+    # see mapper_params.yaml
+    odom_localizer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    )
+
+    # alternative to odom_localizer for slam_toolbox
+    tf_localizer = Node(package = "tf2_ros", 
+                    executable = "static_transform_publisher",
+                    arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+    )
+    
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # Define the ComposableNodeContainer for Nav2 composition:
@@ -86,12 +107,7 @@ def generate_launch_description():
         namespace=namespace,
         executable="ros2_control_node",
         parameters=[controllers_params_file],
-        remappings=[
-            ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
-            ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
-            ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
-            ('sonar_broadcaster_B_R/range', 'sonar_B_R')
-        ]
+        output="screen"
     )
 
     delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
@@ -120,34 +136,6 @@ def generate_launch_description():
         output="screen"
     )
 
-    sonar_f_l_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["sonar_broadcaster_F_L"]
-    )
-
-    sonar_f_r_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["sonar_broadcaster_F_R"]
-    )
-
-    sonar_b_l_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["sonar_broadcaster_B_L"]
-    )
-
-    sonar_b_r_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["sonar_broadcaster_B_R"]
-    )
-
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=controller_manager,
@@ -169,13 +157,6 @@ def generate_launch_description():
         )
     )
 
-    delayed_sonars_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=diff_drive_spawner,
-            on_start=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner]
-        )
-    )
-
     ldlidar_node = Node(
         package='ldlidar_sl_ros2',
         namespace=namespace,
@@ -185,19 +166,17 @@ def generate_launch_description():
         respawn=True,
         respawn_delay=10,
         parameters=[
-          {'product_name': 'LDLiDAR_LD14P'},  # LDLiDAR_LD14P setting works for LD-19P LIDAR
+          {'product_name': 'LDLiDAR_LD14'},
           {'laser_scan_topic_name': 'scan'},
           {'point_cloud_2d_topic_name': 'pointcloud2d'},
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
-          {'serial_baudrate' : 230400}, # LD-19P has 230400 baud rate
+          {'serial_baudrate' : 115200},
           {'laser_scan_dir': True},
-          {'enable_angle_crop_func': False},
-          {'angle_crop_min': 135.0},
-          {'angle_crop_max': 225.0},
-          {'min_intensity': 45},
-          {'do_filtering': False},
-          {'do_triplets': False}
+          # Seggy has vertical bar behind the LiDAR, so we crop angles around 180 degrees:
+          {'enable_angle_crop_func': True},
+          {'angle_crop_min': 170.0},
+          {'angle_crop_max': 190.0}
         ]
     )
 
@@ -233,44 +212,19 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
-    gps_node = Node(
-        package='nmea_navsat_driver',
-        executable='nmea_serial_driver',
-        output='screen',
-        respawn=True,
-        respawn_delay=10,
-        parameters=[
-            {'port' : '/dev/ttyUSBGPS' },
-            {'baud' : 115200 },
-            #{'baud' : 38400 },
-            {'frame_id' : 'gps_link' },
-            {'time_ref_source' : 'gps' },
-            {'use_GNSS_time' : False },
-            {'useRMC' : False }
-        ],
-        remappings=[("fix", "gps/fix")]
-    )
-
-    navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
-    )
-
     drive_include = GroupAction(
         actions=[
             twist_mux,
             delayed_controller_manager,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
-            delayed_battery_state_broadcaster_spawner,
-            delayed_sonars_spawner
+            delayed_battery_state_broadcaster_spawner
         ]
     )
 
     sensors_include = GroupAction(
         actions=[
             ldlidar_node,
-            gps_node,
             mpu9250driver_node
         ]
     )
@@ -278,10 +232,11 @@ def generate_launch_description():
     localizers_include = GroupAction(
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
-            navsat_localizer,
-            # use either map_server OR slam_toolbox, as both are mappers
-            map_server,    # localization is left to GPS
-            #slam_toolbox, # localization via LIDAR
+            odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            #tf_localizer,
+            # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
+            #cartographer, # localization via LIDAR
+            slam_toolbox, # localization via LIDAR
         ]
     )
 
@@ -305,4 +260,3 @@ def generate_launch_description():
         container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         delayed_nav
     ])
-

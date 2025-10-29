@@ -11,7 +11,11 @@ source /home/ros/robot_ws/install/setup.bash
 #aplay -D default:CARD=Set ~/wav/cat_meow.wav
 #aplay ~/wav/cat_meow.wav
 
-ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky.launch.py
+ros2 launch /home/ros/robot_ws/src/articubot_one/robots/seggy/launch/seggy.launch.py
+#ros2 launch /home/ros/robot_ws/src/articubot_one/robots/seggy/launch/seggy_sim_nav.launch.py
+#ros2 launch /home/ros/robot_ws/src/articubot_one/robots/seggy/launch/seggy_slam_toolbox.launch.py
+
+#ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky.launch.py
 #ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky_sim_nav.launch.py
 #ros2 launch /home/ros/robot_ws/src/articubot_one/robots/plucky/launch/plucky_slam_toolbox.launch.py
 

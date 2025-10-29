@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- See common Gazebo pugins in the world file -->
+    
+    <!--
+        To re-generate robot.urdf.generated.xml manually for troubleshooting:
+          cd ~/robot_ws
+          colcon build
+          xacro install/articubot_one/share/articubot_one/robots/seggy/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/seggy/description/robot.urdf.generated.xml
+    -->
+
+    <xacro:include filename="../../../description/common_properties.xacro" />
+
+    <xacro:include filename="robot_core.xacro" />
+
+    <xacro:property name="imu_offset_x" value="${wheel_offset_x - 0.0}"/>
+    <xacro:property name="imu_offset_z" value="${chassis_top_offset + 0.01}"/>
+    <xacro:property name="imu_visual_size" value="0.01"/>
+    <xacro:include filename="../../../description/imu.xacro" />
+
+    <!-- using arguments here, as that allows overriding default values -->
+    <xacro:arg name="lidar_offset_x" default="${wheel_offset_x + 0.05}"/>
+    <xacro:arg name="lidar_offset_z" default="0.27"/>
+    <xacro:arg name="lidar_min_angle" default="-${pi * 0.95}"/>
+    <xacro:arg name="lidar_max_angle" default="${pi * 0.95}"/>
+    <!-- xacro:arg name="lidar_base_length" default="0.04"/ -->
+    <xacro:include filename="../../../description/lidar.xacro" />
+
+    <xacro:property name="open_circuit_voltage" value="12.592"/>
+    <xacro:property name="battery_capacity" value="20.0"/>
+    <xacro:include filename="../../../description/battery.xacro" />
+
+    <xacro:property name="depth_camera_offset_x" value="${wheel_offset_x + 0.03}"/>
+    <xacro:property name="depth_camera_offset_z" value="${chassis_top_offset + 0.11}"/>
+    <xacro:include filename="../../../description/depth_camera.xacro"/>
+
+    <xacro:unless value="$(arg sim_mode)">
+        <xacro:arg name="parent_frame" default="depth_camera_link_optical" />
+        <xacro:include filename="$(find depthai_descriptions)/urdf/depthai_descr.urdf.xacro"/>
+    </xacro:unless>
+    
+    <xacro:include filename="ros2_control.xacro" />
+
+</robot>

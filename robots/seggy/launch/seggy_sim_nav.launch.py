@@ -19,7 +19,7 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    robot_model='dragger'
+    robot_model='seggy'
 
     robot_path = os.path.join(package_path, 'robots', robot_model)
 

@@ -1,11 +1,5 @@
 ### ekf config file ###
 
-# see https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/config/dual_ekf_navsat_params.yaml
-#     https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
-#     https://github.com/jimdinunzio/trucksaurus/blob/humble/linorobot2_base/config/ekf_gps.yaml
-#     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/dual_ekf_navsat_example.yaml
-#     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml
-
 # For parameter descriptions, please refer to the template parameter files for each node.
 
 ekf_filter_node_odom:
@@ -14,7 +8,8 @@ ekf_filter_node_odom:
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
 # computation until it receives at least one message from one of the inputs. It will then run continuously at the
 # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-    frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    #frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    frequency: 60.0 # at max speed we have about 30 ticks per second from wheels encoders. IMU is much higher.
 
 # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
 # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
@@ -46,7 +41,7 @@ ekf_filter_node_odom:
     debug: false
 
 # Defaults to "robot_localization_debug.txt" if unspecified. Please specify the full path.
-    debug_out_file: /tmp/dual_ekf_navsat_odom_debug.txt
+    debug_out_file: /tmp/ekf_odom_debug.txt
 
 # Whether to broadcast the transformation over the /tf topic. Defaults to true if unspecified.
 # Must be left true. If set to false, TF from wheels to map will be missing, so - laser won't be working etc.
@@ -151,10 +146,10 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true, true,  true,
                   false, false, false,
-                  true, true, true,
-                  false, true, true]  # having true in "x_accel" cell makes sim crazy
+                  false, false, false,
+                  false, false, true,
+                  false, false, false]
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -164,15 +159,14 @@ ekf_filter_node_odom:
 
 # If using a real robot you might want to set this to true,
 # since usually absolute measurements from real imu's are not very accurate:
-    imu0_differential: false
+    imu0_differential: true
 
     imu0_relative: false
     imu0_queue_size: 10
 
-# IMU data is subject to outliers, try filter them out:
-    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
-    imu0_twist_rejection_threshold: 0.8                #
-    imu0_linear_acceleration_rejection_threshold: 0.8  #
+#    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
+#    imu0_twist_rejection_threshold: 0.8                #
+#    imu0_linear_acceleration_rejection_threshold: 0.8  #
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
@@ -219,9 +213,7 @@ ekf_filter_node_odom:
 # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
 # unspecified.
 
-#                                x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
-#    process_noise_covariance: [1e-2, 1e-2, 1e-2, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
+    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
 
 # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
 # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
@@ -229,90 +221,4 @@ ekf_filter_node_odom:
 # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
 #if unspecified.
 
-#                                   x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
-#    initial_estimate_covariance: [1e-2, 1e-2, 1e-2, 1.0, 1.0,   1e-2, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
-
-ekf_filter_node_map:
-  ros__parameters:
-    frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
-#    sensor_timeout: 0.1
-    two_d_mode: true
-    transform_time_offset: 0.0
-    transform_timeout: 0.0
-    print_diagnostics: true
-    debug: false
-    debug_out_file: /tmp/dual_ekf_navsat_map_debug.txt
-
-# Whether to broadcast the transformation over the /tf topic. Defaults to true if unspecified.
-# Must be left true. If set to false, the robot would stay in place in RViz
-#    publish_tf: false
-
-# If the filter sees a jump back in time, the filter is reset (convenient for testing with rosbags!)
-#     reset_on_time_jump: true
-
-    map_frame: map
-    odom_frame: odom
-    base_link_frame: base_footprint     # this is where the map will be attached to robot
-    world_frame: map
-
-    #x     , y     , z,
-    #roll  , pitch , yaw,
-    #vx    , vy    , vz,
-    #vroll , vpitch, vyaw,
-    #ax    , ay    , az   
-
-    # Since per REP 105 the position of the robot in the odom frame has to be continuous over time, 
-    # in this filter we just want to fuse the robot’s speed measured by its wheels published /odom, 
-    # and the imu heading published on /imu/data:
-    odom0: diff_cont/odom 
-    odom0_config: [false, false, false,
-                   false, false, false,
-                    true,  true, true,
-                   false, false, true,
-                   false, false, false]
-    odom0_queue_size: 10
-    odom0_differential: false
-    odom0_relative: false
-
-    odom1: odometry/gps
-    odom1_config: [true,   true, false,
-                   false, false, false,
-                   false, false, false,
-                   false, false, false,
-                   false, false, false]
-    odom1_queue_size: 10
-#    odom1_nodelay: false
-    odom1_differential: false
-    odom1_relative: false
-
-    # We trust IMU compass data (yaw) to be accurate:
-    imu0: imu/data
-    imu0_config: [false, false, false,
-                  true, true,  true,
-                  false, false, false,
-                  true, true, true,
-                  false, true, true]  # having true in "x_accel" cell makes sim crazy
-#    imu0_nodelay: false
-
-# If using a real robot you might want to set this to true,
-# since usually absolute measurements from real imu's are not very accurate:
-    imu0_differential: false
-    imu0_relative: false
-    imu0_queue_size: 10
-
-# IMU data is subject to outliers, try filter them out:
-    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
-    imu0_twist_rejection_threshold: 0.8                #
-    imu0_linear_acceleration_rejection_threshold: 0.8  #
-    imu0_remove_gravitational_acceleration: true
-
-    use_control: false
-#                                x,   y,    z, roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    process_noise_covariance: [1.0, 1.0, 1e-3, 0.3, 0.3,   0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
-#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3,   0.01, 1e-3, 1e-3, 1e-3, 0.3,   0.3,    0.3, 1e-3, 1e-3, 1e-3]
-
-#                                   x,   y,    z, roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
-#    initial_estimate_covariance: [1.0, 1.0, 1e-9, 1.0,  1.0,  1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
-#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0,  1.0,  1e-9, 1e-9, 1e-9, 1e-9, 1.0,   1.0,    1.0, 1e-9, 1e-9, 1e-9]
-
+    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]

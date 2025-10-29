@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
-    <xacro:property name="magnetometer_offset_x" value="${wheel_offset_x}"/>
-    <xacro:property name="magnetometer_offset_z" value="0.03"/>
-
     <!-- ******************* MAGNETOMETER SETUP ********************************  -->
-    <!-- we are using IMU parameters here, as magnetometer is usually part of IMU -->
     <!-- Each sensor must be attached to a link.                                  -->
+
+    <!-- we are using IMU parameters here, as magnetometer is usually part of IMU:
+        parameters: imu_offset_x
+                     imu_offset_z
+                     imu_visual_size -->
 
     <joint name="magnetometer_joint" type="fixed">
         <parent link="chassis_link"/>

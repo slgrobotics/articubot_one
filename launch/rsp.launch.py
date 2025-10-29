@@ -13,6 +13,8 @@ import xacro
 
 def generate_launch_description():
 
+    namespace=''
+
     package_name='articubot_one' #<--- CHANGE ME
 
     package_path = get_package_share_directory(package_name)
@@ -20,7 +22,7 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, create1...
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, create1...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # define the launch argument that must be passed from the calling launch file or from the console:
@@ -38,10 +40,10 @@ def generate_launch_description():
     # See https://github.com/ros/robot_state_publisher/tree/jazzy
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
+        namespace=namespace,
         executable='robot_state_publisher',
         name='robot_state_publisher',
         output='screen',
-        namespace='/',
         parameters=[{'robot_description': ParameterValue(robot_description_sdf, value_type=str),
                     #'publish_frequency' : 5.0,  # Defaults to 20.0 Hz. Only affects non-static joints.
                     #'frame_prefix': '',
@@ -52,18 +54,18 @@ def generate_launch_description():
     # Optional nodes to interact with joints from the RViz2:
     node_joint_state_publisher = Node(
         package='joint_state_publisher',
+        namespace=namespace,
         executable='joint_state_publisher',
         name='joint_state_publisher',
-        namespace='/',
         output=['screen']
     )
 
     # For publishing and controlling the robot pose in the pop-up GUI:
     node_joint_state_publisher_gui = Node(
         package='joint_state_publisher_gui',
+        namespace=namespace,
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
-        namespace='/',
         output=['screen'],
         # no need to supply SDF source here, it will be picked from topic /robot_description by default
         #arguments=[robot_description_sdf]

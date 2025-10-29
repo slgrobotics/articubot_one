@@ -6,10 +6,10 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessStart
 from nav2_common.launch import ReplaceString
+from launch_ros.actions import ComposableNodeContainer, Node
 
 #
 # To launch Plucky sim:
@@ -22,7 +22,7 @@ def generate_launch_description():
     # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
     # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
 
-    namespace='/'
+    namespace=''
 
     package_name='articubot_one' #<--- CHANGE ME
 
@@ -80,12 +80,23 @@ def generate_launch_description():
     
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        name='nav2_container',
+        namespace=namespace,
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[],
+        output='screen'
+    )
+
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
-                                     #'use_composition': 'True',
-                                     'odom_topic': 'diff_cont/odom',
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
                                      #'use_respawn': 'true',
                                      'autostart' : 'true',
                                      'params_file' : nav2_params_file }.items()
@@ -124,9 +135,10 @@ def generate_launch_description():
 
     # spawn entity (robot model) in the Gazebo gz_sim
     # see arguments:  ros2 run ros_gz_sim create --helpshort
-    spawn_sim_robot = Node(package='ros_gz_sim',
-        executable='create',
+    spawn_sim_robot = Node(
+        package='ros_gz_sim',
         namespace=namespace,
+        executable='create',
         arguments=[
             '-name', robot_model,
             '-topic', '/robot_description',
@@ -139,25 +151,28 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
         output='screen')
 
+    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
+    # We only need to point spawners to the correct controller_manager instance in the arguments.
+    # Only configure controllers, after the robot shows up live in GZ:
+
     joint_broad_spawner = Node(
         package="controller_manager",
-        executable="spawner",
         namespace=namespace,
+        executable="spawner",
         arguments=["joint_broad", "--controller-manager", "/controller_manager"],
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
-        executable="spawner",
         namespace=namespace,
-        arguments=["diff_cont", "--controller-manager", "/controller_manager"],
-        # remappings don't work here. Use relay.
-        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
-        #remappings=[('diff_cont/odom','odom')]
+        executable="spawner",
+        arguments=["diff_cont", "--controller-manager", "/controller_manager",
+                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
+                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
+                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
+                   ],
+        output="screen"
     )
-
-    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
-    # Only configure controllers, after the robot shows up live in GZ:
 
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
@@ -189,8 +204,8 @@ def generate_launch_description():
 
     gz_bridge = Node(
         package='ros_gz_bridge',
-        executable='parameter_bridge',
         namespace=namespace,
+        executable='parameter_bridge',
         parameters=[{
             'config_file': namespaced_gz_bridge_config_path,
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
@@ -251,6 +266,7 @@ def generate_launch_description():
     # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
     #waypoint_follower = Node(
     #    package='nav2_simple_commander',
+    #    namespace=namespace,
     #    executable='example_waypoint_follower',
     #    emulate_tty=True,
     #    output='screen',
@@ -271,6 +287,7 @@ def generate_launch_description():
         gz_include,
         delayed_loc,
         delayed_sonars,
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

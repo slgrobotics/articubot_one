@@ -1,6 +1,7 @@
 controller_manager:     # target node name
   ros__parameters:
-    update_rate: 30 # Hz
+    #update_rate: 30 # Hz
+    update_rate: 60 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
     #use_sim_time: false
 
     diff_cont:
@@ -12,18 +13,6 @@ controller_manager:     # target node name
     battery_state_broadcaster:
       type: battery_state_broadcaster/BatteryStateBroadcaster
 
-    sonar_broadcaster_F_L:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_F_R:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_B_L:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
-    sonar_broadcaster_B_R:
-      type: range_sensor_broadcaster/RangeSensorBroadcaster
-
 diff_cont:
   ros__parameters:
 
@@ -31,7 +20,7 @@ diff_cont:
     #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
     #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
 
-    publish_rate: 50.0
+    publish_rate: 60.0 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
 
     # Name of frame to publish odometry in. Default: "/odom"
     odom_frame_id: 'odom'
@@ -41,8 +30,9 @@ diff_cont:
     #base_frame_id: base_footprint
 
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
-    # make it false, or there will be a lot of jumping and wheels will be sepatared from the body.
+    # make it false, or there will be a lot of jumping and wheels will be separated from the body.
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
+    # Note the "--remap /tf:=diff_cont/tf" in launch file to isolate TFs, if published.
     enable_odom_tf: false
 
     use_stamped_vel: true
@@ -52,8 +42,8 @@ diff_cont:
 
     wheels_per_side: 1
 
-    wheel_separation: 0.580             # distance between left and right wheels
-    wheel_radius: 0.192
+    wheel_separation: 0.473             # distance between left and right wheels
+    wheel_radius: 0.122
 
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
     # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false
@@ -81,21 +71,23 @@ diff_cont:
     linear:
       x:
         has_velocity_limits    : true
-        max_velocity           : 0.32 # m/s - experimental on actual robot
-        min_velocity           : -0.2 # m/s
+        max_velocity           : 0.1  # m/s - 0.3 - experimental max on actual robot (3 rad/sec wheel speed, 25 cm wheel radius)
+        min_velocity           : -0.05 # m/s
         has_acceleration_limits: true
-        max_acceleration       : 0.5  # m/s^2
-        min_acceleration       : -0.3 # m/s^2
+        max_acceleration       : 1.0  # m/s^2 - "3" is aggressive
+        min_acceleration       : -0.5 # m/s^2
         has_jerk_limits        : true
-        max_jerk               : 0.8  # m/s^3
+        max_jerk               : 0.5  # m/s^3 - "1.0" is aggressive
     angular:
       z:
+        # Note: angular velocity must be limited to avoid losing mapping capabilities.
         has_velocity_limits    : true
-        max_velocity           : 0.25 # rad/s - experimental on actual robot
-        has_acceleration_limits: true
-        max_acceleration       : 0.5  # rad/s^2
-        has_jerk_limits        : true
-        max_jerk               : 0.5  # rad/s^3
+        max_velocity           : 0.3  # rad/s - limit robot turn rate to ~17 deg/sec, feels fast enough, mapping still works.
+        # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
+        has_acceleration_limits: false
+        max_acceleration       : 1.0  # rad/s^2
+        has_jerk_limits        : false
+        max_jerk               : 1.0  # rad/s^3
 
 #
 # By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
@@ -134,8 +126,8 @@ battery_state_broadcaster:
     sensor_name: "main_battery"
     frame_id: "battery_frame"
     power_supply_technology: 4
-    design_capacity: 50.0
-    location: "robot Dragger"
+    design_capacity: 20.0
+    location: "robot Seggy"
     serial_number: "3.0001"
     # https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/BatteryState.msg
     # https://github.com/ipa320/ros_battery_monitoring/blob/main/battery_state_broadcaster/src/BatteryStateBroadcaster.cpp
@@ -149,50 +141,3 @@ battery_state_broadcaster:
       - power_supply_status
       - power_supply_health
       - present
-
-# Dragger and Plucky have four sensors on all four corners.
-# see https://control.ros.org/jazzy/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html
-#     https://github.com/ros-controls/ros2_controllers/blob/master/range_sensor_broadcaster/src/range_sensor_broadcaster.cpp
-#     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/DraggerROS
-#     https://github.com/slgrobotics/diffdrive_arduino/tree/main
-#     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/ParkingSensorI2C
-sonar_broadcaster_F_L:
-  ros__parameters:
-    field_of_view: 0.1
-    frame_id: 'sonar_F_L_frame'
-    max_range: 2.5
-    min_range: 0.01
-    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
-    sensor_name: 'sonar_F_L'
-    variance: 0.01
-
-sonar_broadcaster_F_R:
-  ros__parameters:
-    field_of_view: 0.1
-    frame_id: 'sonar_F_R_frame'
-    max_range: 2.5
-    min_range: 0.01
-    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
-    sensor_name: 'sonar_F_R'
-    variance: 0.01
-
-sonar_broadcaster_B_L:
-  ros__parameters:
-    field_of_view: 0.1
-    frame_id: 'sonar_B_L_frame'
-    max_range: 2.5
-    min_range: 0.01
-    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
-    sensor_name: 'sonar_B_L'
-    variance: 0.01
-
-sonar_broadcaster_B_R:
-  ros__parameters:
-    field_of_view: 0.1
-    frame_id: 'sonar_B_R_frame'
-    max_range: 2.5
-    min_range: 0.01
-    radiation_type: 0   # ULTRASOUND=0 INFRARED=1
-    sensor_name: 'sonar_B_R'
-    variance: 0.01
-

@@ -9,12 +9,12 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessStart
 from nav2_common.launch import ReplaceString
-from launch_ros.actions import Node
+from launch_ros.actions import ComposableNodeContainer, Node
 
 #
-# To launch Create 1 Turtle sim:
+# To launch Seggy sim:
 #
-# cd ~/robot_ws; colcon build; ros2 launch articubot_one turtle_sim.launch.py
+# cd ~/robot_ws; colcon build; ros2 launch articubot_one seggy_sim.launch.py
 #
 
 def generate_launch_description():
@@ -26,7 +26,7 @@ def generate_launch_description():
 
     package_name='articubot_one' #<--- CHANGE ME
 
-    robot_model='turtle'
+    robot_model='seggy'
 
     package_path = get_package_share_directory(package_name)
 
@@ -45,7 +45,7 @@ def generate_launch_description():
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_slam_toolbox.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy_slam_toolbox.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
@@ -78,9 +78,28 @@ def generate_launch_description():
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
     )
     
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        name='nav2_container',
+        namespace=namespace,
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[],
+        output='screen'
+    )
+
+    # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time }.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items()
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
@@ -147,10 +166,12 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["diff_cont", "--controller-manager", "/controller_manager"],
-        # remappings don't work here. Use relay.
-        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
-        #remappings=[('diff_cont/odom','odom')]
+        arguments=["diff_cont", "--controller-manager", "/controller_manager",
+                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
+                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
+                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
+                   ],
+        output="screen"
     )
 
     delayed_joint_broad_spawner = RegisterEventHandler(
@@ -207,7 +228,6 @@ def generate_launch_description():
             delayed_joint_broad_spawner,
             gz_bridge,
             #odom_relay,
-            #gps_fix_translator
         ]
     )
 
@@ -216,8 +236,8 @@ def generate_launch_description():
             LogInfo(msg='============ starting LOCALIZERS ==============='),
             odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #tf_localizer,
-            # use either cartographer OR slam_toolbox, as both are mappers
-            #cartographer,  # localization via LIDAR
+            # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
+            #cartographer, # localization via LIDAR
             slam_toolbox, # localization via LIDAR
         ]
     )
@@ -250,6 +270,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])

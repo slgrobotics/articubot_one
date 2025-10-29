@@ -7,12 +7,15 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogI
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from nav2_common.launch import RewrittenYaml
+from launch_ros.actions import ComposableNodeContainer
 
 #
 # To launch nav2 in sim mode on Raspberry Pi because it crashes on my Intel desktop
 #
 
 def generate_launch_description():
+
+    namespace=''
 
     package_name='articubot_one' #<--- CHANGE ME
 
@@ -40,14 +43,26 @@ def generate_launch_description():
             param_rewrites=param_substitutions,
             convert_types=True)
 
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        name='nav2_container',
+        namespace=namespace,
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[],
+        output='screen'
+    )
+
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
-                                     #'use_composition': 'True',
-                                     'odom_topic': 'diff_cont/odom',
-                                     'autostart' : 'false',
-                                     'params_file' : configured_params }.items()
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'diff_cont/odom',  # turtle better uses diff_cont/odom, than odometry/local
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : configured_params }.items() # some parameters may be rewritten
     )
 
     return LaunchDescription([
@@ -59,5 +74,6 @@ def generate_launch_description():
         LogInfo(msg='starting NAV2: ' + nav2_params_file),
         LogInfo(msg=use_sim_time),
 
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         nav2
     ])
