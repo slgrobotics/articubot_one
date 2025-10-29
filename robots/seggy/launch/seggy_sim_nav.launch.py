@@ -41,7 +41,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': 'true',
                                      'use_composition': 'True',
                                      'container_name': 'nav2_container',
-                                     'odom_topic': 'diff_cont/odom',
+                                     'odom_topic': 'odometry/local',
                                      'autostart' : 'false',
                                      'params_file' : nav2_params_file }.items()
     )
