@@ -45,7 +45,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
                                      #'use_composition': 'True',
-                                     'odom_topic': 'diff_cont/odom',
+                                     'odom_topic': 'diff_cont/odom',  # turtle better uses diff_cont/odom, than odometry/local
                                      'autostart' : 'false',
                                      'params_file' : configured_params }.items()
     )
