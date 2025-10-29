@@ -107,10 +107,12 @@ def generate_launch_description():
         namespace=namespace,
         executable="ros2_control_node",
         parameters=[controllers_params_file],
-        remappings=[
-            ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
-            ('battery_state_broadcaster/battery_state', 'battery/battery_state')
-        ]
+        arguments=[
+            "--ros-args", "--remap", "/tf:=/diff_cont/tf",
+            "--ros-args", "--remap", "/tf_static:=/diff_cont/tf_static",
+            "--ros-args", "--remap", "battery_state_broadcaster/battery_state:=battery/battery_state"
+        ],
+        output="screen"
     )
 
     delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
@@ -127,7 +129,7 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["battery_state_broadcaster", "--controller-ros-args", "-r", "battery_state_broadcaster/battery_state:=battery/battery_state"],
+        arguments=["battery_state_broadcaster"],
         output="screen"
     )
 
@@ -135,7 +137,7 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["diff_cont", "--controller-ros-args", "-r", "/tf:=/diff_cont/tf"],
+        arguments=["diff_cont"],
         output="screen"
     )
 
