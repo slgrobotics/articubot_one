@@ -270,8 +270,8 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        #container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
-        #delayed_nav
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
