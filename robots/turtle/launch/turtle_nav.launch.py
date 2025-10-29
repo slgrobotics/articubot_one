@@ -61,7 +61,7 @@ def generate_launch_description():
                                      'container_name': 'nav2_container',
                                      'odom_topic': 'diff_cont/odom',  # turtle better uses diff_cont/odom, than odometry/local
                                      #'use_respawn': 'true',
-                                     'autostart' : 'false',
+                                     'autostart' : 'true',
                                      'params_file' : configured_params }.items() # some parameters may be rewritten
     )
 
