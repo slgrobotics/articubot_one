@@ -27,8 +27,8 @@ amcl:
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
     max_beams: 60
-    max_particles: 2000
-    min_particles: 500
+    max_particles: 1000 # Reduced to optimize performance
+    min_particles: 300 # Reduced to optimize performance
     odom_frame_id: "odom"
     pf_err: 0.05
     pf_z: 0.99
@@ -45,7 +45,7 @@ amcl:
     z_hit: 0.5
     z_max: 0.05
     z_rand: 0.5
-    z_short: 0.05 # Default 0.005. Greater value compensates for short readings, such as small obstacles or reflective surfaces
+    z_short: 0.1 # Default 0.005. Greater value compensates for short readings, such as small obstacles or reflective surfaces
     scan_topic: scan
 
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
@@ -58,7 +58,7 @@ bt_navigator:
     #odom_topic: /odometry/global  # works
     #odom_topic: /odometry/filtered  # Addison recommended, here is one of the remapped - likely /odometry/local
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
-    bt_loop_duration: 10
+    bt_loop_duration: 5 # Reduced for quicker decision-making
     default_server_timeout: 20
     wait_for_service_timeout: 1000  # ms, during initialization
     #action_server_result_timeout: 900.0 # timeout value for action servers to discard a goal handle if a result hasn’t been produced.
@@ -100,7 +100,7 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 5.0 # Default: 20.0. XV-11 Laser scans come at 5 Hz
+    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
     costmap_update_timeout: 0.30
     odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/local   # works
@@ -178,7 +178,7 @@ controller_server:
         cost_power: 1
         cost_weight: 3.81
         critical_cost: 300.0
-        consider_footprint: true # Default false
+        #consider_footprint: true # Default false  TODO: used to work with "true" before Oct 2025
         collision_cost: 1000000.0
         near_goal_distance: 1.0 # when the robot can get a bit closer to obstacles while trying to reach its final destination.
         trajectory_point_step: 2
@@ -235,8 +235,8 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 5.0 # Default: 5.0 Matches XV-11 Laser scan frequency
-      publish_frequency: 5.0
+      update_frequency: 30.0 # Default: 5.0 Matches Laser scan frequency
+      publish_frequency: 12.0 # Default: 5.0 Matches Laser scan frequency (6 Hz)
       global_frame: odom # Default: map.  "odom" keeps the local costmap consistent with the robot’s movement.
       robot_base_frame: base_link
       static_map: false
@@ -248,6 +248,7 @@ local_costmap:
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       robot_radius: 0.22
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
+      inflation_radius: 0.4  # Should be larger than robot_radius
       plugins: ["obstacle_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
       obstacle_layer:
@@ -291,7 +292,7 @@ global_costmap:
       #lethal_cost_threshold: 100
       #Added above to improve slam exploration
       update_frequency: 5.0 # Default: 5.0
-      publish_frequency: 5.0 # Default: 1.0
+      publish_frequency: 3.0 # Default: 1.0
       global_frame: map
       robot_base_frame: base_link
       robot_radius: 0.22
@@ -346,7 +347,7 @@ map_saver:
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 10.0 # Default: 20.0
+    expected_planner_frequency: 30.0 # Default: 20.0
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
@@ -413,7 +414,7 @@ behavior_server:
 waypoint_follower:
   ros__parameters: # see https://docs.nav2.org/configuration/packages/configuring-waypoint-follower.html#default-plugin
     enable_stamped_cmd_vel: true
-    loop_rate: 2 # Default: 20
+    loop_rate: 20 # Default: 20
     stop_on_failure: false # false allows the robot to continue to the next waypoint even if one fails.
     #action_server_result_timeout: 900.0 # Default: 900 (15 minutes). ros2 param get waypoint_follower action_server_result_timeout
     waypoint_task_executor_plugin: "wait_at_waypoint" # plugin could be WaitAtWaypoint, PhotoAtWaypoint or InputAtWaypoint
@@ -427,12 +428,12 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 10.0     # Rate to run smoother. Default: 20.0 Hz
+    smoothing_frequency: 20.0     # Rate to run smoother. Default: 20.0 Hz
     scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
-    max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
-    min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_velocity: [0.3, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.3, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
@@ -476,7 +477,7 @@ collision_monitor:
       enabled: True
 #    pointcloud:
 #      type: "pointcloud"
-#      topic: "/intel_realsense_r200_depth/points"
+#      topic: "/stereo/points"  # OAK-D point cloud topic
 #      min_height: 0.1
 #      max_height: 0.5
 #      enabled: True
@@ -485,7 +486,7 @@ collision_monitor:
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 10.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
+    controller_frequency: 60.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
     initial_perception_timeout: 5.0 # Timeout (s) to wait to obtain initial perception of the dock.
     wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
     dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.
