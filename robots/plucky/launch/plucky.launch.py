@@ -3,12 +3,11 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch.actions import RegisterEventHandler
 from launch.event_handlers import OnProcessStart
-from launch_ros.actions import Node
+from launch_ros.actions import ComposableNodeContainer, Node
 
 def generate_launch_description():
 
@@ -52,6 +51,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
+    # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
@@ -78,11 +78,22 @@ def generate_launch_description():
     
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        package='rclcpp_components',
+        namespace=namespace,
+        executable='component_container_mt',
+        name='nav2_container',
+        composable_node_descriptions=[],
+        output='screen'
+    )
+
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
-                                     #'use_composition': 'True',
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
                                      'odom_topic': 'odometry/local',
                                      #'use_respawn': 'true',
                                      'autostart' : 'true',
@@ -97,8 +108,6 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[controllers_params_file],
         remappings=[
-            ('/tf','/diff_cont/tf'),   # to eliminate publishing link to /tf, although "enable_odom_tf: false" anyway
-            ('battery_state_broadcaster/battery_state', 'battery/battery_state'),
             ('sonar_broadcaster_F_L/range', 'sonar_F_L'),
             ('sonar_broadcaster_F_R/range', 'sonar_F_R'),
             ('sonar_broadcaster_B_L/range', 'sonar_B_L'),
@@ -112,21 +121,24 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["joint_broad"]
+        arguments=["joint_broad"],
+        output="screen"
     )
 
     battery_state_broadcaster_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["battery_state_broadcaster"]
+        arguments=["battery_state_broadcaster", "--controller-ros-args", "--remap battery_state_broadcaster/battery_state:=battery/battery_state"],
+        output="screen"
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["diff_cont"]
+        arguments=["diff_cont", "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
+        output="screen"
     )
 
     sonar_f_l_spawner = Node(
@@ -219,7 +231,7 @@ def generate_launch_description():
         parameters=[
           {
               #"print" : True,
-              "frequency" : 30,
+              "frequency" : 60,
               "i2c_address" : 0x68,
               "i2c_port" : 1,
               "frame_id" : "imu_link",
@@ -351,6 +363,7 @@ def generate_launch_description():
         drive_include,
         sensors_include,
         delayed_loc,
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         delayed_nav
     ])
 

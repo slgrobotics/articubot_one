@@ -257,6 +257,6 @@ def generate_launch_description():
         drive_include,
         sensors_include,
         delayed_loc,
-        #container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
-        #delayed_nav
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        delayed_nav
     ])
