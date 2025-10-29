@@ -151,25 +151,28 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
         output='screen')
 
+    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
+    # We only need to point spawners to the correct controller_manager instance in the arguments.
+    # Only configure controllers, after the robot shows up live in GZ:
+
     joint_broad_spawner = Node(
         package="controller_manager",
-        executable="spawner",
         namespace=namespace,
+        executable="spawner",
         arguments=["joint_broad", "--controller-manager", "/controller_manager"],
     )
 
     diff_drive_spawner = Node(
         package="controller_manager",
-        executable="spawner",
         namespace=namespace,
-        arguments=["diff_cont", "--controller-manager", "/controller_manager"],
-        # remappings don't work here. Use relay.
-        #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
-        #remappings=[('diff_cont/odom','odom')]
+        executable="spawner",
+        arguments=["diff_cont", "--controller-manager", "/controller_manager",
+                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
+                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
+                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
+                   ],
+        output="screen"
     )
-
-    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
-    # Only configure controllers, after the robot shows up live in GZ:
 
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
@@ -267,7 +270,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        #container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         #delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
