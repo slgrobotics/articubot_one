@@ -6,10 +6,10 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessStart
 from nav2_common.launch import ReplaceString
+from launch_ros.actions import Node
 
 #
 # To launch Create 1 Turtle sim:
@@ -118,8 +118,8 @@ def generate_launch_description():
     # see arguments:  ros2 run ros_gz_sim create --helpshort
     spawn_sim_robot = Node(
         package='ros_gz_sim',
-        namespace=namespace,
         executable='create',
+        namespace=namespace,
         arguments=[
             '-name', robot_model,
             '-topic', '/robot_description',
@@ -131,6 +131,10 @@ def generate_launch_description():
             '-allow_renaming', 'true'],
         parameters=[{'use_sim_time': True}],
         output='screen')
+
+    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
+    # We only need to point spawners to the correct controller_manager instance in the arguments.
+    # Only configure controllers, after the robot shows up live in GZ:
 
     joint_broad_spawner = Node(
         package="controller_manager",
@@ -148,9 +152,6 @@ def generate_launch_description():
         #arguments=["diff_cont", "--controller-manager", "/controller_manager", "--ros-args", "--remap",  "/diff_cont/odom:=/odom"],
         #remappings=[('diff_cont/odom','odom')]
     )
-
-    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
-    # Only configure controllers, after the robot shows up live in GZ:
 
     delayed_joint_broad_spawner = RegisterEventHandler(
         event_handler=OnProcessStart(
@@ -229,6 +230,7 @@ def generate_launch_description():
     # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
     #waypoint_follower = Node(
     #    package='nav2_simple_commander',
+    #    namespace=namespace,
     #    executable='example_waypoint_follower',
     #    emulate_tty=True,
     #    output='screen',
@@ -248,7 +250,7 @@ def generate_launch_description():
         twist_mux,
         gz_include,
         delayed_loc,
-        #delayed_nav,
+        delayed_nav
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 
