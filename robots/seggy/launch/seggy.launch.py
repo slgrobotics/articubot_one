@@ -84,7 +84,7 @@ def generate_launch_description():
         namespace=namespace,
         executable='component_container_mt', # _mt for multi-threaded
         name='nav2_container',
-        composable_node_descriptions=[],
+        composable_node_descriptions=[], # leave empty, as we are using nav2_launch.py to load components
         parameters=[nav2_params_file],   # must be passed here - see https://github.com/ros-navigation/navigation2/issues/4011
         output='screen'
     )
