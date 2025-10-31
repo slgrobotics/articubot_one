@@ -140,7 +140,7 @@ controller_server:
       plugin: "nav2_mppi_controller::MPPIController"
       time_steps: 20 # Default: 56
       model_dt: 0.25 # Default: 0.05  0.2 matches 5 Hz Laser scan frequency, dt must be larger.
-      batch_size: 2000 # Default: 1000
+      batch_size: 1000 # Default: 1000
       ax_max: 3.0
       ax_min: -3.0
       ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
@@ -178,7 +178,10 @@ controller_server:
         cost_power: 1
         cost_weight: 3.81
         critical_cost: 300.0
-        #consider_footprint: true # Default false  TODO: used to work with "true" before Oct 2025
+        # Considering footprint in collision checking requires a non-circular robot footprint, not just radius.
+        # See https://github.com/ros-navigation/navigation2/issues/5574
+        # Comment it out if using "robot_radius", not "footprint" in costmaps below:
+        #consider_footprint: true # Default false
         collision_cost: 1000000.0
         near_goal_distance: 1.0 # when the robot can get a bit closer to obstacles while trying to reach its final destination.
         trajectory_point_step: 2
@@ -235,8 +238,8 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 30.0 # Default: 5.0 Matches Laser scan frequency
-      publish_frequency: 12.0 # Default: 5.0 Matches Laser scan frequency (6 Hz)
+      update_frequency: 5.0 # Default: 5.0 Matches Laser scan frequency
+      publish_frequency: 5.0 # Default: 5.0 Matches Laser scan frequency (5 Hz)
       global_frame: odom # Default: map.  "odom" keeps the local costmap consistent with the robot’s movement.
       robot_base_frame: base_link
       static_map: false
@@ -246,12 +249,15 @@ local_costmap:
       map_vis_z: -0.19 # place local costmap at the floor level (wheels radius below base_link)
       resolution: 0.05 # meters/cell. Default: 0.1
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
+
+      # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       robot_radius: 0.22
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       inflation_radius: 0.4  # Should be larger than robot_radius
+
       plugins: ["obstacle_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
-      obstacle_layer:
+      obstacle_layer: # note: could use voxel layer here
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
@@ -295,8 +301,11 @@ global_costmap:
       publish_frequency: 3.0 # Default: 1.0
       global_frame: map
       robot_base_frame: base_link
+
+      # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       robot_radius: 0.22
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
+
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
@@ -347,7 +356,7 @@ map_saver:
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 30.0 # Default: 20.0
+    expected_planner_frequency: 2.0 # Default: 20.0  - 2.0 is adequate for slow indoors robots, to avoid oscillations caused by frequent re-planning.
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
@@ -428,17 +437,17 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 20.0     # Rate to run smoother. Default: 20.0 Hz
-    scale_velocities: false       # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
+    smoothing_frequency: 6.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
+    scale_velocities: true        # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
-    max_velocity: [0.3, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
-    min_velocity: [-0.3, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
-    max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
-    max_decel: [-0.5, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
+    max_velocity: [0.2, 0.0, 1.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.1, 0.0, -1.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_accel: [0.3, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
+    max_decel: [-0.3, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
     odom_topic: /diff_cont/odom   # works
-    odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
+    odom_duration: 0.3  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
 
@@ -470,7 +479,7 @@ collision_monitor:
       min_points: 6
       visualize: False
       enabled: True
-    observation_sources: ["scan"] # scan, pointcloud, range or polygon
+    observation_sources: ["scan"] # scan, pointcloud, range or polygon - comma separated list here
     scan:
       type: "scan"
       topic: "/scan"
@@ -541,3 +550,4 @@ loopback_simulator:
     map_frame_id: "map"
     scan_frame_id: "laser_frame"
     update_duration: 0.02
+
