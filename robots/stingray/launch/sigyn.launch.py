@@ -203,7 +203,7 @@ def generate_launch_description():
     )
     ld.add_action(twist_mux)
 
-    map_path = os.path.join(articubot_package_path, "assets", "maps", "open_area_map.yaml")
+    map_path = os.path.join(articubot_package_path, "assets", "maps", "large_map.yaml")
     
     nav2_config_path = os.path.join(robot_path, 'config', 'nav2_params.yaml')
 
@@ -246,32 +246,33 @@ def generate_launch_description():
     ld.add_action(roboclaw)
 
     # Include the SLAM Toolbox launch file for mapping
-    # slam_toolbox = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         [
-    #             os.path.join(
-    #                 get_package_share_directory("slam_toolbox"),
-    #                 "launch",
-    #                 "online_async_launch.py",
-    #             )
-    #         ],
-    #     ),
-    #     condition=IfCondition(make_map),
-    #     launch_arguments={
-    #         "use_lifecycle_manager": "False",
-    #         "use_sim_time": use_sim_time,
-    #         "slam_params_file": os.path.join(
-    #             base_pgk, "config", "mapper_params_online_async.yaml"
-    #         ),
-    #         # "params_file": "/opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml",
-    #     }.items(),
-    # )
-    # ld.add_action(slam_toolbox)
-
-    tf_localizer = Node(package = "tf2_ros", 
-        executable = "static_transform_publisher",
-        arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+    slam_toolbox = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            [
+                os.path.join(
+                    get_package_share_directory("slam_toolbox"),
+                    "launch",
+                    "online_async_launch.py",
+                )
+            ],
+        ),
+        condition=IfCondition(make_map),
+        launch_arguments={
+            "use_lifecycle_manager": "False",
+            "use_sim_time": use_sim_time,
+            "slam_params_file": os.path.join(
+                get_package_share_directory("slam_toolbox"),
+                "config", "mapper_params_online_async.yaml"
+            ),
+            # "params_file": "/opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml",
+        }.items(),
     )
-    ld.add_action(tf_localizer)
+    ld.add_action(slam_toolbox)
+
+    # tf_localizer = Node(package = "tf2_ros", 
+    #     executable = "static_transform_publisher",
+    #     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+    # )
+    # ld.add_action(tf_localizer)  # REMOVED - conflicts with EKF odom->base_link transform
 
     return ld
