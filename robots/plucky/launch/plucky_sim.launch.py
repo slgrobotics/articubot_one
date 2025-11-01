@@ -6,8 +6,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration
 from launch.event_handlers import OnProcessStart
 from nav2_common.launch import ReplaceString
 from launch_ros.actions import ComposableNodeContainer, Node
@@ -25,69 +24,61 @@ def generate_launch_description():
 
     namespace=''
 
-    package_name='articubot_one'
+    package_name='articubot_one' #<--- CHANGE ME
 
     robot_model='plucky'
 
     package_path = get_package_share_directory(package_name)
 
+    robot_path = os.path.join(package_path, 'robots', robot_model)
+
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    robot_state_publisher = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'rsp.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+    rsp = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
     twist_mux = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     slam_toolbox = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'plucky_slam_toolbox.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','plucky_slam_toolbox.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     cartographer = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'cartographer.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time, 'namespace': namespace, 'robot_model': robot_model}.items()
+                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
+    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'map_server.launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
-        #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
-    # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see mapper_params.yaml
-    ekf_localizer = IncludeLaunchDescription(
+    odom_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
+    # alternative to odom_localizer for slam_toolbox
     tf_localizer = Node(package = "tf2_ros", 
                     executable = "static_transform_publisher",
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
     )
     
-    nav2_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'])
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # Define the ComposableNodeContainer for Nav2 composition:
     container_nav2 = ComposableNodeContainer(
@@ -102,16 +93,14 @@ def generate_launch_description():
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])
-        ),
-        launch_arguments={'use_sim_time': use_sim_time,
-                          'use_composition': 'True',
-                          'container_name': 'nav2_container',
-                          'odom_topic': 'odometry/local',
-                          #'use_respawn': 'true',
-                          'autostart': 'true',
-                          'params_file': nav2_params_file}.items()  # pass nav2 params file if not using composition
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
@@ -119,11 +108,9 @@ def generate_launch_description():
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=[
-            PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'worlds']),
-            TextSubstitution(text=':'),
-            PathJoinSubstitution([FindPackageShare(package_name), 'assets'])
-        ]
-    )
+            os.path.join(package_path, 'assets', 'worlds'), ':' + os.path.join(package_path, 'assets')
+            ]
+        )
 
     # Specify the world SDF:
     gazebo_arguments = LaunchDescription([
@@ -259,7 +246,7 @@ def generate_launch_description():
     localizers_include = GroupAction(
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
-            ekf_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #tf_localizer,
             #navsat_localizer,
             # use either map_server, OR cartographer OR slam_toolbox, as they are all mappers
@@ -295,7 +282,7 @@ def generate_launch_description():
             default_value='true',
             description='Use simulation (Gazebo) clock if true'),
 
-        robot_state_publisher,
+        rsp,
         rviz_and_joystick,
         twist_mux,
         gz_include,
