@@ -45,11 +45,12 @@ def generate_launch_description():
 
     # Define the ComposableNodeContainer for Nav2 composition:
     container_nav2 = ComposableNodeContainer(
-        name='nav2_container',
-        namespace=namespace,
         package='rclcpp_components',
-        executable='component_container_mt',
-        composable_node_descriptions=[],
+        namespace=namespace,
+        executable='component_container_mt', # _mt for multi-threaded
+        name='nav2_container',
+        composable_node_descriptions=[], # leave empty, as we are using nav2_launch.py to load components
+        parameters=[nav2_params_file],   # must be passed here - see https://github.com/ros-navigation/navigation2/issues/4011
         output='screen'
     )
 
@@ -62,7 +63,7 @@ def generate_launch_description():
                                      'odom_topic': 'diff_cont/odom',  # turtle better uses diff_cont/odom, than odometry/local
                                      #'use_respawn': 'true',
                                      'autostart' : 'true',
-                                     'params_file' : configured_params }.items() # some parameters may be rewritten
+                                     'params_file' : configured_params }.items() #  # pass nav2 params file if not using composition. Some parameters may be rewritten
     )
 
     return LaunchDescription([
