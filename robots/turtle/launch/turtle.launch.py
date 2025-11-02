@@ -3,10 +3,11 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch.event_handlers import OnProcessStart
+from launch_ros.actions import ComposableNodeContainer, Node
 
 def generate_launch_description():
 
@@ -74,9 +75,31 @@ def generate_launch_description():
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
     )
     
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        package='rclcpp_components',
+        namespace=namespace,
+        executable='component_container_mt', # _mt for multi-threaded
+        name='nav2_container',
+        composable_node_descriptions=[], # leave empty, as we are using nav2_launch.py to load components
+        parameters=[nav2_params_file],   # must be passed here - see https://github.com/ros-navigation/navigation2/issues/4011
+        output='screen'
+    )
+
+    # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time }.items()
+#                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
+#                ), launch_arguments={'use_sim_time': use_sim_time }.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
     )
 
     localizers_include = GroupAction(
@@ -90,9 +113,9 @@ def generate_launch_description():
         ]
     )
 
-    delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
+    delayed_loc = TimerAction(period=10.0, actions=[localizers_include])
 
-    delayed_nav = TimerAction(period=10.0, actions=[nav2])
+    delayed_nav = TimerAction(period=20.0, actions=[nav2])
 
     rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
 
@@ -117,6 +140,7 @@ def generate_launch_description():
         joystick,
         twist_mux,
         delayed_loc,
+        #container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         #delayed_nav,
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
         rviz

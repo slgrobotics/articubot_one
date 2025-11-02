@@ -98,7 +98,7 @@ def generate_launch_description():
             'ros_topic_prefix': '',
             'connection_type': 'i2c',
             'i2c_bus': 1,
-            'i2c_addr': 0x28,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
+            'i2c_addr': 0x29,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
             'data_query_frequency': 20,
             'calib_status_frequency': 0.1,
             'frame_id': 'imu_link',
