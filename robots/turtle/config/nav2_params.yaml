@@ -141,17 +141,17 @@ controller_server:
       time_steps: 20 # Default: 56
       model_dt: 0.25 # Default: 0.05  0.2 matches 5 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
-      ax_max: 3.0
-      ax_min: -3.0
+      ax_max: 1.0
+      ax_min: -1.0
       ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 3.5
+      az_max: 1.5
       vx_std: 0.2
       vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
       wz_std: 0.4 # Default: 0.2
-      vx_max: 0.5
-      vx_min: -0.35
+      vx_max: 0.1
+      vx_min: -0.05
       vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 1.9
+      wz_max: 0.9
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
@@ -273,7 +273,7 @@ local_costmap:
 
         scan:
           topic: "/scan" # must have the / prefix
-          max_obstacle_height: 2.0
+          max_obstacle_height: 1.0
           clearing: True # Default: False. "True" allows the obstacle layer to clear free space in the costmap based on laser data.
           marking: True # allow the obstacle layer to mark obstacles in the costmap.
           data_type: "LaserScan"
@@ -367,10 +367,10 @@ planner_server:
     enable_stamped_cmd_vel: true
     expected_planner_frequency: 2.0 # Default: 20.0  - 2.0 is adequate for slow indoors robots, to avoid oscillations caused by frequent re-planning.
     planner_plugins: ["GridBased"]
-    costmap_update_timeout: 1.0
+    costmap_update_timeout: 2.0
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
-      tolerance: 0.1 # Default: 0.5 meters. A tolerance around the goal.
+      tolerance: 0.15 # Default: 0.5 meters. A tolerance around the goal.
       use_astar: false # False means the default Dijkstra’s algorithm.
       allow_unknown: true # Allowing planning in unknown space gives more flexibility if the map is not fully explored.
 
@@ -417,12 +417,12 @@ behavior_server:
     transform_timeout: 0.8   # Default: 0.1
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5  # m/s^2
-    deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1       # m/s
-    max_rotational_vel: 1.0  # rad/s Default: 1.0
-    min_rotational_vel: 0.4  # rad/s Default: 0.4
-    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
+    acceleration_limit: 1.0  # m/s^2
+    deceleration_limit: -0.5 # m/s^2
+    minimum_speed: 0.05      # m/s
+    max_rotational_vel: 0.5  # rad/s Default: 1.0
+    min_rotational_vel: 0.2  # rad/s Default: 0.4
+    rotational_acc_lim: 1.0  # maximum rotational acceleration (rad/s^2) Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -446,7 +446,7 @@ waypoint_follower:
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 6.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
+    smoothing_frequency: 12.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
     scale_velocities: true        # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
@@ -456,9 +456,9 @@ velocity_smoother:
     max_decel: [-0.3, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
     #odom_topic: /diff_cont/odom   # works
-    odom_duration: 0.3  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
+    odom_duration: 0.4  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
-    velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
+    velocity_timeout: 1.5  # Time (s) after which if no new velocity commands are received to zero out and stop
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
 #     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
@@ -473,7 +473,7 @@ collision_monitor:
     cmd_vel_out_topic: "cmd_vel_nav" # Default: “cmd_vel”. The topic where safety-checked commands are sent. 
     state_topic: "collision_monitor_state" # Where to publish information about active safety behaviors.
     transform_tolerance: 0.5  # Default: 0.1  Delay in transform (tf) data that is tolerable in seconds
-    source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
+    source_timeout: 2.0 # Default: 2.0  How long to wait before assuming sensor data is too old. 
     base_shift_correction: True # true makes collision detection more accurate but uses more CPU power. Like taking a photo from a moving car.
     stop_pub_timeout: 2.0
     # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
@@ -504,7 +504,7 @@ collision_monitor:
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 60.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
+    controller_frequency: 18.0 # Default: 50.0  Control frequency (Hz) for vision-control loop.
     initial_perception_timeout: 5.0 # Timeout (s) to wait to obtain initial perception of the dock.
     wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
     dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.

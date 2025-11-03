@@ -1,5 +1,13 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo, RegisterEventHandler
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch.event_handlers import OnProcessStart
+from launch_ros.actions import ComposableNodeContainer, Node
 
 #
 # See https://github.com/slgrobotics/robots_bringup/tree/main/Docs/Create1
@@ -10,6 +18,74 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     namespace=''
+
+    package_name='articubot_one' #<--- CHANGE ME
+
+    robot_model='turtle'
+
+    package_path = get_package_share_directory(package_name)
+
+    robot_path = os.path.join(package_path, 'robots', robot_model)
+
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    rsp = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    )
+
+    twist_mux = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    slam_toolbox_params_file = os.path.join(package_path,'robots','turtle','config','mapper_params.yaml')
+
+    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # also, produces odom_topic: /odometry/local which can be used by Nav2
+    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
+    # see mapper_params.yaml
+    odom_localizer = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    )
+
+    slam_toolbox = IncludeLaunchDescription(
+                # see /opt/ros/jazzy/share/slam_toolbox/launch
+                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time, 'slam_params_file': slam_toolbox_params_file}.items()
+    )
+
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        package='rclcpp_components',
+        namespace=namespace,
+        executable='component_container_mt', # _mt for multi-threaded
+        name='nav2_container',
+        composable_node_descriptions=[], # leave empty, as we are using nav2_launch.py to load components
+        parameters=[nav2_params_file],   # must be passed here - see https://github.com/ros-navigation/navigation2/issues/4011
+        output='screen'
+    )
+
+    # You need to press "Startup" button in RViz when autostart=false
+    nav2 = IncludeLaunchDescription(
+#                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
+#                ), launch_arguments={'use_sim_time': use_sim_time }.items()
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time,
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
+                                     'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
+    )
+
+    #
+    # Roomba Create 1 specific nodes:
+    #
 
     create_driver_node = Node(
         package='create_driver',
@@ -25,13 +101,12 @@ def generate_launch_description():
             'baud': 57600,
             'base_frame': 'base_link',
             'odom_frame': 'odom',
-            'latch_cmd_duration': 0.5,
-            'loop_hz': 5.0,
+            'latch_cmd_duration': 2.0,
+            'loop_hz': 30.0,    # control loop frequency, odom publishing etc.
             'publish_tf': False,
             'gyro_offset': 0.0,
             'gyro_scale': 1.19,
             'distance_scale': 1.02
-
         }],
         remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')]
     )
@@ -123,11 +198,22 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
+    # Let the sensors and base to wake up and stabilize for 10 seconds:
+    delayed_slam = TimerAction(period=10.0, actions=[slam_toolbox])
+
+    # Nav2 launch delayed by 20 seconds to allow SLAM Toolbox to start first:
+    delayed_nav = TimerAction(period=20.0, actions=[nav2])
+
     return LaunchDescription([
 
         create_driver_node,
         xv_11_driver_node,
         #mpu9250driver_node,
-        bno055_driver_node
-
+        bno055_driver_node,
+        rsp,
+        twist_mux,
+        odom_localizer,
+        delayed_slam,
+        container_nav2,
+        delayed_nav
     ])
