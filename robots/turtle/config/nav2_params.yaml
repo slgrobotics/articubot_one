@@ -102,12 +102,12 @@ controller_server:
     enable_stamped_cmd_vel: true
     controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
     costmap_update_timeout: 0.30
-    odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
-    #odom_topic: /odometry/local   # works
+    #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
+    odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
     min_x_velocity_threshold: 0.001 # Default 0.0001  To filter odometry noise in the x direction
     min_y_velocity_threshold: 0.5 # Large for differential drive robots that can’t move sideways.
-    min_theta_velocity_threshold: 0.001 # Default 0.0001  To filter odometry rotational noise
+    min_theta_velocity_threshold: 0.0001 # Default 0.0001  To filter odometry rotational noise
     failure_tolerance: 0.5 # Seconds. Default 0.0 Allowing the controller to fail for up to 0.5 seconds before the FollowPath action fails provides some tolerance for temporary failures.
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
@@ -255,10 +255,19 @@ local_costmap:
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
       inflation_radius: 0.4  # Should be larger than robot_radius
 
-      plugins: ["obstacle_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
+      plugins: ["voxel_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
-      obstacle_layer: # note: could use voxel layer here
-        plugin: "nav2_costmap_2d::ObstacleLayer"
+      voxel_layer:
+        # -- Using voxel layer, as in original example:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 1.5
+        mark_threshold: 0
+        # -- Option: Using obstacle layer, as in global costmap:
+        # plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
 
@@ -283,7 +292,7 @@ local_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 1.75  # Default: 0.55  Must be larger than robot footprint
+        inflation_radius: 0.5  # Default: 0.55  Must be larger than robot footprint
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -337,7 +346,7 @@ global_costmap:
         enabled: true
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 1.75  # Default: 0.55  Must be larger than robot footprint
+        inflation_radius: 0.5  # Default: 0.55  Must be larger than robot footprint
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -445,8 +454,8 @@ velocity_smoother:
     min_velocity: [-0.1, 0.0, -1.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.3, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-0.3, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
-    #odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
-    odom_topic: /diff_cont/odom   # works
+    odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
+    #odom_topic: /diff_cont/odom   # works
     odom_duration: 0.3  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
@@ -479,7 +488,7 @@ collision_monitor:
       min_points: 6
       visualize: False
       enabled: True
-    observation_sources: ["scan"] # scan, pointcloud, range or polygon - comma separated list here
+    observation_sources: ["scan"] # scan, pointcloud, range or polygon - comma separated list
     scan:
       type: "scan"
       topic: "/scan"
