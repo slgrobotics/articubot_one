@@ -176,7 +176,7 @@ def generate_launch_description():
             'calib_status_frequency': 0.1,
             'frame_id': 'imu_link',
             'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
-            'placement_axis_remap': 'P1', # P1 - default, ENU
+            'placement_axis_remap': 'P1', # P1 - default, ENU. See Bosch BNO055 datasheet section "Axis Remap"
             'acc_factor': 100.0,
             'mag_factor': 16000000.0,
             'gyr_factor': 900.0,
