@@ -21,4 +21,3 @@ ros2 launch /home/ros/robot_ws/src/articubot_one/robots/turtle/launch/turtle.lau
 
 # Show arguments example:
 #ros2 launch /home/ros/robot_ws/src/articubot_one/robots/turtle/launch/turtle.launch.py  --show-arguments
-r
