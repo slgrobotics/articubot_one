@@ -204,6 +204,7 @@ def generate_launch_description():
     ld.add_action(twist_mux)
 
     map_path = os.path.join(articubot_package_path, "assets", "maps", "large_map.yaml")
+    # map_path = os.path.join(articubot_package_path, "assets", "maps", "20251106.yaml")
     
     nav2_config_path = os.path.join(robot_path, 'config', 'nav2_params.yaml')
 

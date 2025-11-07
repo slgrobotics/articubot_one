@@ -1,0 +1,7 @@
+image: 1106c.pgm
+mode: trinary
+resolution: 0.050
+origin: [-9.453, -2.801, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
