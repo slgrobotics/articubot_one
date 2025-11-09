@@ -86,7 +86,14 @@ bt_navigator:
     # Built-in plugins are added automatically
     # plugin_lib_names: []
 
-    error_code_names:
+    error_code_names: # works for Jazzy
+      - compute_path_error_code
+      - follow_path_error_code
+      - smoother_error_code
+      - navigate_to_pose_error_code
+      - navigate_through_poses_error_code
+
+    error_code_name_prefixes: # works for Kilted
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
@@ -253,7 +260,6 @@ local_costmap:
       # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       robot_radius: 0.22
       #footprint: "[[-0.75, -0.35], [-0.75, 0.35], [0.40, 0.35], [0.40, -0.35]]"
-      inflation_radius: 0.23  # Should be larger than robot_radius
 
       plugins: ["voxel_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
@@ -292,7 +298,7 @@ local_costmap:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.23  # Default: 0.55  Must be larger than robot footprint
+        inflation_radius: 0.24  # Default: 0.55  Must be larger than robot footprint (0.23)
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -346,7 +352,7 @@ global_costmap:
         enabled: true
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
         cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.23  # Default: 0.55  Must be larger than robot footprint
+        inflation_radius: 0.24  # Default: 0.55  Must be larger than robot footprint (0.23)
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
