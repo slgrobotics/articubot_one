@@ -194,7 +194,7 @@ def generate_launch_description():
         }],
         remappings=[("imu", "imu/data")]
     )
-    # ld.add_action(bno055_driver_node)
+    ld.add_action(bno055_driver_node)
 
     # Bring up the twist multiplexer.
     twist_mux = IncludeLaunchDescription(
@@ -203,8 +203,8 @@ def generate_launch_description():
     )
     ld.add_action(twist_mux)
 
-    map_path = os.path.join(articubot_package_path, "assets", "maps", "large_map.yaml")
-    # map_path = os.path.join(articubot_package_path, "assets", "maps", "20251106.yaml")
+    # map_path = os.path.join(articubot_package_path, "assets", "maps", "large_map.yaml")
+    map_path = os.path.join(articubot_package_path, "assets", "maps", "Stormy.yaml")
     
     nav2_config_path = os.path.join(robot_path, 'config', 'nav2_params.yaml')
 

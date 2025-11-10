@@ -52,7 +52,7 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    map_yaml_file = os.path.join(package_path,'assets','maps','open_area_map.yaml')   # this is default anyway
+    map_yaml_file = os.path.join(package_path,'assets','maps','large_map.yaml')   # this is default anyway
     #map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
@@ -195,7 +195,7 @@ def generate_launch_description():
     sensors_include = GroupAction(
         actions=[
             ydlidar_node,
-            # bno055_driver_node
+            bno055_driver_node
         ]
     )
 
