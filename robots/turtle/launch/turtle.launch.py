@@ -48,6 +48,21 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
+    # for experiments: map server, optionally with pre-loaded warehouse map
+    map_server = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
+    )
+
+    # for experiments: alternative to odom_localizer for slam_toolbox - static transform publisher
+    tf_localizer = Node(package = "tf2_ros",
+                    executable = "static_transform_publisher",
+                    #arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+                    #arguments = ["0", "0", "0", "0", "0", "0", "odom", "map"]
+                    arguments = ["0", "0", "0", "0", "0", "0", "map", "odom"]
+    )
+
     slam_toolbox = IncludeLaunchDescription(
                 # see /opt/ros/jazzy/share/slam_toolbox/launch
                 PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("slam_toolbox"),'launch','online_async_launch.py')]
@@ -100,11 +115,11 @@ def generate_launch_description():
             'base_frame': 'base_link',
             'odom_frame': 'odom',
             'latch_cmd_duration': 2.0,
-            'loop_hz': 30.0,    # control loop frequency, odom publishing etc. Create 1 sends all sensor data every 15ms (66Hz)
+            'loop_hz': 66.0,    # control loop frequency, odom publishing etc. Create 1 sends all sensor data every 15ms (66Hz)
             'publish_tf': False,
             'gyro_offset': 0.0,
-            'gyro_scale': 1.19,
-            'distance_scale': 1.02
+            'gyro_scale': 1.21,
+            'distance_scale': 1.05
         }],
         remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')]
     )
@@ -172,7 +187,7 @@ def generate_launch_description():
             'connection_type': 'i2c',
             'i2c_bus': 1,
             'i2c_addr': 0x29,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
-            'data_query_frequency': 20,
+            'data_query_frequency': 30,
             'calib_status_frequency': 0.1,
             'frame_id': 'imu_link',
             'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
@@ -211,6 +226,8 @@ def generate_launch_description():
         rsp,
         twist_mux,
         odom_localizer,
+        #tf_localizer,
+        #map_server,
         delayed_slam,
         container_nav2,
         delayed_nav
