@@ -24,7 +24,7 @@ def generate_launch_description():
 
     namespace=''
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one'
 
     robot_model='dragger'
 

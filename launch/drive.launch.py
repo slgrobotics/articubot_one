@@ -13,25 +13,25 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
+    package_name='articubot_one'
+
     # Accept namespace from parent launch or use empty default
     namespace = LaunchConfiguration('namespace', default='')
 
-    package_name='articubot_one' #<--- CHANGE ME
+    # Check if we're told to use sim time
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, create1...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time
     robot_path_sub = PathJoinSubstitution([
-        FindPackageShare('articubot_one'), 'robots', robot_model
+        FindPackageShare(package_name), 'robots', robot_model
     ])
     
     controllers_params_file_sub = PathJoinSubstitution([
-        FindPackageShare('articubot_one'), 'robots', robot_model, 'config', 'controllers.yaml'
+        FindPackageShare(package_name), 'robots', robot_model, 'config', 'controllers.yaml'
     ])
-
-    # Check if we're told to use sim time
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # Include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
@@ -107,23 +107,21 @@ def generate_launch_description():
     return LaunchDescription([
 
         DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='false',
-            description='Use sim time if true'),
-
-        DeclareLaunchArgument(
             'namespace',
             default_value='',
             description='Namespace for drive nodes'),
+
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use sim time if true'),
 
         DeclareLaunchArgument(
             'robot_model',
             default_value='',
             description='Robot model (e.g., seggy, plucky, dragger)'),
 
-        LogInfo(msg='============ starting ROBOT DRIVE  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
-        LogInfo(msg=robot_model_path),
+        LogInfo(msg=['============ starting ROBOT DRIVE  namespace: ', namespace, '  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
 
         drive_include
     ])

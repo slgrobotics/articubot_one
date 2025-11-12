@@ -11,13 +11,10 @@ from launch_ros.actions import ComposableNodeContainer, Node
 
 def generate_launch_description():
 
-    # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
-    # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+    package_name='articubot_one'
 
     # Make namespace overridable at runtime
     namespace = LaunchConfiguration('namespace', default='')
-
-    package_name='articubot_one' #<--- CHANGE ME
 
     robot_model='seggy'
 
@@ -60,19 +57,19 @@ def generate_launch_description():
     # Include separate drive launch for better modularity
     drive_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy.drive.launch.py')]),
-        launch_arguments={'use_sim_time': use_sim_time, 'namespace': namespace}.items()
+        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
     # Include separate sensors launch for better modularity
     sensors_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy.sensors.launch.py')]),
-        launch_arguments={'use_sim_time': use_sim_time, 'namespace': namespace}.items()
+        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
     # Include separate localizers launch for better modularity
     localizers_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy.localizers.launch.py')]),
-        launch_arguments={'use_sim_time': use_sim_time, 'namespace': namespace, 'robot_model': robot_model}.items()
+        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
     delayed_nav = TimerAction(period=20.0, actions=[nav2])

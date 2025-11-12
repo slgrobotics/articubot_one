@@ -33,7 +33,7 @@ from launch.substitutions import ThisLaunchFileDir
 
 def generate_launch_description():
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one'
 
     robot_model='seggy'
 

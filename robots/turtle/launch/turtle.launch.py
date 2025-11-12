@@ -17,7 +17,7 @@ def generate_launch_description():
 
     namespace=''
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one'
 
     robot_model='turtle'
 
@@ -39,11 +39,11 @@ def generate_launch_description():
 
     slam_toolbox_params_file = os.path.join(package_path,'robots','turtle','config','mapper_params.yaml')
 
-    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see mapper_params.yaml
-    odom_localizer = IncludeLaunchDescription(
+    ekf_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
@@ -55,7 +55,7 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
-    # for experiments: alternative to odom_localizer for slam_toolbox - static transform publisher
+    # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
     tf_localizer = Node(package = "tf2_ros",
                     executable = "static_transform_publisher",
                     #arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
@@ -225,7 +225,7 @@ def generate_launch_description():
         bno055_driver_node,
         rsp,
         twist_mux,
-        odom_localizer,
+        ekf_localizer,
         #tf_localizer,
         #map_server,
         delayed_slam,

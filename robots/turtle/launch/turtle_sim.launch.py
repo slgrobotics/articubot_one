@@ -24,7 +24,7 @@ def generate_launch_description():
 
     namespace=''
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one'
 
     robot_model='turtle'
 
@@ -66,16 +66,16 @@ def generate_launch_description():
                 #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
-    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see mapper_params.yaml
-    odom_localizer = IncludeLaunchDescription(
+    ekf_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    # alternative to odom_localizer for slam_toolbox
+    # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
     tf_localizer = Node(package = "tf2_ros", 
                     executable = "static_transform_publisher",
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
@@ -217,7 +217,7 @@ def generate_launch_description():
     localizers_include = GroupAction(
         actions=[
             LogInfo(msg='============ starting LOCALIZERS ==============='),
-            odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
+            ekf_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
             #tf_localizer,
             # use either cartographer OR slam_toolbox, as both are mappers
             #cartographer,  # localization via LIDAR

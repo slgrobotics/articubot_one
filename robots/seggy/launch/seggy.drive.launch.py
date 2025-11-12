@@ -8,25 +8,26 @@ import os
 
 def generate_launch_description():
 
-    # Accept launch arguments from parent (seggy.launch.py)
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    namespace = LaunchConfiguration('namespace', default='')
-    robot_model = LaunchConfiguration('robot_model', default='seggy')
-
     package_name = 'articubot_one'
+
+    # Accept launch arguments from parent (seggy.launch.py)
+    namespace = LaunchConfiguration('namespace', default='')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    robot_model = LaunchConfiguration('robot_model', default='')
+
     package_path = get_package_share_directory(package_name)
 
     # Include the main / common drive launch and pass through all arguments
     drive_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive.launch.py')]),
         launch_arguments={
-            'use_sim_time': use_sim_time,
             'namespace': namespace,
+            'use_sim_time': use_sim_time,
             'robot_model': robot_model
         }.items()
     )
 
-    # add any robot-specific launch operations here if needed
+    # add any robot-specific drive launch operations here if needed
 
     return LaunchDescription([
         drive_launch
