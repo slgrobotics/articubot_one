@@ -213,6 +213,16 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
+    face_gesture_sensor = Node(
+        package="face_gesture_sensor",
+        namespace=namespace,
+        executable="fgs_node",
+        name="face_gesture_sensor",
+        output='screen',
+        respawn=True,
+        respawn_delay=4,
+    )
+
     drive_include = GroupAction(
         actions=[
             twist_mux,
@@ -226,7 +236,8 @@ def generate_launch_description():
     sensors_include = GroupAction(
         actions=[
             ldlidar_node,
-            mpu9250driver_node
+            mpu9250driver_node,
+            face_gesture_sensor
         ]
     )
 
