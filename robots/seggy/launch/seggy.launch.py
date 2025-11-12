@@ -32,16 +32,6 @@ def generate_launch_description():
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    # joystick = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-    #             ), launch_arguments={'use_sim_time': use_sim_time}.items()
-    # )
-
-    twist_mux = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
-    )
-
     nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
 
     # Define the ComposableNodeContainer for Nav2 composition:
@@ -101,7 +91,6 @@ def generate_launch_description():
             description='Namespace for seggy nodes'),
 
         rsp,
-        # joystick,
         drive_include,
         sensors_include,
         localizers_include,

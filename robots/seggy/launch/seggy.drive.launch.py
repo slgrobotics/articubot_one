@@ -1,7 +1,12 @@
 import os
 
+from ament_index_python.packages import get_package_share_directory
+
 from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction, GroupAction, RegisterEventHandler
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
 
 
@@ -12,6 +17,22 @@ def generate_launch_description():
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
+    # Compute package paths (keeps this file standalone when included)
+    package_name = 'articubot_one'
+    robot_model = 'seggy'
+    package_path = get_package_share_directory(package_name)
+    robot_path = os.path.join(package_path, 'robots', robot_model)
+
+    # joystick = IncludeLaunchDescription(
+    #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
+    #             ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    # )
+
+    # Include twist_mux for command velocity arbitration
+    twist_mux = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
+                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
 
     controllers_params_file = os.path.join(robot_path,'config','controllers.yaml')
 
@@ -81,5 +102,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        # joystick,
         drive_include,
     ])
