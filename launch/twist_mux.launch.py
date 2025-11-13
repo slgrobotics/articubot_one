@@ -9,11 +9,13 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    namespace=''
-
-    use_sim_time = LaunchConfiguration('use_sim_time')
-
     package_name='articubot_one'
+
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
+
+    # Check if we're told to use sim time
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     package_path = get_package_share_directory(package_name)
 
@@ -93,8 +95,7 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'),
 
-        LogInfo(msg='============ starting TWIST_MUX  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
+        LogInfo(msg=['============ starting TWIST_MUX  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
 
         twist_mux,
         #twist_marker,

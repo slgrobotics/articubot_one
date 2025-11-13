@@ -13,20 +13,18 @@ import xacro
 
 def generate_launch_description():
 
-    namespace=''
-
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, create1...
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # define the launch argument that must be passed from the calling launch file or from the console:
-    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
+    package_path = get_package_share_directory(package_name)
 
     robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
 
@@ -79,10 +77,8 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'),
 
-        LogInfo(msg='============ starting ROBOT STATE PUBLISHER  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
-        #LogInfo(msg=robot_model_path),
-        LogInfo(msg=xacro_file),
+        LogInfo(msg=['============ starting ROBOT STATE PUBLISHER  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        LogInfo(msg=['xacro_file: ', xacro_file]),
 
         node_robot_state_publisher,
 

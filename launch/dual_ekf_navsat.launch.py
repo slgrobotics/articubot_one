@@ -27,24 +27,25 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
+    # Make namespace overridable at runtime
+    namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, create1...
+    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
+
+    package_path = get_package_share_directory(package_name)
 
     # define the launch argument that must be passed from the calling launch file or from the console:
     robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
 
     robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
     
-    #rl_params_file = os.path.join(package_path,'config','dual_ekf_navsat_params.yaml')
-    rl_params_file = PythonExpression(["'", robot_model_path, "' + '/config/dual_ekf_navsat_params.yaml'"])
+    ekf_params_file = PythonExpression(["'", robot_model_path, "' + '/config/dual_ekf_navsat_params.yaml'"])
 
-    #nt_params_file = os.path.join(package_path,'config','navsat_transform.yaml')
-    nt_params_file = PythonExpression(["'", robot_model_path, "' + '/config/navsat_transform.yaml'"])
+    navsat_transform_params_file = PythonExpression(["'", robot_model_path, "' + '/config/navsat_transform.yaml'"])
 
     return LaunchDescription(
         [
@@ -59,33 +60,35 @@ def generate_launch_description():
                 "output_location", default_value="~/dual_ekf_navsat_example_debug.txt"
             ),
 
-            LogInfo(msg='============ starting DUAL EKF NAVSAT  use_sim_time:'),
-            LogInfo(msg=use_sim_time),
-            LogInfo(msg=rl_params_file),
-            LogInfo(msg=nt_params_file),
+            LogInfo(msg=['============ starting DUAL EKF NAVSAT  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+            LogInfo(msg=['EKF params file:', ekf_params_file]),
+            LogInfo(msg=['navsat transform params file:', navsat_transform_params_file]),
 
             launch_ros.actions.Node(
                 package="robot_localization",
+                namespace=namespace,
                 executable="ekf_node",
                 name="ekf_filter_node_odom",
                 output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
+                parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[("odometry/filtered", "odometry/local")],
             ),
             launch_ros.actions.Node(
                 package="robot_localization",
+                namespace=namespace,
                 executable="ekf_node",
                 name="ekf_filter_node_map",
                 output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
+                parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[("odometry/filtered", "odometry/global")],
             ),
             launch_ros.actions.Node(
                 package="robot_localization",
+                namespace=namespace,
                 executable="navsat_transform_node",
                 name="navsat_transform",
                 output="screen",
-                parameters=[nt_params_file, {"use_sim_time": use_sim_time}],
+                parameters=[navsat_transform_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[
                     ("imu", "imu/data"),
                     ("gps/fix", "gps/fix"),

@@ -21,7 +21,7 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, create1...
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time
@@ -121,7 +121,7 @@ def generate_launch_description():
             default_value='',
             description='Robot model (e.g., seggy, plucky, dragger)'),
 
-        LogInfo(msg=['============ starting ROBOT DRIVE  namespace: ', namespace, '  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        LogInfo(msg=['============ starting ROBOT DRIVE  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
 
         drive_include
     ])

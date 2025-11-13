@@ -16,28 +16,26 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument, LogInfo
 import launch_ros.actions
-import os
-import launch.actions
 
 
 def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
+    # Make namespace overridable at runtime
+    namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, create1...
+    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # define the launch argument that must be passed from the calling launch file or from the console:
-    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
+    package_path = get_package_share_directory(package_name)
 
     robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
     
-    rl_params_file = PythonExpression(["'", robot_model_path, "' + '/config/ekf_odom_params.yaml'"])
+    ekf_params_file = PythonExpression(["'", robot_model_path, "' + '/config/ekf_odom_params.yaml'"])
 
     return LaunchDescription(
         [
@@ -52,16 +50,15 @@ def generate_launch_description():
                 "output_location", default_value="~/ekf_odom_example_debug.txt"
             ),
 
-            LogInfo(msg='============ starting EKF ODOM  use_sim_time:'),
-            LogInfo(msg=use_sim_time),
-            LogInfo(msg=rl_params_file),
+            LogInfo(msg=['============ starting EKF ODOM  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+            LogInfo(msg=['EKF params file:', ekf_params_file]),
 
             launch_ros.actions.Node(
                 package="robot_localization",
                 executable="ekf_node",
                 name="ekf_filter_node_odom",
                 output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
+                parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
                 remappings=[("odometry/filtered", "odometry/local")],
             )
         ]

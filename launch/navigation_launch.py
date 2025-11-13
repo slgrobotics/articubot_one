@@ -371,10 +371,9 @@ def generate_launch_description():
     ld.add_action(load_composable_nodes)
 
     ld.add_action(GroupAction([
-        LogInfo(msg='============ starting NAVIGATION  use_sim_time / params_file / odom_topic :'),
-        LogInfo(msg=use_sim_time),
-        LogInfo(msg=params_file),
-        LogInfo(msg=odom_topic)
+        LogInfo(msg=['============ starting NAVIGATION  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
+        LogInfo(msg=['params file:', params_file]),
+        LogInfo(msg=['odom topic:', odom_topic]),
     ]))
 
     return ld
