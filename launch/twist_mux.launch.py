@@ -1,7 +1,8 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo
+from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 import os
@@ -22,7 +23,7 @@ def generate_launch_description():
     # See /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
     #     https://github.com/ros-teleop/twist_mux/tree/rolling/src
 
-    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
+    twist_mux_params = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'twist_mux.yaml'])
 
     twist_mux = Node(
         package="twist_mux",
@@ -59,7 +60,7 @@ def generate_launch_description():
             'vertical_position': 2.0}]
     )
 
-    joystick_params_file = os.path.join(package_path,'config','joystick.yaml')
+    joystick_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'joystick.yaml'])
 
     # see https://github.com/ros-teleop/twist_mux/blob/rolling/scripts/joystick_relay.py
     # currently doesn't support 'use_stamped'
@@ -79,13 +80,15 @@ def generate_launch_description():
     # this is how it should be, but "use_stamped" isn't working in that launch file
     # see /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
     twist_mux_ = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("twist_mux"),'launch','twist_mux_launch.py')]
-                ), launch_arguments={
-                    'use_sim_time': use_sim_time,
-                    'use_stamped': 'true',
-                    'cmd_vel_out': 'diff_cont/cmd_vel',
-                    'config_topics': twist_mux_params,
-                    }.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('twist_mux'), 'launch', 'twist_mux_launch.py'])
+        ),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'use_stamped': 'true',
+            'cmd_vel_out': 'diff_cont/cmd_vel',
+            'config_topics': twist_mux_params,
+        }.items()
     )
 
     return LaunchDescription([

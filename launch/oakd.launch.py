@@ -16,8 +16,9 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.descriptions import ComposableNode
 
 
@@ -49,9 +50,7 @@ def launch_setup(context, *args, **kwargs):
     if context.environment.get("DEPTHAI_DEBUG") == "1":
         log_level = "debug"
 
-    urdf_launch_dir = os.path.join(
-        get_package_share_directory("depthai_descriptions"), "launch"
-    )
+    urdf_launch_dir = PathJoinSubstitution([FindPackageShare('depthai_descriptions'), 'launch'])
 
     parent_frame = LaunchConfiguration(
         "parent_frame", default="oak-d-base-frame"
@@ -189,7 +188,7 @@ def launch_setup(context, *args, **kwargs):
         ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(urdf_launch_dir, "urdf_launch.py")
+                PathJoinSubstitution([urdf_launch_dir, 'urdf_launch.py'])
             ),
             launch_arguments={
                 "namespace": namespace,
@@ -287,7 +286,7 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    depthai_prefix = get_package_share_directory("depthai_ros_driver")
+    depthai_prefix = PathJoinSubstitution([FindPackageShare('depthai_ros_driver')])
 
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
@@ -302,12 +301,12 @@ def generate_launch_description():
         DeclareLaunchArgument("cam_yaw", default_value="0.0"),
         DeclareLaunchArgument(
             "params_file",
-            default_value=os.path.join(depthai_prefix, "config", "camera.yaml"),
+            default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'camera.yaml']),
         ),
         DeclareLaunchArgument("use_rviz", default_value="false"),
         DeclareLaunchArgument(
             "rviz_config",
-            default_value=os.path.join(depthai_prefix, "config", "rviz", "rgbd.rviz"),
+            default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'rviz', 'rgbd.rviz']),
         ),
         DeclareLaunchArgument("rsp_use_composition", default_value="true"),
         DeclareLaunchArgument(

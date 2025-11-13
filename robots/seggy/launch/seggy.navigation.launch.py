@@ -37,15 +37,17 @@ def generate_launch_description():
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                ), launch_arguments={'namespace': namespace,
-                                     'use_sim_time': use_sim_time,
-                                     'use_composition': 'True',
-                                     'container_name': 'nav2_container',
-                                     'odom_topic': 'odometry/local',
-                                     #'use_respawn': 'true',
-                                     'autostart': 'true',
-                                     'params_file': nav2_params_file }.items() # pass nav2 params file if not using composition
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])
+        ),
+        launch_arguments={'namespace': namespace,
+                          'use_sim_time': use_sim_time,
+                          'use_composition': 'True',
+                          'container_name': 'nav2_container',
+                          'odom_topic': 'odometry/local',
+                          #'use_respawn': 'true',
+                          'autostart': 'true',
+                          'params_file': nav2_params_file}.items()  # pass nav2 params file if not using composition
     )
 
     delayed_nav = TimerAction(period=20.0, actions=[nav2])
