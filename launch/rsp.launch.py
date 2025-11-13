@@ -32,7 +32,7 @@ def generate_launch_description():
     ])
 
     # Produce full XML/SDF description by invoking xacro on the substitution path
-    robot_description_sdf = Command(['xacro', xacro_file, 'sim_mode:=', use_sim_time])
+    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
     
     # Create a robot_state_publisher node
     # See https://github.com/ros/robot_state_publisher/tree/jazzy
