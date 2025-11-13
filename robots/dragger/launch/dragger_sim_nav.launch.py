@@ -1,7 +1,5 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -19,11 +17,7 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
-
     robot_model='dragger'
-
-    robot_path = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
 
     nav2_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'])
 

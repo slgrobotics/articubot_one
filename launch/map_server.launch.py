@@ -16,8 +16,6 @@ def generate_launch_description():
     # Get the launch directory
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
-
     namespace = LaunchConfiguration('namespace')
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')

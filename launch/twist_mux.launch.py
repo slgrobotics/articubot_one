@@ -18,8 +18,6 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    package_path = get_package_share_directory(package_name)
-
     # See /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
     #     https://github.com/ros-teleop/twist_mux/tree/rolling/src
 

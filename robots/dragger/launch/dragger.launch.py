@@ -23,8 +23,6 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    robot_path = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
-
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     robot_state_publisher = IncludeLaunchDescription(

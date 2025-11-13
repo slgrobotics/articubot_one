@@ -14,8 +14,6 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
-
     # See XBox buttons mapping: https://europe1.discourse-cdn.com/unity/original/3X/5/8/58e7b2a50ec35ea142ae9c4d27c9df2d372cd1f3.jpeg
     # Overriding '/opt/ros/jazzy/share/teleop_twist_joy/config/xbox.config.yaml' - because teleop-launch.py isn't accepting buttons assignments:
     joystick_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'joystick.yaml'])

@@ -1,7 +1,5 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, TimerAction, GroupAction, RegisterEventHandler
@@ -25,10 +23,6 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time
-    robot_path_sub = PathJoinSubstitution([
-        FindPackageShare(package_name), 'robots', robot_model
-    ])
-    
     controllers_params_file_sub = PathJoinSubstitution([
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'controllers.yaml'
     ])

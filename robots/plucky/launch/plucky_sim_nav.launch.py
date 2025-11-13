@@ -19,11 +19,7 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
-
     robot_model='plucky'
-
-    robot_path = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
 
     nav2_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'])
 

@@ -17,8 +17,6 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    package_path = get_package_share_directory(package_name)
-
     # Build substitution for nav2 params so robot_model can be dynamic
     nav2_params_file = PathJoinSubstitution([
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'

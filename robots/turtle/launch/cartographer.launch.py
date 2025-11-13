@@ -40,8 +40,6 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    robot_path_sub = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
-
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     cartographer_config_dir_default = os.path.join(package_path, 'robots', robot_model, 'config')

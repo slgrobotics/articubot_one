@@ -18,8 +18,6 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    package_path = get_package_share_directory(package_name)
-
     use_sim_time = LaunchConfiguration('use_sim_time')
 
     rviz_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'main.rviz'])
@@ -56,7 +54,7 @@ def generate_launch_description():
         remappings=[('battery_state','battery/battery_state')]
     )
 
-    # topic_tools does not work after October 2025 ROS2 Jazzy update:
+    # topic_tools don't work after October 2025 ROS2 Jazzy update:
     battery_pie_chart_relay = Node(
         package='topic_tools',
         namespace=namespace,
@@ -85,7 +83,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         joystick,
-        #battery_pie_chart_relay,
+        #battery_pie_chart_relay,  # TODO: topic_tools do not work after October 2025 ROS2 Jazzy update
         rviz,
         rviz_overlay
     ])

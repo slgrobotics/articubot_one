@@ -43,11 +43,9 @@ def generate_launch_description():
     package_path = get_package_share_directory(package_name)
 
     # Use substitution for runtime-safe path construction
-    robot_path_sub = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
-
     # Provide a string default for the launch argument (safe at parse-time)
     cartographer_config_dir_default = os.path.join(package_path, 'robots', robot_model, 'config')
-    
+
     cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=cartographer_config_dir_default)
 
     configuration_basename = LaunchConfiguration('configuration_basename',
