@@ -5,7 +5,8 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
@@ -21,7 +22,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
+    rviz_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'main.rviz'])
 
     rviz = Node(
         package='rviz2',
@@ -70,8 +71,10 @@ def generate_launch_description():
     )
 
     joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'joystick.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     return LaunchDescription([

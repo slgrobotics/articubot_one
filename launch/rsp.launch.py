@@ -3,10 +3,11 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
 
 import xacro
 
@@ -24,15 +25,14 @@ def generate_launch_description():
     # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    package_path = get_package_share_directory(package_name)
+    # Build substitution-based paths so robot_model can be used at launch-time
+    # Path to the robot xacro file (resolved at launch time)
+    xacro_file = PathJoinSubstitution([
+        FindPackageShare(package_name), 'robots', robot_model, 'description', 'robot.urdf.xacro'
+    ])
 
-    robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
-
-    # Produce the URDF string from collection of .xacro's:
-    xacro_file = PythonExpression(["'", robot_model_path, "' + '/description/robot.urdf.xacro'"])
-
-    # Produce full XML/SDF description:
-    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
+    # Produce full XML/SDF description by invoking xacro on the substitution path
+    robot_description_sdf = Command(['xacro', xacro_file, 'sim_mode:=', use_sim_time])
     
     # Create a robot_state_publisher node
     # See https://github.com/ros/robot_state_publisher/tree/jazzy
