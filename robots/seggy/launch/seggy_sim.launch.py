@@ -6,7 +6,8 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch.event_handlers import OnProcessStart
 from nav2_common.launch import ReplaceString
 from launch_ros.actions import ComposableNodeContainer, Node
@@ -30,37 +31,47 @@ def generate_launch_description():
 
     package_path = get_package_share_directory(package_name)
 
-    robot_path = os.path.join(package_path, 'robots', robot_model)
+    robot_path = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model])
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    robot_state_publisher =IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    robot_state_publisher = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'rsp.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
     twist_mux = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','seggy_slam_toolbox.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'seggy_slam_toolbox.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     cartographer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'cartographer.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'map_server.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
+        #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
     )
 
     # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
@@ -68,8 +79,10 @@ def generate_launch_description():
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see mapper_params.yaml
     ekf_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'ekf_odom.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
     # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
@@ -78,7 +91,7 @@ def generate_launch_description():
                     arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
     )
     
-    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+    nav2_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'])
 
     # Define the ComposableNodeContainer for Nav2 composition:
     container_nav2 = ComposableNodeContainer(
@@ -93,14 +106,16 @@ def generate_launch_description():
 
     # You need to press "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time,
-                                     'use_composition': 'True',
-                                     'container_name': 'nav2_container',
-                                     'odom_topic': 'odometry/local',
-                                     #'use_respawn': 'true',
-                                     'autostart' : 'true',
-                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time,
+                          'use_composition': 'True',
+                          'container_name': 'nav2_container',
+                          'odom_topic': 'odometry/local',
+                          #'use_respawn': 'true',
+                          'autostart': 'true',
+                          'params_file': nav2_params_file}.items()  # pass nav2 params file if not using composition
     )
 
     # Start Gazebo Harmonic (GZ, Ignition)
@@ -108,9 +123,11 @@ def generate_launch_description():
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
         value=[
-            os.path.join(package_path, 'assets', 'worlds'), ':' + os.path.join(package_path, 'assets')
-            ]
-        )
+            PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'worlds']),
+            TextSubstitution(text=':'),
+            PathJoinSubstitution([FindPackageShare(package_name), 'assets'])
+        ]
+    )
 
     # Specify the world SDF:
     gazebo_arguments = LaunchDescription([
@@ -123,8 +140,9 @@ def generate_launch_description():
 
     # -- how to launch Gazebo UI:
     gazebo_ui = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py'])
+        ),
         launch_arguments=[
             ('gz_args', [LaunchConfiguration('world'),
                 '.sdf',
@@ -190,8 +208,10 @@ def generate_launch_description():
     )
 
     rviz_and_joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','launch_rviz.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'launch_rviz.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     # Bridge ROS topics and Gazebo messages for establishing communication
@@ -199,7 +219,7 @@ def generate_launch_description():
     gz_model_name = robot_model  # see spawn_sim_robot 'name' above, it becomes "gz model" for all gz queries
 
     namespaced_gz_bridge_config_path = ReplaceString(
-        source_file=os.path.join(package_path, 'config', 'gz_ros_bridge.yaml'),
+        source_file=PathJoinSubstitution([FindPackageShare(package_name), 'config', 'gz_ros_bridge.yaml']),
         replacements={"<model_name>": gz_model_name, "<namespace>": namespace, "///": "/", "//": "/"},
     )
 
