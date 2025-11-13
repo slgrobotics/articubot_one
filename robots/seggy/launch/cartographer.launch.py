@@ -68,8 +68,7 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
-        LogInfo(msg='============ starting SEGGY CARTOGRAPHER  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
+        LogInfo(msg=['============ starting SEGGY CARTOGRAPHER  use_sim_time:', use_sim_time]),
 
         Node(
             package='cartographer_ros',
