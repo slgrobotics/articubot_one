@@ -1,0 +1,56 @@
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.actions import ComposableNodeContainer, Node
+import os
+
+
+def generate_launch_description():
+
+    package_name = 'articubot_one'
+
+    # Accept launch arguments from parent (seggy.launch.py)
+    namespace = LaunchConfiguration('namespace', default='')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    robot_model = LaunchConfiguration('robot_model', default='')
+
+    package_path = get_package_share_directory(package_name)
+
+    robot_path = os.path.join(package_path, 'robots', robot_model)
+
+    nav2_params_file = os.path.join(robot_path,'config','nav2_params.yaml')
+
+    # Define the ComposableNodeContainer for Nav2 composition:
+    container_nav2 = ComposableNodeContainer(
+        package='rclcpp_components',
+        namespace=namespace,
+        executable='component_container_mt', # _mt for multi-threaded
+        name='nav2_container',
+        composable_node_descriptions=[], # leave empty, as we are using nav2_launch.py to load components
+        parameters=[nav2_params_file],   # must be passed here - see https://github.com/ros-navigation/navigation2/issues/4011
+        output='screen'
+    )
+
+    # You need to press "Startup" button in RViz when autostart=false
+    nav2 = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
+                ), launch_arguments={'namespace': namespace,
+                                     'use_sim_time': use_sim_time,
+                                     'use_composition': 'True',
+                                     'container_name': 'nav2_container',
+                                     'odom_topic': 'odometry/local',
+                                     #'use_respawn': 'true',
+                                     'autostart' : 'true',
+                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
+    )
+
+    delayed_nav = TimerAction(period=20.0, actions=[nav2])
+
+    # add any robot-specific navigation launch operations here if needed
+
+    return LaunchDescription([
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        delayed_nav
+    ])

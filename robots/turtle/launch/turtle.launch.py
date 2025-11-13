@@ -27,7 +27,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    rsp = IncludeLaunchDescription(
+    robot_state_publisher =IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
@@ -223,7 +223,7 @@ def generate_launch_description():
         xv_11_driver_node,
         #mpu9250driver_node,
         bno055_driver_node,
-        rsp,
+        robot_state_publisher,
         twist_mux,
         ekf_localizer,
         #tf_localizer,

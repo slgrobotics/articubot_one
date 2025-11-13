@@ -34,7 +34,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    rsp = IncludeLaunchDescription(
+    robot_state_publisher =IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
@@ -265,7 +265,7 @@ def generate_launch_description():
             default_value='true',
             description='Use simulation (Gazebo) clock if true'),
 
-        rsp,
+        robot_state_publisher,
         rviz_and_joystick,
         twist_mux,
         gz_include,
