@@ -44,8 +44,8 @@ def generate_launch_description():
                                      'container_name': 'nav2_container',
                                      'odom_topic': 'odometry/local',
                                      #'use_respawn': 'true',
-                                     'autostart' : 'true',
-                                     'params_file' : nav2_params_file }.items() # pass nav2 params file if not using composition
+                                     'autostart': 'true',
+                                     'params_file': nav2_params_file }.items() # pass nav2 params file if not using composition
     )
 
     delayed_nav = TimerAction(period=20.0, actions=[nav2])
