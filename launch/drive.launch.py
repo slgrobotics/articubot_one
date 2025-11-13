@@ -35,8 +35,10 @@ def generate_launch_description():
 
     # Include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package_name),'launch','twist_mux.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     controller_manager = Node(
