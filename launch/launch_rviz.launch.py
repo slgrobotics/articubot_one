@@ -1,9 +1,5 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
@@ -14,11 +10,13 @@ def generate_launch_description():
     # For any real robot (not a sim), launch on workstation:
     #   ros2 launch articubot_one launch_rviz.launch.py use_sim_time:=false
 
-    namespace=''
-
     package_name='articubot_one'
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
+
+    # Check if we're told to use sim time
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     rviz_config = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'main.rviz'])
 
@@ -81,6 +79,8 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
+
+        LogInfo(msg=['============ starting RViz and Joystick  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
 
         joystick,
         #battery_pie_chart_relay,  # TODO: topic_tools do not work after October 2025 ROS2 Jazzy update

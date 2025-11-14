@@ -1,10 +1,11 @@
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, GroupAction, RegisterEventHandler
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
+from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, GroupAction, RegisterEventHandler, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from nav2_common.launch import ReplaceString
 
 #
 # Generate launch description for a typical differential drive robot drive system
@@ -45,47 +46,6 @@ def generate_launch_description():
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
         ),
         launch_arguments={'use_sim_time': use_sim_time}.items()
-    )
-
-    #
-    # Gazebo-related variations of spawners
-    # 
-    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
-    # We only need to point spawners to the correct controller_manager instance in the arguments.
-    # Only configure controllers, after the robot shows up live in GZ:
-
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["joint_broad", "--controller-manager", "/controller_manager"],
-        output="screen"
-    )
-
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["diff_cont", "--controller-manager", "/controller_manager", "--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published.
-                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
-                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
-                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
-                   ],
-        output="screen"
-    )
-
-    delayed_joint_broad_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=spawn_sim_robot,
-            on_start=[joint_broad_spawner],
-        )
-    )
-
-    delayed_diff_drive_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner],
-        )
     )
 
     #
@@ -138,7 +98,7 @@ def generate_launch_description():
             '-z', '0.4', # let it gently settle on the ground plane
             '-Y', '0.333', # yaw (heading) in radians, related to 0=East, e.g. 0.333 = 30 degrees towards North
             '-allow_renaming', 'true'],
-        parameters=[{'use_sim_time': True}],
+        parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
 
     rviz_and_joystick = IncludeLaunchDescription(
@@ -168,6 +128,47 @@ def generate_launch_description():
         output='screen'
     )
 
+    #
+    # Gazebo-related variations of spawners
+    # 
+    # No need to run controller_manager - it runs within Gazebo ROS2 Bridge.
+    # We only need to point spawners to the correct controller_manager instance in the arguments.
+    # Only configure controllers, after the robot shows up live in GZ:
+
+    joint_broad_spawner = Node(
+        package="controller_manager",
+        namespace=namespace,
+        executable="spawner",
+        arguments=["joint_broad", "--controller-manager", "/controller_manager"],
+        output="screen"
+    )
+
+    diff_drive_spawner = Node(
+        package="controller_manager",
+        namespace=namespace,
+        executable="spawner",
+        arguments=["diff_cont", "--controller-manager", "/controller_manager", "--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published.
+                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
+                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
+                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
+                   ],
+        output="screen"
+    )
+
+    delayed_joint_broad_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=spawn_sim_robot,
+            on_start=[joint_broad_spawner],
+        )
+    )
+
+    delayed_diff_drive_spawner = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=joint_broad_spawner,
+            on_start=[diff_drive_spawner],
+        )
+    )
+
     # =========================================================================
 
     # have Gazebo and drive system launched as separate groups:
@@ -188,7 +189,6 @@ def generate_launch_description():
 
     drive_include = GroupAction(
         actions=[
-            robot_state_publisher,
             rviz_and_joystick,
             twist_mux,
             delayed_diff_drive_spawner,
