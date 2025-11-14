@@ -104,7 +104,7 @@ def generate_launch_description():
             default_value='',
             description='Robot model (e.g., seggy, plucky, dragger)'),
 
-        LogInfo(msg=['============ starting LOCALIZERS  namespace: ', namespace, '  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        LogInfo(msg=['============ starting LOCALIZERS  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
 
         delayed_loc
     ])
