@@ -1,7 +1,3 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, LogInfo
@@ -9,8 +5,19 @@ from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
-import xacro
-
+#
+# Generate launch description for robot_state_publisher
+#
+# Will load robot description from "robot.urdf.xacro" file located at robot's "description" directory
+#
+# Typical use (see seggy.launch.py):
+#    robot_state_publisher = IncludeLaunchDescription(
+#        PythonLaunchDescriptionSource(
+#            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'rsp.launch.py'])
+#        ),
+#        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+#    )
+#
 
 def generate_launch_description():
 

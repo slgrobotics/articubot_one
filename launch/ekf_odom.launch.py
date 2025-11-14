@@ -17,6 +17,17 @@ from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument, LogInfo
 import launch_ros.actions
 
+#
+# Generate launch description for robot_localization EKF odometry node
+#
+# Use robot-specific configuration file from robots/<robot_model>/config/ekf_odom_params.yaml
+# (typically specifies wheels odometry and IMU inputs to fuse for better odometry)
+#
+# Example usage (see seggy.localizers.launch.py):
+#    ekf_localizer = IncludeLaunchDescription(
+#                PythonLaunchDescriptionSource([ekf_odom_path]
+#                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
+#    )
 
 def generate_launch_description():
 

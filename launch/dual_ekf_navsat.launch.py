@@ -22,6 +22,19 @@ import launch_ros.actions
 import os
 import launch.actions
 
+#
+# Generate launch description for robot_localization dual EKF with navsat (GNSS) transform node
+#
+# Use robot-specific configuration file from robots/<robot_model>/config/dual_ekf_navsat_params.yaml
+# and robots/<robot_model>/config/navsat_transform.yaml
+# (typically specifies wheels odometry IMU inputs and GNSS coordinates to fuse for better odometry)
+#
+# Example usage (see dragger.localizers.launch.py):
+#    navsat_localizer = IncludeLaunchDescription(
+#                PythonLaunchDescriptionSource([dual_ekf_navsat_path]
+#                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
+#    )
+#
 
 def generate_launch_description():
 

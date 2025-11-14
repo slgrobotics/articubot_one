@@ -8,6 +8,13 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 import os
 from ament_index_python.packages import get_package_share_directory
 
+#
+# Generate launch description for joystick teleoperation using teleop_twist_joy
+#
+# Typically called with RViz2 launch so that joystick can control the robot from the Desktop
+# See launch_rviz.launch.py
+#
+
 def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time')
