@@ -9,7 +9,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 #
-# Generate launch description for a typical robot drive system
+# Generate launch description for a typical differential drive robot drive system
 #
 # This includes controller manager and necessary controllers:
 # - twist mux for cmd_vel arbitration
@@ -18,13 +18,15 @@ from launch_ros.substitutions import FindPackageShare
 # - joint state broadcaster,
 # - battery state broadcaster
 #
-# Use example:
-#     drive_include = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource(
-#             PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'seggy.drive.launch.py'])
-#         ),
-#         launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
-# )
+# Use example (see seggy.drive.launch.py):
+#     drive_launch = IncludeLaunchDescription(
+#         PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive.launch.py')]),
+#         launch_arguments={
+#             'namespace': namespace,
+#             'use_sim_time': use_sim_time,
+#             'robot_model': robot_model
+#         }.items()
+#     )
 
 def generate_launch_description():
 
