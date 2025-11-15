@@ -86,8 +86,8 @@ bt_navigator:
     # Built-in plugins are added automatically
     # plugin_lib_names: []
 
-    error_code_names: # works for Jazzy, must be removed for Kilted
-    #error_code_name_prefixes: # works for Kilted
+    #error_code_names: # works for Jazzy, must be removed for Kilted
+    error_code_name_prefixes: # works for Kilted
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
