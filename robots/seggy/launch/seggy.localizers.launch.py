@@ -5,6 +5,13 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
+#
+# Generate launch description for Seggy robot localizers
+#
+# Localizers are SLAM and/or EKF nodes that provide robot pose estimates
+# to be used by navigation stack (Nav2) and other components.
+# They can be robot-specific, and that's why we have this separate launch file.
+#
 
 def generate_launch_description():
 

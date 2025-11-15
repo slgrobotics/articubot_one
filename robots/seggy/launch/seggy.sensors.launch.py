@@ -4,6 +4,11 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
+#
+# Generate launch description for Seggy robot sensors
+#
+# Sensors are almost always robot-specific, so we have this separate launch file.
+#   
 
 def generate_launch_description():
 

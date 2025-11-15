@@ -6,6 +6,12 @@ from launch.substitutions import LaunchConfiguration
 from ament_index_python.packages import get_package_share_directory
 import os
 
+#
+# Generate launch description for Seggy robot drive system
+#
+# This launch file includes the generic "drive.launch.py" with appropriate
+# parameters for Seggy robot.
+#
 
 def generate_launch_description():
 
