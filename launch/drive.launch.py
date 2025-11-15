@@ -20,7 +20,7 @@ from launch_ros.substitutions import FindPackageShare
 #
 # Use example (see seggy.drive.launch.py):
 #     drive_launch = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive.launch.py')]),
+#         PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive.launch.py')),
 #         launch_arguments={
 #             'namespace': namespace,
 #             'use_sim_time': use_sim_time,

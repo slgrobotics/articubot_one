@@ -216,12 +216,12 @@ def generate_launch_description():
     )
 
     sonar_nodes = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','sonars_sim.launch.py')]
+                PythonLaunchDescriptionSource(os.path.join(package_path,'launch','sonars_sim.launch.py')
                 )
     )
 
     navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
+                PythonLaunchDescriptionSource(os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 

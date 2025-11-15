@@ -28,7 +28,7 @@ def generate_launch_description():
     # Use the non-sim drive when use_sim_time is false, and the sim-specific
     # drive when use_sim_time is true.
     drive_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive.launch.py')]),
+        PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive.launch.py')),
         launch_arguments={
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -38,7 +38,7 @@ def generate_launch_description():
     )
 
     drive_sim_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive_sim.launch.py')]),
+        PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive_sim.launch.py')),
         launch_arguments={
             'namespace': namespace,
             'use_sim_time': use_sim_time,

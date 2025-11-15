@@ -33,7 +33,7 @@ def generate_launch_description():
     )
 
     # joystick = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
+    #             PythonLaunchDescriptionSource(os.path.join(package_path,'launch','joystick.launch.py')
     #             ), launch_arguments={'use_sim_time': use_sim_time}.items()
     # )
 
@@ -262,7 +262,7 @@ def generate_launch_description():
     )
 
     navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
+                PythonLaunchDescriptionSource(os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
                 ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 

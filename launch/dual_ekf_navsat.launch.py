@@ -31,7 +31,7 @@ import launch.actions
 #
 # Example usage (see dragger.localizers.launch.py):
 #    navsat_localizer = IncludeLaunchDescription(
-#                PythonLaunchDescriptionSource([dual_ekf_navsat_path]
+#                PythonLaunchDescriptionSource(dual_ekf_navsat_path
 #                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
 #    )
 #

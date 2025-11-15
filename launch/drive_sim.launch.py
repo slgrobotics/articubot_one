@@ -19,7 +19,7 @@ from nav2_common.launch import ReplaceString
 #
 # Use example (see seggy.drive.launch.py):
 #     drive_launch = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource([os.path.join(package_path, 'launch', 'drive_sim.launch.py')]),
+#         PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive_sim.launch.py')),
 #         launch_arguments={
 #             'namespace': namespace,
 #             'use_sim_time': use_sim_time,

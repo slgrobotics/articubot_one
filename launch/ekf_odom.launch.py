@@ -25,7 +25,7 @@ import launch_ros.actions
 #
 # Example usage (see seggy.localizers.launch.py):
 #    ekf_localizer = IncludeLaunchDescription(
-#                PythonLaunchDescriptionSource([ekf_odom_path]
+#                PythonLaunchDescriptionSource(ekf_odom_path)
 #                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
 #    )
 
