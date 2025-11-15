@@ -61,11 +61,12 @@ def generate_launch_description():
         launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
 
+    # Include generic navigation stack launch, it will pick up seggy's "nav2_params.yaml"
     navigation_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'seggy.navigation.launch.py'])
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation.launch.py'])
         ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model, 'delay': '20.0'}.items()
     )
 
     # Launch them all!
