@@ -19,14 +19,16 @@ from launch_ros.substitutions import FindPackageShare
 # - battery state broadcaster
 #
 # Use example (see seggy.drive.launch.py):
-#     drive_launch = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive.launch.py')),
-#         launch_arguments={
-#             'namespace': namespace,
-#             'use_sim_time': use_sim_time,
-#             'robot_model': robot_model
-#         }.items()
-#     )
+# drive_launch_path = PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'drive.launch.py'])
+# drive_launch = IncludeLaunchDescription(
+#     PythonLaunchDescriptionSource(drive_launch_path),
+#     launch_arguments={
+#         'namespace': namespace,
+#         'use_sim_time': use_sim_time,
+#         'robot_model': robot_model
+#     }.items(),
+#     condition=UnlessCondition(use_sim_time)
+# )
 
 def generate_launch_description():
 

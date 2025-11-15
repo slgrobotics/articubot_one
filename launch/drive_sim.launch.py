@@ -18,14 +18,16 @@ from nav2_common.launch import ReplaceString
 # Also, contains Gazebo and RViz launching, simulated robot spawning, and ROS-Gazebo bridging.
 #
 # Use example (see seggy.drive.launch.py):
-#     drive_launch = IncludeLaunchDescription(
-#         PythonLaunchDescriptionSource(os.path.join(package_path, 'launch', 'drive_sim.launch.py')),
-#         launch_arguments={
-#             'namespace': namespace,
-#             'use_sim_time': use_sim_time,
-#             'robot_model': robot_model
-#         }.items()
-#     )
+# drive_sim_launch_path = PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'drive_sim.launch.py'])
+# drive_sim_launch = IncludeLaunchDescription(
+#     PythonLaunchDescriptionSource(drive_sim_launch_path),
+#     launch_arguments={
+#         'namespace': namespace,
+#         'use_sim_time': use_sim_time,
+#         'robot_model': robot_model
+#     }.items(),
+#     condition=IfCondition(use_sim_time)
+# )
 
 def generate_launch_description():
 
