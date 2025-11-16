@@ -5,7 +5,7 @@
 bno08x_driver:
   ros__parameters:
 
-    frame_id: "bno085"  # The frame_id to use for the sensor data
+    frame_id: "imu_link"  # The frame_id to use for the sensor data
 
     # Communication Interface
     # Select the communication interface to use 
@@ -20,8 +20,8 @@ bno08x_driver:
     publish:
       magnetic_field:
         enabled: false
-        rate: 100   # max 100 Hz
+        rate: 60   # max 100 Hz
       imu:
         enabled: true
-        rate: 100   # max 400 Hz 
+        rate: 60   # max 400 Hz 
                     # (anythihng above 100Hz depends on your hardware)
