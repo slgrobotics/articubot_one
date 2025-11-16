@@ -5,9 +5,6 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-import os
-from ament_index_python.packages import get_package_share_directory
-
 #
 # Generate launch description for joystick teleoperation using teleop_twist_joy
 #

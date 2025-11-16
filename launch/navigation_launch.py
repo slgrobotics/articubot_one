@@ -15,8 +15,6 @@
 # originally from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
 # meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
 
-import os
-
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription

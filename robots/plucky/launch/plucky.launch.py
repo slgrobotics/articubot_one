@@ -52,7 +52,7 @@ def generate_launch_description():
     )
 
     # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
-    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
+    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(

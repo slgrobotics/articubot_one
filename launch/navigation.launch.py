@@ -4,8 +4,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.substitutions import FindPackageShare
-from launch_ros.actions import ComposableNodeContainer, Node
-import os
+from launch_ros.actions import ComposableNodeContainer
 
 #
 # A generic wrapper launch file to start Nav2 navigation stack for a given robot model

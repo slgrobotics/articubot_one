@@ -19,8 +19,6 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument, LogInfo
 import launch_ros.actions
-import os
-import launch.actions
 
 #
 # Generate launch description for robot_localization dual EKF with navsat (GNSS) transform node

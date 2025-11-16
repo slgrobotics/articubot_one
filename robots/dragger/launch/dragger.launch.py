@@ -1,7 +1,3 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo, RegisterEventHandler
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -21,8 +17,6 @@ def generate_launch_description():
 
     robot_model='dragger'
 
-    package_path = get_package_share_directory(package_name)
-
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     robot_state_publisher = IncludeLaunchDescription(
@@ -31,11 +25,6 @@ def generate_launch_description():
         ),
         launch_arguments={'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
     )
-
-    # joystick = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource(os.path.join(package_path,'launch','joystick.launch.py')
-    #             ), launch_arguments={'use_sim_time': use_sim_time}.items()
-    # )
 
     twist_mux = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -51,7 +40,7 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
+    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
     map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = IncludeLaunchDescription(
@@ -262,8 +251,10 @@ def generate_launch_description():
     )
 
     navsat_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(os.path.join(package_path,'launch','dual_ekf_navsat.launch.py')]
-                ), launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'dual_ekf_navsat.launch.py'])
+        ),
+        launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
     )
 
     drive_include = GroupAction(

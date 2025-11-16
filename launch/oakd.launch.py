@@ -5,8 +5,6 @@
 #   meld ~/robot_ws/src/articubot_one/launch/oakd.launch.py /opt/ros/jazzy/share/depthai_ros_driver/launch/camera.launch.py
 #
 
-import os
-
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
