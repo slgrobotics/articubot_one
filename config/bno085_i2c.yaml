@@ -1,0 +1,27 @@
+#
+# See https://github.com/bnbhat/bno08x_ros2_driver
+#     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO085%20IMU.md
+#
+bno08x_driver:
+  ros__parameters:
+
+    frame_id: "bno085"  # The frame_id to use for the sensor data
+
+    # Communication Interface
+    # Select the communication interface to use 
+    # (only one interface can be enabled at a time)
+    # This requires a hardware change to the board
+    # (see documentation for more information)
+    i2c:
+      enabled: true
+      bus: "/dev/i2c-1"
+      address: "0x4B"
+
+    publish:
+      magnetic_field:
+        enabled: false
+        rate: 100   # max 100 Hz
+      imu:
+        enabled: true
+        rate: 100   # max 400 Hz 
+                    # (anythihng above 100Hz depends on your hardware)
