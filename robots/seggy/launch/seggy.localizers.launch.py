@@ -55,7 +55,7 @@ def generate_launch_description():
     # ==========================
     # optional alternative - Cartographer
     cartographer_path = PathJoinSubstitution([
-        FindPackageShare(package_name), 'robots', robot_model, 'launch', 'cartographer.launch.py'
+        FindPackageShare(package_name), 'launch', 'cartographer.launch.py'
     ])
     cartographer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(cartographer_path),

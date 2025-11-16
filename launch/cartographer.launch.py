@@ -20,29 +20,31 @@
 
 # colcon build; ros2 launch articubot_one cartographer.launch.py use_sim_time:=true
 
-import os
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import ThisLaunchFileDir
-
 
 def generate_launch_description():
 
     package_name='articubot_one'
 
-    robot_model='turtle'
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
 
-    package_path = get_package_share_directory(package_name)
+    # Check if we're told to use sim time
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
+    robot_model = LaunchConfiguration('robot_model', default='')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    cartographer_config_dir_default = os.path.join(package_path, 'robots', robot_model, 'config')
+    cartographer_config_dir_default = PathJoinSubstitution([
+        FindPackageShare(package_name), 'robots', robot_model, 'config'
+    ])
+
     cartographer_config_dir = LaunchConfiguration('cartographer_config_dir', default=cartographer_config_dir_default)
 
     configuration_basename = LaunchConfiguration('configuration_basename',
@@ -67,10 +69,11 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
-        LogInfo(msg=['============ starting TURTLE CARTOGRAPHER  use_sim_time:', use_sim_time]),
+        LogInfo(msg=['============ starting CARTOGRAPHER  use_sim_time: ', use_sim_time]),
 
         Node(
             package='cartographer_ros',
+            namespace=namespace,
             executable='cartographer_node',
             name='cartographer_node',
             output='screen',
@@ -87,6 +90,7 @@ def generate_launch_description():
 
         Node(
             package='cartographer_ros',
+            namespace=namespace,
             executable='cartographer_occupancy_grid_node',
             name='cartographer_occupancy_grid_node',
             output='screen',

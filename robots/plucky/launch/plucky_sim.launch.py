@@ -56,9 +56,9 @@ def generate_launch_description():
 
     cartographer = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'cartographer.launch.py'])
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'cartographer.launch.py'])
         ),
-        launch_arguments={'use_sim_time': use_sim_time}.items()
+        launch_arguments={'use_sim_time': use_sim_time, 'namespace': namespace, 'robot_model': robot_model}.items()
     )
 
     #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
