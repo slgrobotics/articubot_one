@@ -1,5 +1,6 @@
 #
 # See https://github.com/bnbhat/bno08x_ros2_driver
+#     https://github.com/slgrobotics/bno08x_ros2_driver  (improved fork)
 #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO085%20IMU.md
 #
 bno08x_driver:
@@ -23,5 +24,6 @@ bno08x_driver:
         rate: 60   # max 100 Hz
       imu:
         enabled: true
-        rate: 60   # max 400 Hz 
-                    # (anythihng above 100Hz depends on your hardware)
+        rate: 60   # max 400 Hz (anythihng above 100Hz depends on your hardware)
+        imu.orientation_yaw_variance: 0.005  # 5e-3 = 0.005 is default
+
