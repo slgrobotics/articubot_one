@@ -121,7 +121,7 @@ def generate_launch_description():
             package="scan_to_range",
             executable="scan_to_range",
             namespace=namespace,
-            name="scan_to_range_FR",
+            name="scan_to_range_F_R",
             parameters=[
                 {
                     "input_topic": "sonar_F_R_sim",
@@ -136,7 +136,7 @@ def generate_launch_description():
             package="scan_to_range",
             executable="scan_to_range",
             namespace=namespace,
-            name="scan_to_range_FL",
+            name="scan_to_range_F_L",
             parameters=[
                 {
                     "input_topic": "sonar_F_L_sim",
@@ -151,7 +151,7 @@ def generate_launch_description():
             package="scan_to_range",
             executable="scan_to_range",
             namespace=namespace,
-            name="scan_to_range_RR",
+            name="scan_to_range_B_R",
             parameters=[
                 {
                     "input_topic": "sonar_B_R_sim",
@@ -166,7 +166,7 @@ def generate_launch_description():
             package="scan_to_range",
             executable="scan_to_range",
             namespace=namespace,
-            name="scan_to_range_RL",
+            name="scan_to_range_B_L",
             parameters=[
                 {
                     "input_topic": "sonar_B_L_sim",
