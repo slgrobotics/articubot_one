@@ -22,28 +22,28 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["sonar_broadcaster_F_L"]
+        arguments=["sonar_broadcaster_F_L", "--controller-ros-args", "--remap sonar_broadcaster_F_L/range:=sonar_F_L"]
     )
 
     sonar_f_r_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["sonar_broadcaster_F_R"]
+        arguments=["sonar_broadcaster_F_R", "--controller-ros-args", "--remap sonar_broadcaster_F_R/range:=sonar_F_R"]
     )
 
     sonar_b_l_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["sonar_broadcaster_B_L"]
+        arguments=["sonar_broadcaster_B_L", "--controller-ros-args", "--remap sonar_broadcaster_B_L/range:=sonar_B_L"]
     )
 
     sonar_b_r_spawner = Node(
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["sonar_broadcaster_B_R"]
+        arguments=["sonar_broadcaster_B_R", "--controller-ros-args", "--remap sonar_broadcaster_B_R/range:=sonar_B_R"]
     )
 
     delayed_sonars_spawner = TimerAction(period=10.0, actions=[sonar_f_l_spawner, sonar_f_r_spawner, sonar_b_l_spawner, sonar_b_r_spawner])
