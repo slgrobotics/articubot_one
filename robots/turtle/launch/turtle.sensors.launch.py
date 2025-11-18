@@ -98,11 +98,12 @@ def generate_launch_description():
             'offset_gyr': [0x0002, 0xFFFF, 0xFFFF],
             # Sensor standard deviation [x,y,z]
             # Used to calculate covariance matrices
-            # defaults are used if parameters below are not provided
-            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]
-            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s]
-            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad]
-            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]
+            # driver defaults are used if parameters below are not provided - bno055/src/bno055/bno055/registers.py:255
+            # see https://chatgpt.com/s/t_691b60f38e1c8191a0a309cbcf99e478
+            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]      defaults: [0.017, 0.017, 0.017]
+            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s] defaults: [0.04, 0.04, 0.04]
+            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad] - (roll, pitch, yaw)  defaults: [0.0159, 0.0159, 0.0159]
+            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]            defaults: [0.0, 0.0, 0.0]
         }],
         remappings=[("imu", "imu/data")]
     )
