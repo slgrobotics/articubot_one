@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.conditions import UnlessCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -54,6 +54,24 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time) # only for real robot, not Gazebo simulation
     )
 
+    # Dragger has four sonars in the corners, we have two separate launch files for them:
+
+    # Sonar broadcasters for real robot
+    sonars_include = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model,, 'launch', 'dragger.sonars.launch.py'])
+        )
+        condition=UnlessCondition(use_sim_time) # only for real robot, not Gazebo simulation
+    )
+
+    # Sonar broadcasters for Gazebo simulation
+    sonars_sim_include = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'sonars_sim.launch.py'])
+        )
+        condition=IfCondition(use_sim_time) # only for Gazebo simulation
+    )
+
     localizers_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.localizers.launch.py'])
@@ -85,6 +103,8 @@ def generate_launch_description():
         robot_state_publisher,
         drive_include,
         sensors_include,
+        sonars_include,
+        sonars_sim_include,
         localizers_include,
         navigation_include
     ])
