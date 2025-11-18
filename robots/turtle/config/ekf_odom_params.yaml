@@ -8,7 +8,7 @@ ekf_filter_node_odom:
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
 # computation until it receives at least one message from one of the inputs. It will then run continuously at the
 # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-    #frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+# Note: Running the EKF at higher than odometry frequency gives you no better state, just more CPU load.
     frequency: 30.0 # see Create 1 base: 'loop_hz': 30.0  - control loop frequency, odom publishing etc.
 
 # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
@@ -99,7 +99,7 @@ ekf_filter_node_odom:
     odom0_config: [false, false, false,
                    false, false, false,
                     true,  true, false,
-                   false, false,  true,
+                   false, false,  true, # let odom contribute yaw velocity, but not yaw pose
                    false, false, false]
 
         #        [x_pos   , y_pos    , z_pos,
@@ -146,7 +146,7 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  false, false, true,
+                  true, true, true,
                   false, false, false,
                   false, false, true,
                   false, false, false]
@@ -156,6 +156,10 @@ ekf_filter_node_odom:
         #         x_vel   , y_vel    , z_vel,
         #         roll_vel, pitch_vel, yaw_vel,
         #         x_accel , y_accel  , z_accel]
+
+# ensure that the IMU always wins during rotations, fixing possible drift:
+    imu0_pose_rejection_threshold: 2.5
+    imu0_twist_rejection_threshold: 2.0
 
 # If using a real robot you might want to set this to true,
 # since usually absolute measurements from real imu's are not very accurate:
@@ -212,13 +216,26 @@ ekf_filter_node_odom:
 # to be larger, which will cause the filter to trust the incoming measurement more during correction. The values are
 # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
 # unspecified.
+#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
 
-    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+    process_noise_covariance:  [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.05, 1.0, 1.0, 0.1, 0.3, 0.3, 0.5, 0.3, 0.3, 0.3]
+    # Changes:
+    #     yaw PN: 0.01 → 0.05 (trust IMU more)
+    #     vx/vy PN: 0.5 → 1.0 (trust wheel velocity more)
+    #     yaw vel PN: 0.3 → 0.5 (IMU gyro dominates)
 
 # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
 # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
 # question. Users should take care not to use large values for variables that will not be measured directly. The values
 # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
 #if unspecified.
+#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
-    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    initial_estimate_covariance:  [0.5, 0.5, 1.0, 0.3, 0.3, 0.1, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 1.0, 1.0, 1.0]
+    # Changes: (more pessimistic values, this makes early convergence smoother)
+    #     x/y pos IEC: 1e-9 → 0.5 (wheel odom is not very accurate)
+    #     z pos IEC: 1e-9 → 1.0 (no z measurement)
+    #     yaw IEC: 1e-9 → 0.1 (IMU is not very accurate)
+    #     vx/vy IEC: 1.0 → 0.5 (wheel odom is not very accurate)
+    #     vz IEC: 1.0 → 0.5 (no z vel measurement)
+    #     yaw vel IEC: 1.0 → 0.3 (IMU gyro is quite accurate)
