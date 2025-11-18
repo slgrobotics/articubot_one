@@ -59,8 +59,8 @@ def generate_launch_description():
     # Sonar broadcasters for real robot
     sonars_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model,, 'launch', 'dragger.sonars.launch.py'])
-        )
+            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.sonars.launch.py'])
+        ),
         condition=UnlessCondition(use_sim_time) # only for real robot, not Gazebo simulation
     )
 
@@ -68,7 +68,7 @@ def generate_launch_description():
     sonars_sim_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'sonars_sim.launch.py'])
-        )
+        ),
         condition=IfCondition(use_sim_time) # only for Gazebo simulation
     )
 
