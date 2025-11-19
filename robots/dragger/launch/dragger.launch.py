@@ -106,5 +106,5 @@ def generate_launch_description():
         sonars_include,
         sonars_sim_include,
         localizers_include,
-        #navigation_include
+        navigation_include
     ])
