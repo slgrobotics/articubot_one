@@ -1,10 +1,14 @@
 ### ekf config file ###
 
+# Used by: launch/dual_ekf_navsat.launch.py
+
 # see https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/config/dual_ekf_navsat_params.yaml
 #     https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
 #     https://github.com/jimdinunzio/trucksaurus/blob/humble/linorobot2_base/config/ekf_gps.yaml
 #     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/dual_ekf_navsat_example.yaml
 #     https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/ekf.yaml
+#
+# Tuned: https://chatgpt.com/s/t_691d3830ae048191a41a03bc3d0ffe15
 
 # For parameter descriptions, please refer to the template parameter files for each node.
 
@@ -14,7 +18,7 @@ ekf_filter_node_odom:
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
 # computation until it receives at least one message from one of the inputs. It will then run continuously at the
 # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-    frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    frequency: 15.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
 
 # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
 # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
@@ -84,7 +88,7 @@ ekf_filter_node_odom:
     map_frame: map                  # Defaults to "map" if unspecified
     odom_frame: odom                # Defaults to "odom" if unspecified
     base_link_frame: base_link      # Defaults to "base_link" if unspecified, don't change!
-#    world_frame: odom              # Defaults to the value of odom_frame if unspecified
+    world_frame: odom               # Defaults to the value of odom_frame if unspecified
 
 
 # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
@@ -151,10 +155,10 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true, true,  true,
+                  false, false,  true,
                   false, false, false,
-                  true, true, true,
-                  false, true, true]  # having true in "x_accel" cell makes sim crazy
+                  false, false,  true,
+                  false, false, false]  # having true in "x_accel" cell makes sim crazy
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -167,11 +171,11 @@ ekf_filter_node_odom:
     imu0_differential: false
 
     imu0_relative: false
-    imu0_queue_size: 10
+    imu0_queue_size: 20
 
 # IMU data is subject to outliers, try filter them out:
-    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
-    imu0_twist_rejection_threshold: 0.8                #
+    imu0_pose_rejection_threshold: 2.5                 # Note the difference in parameter names
+    imu0_twist_rejection_threshold: 2.0                #
     imu0_linear_acceleration_rejection_threshold: 0.8  #
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
@@ -223,6 +227,13 @@ ekf_filter_node_odom:
 #    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
 #    process_noise_covariance: [1e-2, 1e-2, 1e-2, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3]
 
+    # tuned noise
+    process_noise_covariance: [1e-3, 1e-3, 1e-3,
+                               0.1,  0.1,  0.01,
+                               0.5,  0.5,  0.1,
+                               0.1,  0.1,  0.1,
+                               0.1,  0.1,  0.1]
+
 # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
 # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
 # question. Users should take care not to use large values for variables that will not be measured directly. The values
@@ -233,9 +244,16 @@ ekf_filter_node_odom:
 #    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
 #    initial_estimate_covariance: [1e-2, 1e-2, 1e-2, 1.0, 1.0,   1e-2, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0]
 
+    # tuned initial covariance
+    initial_estimate_covariance: [1e-6, 1e-6, 1e-6,
+                                  1.0, 1.0,  1e-4,
+                                  1.0, 1.0,  1.0,
+                                  1.0, 1.0,  1.0,
+                                  1.0, 1.0,  1.0]
+
 ekf_filter_node_map:
   ros__parameters:
-    frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    frequency: 15.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
 #    sensor_timeout: 0.1
     two_d_mode: true
     transform_time_offset: 0.0
@@ -268,8 +286,8 @@ ekf_filter_node_map:
     odom0: diff_cont/odom 
     odom0_config: [false, false, false,
                    false, false, false,
-                    true,  true, true,
-                   false, false, true,
+                    true,  true, false,
+                   false, false, false,
                    false, false, false]
     odom0_queue_size: 10
     odom0_differential: false
@@ -289,10 +307,10 @@ ekf_filter_node_map:
     # We trust IMU compass data (yaw) to be accurate:
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true, true,  true,
+                  false, false,  true,
                   false, false, false,
-                  true, true, true,
-                  false, true, true]  # having true in "x_accel" cell makes sim crazy
+                  false, false,  true,
+                  false, false, false]  # having true in "x_accel" cell makes sim crazy
 #    imu0_nodelay: false
 
 # If using a real robot you might want to set this to true,
@@ -312,7 +330,20 @@ ekf_filter_node_map:
 #    process_noise_covariance: [1.0, 1.0, 1e-3, 0.3, 0.3,   0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
 #    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3,   0.01, 1e-3, 1e-3, 1e-3, 0.3,   0.3,    0.3, 1e-3, 1e-3, 1e-3]
 
+    # tuned noise
+    process_noise_covariance: [1e-3, 1e-3, 1e-3,
+                               0.1,  0.1,  0.01,
+                               0.5,  0.5,  0.1,
+                               0.1,  0.1,  0.1,
+                               0.1,  0.1,  0.1]
+
 #                                   x,   y,    z, roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
 #    initial_estimate_covariance: [1.0, 1.0, 1e-9, 1.0,  1.0,  1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
 #    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0,  1.0,  1e-9, 1e-9, 1e-9, 1e-9, 1.0,   1.0,    1.0, 1e-9, 1e-9, 1e-9]
 
+    # tuned initial covariance
+    initial_estimate_covariance: [1e-3, 1e-3, 1e-3,
+                                  1.0,  1.0,  1e-3,
+                                  1.0,  1.0,  1.0,
+                                  1.0,  1.0,  1.0,
+                                  1.0,  1.0,  1.0]
