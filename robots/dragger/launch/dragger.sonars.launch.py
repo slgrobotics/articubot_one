@@ -7,6 +7,8 @@ from launch_ros.actions import Node
 #
 # Generate launch description for Dragger robot sensors
 #
+#   *** runs on real robot only, not in simulation ***
+#
 # Sensors are almost always robot-specific, so we have this separate launch file.
 #   
 

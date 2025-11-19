@@ -2,6 +2,19 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
+#
+# Generate launch description for Sonar topic relays in Gazebo simulation
+#
+# At the moment there's no way to directly simulate and bridge sonar sensors in Gazebo,
+# so we create four Lase Scan sensors in Gazebo and then convert them to Range messages:
+#
+#      'sensor_msgs/msg/LaserScan' -> 'sensor_msgs/msg/Range'
+#
+# For a while it was possible to use topic_tools relay_field nodes, but since October 2025 update
+# they stopped working properly. So now we use specialized "scan_to_range" nodes instead.
+# See https://github.com/slgrobotics/scan_to_range
+#
+
 # See https://github.com/ros-tooling/topic_tools/tree/jazzy?tab=readme-ov-file#relayfield
 #     https://github.com/gazebosim/ros_gz/issues/586
 #     https://github.com/ros/ros_comm/pull/639
