@@ -93,7 +93,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'dual_ekf_navsat.launch.py'])
         ),
-        launch_arguments={'use_sim_time': 'false', 'robot_model' : robot_model}.items()
+        launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
     localizers_include = GroupAction(
