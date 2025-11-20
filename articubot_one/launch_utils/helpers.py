@@ -1,10 +1,11 @@
 # ===================================================================
-#  Reusable launch helper utilities for ROS 2 Jazzy
+#  Reusable launch helper utilities for ROS 2 launch files.
 #  Import into any launch file:
 #
-#      from articubot_one.launch.launch_utils import (
-#          include_launch,
-#          delayed_include,
+#      from articubot_one.launch_utils.helpers import (
+#              include_launch,
+#              delayed_include,
+#              namespace_wrap,
 #      )
 #
 # ===================================================================

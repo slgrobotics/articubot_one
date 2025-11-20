@@ -5,7 +5,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 # Reusable helpers
-from articubot_one.launch_utils.launch_utils import (
+from articubot_one.launch_utils.helpers import (
     include_launch,
     namespace_wrap,
 )

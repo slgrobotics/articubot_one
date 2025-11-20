@@ -2,7 +2,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration
-from articubot_one.launch_utils.launch_utils import (
+from articubot_one.launch_utils.helpers import (
     include_launch,
     delayed_include,
     namespace_wrap,
