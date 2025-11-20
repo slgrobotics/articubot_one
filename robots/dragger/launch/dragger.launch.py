@@ -9,25 +9,24 @@ from articubot_one.launch_utils.launch_utils import (
 )
 
 #
-# Generate launch description for Dragger robot
+# Generate launch description for Dragger robot — multi-robot safe version
 #
-# if launched with "use_sim_time=true", will be running in Gazebo simulation
+# If launched with "use_sim_time=true", will be running in Gazebo simulation.
 #
-# On the robot's Raspberry Pi:
+# Multi-robot usage example. On the robots' Raspberry Pi's:
 #
-#     ros2 launch articubot_one dragger.launch.py
+#   ros2 launch articubot_one dragger.launch.py namespace:=robot1
+#   ros2 launch articubot_one dragger.launch.py namespace:=robot2
 #
-# On the Desktop in simulation:
-#
-#     ros2 launch articubot_one dragger.launch.py use_sim_time:=true
+# Every robot runs a fully isolated stack under its namespace.
 #
 
 def generate_launch_description():
 
     package_name = 'articubot_one'
-    robot_model = 'dragger'  # static per this robot
+    robot_model = 'dragger'  # static per robot type
 
-    # Launch arguments (can be overridden by parent)
+    # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
@@ -65,7 +64,7 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'robot_model': robot_model
         },
-        condition=UnlessCondition(use_sim_time),   # only for real robot
+        condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
     # -------------------------------------------------------
@@ -77,25 +76,25 @@ def generate_launch_description():
     sonars_include = include_launch(
         package_name,
         ['robots', robot_model, 'launch', 'dragger.sonars.launch.py'],
-        condition=UnlessCondition(use_sim_time)    # real robot only
+        condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
     # Sonar topic relays (scan->range) for *** Gazebo simulation ***
     sonars_sim_include = include_launch(
         package_name,
         ['launch', 'sonars_sim.launch.py'],
-        condition=IfCondition(use_sim_time)        # simulation only
+        condition=IfCondition(use_sim_time),  # simulation only
     )
 
     # -------------------------------------------------------
-    # Timed includes (first localizers, then Nav2)
+    # Timed includes — Localizers first, Nav2 after
     #
-    # Note: TimerAction does not work in included launch files:
-    #   https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    loc_delay = 15.0   # seconds
-    nav_delay = 18.0   # seconds
+    loc_delay = 8.0    # seconds
+    nav_delay = 15.0
 
     localizers_include = include_launch(
         package_name,
@@ -121,9 +120,29 @@ def generate_launch_description():
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
 
     # -------------------------------------------------------
-    # Final Launch Description
+    # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
+    #
+    # Ensures:
+    #   /robot1/tf
+    #   /robot1/odom
+    #   /robot1/map
+    #   /robot1/scan
+    #   /robot1/nav2/...
     # -------------------------------------------------------
 
+    namespaced_actions = namespace_wrap(namespace, [
+        robot_state_publisher,
+        drive_include,
+        sensors_include,
+        sonars_include,
+        sonars_sim_include,
+        delayed_loc,
+        delayed_nav,
+    ])
+
+    # -------------------------------------------------------
+    # Final LaunchDescription
+    # -------------------------------------------------------
     return LaunchDescription([
 
         DeclareLaunchArgument(
@@ -134,27 +153,16 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'namespace',
-            default_value='',
-            description='Namespace for dragger nodes'
+            default_value='dragger1',
+            description='Top-level namespace for multi-robot deployment'
         ),
 
         LogInfo(msg=[
-            '============ starting DRAGGER (top-level)  namespace="', namespace,
-            '"  use_sim_time=', use_sim_time, '  robot_model=', robot_model
+            '============ starting DRAGGER (multi-robot)  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model
         ]),
 
-        #
-        # Main robot stack
-        #
-        robot_state_publisher,
-        drive_include,
-        sensors_include,
-        sonars_include,
-        sonars_sim_include,
-
-        #
-        # Delayed launch blocks
-        #
-        delayed_loc,
-        delayed_nav,
+        # EVERYTHING runs inside namespace_wrap()
+        namespaced_actions,
     ])
