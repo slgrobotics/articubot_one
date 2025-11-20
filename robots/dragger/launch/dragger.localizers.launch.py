@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction, GroupAction, LogInfo
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, LogInfo
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
@@ -96,17 +96,14 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
-    localizers_include = GroupAction(
+    robot_localizers = GroupAction(
         actions=[
-            LogInfo(msg='============ starting LOCALIZERS ==============='),
             navsat_localizer,
             # use either map_server OR slam_toolbox, as both are mappers
             map_server,    # localization is left to GPS
             #slam_toolbox, # localization via LIDAR - use with navsat_localizer
         ]
     )
-
-    delayed_loc = TimerAction(period=10.0, actions=[localizers_include])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -126,5 +123,5 @@ def generate_launch_description():
 
         LogInfo(msg=['============ starting LOCALIZERS  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
 
-        delayed_loc
+        robot_localizers
     ])

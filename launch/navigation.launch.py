@@ -22,7 +22,6 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
-    delay = LaunchConfiguration('delay', default='15.0')
 
     # Build substitution for nav2 params so robot_model can be dynamic
     nav2_params_file = PathJoinSubstitution([
@@ -55,18 +54,11 @@ def generate_launch_description():
                           'params_file': nav2_params_file}.items()  # pass nav2 params file if not using composition
     )
 
-    # let drive and localization nodes settle before starting nav stack
-    delayed_nav = TimerAction(
-        period=delay,
-        actions=[
-            LogInfo(msg=['============ starting NAVIGATION after delay of ', delay, ' seconds']),
-            container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
-            nav2
-        ])
-
     return LaunchDescription([
 
-        LogInfo(msg=['============ starting NAVIGATION (generic wrapper)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model, '  delay: ', delay, ' seconds']),
+        LogInfo(msg=['============ starting NAVIGATION (generic wrapper)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        #LogInfo(msg=['Nav2 params file: ', nav2_params_file]),
 
-        delayed_nav
+        container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
+        nav2
     ])

@@ -1,9 +1,12 @@
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration
+from articubot_one.launch_utils.launch_utils import (
+    include_launch,
+    delayed_include,
+    namespace_wrap,
+)
 
 #
 # Generate launch description for Dragger robot
@@ -21,90 +24,137 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
-    package_name='articubot_one'
+    package_name = 'articubot_one'
+    robot_model = 'dragger'  # static per this robot
 
-    # Make namespace overridable at runtime
+    # Launch arguments (can be overridden by parent)
     namespace = LaunchConfiguration('namespace', default='')
-
-    robot_model='dragger'
-
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    robot_state_publisher = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'rsp.launch.py'])
-        ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+    # -------------------------------------------------------
+    # Robot State Publisher
+    # -------------------------------------------------------
+    robot_state_publisher = include_launch(
+        package_name,
+        ['launch', 'rsp.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
     )
 
-    # Include separate launch files for better modularity
-
-    drive_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.drive.launch.py'])
-        ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+    # -------------------------------------------------------
+    # Drive & Sensors
+    # -------------------------------------------------------
+    drive_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'dragger.drive.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
     )
 
-    sensors_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.sensors.launch.py'])
-        ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items(),
-        condition=UnlessCondition(use_sim_time) # only for real robot, not Gazebo simulation
+    sensors_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'dragger.sensors.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
+        condition=UnlessCondition(use_sim_time),   # only for real robot
     )
 
+    # -------------------------------------------------------
+    # Sonars (real robot + simulation variants)
     # Dragger has four sonars in the corners, we have two separate launch files for them:
+    # -------------------------------------------------------
 
     # Sonar broadcasters for *** real robot ***
-    sonars_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.sonars.launch.py'])
-        ),
-        condition=UnlessCondition(use_sim_time) # only for real robot, not Gazebo simulation
+    sonars_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'dragger.sonars.launch.py'],
+        condition=UnlessCondition(use_sim_time)    # real robot only
     )
 
     # Sonar topic relays (scan->range) for *** Gazebo simulation ***
-    sonars_sim_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'sonars_sim.launch.py'])
-        ),
-        condition=IfCondition(use_sim_time) # only for Gazebo simulation
+    sonars_sim_include = include_launch(
+        package_name,
+        ['launch', 'sonars_sim.launch.py'],
+        condition=IfCondition(use_sim_time)        # simulation only
     )
 
-    localizers_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'dragger.localizers.launch.py'])
-        ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+    # -------------------------------------------------------
+    # Timed includes (first localizers, then Nav2)
+    #
+    # Note: TimerAction does not work in included launch files:
+    #   https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    loc_delay = 15.0   # seconds
+    nav_delay = 18.0   # seconds
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'dragger.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        }
     )
 
-    # Include generic navigation stack launch, it will pick up Dragger's "nav2_params.yaml"
-    navigation_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation.launch.py'])
-        ),
-        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model, 'delay': '20.0'}.items()
+    navigation_include = include_launch(
+        package_name,
+        ['launch', 'navigation.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        }
     )
 
-    # Launch them all!
+    delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
+    delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
+
+    # -------------------------------------------------------
+    # Final Launch Description
+    # -------------------------------------------------------
+
     return LaunchDescription([
 
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
-            description='Use simulation (Gazebo) clock if true'),
+            description='Use simulation (Gazebo) clock if true'
+        ),
 
         DeclareLaunchArgument(
             'namespace',
             default_value='',
-            description='Namespace for dragger nodes'),
+            description='Namespace for dragger nodes'
+        ),
 
+        LogInfo(msg=[
+            '============ starting DRAGGER (top-level)  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time, '  robot_model=', robot_model
+        ]),
+
+        #
+        # Main robot stack
+        #
         robot_state_publisher,
         drive_include,
         sensors_include,
         sonars_include,
         sonars_sim_include,
-        localizers_include,
-        navigation_include
+
+        #
+        # Delayed launch blocks
+        #
+        delayed_loc,
+        delayed_nav,
     ])
