@@ -1,5 +1,7 @@
 ## Robots Package - Turtle, Plucky, Dragger, Seggy
 
+*Please visit [project Wiki pages](https://github.com/slgrobotics/articubot_one/wiki) for details*
+
 This is an on-board software, normally residing under Ubuntu Server on a Raspberry Pi. It runs under ROS2 Jazzy *base*.
 
 Its Gazebo Simulation side runs on a Ubuntu 24.04 desktop (no robot hardware required) - see [ROS2 Jazzy Setup](https://github.com/slgrobotics/robots_bringup/tree/main/Docs/ROS-Jazzy) 
@@ -31,7 +33,3 @@ This software is not ready for production use. It has neither been developed nor
 2. This project wouldn't be possible without expert help and inspiration from members of:
 - [HomeBrew Robotics Club](https://www.hbrobotics.org/)
 - [Robotics Society ​of Southern California](https://www.rssc.org/)
-
------------------------
-
-**Note:** As of January 7, 2025 this repository is "_unforked_" (detached) from the [original template](https://github.com/joshnewans/articubot_one).
