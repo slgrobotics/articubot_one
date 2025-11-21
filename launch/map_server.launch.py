@@ -1,10 +1,7 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import SetParameter
 from launch_ros.actions import Node
 
@@ -13,9 +10,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     # Get the launch directory
-    package_name='articubot_one' #<--- CHANGE ME
-
-    package_path = get_package_share_directory(package_name)
+    package_name='articubot_one'
 
     namespace = LaunchConfiguration('namespace')
     map_yaml_file = LaunchConfiguration('map')
@@ -25,7 +20,7 @@ def generate_launch_description():
 
     remappings = [('/tf', 'tf'), ('/tf_static', 'tf_static')]
 
-    map_yaml_file_default = os.path.join(package_path, 'assets', 'maps','empty_map.yaml')
+    map_yaml_file_default = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
 
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace', default_value='', description='Top-level namespace'
@@ -43,7 +38,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(package_path, 'config', 'map_server_params.yaml'),
+        default_value=PathJoinSubstitution([FindPackageShare(package_name), 'config', 'map_server_params.yaml']),
         description='Full path to the ROS2 parameters file to use for map server node',
     )
 

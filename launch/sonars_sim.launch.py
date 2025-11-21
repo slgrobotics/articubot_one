@@ -1,9 +1,19 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
+#
+# Generate launch description for Sonar topic relays in Gazebo simulation
+#
+# At the moment there's no way to directly simulate and bridge sonar sensors in Gazebo,
+# so we create four Lase Scan sensors in Gazebo and then convert them to Range messages:
+#
+#      'sensor_msgs/msg/LaserScan' -> 'sensor_msgs/msg/Range'
+#
+# For a while it was possible to use topic_tools relay_field nodes, but since October 2025 update
+# they stopped working properly. So now we use specialized "scan_to_range" nodes instead.
+# See https://github.com/slgrobotics/scan_to_range
+#
 
 # See https://github.com/ros-tooling/topic_tools/tree/jazzy?tab=readme-ov-file#relayfield
 #     https://github.com/gazebosim/ros_gz/issues/586
@@ -12,18 +22,20 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    namespace = LaunchConfiguration('namespace', default='')
 
     # Note: radiation_type ULTRASOUND=0 INFRARED=1
     # See https://github.com/ros-tooling/topic_tools/blob/jazzy/topic_tools/topic_tools/relay_field.py
 
     sonar_F_L_node = Node(
                 package='topic_tools',
+                namespace=namespace,
                 executable='relay_field',
                 name='sonar_F_L_relay',
                 output='screen',
                 respawn=True,
                 respawn_delay=2.0,
-                arguments=['/sonar_F_L_sim', '/sonar_F_L', 'sensor_msgs/msg/Range', \
+                arguments=['sonar_F_L_sim', 'sonar_F_L', 'sensor_msgs/msg/Range', \
                             '{ \
                                 header: { \
                                         stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
@@ -41,12 +53,13 @@ def generate_launch_description():
 
     sonar_F_R_node = Node(
                 package='topic_tools',
+                namespace=namespace,
                 executable='relay_field',
                 name='sonar_F_R_relay',
                 output='screen',
                 respawn=True,
                 respawn_delay=2.0,
-                arguments=['/sonar_F_R_sim', '/sonar_F_R', 'sensor_msgs/msg/Range', \
+                arguments=['sonar_F_R_sim', 'sonar_F_R', 'sensor_msgs/msg/Range', \
                             '{ \
                                 header: { \
                                         stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
@@ -64,12 +77,13 @@ def generate_launch_description():
 
     sonar_B_L_node = Node(
                 package='topic_tools',
+                namespace=namespace,
                 executable='relay_field',
                 name='sonar_B_L_relay',
                 output='screen',
                 respawn=True,
                 respawn_delay=2.0,
-                arguments=['/sonar_B_L_sim', '/sonar_B_L', 'sensor_msgs/msg/Range', \
+                arguments=['sonar_B_L_sim', 'sonar_B_L', 'sensor_msgs/msg/Range', \
                             '{ \
                                 header: { \
                                         stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
@@ -87,12 +101,13 @@ def generate_launch_description():
 
     sonar_B_R_node = Node(
                 package='topic_tools',
+                namespace=namespace,
                 executable='relay_field',
                 name='sonar_B_R_relay',
                 output='screen',
                 respawn=True,
                 respawn_delay=2.0,
-                arguments=['/sonar_B_R_sim', '/sonar_B_R', 'sensor_msgs/msg/Range', \
+                arguments=['sonar_B_R_sim', 'sonar_B_R', 'sensor_msgs/msg/Range', \
                             '{ \
                                 header: { \
                                         stamp: {sec: m.header.stamp.sec, nanosec: m.header.stamp.nanosec}, \
@@ -108,13 +123,86 @@ def generate_launch_description():
                          ']
             )
 
-     # Create the launch description and populate
+
+    # Note: topic_tools don't work since October 2025 update.
+    #       Here is alternative approach using "scan_to_range" node.
+    # See https://chatgpt.com/s/t_691cc863d70c81919fa279f4bcc2e06a
+    #     https://chatgpt.com/s/t_691cc8351e648191a4cf0e7c5dd05428
+
+    # ---------- FRONT RIGHT ----------
+    sonar_F_R_node_ = Node(
+            package="scan_to_range",
+            executable="scan_to_range",
+            namespace=namespace,
+            name="scan_to_range_F_R",
+            parameters=[
+                {
+                    "input_topic": "sonar_F_R_sim",
+                    "output_topic": "sonar_F_R",
+                }
+            ],
+            output="screen",
+        )
+
+    # ---------- FRONT LEFT ----------
+    sonar_F_L_node_ = Node(
+            package="scan_to_range",
+            executable="scan_to_range",
+            namespace=namespace,
+            name="scan_to_range_F_L",
+            parameters=[
+                {
+                    "input_topic": "sonar_F_L_sim",
+                    "output_topic": "sonar_F_L",
+                }
+            ],
+            output="screen",
+        )
+
+    # ---------- REAR RIGHT ----------
+    sonar_B_R_node_ = Node(
+            package="scan_to_range",
+            executable="scan_to_range",
+            namespace=namespace,
+            name="scan_to_range_B_R",
+            parameters=[
+                {
+                    "input_topic": "sonar_B_R_sim",
+                    "output_topic": "sonar_B_R",
+                }
+            ],
+            output="screen",
+        )
+
+    # ---------- REAR LEFT ----------
+    sonar_B_L_node_ = Node(
+            package="scan_to_range",
+            executable="scan_to_range",
+            namespace=namespace,
+            name="scan_to_range_B_L",
+            parameters=[
+                {
+                    "input_topic": "sonar_B_L_sim",
+                    "output_topic": "sonar_B_L",
+                }
+            ],
+            output="screen",
+        )
+
+    # Create the launch description and populate
     ld = LaunchDescription()
 
     # Add the actions to launch all of the navigation nodes
-    ld.add_action(sonar_F_L_node)
-    ld.add_action(sonar_F_R_node)
-    ld.add_action(sonar_B_L_node)
-    ld.add_action(sonar_B_R_node)
+    # using topic_tools relay_field nodes:
+    #ld.add_action(sonar_F_L_node)
+    #ld.add_action(sonar_F_R_node)
+    #ld.add_action(sonar_B_L_node)
+    #ld.add_action(sonar_B_R_node)
+
+    # using scan_to_range nodes:
+    ld.add_action(sonar_F_L_node_)
+    ld.add_action(sonar_F_R_node_)
+    ld.add_action(sonar_B_L_node_)
+    ld.add_action(sonar_B_R_node_)
 
     return ld

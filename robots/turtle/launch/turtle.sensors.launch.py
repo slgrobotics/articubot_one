@@ -1,41 +1,24 @@
 from launch import LaunchDescription
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 #
-# See https://github.com/slgrobotics/robots_bringup/tree/main/Docs/Create1
+# Generate launch description for Turtle robot sensors
 #
-# This file goes to ~/launch folder on Create 1 Turtlebot Raspberry Pi
-#
+# Sensors are almost always robot-specific, so we have this separate launch file.
+#   
 
 def generate_launch_description():
 
-    namespace=''
+    # Allow the including launch file to set a namespace via a launch-argument
+    namespace = LaunchConfiguration('namespace', default='')
 
-    create_driver_node = Node(
-        package='create_driver',
-        namespace=namespace,
-        executable='create_driver',
-        name='create_driver',
-        output='screen',
-        respawn=True,
-        respawn_delay=4,
-        parameters=[{
-            'robot_model': 'CREATE_1',
-            'dev': '/dev/ttyUSB0',
-            'baud': 57600,
-            'base_frame': 'base_link',
-            'odom_frame': 'odom',
-            'latch_cmd_duration': 0.5,
-            'loop_hz': 5.0,
-            'publish_tf': False,
-            'gyro_offset': 0.0,
-            'gyro_scale': 1.19,
-            'distance_scale': 1.02
+    # Keep interface compatible with being included from seggy.launch.py
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-        }],
-        remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')]
-    )
+    # sensor nodes don't depend on robot_model and don't use package_name
 
+    # Lidar node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/LD14.md
     xv_11_driver_node = Node(
         package='xv_11_driver',
         namespace=namespace,
@@ -52,7 +35,8 @@ def generate_launch_description():
         }]
     )
 
-    mpu9250driver_node = Node(
+    # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/MPU9250.md
+    mpu9250_driver_node = Node(
         package="mpu9250",
         namespace=namespace,
         executable="mpu9250",
@@ -98,12 +82,12 @@ def generate_launch_description():
             'ros_topic_prefix': '',
             'connection_type': 'i2c',
             'i2c_bus': 1,
-            'i2c_addr': 0x28,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
-            'data_query_frequency': 20,
+            'i2c_addr': 0x29,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
+            'data_query_frequency': 30,
             'calib_status_frequency': 0.1,
             'frame_id': 'imu_link',
             'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
-            'placement_axis_remap': 'P1', # P1 - default, ENU
+            'placement_axis_remap': 'P1', # P1 - default, ENU. See Bosch BNO055 datasheet section "Axis Remap"
             'acc_factor': 100.0,
             'mag_factor': 16000000.0,
             'gyr_factor': 900.0,
@@ -114,20 +98,18 @@ def generate_launch_description():
             'offset_gyr': [0x0002, 0xFFFF, 0xFFFF],
             # Sensor standard deviation [x,y,z]
             # Used to calculate covariance matrices
-            # defaults are used if parameters below are not provided
-            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]
-            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s]
-            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad]
-            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]
+            # driver defaults are used if parameters below are not provided - bno055/src/bno055/bno055/registers.py:255
+            # see https://chatgpt.com/s/t_691b60f38e1c8191a0a309cbcf99e478
+            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]      defaults: [0.017, 0.017, 0.017]
+            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s] defaults: [0.04, 0.04, 0.04]
+            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad] - (roll, pitch, yaw)  defaults: [0.0159, 0.0159, 0.0159]
+            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]            defaults: [0.0, 0.0, 0.0]
         }],
         remappings=[("imu", "imu/data")]
     )
 
     return LaunchDescription([
-
-        create_driver_node,
         xv_11_driver_node,
-        #mpu9250driver_node,
+        #mpu9250_driver_node,
         bno055_driver_node
-
     ])

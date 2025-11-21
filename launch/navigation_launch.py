@@ -15,8 +15,6 @@
 # originally from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
 # meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
 
-import os
-
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -32,9 +30,7 @@ from nav2_common.launch import RewrittenYaml
 def generate_launch_description():
 
     # Get the launch directory
-    #package_name='articubot_one' #<--- CHANGE ME
-
-    #package_path = get_package_share_directory(package_name)
+    #package_name='articubot_one'
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -258,6 +254,7 @@ def generate_launch_description():
         condition=IfCondition(use_composition),
         actions=[
             SetParameter('use_sim_time', use_sim_time),
+            LogInfo(msg='============ NAV2: using composition, loading nodes into container'),
             LoadComposableNodes(
                 target_container=container_name_full,
                 composable_node_descriptions=[
@@ -266,6 +263,7 @@ def generate_launch_description():
                         plugin='nav2_controller::ControllerServer',
                         name='controller_server',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
@@ -273,6 +271,7 @@ def generate_launch_description():
                         plugin='nav2_smoother::SmootherServer',
                         name='smoother_server',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -280,6 +279,7 @@ def generate_launch_description():
                         plugin='nav2_planner::PlannerServer',
                         name='planner_server',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -287,6 +287,7 @@ def generate_launch_description():
                         plugin='behavior_server::BehaviorServer',
                         name='behavior_server',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
@@ -294,6 +295,7 @@ def generate_launch_description():
                         plugin='nav2_bt_navigator::BtNavigator',
                         name='bt_navigator',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -301,6 +303,7 @@ def generate_launch_description():
                         plugin='nav2_waypoint_follower::WaypointFollower',
                         name='waypoint_follower',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -308,6 +311,7 @@ def generate_launch_description():
                         plugin='nav2_velocity_smoother::VelocitySmoother',
                         name='velocity_smoother',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings
                         + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
                     ),
@@ -316,6 +320,7 @@ def generate_launch_description():
                         plugin='nav2_collision_monitor::CollisionMonitor',
                         name='collision_monitor',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -323,6 +328,7 @@ def generate_launch_description():
                         plugin='opennav_docking::DockingServer',
                         name='docking_server',
                         parameters=[configured_params],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings,
                     ),
                     ComposableNode(
@@ -332,6 +338,7 @@ def generate_launch_description():
                         parameters=[
                             {'autostart': autostart, 'node_names': lifecycle_nodes}
                         ],
+                        extra_arguments=[{'use_intra_process_comms': True}],
                     ),
                 ],
             ),
@@ -360,10 +367,9 @@ def generate_launch_description():
     ld.add_action(load_composable_nodes)
 
     ld.add_action(GroupAction([
-        LogInfo(msg='============ starting NAVIGATION  use_sim_time / params_file / odom_topic :'),
-        LogInfo(msg=use_sim_time),
-        LogInfo(msg=params_file),
-        LogInfo(msg=odom_topic)
+        LogInfo(msg=['============ starting NAVIGATION  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
+        LogInfo(msg=['params file:', params_file]),
+        LogInfo(msg=['odom topic:', odom_topic]),
     ]))
 
     return ld

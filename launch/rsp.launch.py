@@ -1,39 +1,44 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, Command, PythonExpression
+from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
+from launch_ros.substitutions import FindPackageShare
 
-import xacro
-
+#
+# Generate launch description for robot_state_publisher
+#
+# Will load robot description from "robot.urdf.xacro" file located at robot's "description" directory
+#
+# Typical use (see seggy.launch.py):
+#    robot_state_publisher = IncludeLaunchDescription(
+#        PythonLaunchDescriptionSource(
+#            PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'rsp.launch.py'])
+#        ),
+#        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
+#    )
+#
 
 def generate_launch_description():
 
-    namespace=''
+    package_name='articubot_one'
 
-    package_name='articubot_one' #<--- CHANGE ME
-
-    package_path = get_package_share_directory(package_name)
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, create1...
+    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # define the launch argument that must be passed from the calling launch file or from the console:
-    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
+    # Build substitution-based paths so robot_model can be used at launch-time
+    # Path to the robot xacro file (resolved at launch time)
+    xacro_file = PathJoinSubstitution([
+        FindPackageShare(package_name), 'robots', robot_model, 'description', 'robot.urdf.xacro'
+    ])
 
-    robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
-
-    # Produce the URDF string from collection of .xacro's:
-    xacro_file = PythonExpression(["'", robot_model_path, "' + '/description/robot.urdf.xacro'"])
-
-    # Produce full XML/SDF description:
+    # Produce full XML/SDF description by invoking xacro on the substitution path
     robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
     
     # Create a robot_state_publisher node
@@ -79,10 +84,8 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'),
 
-        LogInfo(msg='============ starting ROBOT STATE PUBLISHER  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
-        #LogInfo(msg=robot_model_path),
-        LogInfo(msg=xacro_file),
+        LogInfo(msg=['============ starting ROBOT STATE PUBLISHER  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        LogInfo(msg=['xacro_file: ', xacro_file]),
 
         node_robot_state_publisher,
 

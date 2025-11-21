@@ -1,28 +1,47 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo
+from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-import os
-from ament_index_python.packages import get_package_share_directory
+#
+# Generate the launch description for twist_mux with namespace support
+#
+# Note: this is a temporary solution until use_stamped is supported in the official twist_mux launch file
+#
 
 def generate_launch_description():
 
-    namespace=''
+    package_name='articubot_one'
 
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    # Accept namespace from parent launch or use empty default
+    namespace = LaunchConfiguration('namespace', default='')
 
-    package_name='articubot_one' #<--- CHANGE ME
-
-    package_path = get_package_share_directory(package_name)
+    # Check if we're told to use sim time
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # See /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
     #     https://github.com/ros-teleop/twist_mux/tree/rolling/src
 
-    twist_mux_params = os.path.join(package_path,'config','twist_mux.yaml')
+    twist_mux_params = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'twist_mux.yaml'])
 
-    twist_mux = Node(
+    # Note: this is how it should be, but "use_stamped" isn't working in that launch file
+    #       see /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
+    twist_mux_ = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare('twist_mux'), 'launch', 'twist_mux_launch.py'])
+        ),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+            'use_stamped': 'true',
+            'cmd_vel_out': 'diff_cont/cmd_vel',
+            'config_topics': twist_mux_params,
+        }.items()
+    )
+
+    # temporarily use direct Node instantiation until use_stamped is supported in the official launch file:
+    twist_mux_node = Node(
         package="twist_mux",
         namespace=namespace,
         executable="twist_mux",
@@ -38,12 +57,14 @@ def generate_launch_description():
     # In robotics, a twist is a 6x1 column vector of linear and angular velocities. In ROS, this is implemented as a Twist message,
     #  which you can see for yourself by entering the following in a terminal:
     #     rosmsg show geometry_msgs/Twist
-    # An interactive marker is another ROS tool to interface with robots through rviz. You can drag around this marker,
+
+    #
+    # An interactive marker is another ROS tool to interface with robots through RViz. You can drag around this marker,
     #  and generally a robot will try to follow it. The server publishes twists (velocity commands) to get to the interactive marker pose (position command).
     #     sudo apt install ros-${ROS_DISTRO}-interactive-marker-twist-server
     #     ros2 launch interactive_marker_twist_server interactive_markers.launch.xml
 
-    twist_marker = Node(
+    twist_marker_node = Node(
         package='twist_mux',
         namespace=namespace,
         executable='twist_marker',
@@ -57,35 +78,6 @@ def generate_launch_description():
             'vertical_position': 2.0}]
     )
 
-    joystick_params_file = os.path.join(package_path,'config','joystick.yaml')
-
-    # see https://github.com/ros-teleop/twist_mux/blob/rolling/scripts/joystick_relay.py
-    # currently doesn't support 'use_stamped'
-    joystick_relay = Node(
-        package='twist_mux',
-        namespace=namespace,
-        executable='joystick_relay.py',
-        output='screen',
-        remappings={('joy_vel_in', 'cmd_vel_joy'),
-                    ('joy_vel_out', 'joy_vel')},
-        parameters=[joystick_params_file, {
-            'use_sim_time': use_sim_time,
-            'use_stamped': 'true'
-            }]
-    )
-
-    # this is how it should be, but "use_stamped" isn't working in that launch file
-    # see /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
-    twist_mux_ = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(get_package_share_directory("twist_mux"),'launch','twist_mux_launch.py')]
-                ), launch_arguments={
-                    'use_sim_time': use_sim_time,
-                    'use_stamped': 'true',
-                    'cmd_vel_out': 'diff_cont/cmd_vel',
-                    'config_topics': twist_mux_params,
-                    }.items()
-    )
-
     return LaunchDescription([
 
         DeclareLaunchArgument(
@@ -93,10 +85,8 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'),
 
-        LogInfo(msg='============ starting TWIST_MUX  use_sim_time:'),
-        LogInfo(msg=use_sim_time),
+        LogInfo(msg=['============ starting TWIST_MUX  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
 
-        twist_mux,
-        #twist_marker,
-        #joystick_relay
+        twist_mux_node,
+        #twist_marker_node,  # enable if you want interactive marker control from RViz
     ])

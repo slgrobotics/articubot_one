@@ -2,12 +2,13 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>articubot_one</name>
-  <version>0.0.0</version>
-  <description>ROS2 Outdoors Robot</description>
+  <version>0.0.1</version>
+  <description>ROS2 Indoors and Outdoors Robots - launch and config package</description>
   <maintainer email="slg@quakemap.com">Sergei Grichine</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>rclcpp</depend>
   <depend>xacro</depend>
@@ -21,13 +22,13 @@
   <depend>imu_tools</depend>
   <depend>slam_toolbox</depend>
   <depend>navigation2</depend>
-  <depend>rmw_cyclonedds_cpp</depend>
   <depend>cartographer_ros</depend>
   <depend>rviz_satellite</depend>
   <depend>battery_state_rviz_overlay</depend>
 
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

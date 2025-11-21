@@ -13,7 +13,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name='articubot_one'
 
     package_path = get_package_share_directory(package_name)
 

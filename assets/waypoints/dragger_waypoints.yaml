@@ -1,0 +1,18 @@
+#
+# Run script:
+# cd ~/robot_ws; colcon build; python3 install/articubot_one/lib/articubot_one/gps_waypoint_follower.py --file dragger_waypoints
+
+# 10 meters = 0.00001 lat (y) or long (x)
+waypoints:
+- latitude:   33.2202050 # NW facing East
+  longitude: -86.3088000
+  yaw: 0.0
+- latitude:   33.2202019 # N  facing South
+  longitude: -86.3086910
+  yaw: -1.57
+- latitude:   33.2200100 # E facing West
+  longitude: -86.3087000
+  yaw: 3.1459
+- latitude:   33.2201167 # Home position facing North
+  longitude: -86.3087345
+  yaw: 1.57

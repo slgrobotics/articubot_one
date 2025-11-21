@@ -13,7 +13,7 @@ from ament_index_python.packages import get_package_share_directory
 #  ros2 launch articubot_one mapviz.launch.py
 #
 
-package_name='articubot_one' #<--- CHANGE ME
+package_name='articubot_one'
 
 package_path = get_package_share_directory(package_name)
 

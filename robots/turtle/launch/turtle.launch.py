@@ -1,124 +1,147 @@
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction, GroupAction, LogInfo
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from articubot_one.launch_utils.helpers import (
+    include_launch,
+    delayed_include,
+    namespace_wrap,
+)
+
+#
+# Generate launch description for Turtle robot — multi-robot safe version
+#
+# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+#
+# Multi-robot usage example. On the robots' Raspberry Pi's:
+#
+#   ros2 launch articubot_one turtle.launch.py namespace:=robot1
+#   ros2 launch articubot_one turtle.launch.py namespace:=robot2
+#
+# Every robot runs a fully isolated stack under its namespace.
+#
 
 def generate_launch_description():
 
-    # Include the robot_state_publisher launch file, provided by our own package. Force sim time to be enabled
-    # !!! MAKE SURE YOU SET THE PACKAGE NAME CORRECTLY !!!
+    package_name = 'articubot_one'
+    robot_model = 'turtle'  # static per robot type
 
-    namespace=''
-
-    package_name='articubot_one' #<--- CHANGE ME
-
-    robot_model='turtle'
-
-    package_path = get_package_share_directory(package_name)
-
-    robot_path = os.path.join(package_path, 'robots', robot_model)
-
+    # Launch arguments (can be overridden)
+    namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    rsp = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','rsp.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
+    # -------------------------------------------------------
+    # Robot State Publisher
+    # -------------------------------------------------------
+    robot_state_publisher = include_launch(
+        package_name,
+        ['launch', 'rsp.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
     )
 
-    joystick = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','joystick.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    # -------------------------------------------------------
+    # Drive & Sensors
+    # -------------------------------------------------------
+    drive_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'turtle.drive.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
     )
 
-    twist_mux = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','twist_mux.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    sensors_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'turtle.sensors.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
+        condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
-    slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_slam_toolbox.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    # -------------------------------------------------------
+    # Timed includes — Localizers first, Nav2 after
+    #
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    loc_delay = 8.0    # seconds
+    nav_delay = 15.0
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'turtle.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        }
     )
 
-    cartographer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','cartographer.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()
+    navigation_include = include_launch(
+        package_name,
+        ['launch', 'navigation.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        }
     )
 
-    #map_yaml_file = os.path.join(package_path,'assets','maps','empty_map.yaml')   # this is default anyway
-    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
+    delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
 
-    map_server = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','map_server.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time}.items()       # empty_map - default
-                #), launch_arguments={'map': map_yaml_file, 'use_sim_time': use_sim_time}.items() # warehouse
-    )
+    # -------------------------------------------------------
+    # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
+    #
+    # Ensures:
+    #   /robot1/tf
+    #   /robot1/odom
+    #   /robot1/map
+    #   /robot1/scan
+    #   /robot1/nav2/...
+    # -------------------------------------------------------
 
-    # odom_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
-    # also, produces odom_topic: /odometry/local which can be used by Nav2
-    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see mapper_params.yaml
-    odom_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
-    )
+    namespaced_actions = namespace_wrap(namespace, [
+        robot_state_publisher,
+        drive_include,
+        sensors_include,
+        delayed_loc,
+        delayed_nav,
+    ])
 
-    # alternative to odom_localizer for slam_toolbox
-    tf_localizer = Node(package = "tf2_ros", 
-                    executable = "static_transform_publisher",
-                    arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
-    )
-    
-    nav2 = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(robot_path,'launch','turtle_nav.launch.py')]
-                ), launch_arguments={'use_sim_time': use_sim_time }.items()
-    )
-
-    localizers_include = GroupAction(
-        actions=[
-            LogInfo(msg='============ starting LOCALIZERS ==============='),
-            odom_localizer, # needed for slam_toolbox. cartographer doesn't need it when cartographer.launch.py uses direct mapping
-            #tf_localizer,
-            # use either cartographer OR slam_toolbox, as both are mappers
-            #cartographer,  # localization via LIDAR
-            slam_toolbox, # localization via LIDAR
-        ]
-    )
-
-    delayed_loc = TimerAction(period=5.0, actions=[localizers_include])
-
-    delayed_nav = TimerAction(period=10.0, actions=[nav2])
-
-    rviz_config = os.path.join(package_path, 'config', 'main.rviz')  # 'view_bot.rviz'  'map.rviz'
-
-    rviz = Node(
-        package='rviz2',
-        namespace=namespace,
-        executable='rviz2',
-        arguments=['-d', rviz_config],
-        parameters=[{'use_sim_time': False}],
-        output='screen'
-    )
-
-    # Launch them all!
+    # -------------------------------------------------------
+    # Final LaunchDescription
+    # -------------------------------------------------------
     return LaunchDescription([
 
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
-            description='Use simulation (Gazebo) clock if true'),
+            description='Use simulation (Gazebo) clock if true'
+        ),
 
-        rsp,
-        joystick,
-        twist_mux,
-        delayed_loc,
-        #delayed_nav,
-        #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
-        rviz
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='turtle1',
+            description='Top-level namespace for multi-robot deployment'
+        ),
+
+        LogInfo(msg=[
+            '============ starting TURTLE (multi-robot)  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model
+        ]),
+
+        # EVERYTHING runs inside namespace_wrap()
+        namespaced_actions,
     ])
-

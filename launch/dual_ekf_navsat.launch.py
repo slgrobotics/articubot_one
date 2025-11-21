@@ -15,84 +15,98 @@
 #     https://github.com/ros-navigation/navigation2_tutorials/blob/master/nav2_gps_waypoint_follower_demo/launch/dual_ekf_navsat.launch.py
 
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration, PythonExpression
-from ament_index_python.packages import get_package_share_directory
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch.actions import DeclareLaunchArgument, LogInfo
-import launch_ros.actions
-import os
-import launch.actions
+from launch_ros.actions import Node
 
+#
+# Generate launch description for robot_localization dual EKF with navsat (GNSS) transform node
+#
+# Use robot-specific configuration file from robots/<robot_model>/config/dual_ekf_navsat_transform_params_file.yaml
+# and robots/<robot_model>/config/navsat_transform.yaml
+# (typically specifies wheels odometry IMU inputs and GNSS coordinates to fuse for better odometry)
+#
+# Example usage (see dragger.localizers.launch.py):
+#    navsat_localizer = IncludeLaunchDescription(
+#                PythonLaunchDescriptionSource(dual_ekf_navsat_path
+#                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
+#    )
+#
 
 def generate_launch_description():
 
-    package_name='articubot_one' #<--- CHANGE ME
+    package_name = "articubot_one"
 
-    package_path = get_package_share_directory(package_name)
+    namespace = LaunchConfiguration("namespace")
+    use_sim_time = LaunchConfiguration("use_sim_time")
+    robot_model = LaunchConfiguration("robot_model")
 
-    # Check if we're told to use sim time
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    ekf_params_file = PathJoinSubstitution([
+        FindPackageShare(package_name), "robots", robot_model, "config", "dual_ekf_navsat_params.yaml"
+    ])
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, create1...
-    robot_model = LaunchConfiguration('robot_model', default='')
+    navsat_transform_params_file = PathJoinSubstitution([
+        FindPackageShare(package_name), "robots", robot_model, "config", "navsat_transform.yaml"
+    ])
 
-    # define the launch argument that must be passed from the calling launch file or from the console:
-    robot_model_arg= DeclareLaunchArgument('robot_model', default_value='')
+    return LaunchDescription([
 
-    robot_model_path = PythonExpression(["'", package_path, "' + '/robots/", robot_model,"'"])
-    
-    #rl_params_file = os.path.join(package_path,'config','dual_ekf_navsat_params.yaml')
-    rl_params_file = PythonExpression(["'", robot_model_path, "' + '/config/dual_ekf_navsat_params.yaml'"])
+        DeclareLaunchArgument(
+            "namespace", default_value="", description="Top-level namespace for multi-robot setups"
+        ),
 
-    #nt_params_file = os.path.join(package_path,'config','navsat_transform.yaml')
-    nt_params_file = PythonExpression(["'", robot_model_path, "' + '/config/navsat_transform.yaml'"])
+        DeclareLaunchArgument(
+            "use_sim_time", default_value="false", description="Use simulation clock if true"
+        ),
 
-    return LaunchDescription(
-        [
-            DeclareLaunchArgument(
-                'use_sim_time', default_value='false',
-                description='Use simulation (Gazebo) clock if true'
-            ),
-            DeclareLaunchArgument(
-                "output_final_position", default_value="false"
-            ),
-            DeclareLaunchArgument(
-                "output_location", default_value="~/dual_ekf_navsat_example_debug.txt"
-            ),
+        DeclareLaunchArgument(
+            "robot_model", default_value="", description="Robot model directory: seggy, turtle, dragger, etc."
+        ),
 
-            LogInfo(msg='============ starting DUAL EKF NAVSAT  use_sim_time:'),
-            LogInfo(msg=use_sim_time),
-            LogInfo(msg=rl_params_file),
-            LogInfo(msg=nt_params_file),
+        LogInfo(msg=["============ starting Dual EKF + NavSat Transform ============ "]),
+        LogInfo(msg=["namespace: ", namespace]),
+        LogInfo(msg=["robot_model: ", robot_model]),
+        LogInfo(msg=["use_sim_time: ", use_sim_time]),
+        LogInfo(msg=["EKF params: ", ekf_params_file]),
+        LogInfo(msg=["NavSat Transform params: ", navsat_transform_params_file]),
 
-            launch_ros.actions.Node(
-                package="robot_localization",
-                executable="ekf_node",
-                name="ekf_filter_node_odom",
-                output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
-                remappings=[("odometry/filtered", "odometry/local")],
-            ),
-            launch_ros.actions.Node(
-                package="robot_localization",
-                executable="ekf_node",
-                name="ekf_filter_node_map",
-                output="screen",
-                parameters=[rl_params_file, {"use_sim_time": use_sim_time}],
-                remappings=[("odometry/filtered", "odometry/global")],
-            ),
-            launch_ros.actions.Node(
-                package="robot_localization",
-                executable="navsat_transform_node",
-                name="navsat_transform",
-                output="screen",
-                parameters=[nt_params_file, {"use_sim_time": use_sim_time}],
-                remappings=[
-                    ("imu", "imu/data"),
-                    ("gps/fix", "gps/fix"),
-                    ("gps/filtered", "gps/filtered"),
-                    ("odometry/gps", "odometry/gps"),
-                    ("odometry/filtered", "odometry/global"),
-                ],
-            ),
-        ]
-    )
+        # ------------------ EKF (ODOM) ------------------
+        Node(
+            package="robot_localization",
+            executable="ekf_node",
+            namespace=namespace,
+            name="ekf_filter_node_odom",
+            parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
+            remappings=[("odometry/filtered", "odometry/local")],
+            output="screen"
+        ),
+
+        # ------------------ EKF (MAP) ------------------
+        Node(
+            package="robot_localization",
+            executable="ekf_node",
+            namespace=namespace,
+            name="ekf_filter_node_map",
+            parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
+            remappings=[("odometry/filtered", "odometry/global")],
+            output="screen"
+        ),
+
+        # ------------------ NavSat Transform ------------------
+        Node(
+            package="robot_localization",
+            executable="navsat_transform_node",
+            namespace=namespace,
+            name="navsat_transform",
+            parameters=[navsat_transform_params_file, {"use_sim_time": use_sim_time}],
+            remappings=[
+                ("imu", "imu/data"),
+                ("gps/fix", "gps/fix"),
+                ("gps/filtered", "gps/filtered"),
+                ("odometry/gps", "odometry/gps"),
+                ("odometry/filtered", "odometry/global")
+            ],
+            output="screen"
+        ),
+    ])
