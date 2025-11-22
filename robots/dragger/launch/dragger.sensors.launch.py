@@ -44,6 +44,24 @@ def generate_launch_description():
         ]
     )
 
+    # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO085%20IMU.md
+    bno08x_config_path = PathJoinSubstitution([
+        FindPackageShare(package_name), 'config', 'bno085_i2c.yaml'
+    ])
+
+    bno08x_driver_node = Node(
+        package="bno08x_driver",
+        namespace=namespace,
+        executable="bno08x_driver",
+        name="bno08x_driver",
+        output='screen',
+        respawn=True,
+        respawn_delay=4,
+        emulate_tty=True,
+        parameters=[bno08x_config_path],
+        remappings=[("imu", "imu/data")]
+    )
+
     # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/MPU9250.md
     mpu9250driver_node = Node(
         package="mpu9250",
