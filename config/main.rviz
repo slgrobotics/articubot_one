@@ -609,7 +609,7 @@ Visualization Manager:
       Class: rviz_default_plugins/Polygon
       Color: 224; 27; 36
       Enabled: false
-      Name: Polygon
+      Name: Robot Footprint
       Topic:
         Depth: 5
         Durability Policy: Volatile
