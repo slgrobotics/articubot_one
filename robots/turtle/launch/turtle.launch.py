@@ -132,7 +132,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'namespace',
-            default_value='turtle1',
+            default_value='',
             description='Top-level namespace for multi-robot deployment'
         ),
 

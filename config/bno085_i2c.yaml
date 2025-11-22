@@ -24,6 +24,6 @@ bno08x_driver:
         rate: 60   # max 100 Hz
       imu:
         enabled: true
-        rate: 60   # max 400 Hz (anythihng above 100Hz depends on your hardware)
-        imu.orientation_yaw_variance: 0.005  # 5e-3 = 0.005 is default
+        rate: 60   # max 400 Hz (anything above 100Hz depends on your hardware)
+        orientation_yaw_variance: 0.005  # 5e-3 = 0.005 is default
 
