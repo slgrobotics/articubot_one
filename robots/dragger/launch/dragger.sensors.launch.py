@@ -117,7 +117,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         ldlidar_node,
-        bno08x_driver_node
+        bno08x_driver_node,
         #mpu9250driver_node,
         gps_node
     ])
