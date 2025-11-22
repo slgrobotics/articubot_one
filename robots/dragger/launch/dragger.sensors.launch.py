@@ -1,5 +1,6 @@
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 #
@@ -116,6 +117,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         ldlidar_node,
-        mpu9250driver_node,
+        bno08x_driver_node
+        #mpu9250driver_node,
         gps_node
     ])
