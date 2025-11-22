@@ -255,14 +255,15 @@ local_costmap:
 
       # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       #robot_radius: 0.30  # actual robot radius plus small safety margin
-      footprint: "[[ 0.340,  0.000],
-                  [ 0.241, -0.241],
-                  [ 0.000, -0.340],
-                  [-0.241, -0.241],
-                  [-0.340,  0.000],
-                  [-0.241,  0.241],
-                  [ 0.000,  0.340],
-                  [ 0.241,  0.241]]"
+      footprint: "[[ 0.280,  0.000],
+                  [ 0.235, -0.235],
+                  [ 0.000, -0.280],
+                  [-0.235, -0.235],
+                  [-0.300, -0.140],
+                  [-0.300,  0.140],
+                  [-0.235,  0.235],
+                  [ 0.000,  0.280],
+                  [ 0.235,  0.235]]"
 
       plugins: ["voxel_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
@@ -323,14 +324,15 @@ global_costmap:
 
       # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       #robot_radius: 0.30  # actual robot radius plus small safety margin
-      footprint: "[[ 0.340,  0.000],
-                  [ 0.241, -0.241],
-                  [ 0.000, -0.340],
-                  [-0.241, -0.241],
-                  [-0.340,  0.000],
-                  [-0.241,  0.241],
-                  [ 0.000,  0.340],
-                  [ 0.241,  0.241]]"
+      footprint: "[[ 0.280,  0.000],
+                  [ 0.235, -0.235],
+                  [ 0.000, -0.280],
+                  [-0.235, -0.235],
+                  [-0.300, -0.140],
+                  [-0.300,  0.140],
+                  [-0.235,  0.235],
+                  [ 0.000,  0.280],
+                  [ 0.235,  0.235]]"
 
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
