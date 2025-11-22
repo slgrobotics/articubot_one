@@ -74,8 +74,8 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    loc_delay = 8.0    # seconds
-    nav_delay = 15.0
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
 
     localizers_include = include_launch(
         package_name,
