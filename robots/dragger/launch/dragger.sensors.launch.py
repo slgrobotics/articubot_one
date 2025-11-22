@@ -11,6 +11,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    package_name = 'articubot_one'
+
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
