@@ -24,7 +24,7 @@
     <xacro:arg name="lidar_offset_z" default="0.27"/>
     <xacro:arg name="lidar_min_angle" default="-${pi * 0.95}"/>
     <xacro:arg name="lidar_max_angle" default="${pi * 0.95}"/>
-    <!-- xacro:arg name="lidar_base_length" default="0.04"/ -->
+    <!-- xacro:arg name="lidar_pedestal_height" default="0.04"/ -->
     <xacro:include filename="../../../description/lidar.xacro" />
 
     <xacro:property name="open_circuit_voltage" value="12.592"/>

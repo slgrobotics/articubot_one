@@ -8,9 +8,9 @@
     <xacro:arg name="lidar_offset_z" default="0"/>
     <xacro:arg name="lidar_min_angle" default="-3.14159"/>
     <xacro:arg name="lidar_max_angle" default="3.14159"/>
-    <xacro:arg name="lidar_base_length" default="0.003"/>
+    <xacro:arg name="lidar_pedestal_height" default="0.003"/>
 
-    <xacro:property name="_lidar_base_length" value="$(arg lidar_base_length)"/>
+    <xacro:property name="_lidar_pedestal_height" value="$(arg lidar_pedestal_height)"/>
 
     <joint name="laser_joint" type="fixed">
         <parent link="chassis_link"/>
@@ -34,9 +34,9 @@
             <material name="sensor_blue"/>
         </visual>
         <visual name="lidar_visual_base">
-            <origin xyz="0 0 -${_lidar_base_length/2+0.01}"/>
+            <origin xyz="0 0 -${_lidar_pedestal_height/2+0.01}"/>
             <geometry>
-                <cylinder radius="0.02" length="${_lidar_base_length}"/>
+                <cylinder radius="0.02" length="${_lidar_pedestal_height}"/>
             </geometry>
             <material name="body_color"/>
         </visual>
