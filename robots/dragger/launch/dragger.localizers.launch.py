@@ -126,6 +126,8 @@ def generate_launch_description():
     #       Adding a previously saved map to the map server is possible.
     #       If indoor use is needed, enable slam_toolbox and ekf_localizer instead.
     #
+    # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
+    #
     localizer_actions = [
         navsat_localizer, # localization via GPS
         map_server,       # localization is left to GPS
