@@ -34,7 +34,7 @@ def generate_launch_description():
     # ==========================
     # most used localizer - SLAM Toolbox
     slam_toolbox_params_file = PathJoinSubstitution([
-        FindPackageShare(package_name), 'robots', robot_model, 'config', 'mapper_params.yaml'
+        FindPackageShare(package_name), 'robots', robot_model, 'config', 'slam_toolbox_params.yaml'
     ])
 
     slam_toolbox = include_launch(
@@ -50,7 +50,7 @@ def generate_launch_description():
     # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see mapper_params.yaml
+    # see slam_toolbox_params.yaml
     ekf_localizer = include_launch(
         package_name,
         ['launch', 'ekf_odom.launch.py'],

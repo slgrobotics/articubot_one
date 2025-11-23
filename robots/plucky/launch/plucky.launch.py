@@ -64,7 +64,7 @@ def generate_launch_description():
     # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see mapper_params.yaml
+    # see slam_toolbox_params.yaml
     ekf_localizer = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
