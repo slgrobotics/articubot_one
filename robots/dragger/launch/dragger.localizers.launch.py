@@ -119,13 +119,20 @@ def generate_launch_description():
     #   - slam_toolbox (LIDAR)
     # not both at once.
     #
+    # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments.
+    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
+    #       Therefore, for outdoor use I am using only GPS-based localization with mapper server.
+    #       Adding a previously saved map to the map server is possible.
+    #       If indoor use is needed, enable slam_toolbox and ekf_localizer instead.
+    #
     localizer_actions = [
-        navsat_localizer,
-        map_server,     # localization is left to GPS
-        # slam_toolbox, # localization via LIDAR — enable if desired
-        # ekf_localizer,
+        navsat_localizer, # localization via GPS
+        map_server,       # localization is left to GPS
+        # slam_toolbox,   # localization via LIDAR — enable if desired
+        # ekf_localizer,  # needed for slam_toolbox indoors
         # cartographer,
-        # tf_localizer, # debugging only
+        # tf_localizer,   # debugging only
     ]
 
     # Multi-robot safe: wrap everything under the namespace
