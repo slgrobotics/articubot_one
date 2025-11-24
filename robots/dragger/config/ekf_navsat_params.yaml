@@ -12,7 +12,7 @@
 
 # For parameter descriptions, please refer to the template parameter files for each node.
 
-ekf_filter_node_map:
+ekf_filter_node_navsat:
   ros__parameters:
     frequency: 15.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
 #    sensor_timeout: 0.1
