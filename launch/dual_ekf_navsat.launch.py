@@ -111,11 +111,11 @@ def generate_launch_description():
             name="navsat_transform",
             parameters=[navsat_transform_params_file, {"use_sim_time": use_sim_time}],
             remappings=[
-                ("imu", "imu/data"),
-                ("gps/fix", "gps/fix"),
-                ("gps/filtered", "gps/filtered"),
-                ("odometry/gps", "odometry/gps"),
-                ("odometry/filtered", "odometry/global")
+                ('imu', 'imu/data'),                # sensor IMU input
+                ('gps/fix', 'gps/fix'),             # raw GPS fix
+                ('odometry/filtered', 'odometry/local'),  # robot odom input to correct yaw
+                ("odometry/gps", "odometry/gps"),   # output odom aligned to GPS
+                ('gps/filtered', 'gps/filtered')    # output filtered GPS
             ],
             output="screen"
         ),
