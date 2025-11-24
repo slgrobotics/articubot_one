@@ -101,18 +101,6 @@ def generate_launch_description():
     )
 
     # ==========================
-
-    navsat_localizer = include_launch(
-        package_name,
-        ['launch', 'dual_ekf_navsat.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
-
-    #
     # Group all localizers —
     # You generally want either:
     #   - map_server (GPS)
@@ -120,7 +108,6 @@ def generate_launch_description():
     # not both at once.
     #
     localizer_actions = [
-        # navsat_localizer,
         # map_server,     # localization is left to GPS
         slam_toolbox, # localization via LIDAR — enable if desired
         ekf_localizer,

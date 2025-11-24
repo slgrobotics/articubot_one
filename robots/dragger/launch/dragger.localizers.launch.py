@@ -112,6 +112,15 @@ def generate_launch_description():
         }
     )
 
+    outdoors_loc_nav = include_launch(
+        "outdoors_loc_nav",
+        ['launch', 'outdoors_loc.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'namespace': namespace
+        }
+    )
+
     #
     # Group all localizers —
     # You generally want either:
@@ -129,10 +138,11 @@ def generate_launch_description():
     # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
     localizer_actions = [
-        navsat_localizer, # localization via GPS
-        map_server,       # localization is left to GPS
+        outdoors_loc_nav, # external package preferred for outdoors
+        #navsat_localizer, # localization via GPS
+        #map_server,       # localization is left to GPS
         # slam_toolbox,   # localization via LIDAR — enable if desired
-        # ekf_localizer,  # needed for slam_toolbox indoors
+        #ekf_localizer,  # needed for slam_toolbox indoors
         # cartographer,
         # tf_localizer,   # debugging only
     ]

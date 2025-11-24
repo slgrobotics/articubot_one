@@ -1,6 +1,7 @@
 ### navsat transform config file ###
 
-# see https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/navsat_transform.yaml
+# See https://github.com/cra-ros-pkg/robot_localization/blob/ros2/params/navsat_transform.yaml
+#     https://github.com/slgrobotics/articubot_one/wiki/Outdoors-Package-Template
 
 navsat_transform:
   ros__parameters:
@@ -30,11 +31,11 @@ navsat_transform:
         zero_altitude: true # 2D robots always benefit from zero altitude
 
 # If this is true, the transform world_frame->utm transform is broadcast for use by other nodes. Defaults to false.
-        broadcast_utm_transform: false
+        broadcast_cartesian_transform: true
 
 # If this is true, the utm->world_frame transform will be published instead of the world_frame->utm transform. 
-# Note that broadcast_utm_transform still has to be enabled. Defaults to false.
-        broadcast_utm_transform_as_parent_frame: false
+# Note that broadcast_cartesian_transform still has to be enabled. Defaults to false.
+        broadcast_cartesian_transform_as_parent_frame: false
 
 # If this is true, all received odometry data is converted back to a lat/lon and published as a NavSatFix message as
 # /gps/filtered. Defaults to false.
