@@ -77,7 +77,8 @@ def generate_launch_description():
         LogInfo(msg=["namespace: ", namespace]),
         LogInfo(msg=["robot_model: ", robot_model]),
         LogInfo(msg=["use_sim_time: ", use_sim_time]),
-        LogInfo(msg=["EKF params: ", ekf_params_file]),
+        LogInfo(msg=["EKF params   - odom: ", ekf_odom_params_file]),
+        LogInfo(msg=["EKF params - navsat: ", ekf_navsat_params_file]),
         LogInfo(msg=["NavSat Transform params: ", navsat_transform_params_file]),
 
         # ------------------ EKF (ODOM) ------------------

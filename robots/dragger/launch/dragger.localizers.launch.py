@@ -138,9 +138,9 @@ def generate_launch_description():
     # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
     localizer_actions = [
-        outdoors_loc_nav, # external package preferred for outdoors
-        #navsat_localizer, # localization via GPS
-        #map_server,       # localization is left to GPS
+        #outdoors_loc_nav, # external package preferred for outdoors
+        navsat_localizer, # localization via GPS
+        map_server,       # localization is left to GPS
         # slam_toolbox,   # localization via LIDAR — enable if desired
         #ekf_localizer,  # needed for slam_toolbox indoors
         # cartographer,
