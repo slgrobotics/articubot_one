@@ -84,7 +84,7 @@ ekf_filter_node_odom:
     map_frame: map                  # Defaults to "map" if unspecified
     odom_frame: odom                # Defaults to "odom" if unspecified
     base_link_frame: base_link      # Defaults to "base_link" if unspecified, don't change!
-#    world_frame: odom              # Defaults to the value of odom_frame if unspecified
+    world_frame: odom               # Defaults to the value of odom_frame if unspecified
 
 
 # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
@@ -151,10 +151,10 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true, true, true,
+                  true,  true,  true,  # can be: false, false, true
                   false, false, false,
-                  false, false, true,
-                  false, false, false]
+                  false, false,  true,
+                  false, false, false]  # having true in "x_accel" cell makes sim crazy
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -171,11 +171,12 @@ ekf_filter_node_odom:
     imu0_differential: false
 
     imu0_relative: false
-    imu0_queue_size: 10
+    imu0_queue_size: 20
 
-#    imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
-#    imu0_twist_rejection_threshold: 0.8                #
-#    imu0_linear_acceleration_rejection_threshold: 0.8  #
+# IMU data is subject to outliers, try filter them out:
+    imu0_pose_rejection_threshold: 2.5                 # Note the difference in parameter names
+    imu0_twist_rejection_threshold: 2.0                #
+    imu0_linear_acceleration_rejection_threshold: 0.8  #
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
@@ -221,9 +222,10 @@ ekf_filter_node_odom:
 # to be larger, which will cause the filter to trust the incoming measurement more during correction. The values are
 # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
 # unspecified.
-#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
 
-    process_noise_covariance:  [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.05, 1.0, 1.0, 0.1, 0.3, 0.3, 0.5, 0.3, 0.3, 0.3]
+#                                x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
+#    process_noise_covariance: [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.01, 0.5, 0.5, 0.1, 0.3,   0.3,    0.3, 0.3, 0.3, 0.3] # default
+    process_noise_covariance:  [1e-3, 1e-3, 1e-3, 0.3,  0.3,  0.05, 1.0, 1.0, 0.1, 0.3,   0.3,    0.5, 0.3, 0.3, 0.3]
     # Changes:
     #     yaw PN: 0.01 → 0.05 (trust IMU more)
     #     vx/vy PN: 0.5 → 1.0 (trust wheel velocity more)
@@ -234,9 +236,10 @@ ekf_filter_node_odom:
 # question. Users should take care not to use large values for variables that will not be measured directly. The values
 # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
 #if unspecified.
-#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
-    initial_estimate_covariance:  [0.5, 0.5, 1.0, 0.3, 0.3, 0.1, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 1.0, 1.0, 1.0]
+#                                   x,   y,    z,   roll, pitch, yaw,  vx,  vy,  vz, vroll, vpitch, vyaw, ax,  ay,  az
+#    initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0,   1e-9, 1.0, 1.0, 1.0, 1.0,   1.0,    1.0, 1.0, 1.0, 1.0] # default
+    initial_estimate_covariance:  [0.5,   0.5,  1.0, 0.3, 0.3,    0.1, 0.5, 0.5, 0.5, 0.3,   0.3,    0.3, 1.0, 1.0, 1.0]
     # Changes: (more pessimistic values, this makes early convergence smoother)
     #     x/y pos IEC: 1e-9 → 0.5 (wheel odom is not very accurate)
     #     z pos IEC: 1e-9 → 1.0 (no z measurement)
