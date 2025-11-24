@@ -113,7 +113,7 @@ def generate_launch_description():
             remappings=[
                 ('imu', 'imu/data'),                # sensor IMU input
                 ('gps/fix', 'gps/fix'),             # raw GPS fix
-                ('odometry/filtered', 'odometry/global'),  # odom input to correct yaw. "local" here will cause slow drift from initial position
+                ('odometry/filtered', 'odometry/global'),  # odom input. "local" here will cause slow drift from initial position
                 ("odometry/gps", "odometry/gps"),   # output odom aligned to GPS
                 ('gps/filtered', 'gps/filtered')    # output filtered GPS
             ],
