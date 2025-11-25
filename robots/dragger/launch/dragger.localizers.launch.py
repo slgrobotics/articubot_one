@@ -97,7 +97,8 @@ def generate_launch_description():
         package="tf2_ros",
         namespace=namespace,
         executable="static_transform_publisher",
-        arguments=["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+        arguments=["0", "0", "0", "0", "0", "0", "odom", "base_link"] # replaces ekf_localizer - when used outdoors only
+        #arguments=["0", "0", "0", "0", "0", "0", "odom", "map"]
     )
 
     # ==========================
@@ -124,6 +125,7 @@ def generate_launch_description():
             'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
             'map': map_yaml_file,        # optional map file for amcl or map_server
             #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
+            #'do_odom_tf': 'true'          # whether to publish static "odom->base_link" TF (default: true)
         }
     )
 
@@ -148,7 +150,7 @@ def generate_launch_description():
         #navsat_localizer, # localization via GPS
         #map_server,       # localization is left to GPS
         # slam_toolbox,   # localization via LIDAR — enable if desired
-        ekf_localizer,  # IMU + ODOM fusing. Needed for slam_toolbox indoors and outdoors
+        #ekf_localizer,  # IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
         # cartographer,
         # tf_localizer,   # debugging only
     ]
