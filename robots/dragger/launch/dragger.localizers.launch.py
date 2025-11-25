@@ -77,7 +77,7 @@ def generate_launch_description():
     # optional alternative - Map Server
     # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
     #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
-    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    #map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     map_server = include_launch(
         package_name,
@@ -113,15 +113,17 @@ def generate_launch_description():
     )
 
     # see https://github.com/slgrobotics/outdoors_loc_nav
+    map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
+
     outdoors_loc_nav = include_launch(
         "outdoors_loc_nav",
         ['launch', 'outdoors_loc.launch.py'],
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            #'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
-            'localizer': 'amcl',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
-            #'localizer': 'slam_toolbox',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
+            'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
+            'map': map_yaml_file,        # optional map file for amcl or map_server
+            #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
         }
     )
 
