@@ -5,6 +5,8 @@
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
 #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
+# meld /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml ~/robot_ws/src/articubot_one/robots/dragger/config/nav2_params.yaml
+#
 
 # see https://docs.nav2.org/configuration/packages/configuring-amcl.html
 amcl:

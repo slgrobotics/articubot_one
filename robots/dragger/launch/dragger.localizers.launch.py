@@ -112,12 +112,16 @@ def generate_launch_description():
         }
     )
 
+    # see https://github.com/slgrobotics/outdoors_loc_nav
     outdoors_loc_nav = include_launch(
         "outdoors_loc_nav",
         ['launch', 'outdoors_loc.launch.py'],
         {
             'use_sim_time': use_sim_time,
-            'namespace': namespace
+            'namespace': namespace,
+            #'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
+            'localizer': 'amcl',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
+            #'localizer': 'slam_toolbox',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
         }
     )
 
@@ -142,7 +146,7 @@ def generate_launch_description():
         #navsat_localizer, # localization via GPS
         #map_server,       # localization is left to GPS
         # slam_toolbox,   # localization via LIDAR — enable if desired
-        ekf_localizer,  # needed for slam_toolbox indoors and outdoors
+        ekf_localizer,  # IMU + ODOM fusing. Needed for slam_toolbox indoors and outdoors
         # cartographer,
         # tf_localizer,   # debugging only
     ]
