@@ -45,7 +45,7 @@ slam_toolbox:
     debug_logging: false
     throttle_scans: 1
     # see https://chatgpt.com/s/t_692348bb05048191b24d621992e75b03
-    transform_publish_period: 0 #if 0 never publishes odometry - if >0, wheels will be jumping off
+    transform_publish_period: 0.0 #if 0 never publishes odometry - if >0, wheels will be jumping off
     map_update_interval: 5.0
     resolution: 0.25
     min_laser_range: 0.5

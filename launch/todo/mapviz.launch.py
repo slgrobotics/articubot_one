@@ -40,6 +40,15 @@ def generate_launch_description():
             package="tf2_ros",
             executable="static_transform_publisher",
             name="swri_transform",
-            arguments=["0", "0", "0", "0", "0", "0", "map", "origin"]
+            arguments=[
+                '--x', '0.0',     # X translation in meters
+                '--y', '0.0',     # Y translation in meters
+                '--z', '0.0',     # Z translation in meters
+                '--roll', '0.0',  # Roll in radians
+                '--pitch', '0.0', # Pitch in radians
+                '--yaw', '0.0',   # Yaw in radians (e.g., 90 degrees)
+                '--frame-id', 'map', # Parent frame ID
+                '--child-frame-id', 'origin' # Child frame ID
+            ]
         )
     ])
