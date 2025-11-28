@@ -77,7 +77,7 @@ def generate_launch_description():
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see slam_toolbox_params.yaml
     ekf_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_imu_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 

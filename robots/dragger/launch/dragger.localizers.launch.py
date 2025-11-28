@@ -32,98 +32,32 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # ==========================
-    # most used localizer - SLAM Toolbox
-    slam_toolbox_params_file = PathJoinSubstitution([
-        FindPackageShare(package_name), 'robots', robot_model, 'config', 'slam_toolbox_params.yaml'
-    ])
-
-    slam_toolbox = include_launch(
-        "slam_toolbox",
-        ['launch', 'online_async_launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'namespace': namespace,
-            'slam_params_file': slam_toolbox_params_file
-        }
-    )
-
-    # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
+    #
+    # Note: ekf_imu_odom.launch.py must be run in main dragger.launch.py
+    # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
+    # it is needed, among others, for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see slam_toolbox_params.yaml
-    ekf_localizer = include_launch(
-        package_name,
-        ['launch', 'ekf_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
 
     # ==========================
-    # optional alternative - Cartographer
-    cartographer = include_launch(
-        package_name,
-        ['launch', 'cartographer.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'namespace': namespace,
-            'robot_model': robot_model
-        }
-    )
+    #
+    # You generally want either:
+    #   - map_server (GPS)
+    #   - slam_toolbox (LIDAR)
+    # not both at once.
+    #
+    # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments.
+    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
+    #       Therefore, for outdoor use I am using only GPS-based localization with mapper server.
+    #       Adding a previously saved map to the map server is possible.
+    #       If indoor use is needed, enable slam_toolbox instead.
+    #
+    # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
+    #     https://github.com/slgrobotics/outdoors_loc_nav
+    #
 
-    # ==========================
-    # optional alternative - Map Server
-    # Map server is convenient when used with GPS and an empty map, for obstacle avoidance.
-    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is default anyway
-    #map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
-
-    map_server = include_launch(
-        package_name,
-        ['launch', 'map_server.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'namespace': namespace,
-            # default map (empty) OR:
-            # 'map': map_yaml_file,
-        }
-    )
-
-    # ==========================
-    # debugging helper - rarely needed
-    # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
-    tf_localizer = Node(
-        package="tf2_ros",
-        namespace=namespace,
-        executable="static_transform_publisher",
-        #arguments=["0", "0", "0", "0", "0", "0", "odom", "base_link"]
-        #arguments=["0", "0", "0", "0", "0", "0", "odom", "map"]
-        arguments=[
-            '--x', '0.0',     # X translation in meters
-            '--y', '0.0',     # Y translation in meters
-            '--z', '0.0',     # Z translation in meters
-            '--roll', '0.0',  # Roll in radians
-            '--pitch', '0.0', # Pitch in radians
-            '--yaw', '0.0',   # Yaw in radians (e.g., 90 degrees)
-            '--frame-id', 'odom', # Parent frame ID
-            '--child-frame-id', 'base_link' # Child frame ID
-        ], # replaces ekf_localizer - when used outdoors only
-    )
-
-    # ==========================
-
-    navsat_localizer = include_launch(
-        package_name,
-        ['launch', 'dual_ekf_navsat.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
-
-    # see https://github.com/slgrobotics/outdoors_loc_nav
     map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
 
     outdoors_loc_nav = include_launch(
@@ -135,37 +69,14 @@ def generate_launch_description():
             'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
             'map': map_yaml_file,        # optional map file for amcl or map_server
             #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
-            #'do_odom_tf': 'true'          # whether to publish static "odom->base_link" TF (default: true)
         }
     )
 
-    #
-    # Group all localizers —
-    # You generally want either:
-    #   - map_server (GPS)
-    #   - slam_toolbox (LIDAR)
-    # not both at once.
-    #
-    # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments.
-    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
-    #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with mapper server.
-    #       Adding a previously saved map to the map server is possible.
-    #       If indoor use is needed, enable slam_toolbox and ekf_localizer instead.
-    #
-    # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
-    #
+    # Multi-robot safe: wrap everything under the namespace
     localizer_actions = [
         outdoors_loc_nav, # external package preferred for outdoors
-        #navsat_localizer, # localization via GPS
-        #map_server,       # localization is left to GPS
-        # slam_toolbox,   # localization via LIDAR — enable if desired
-        #ekf_localizer,  # IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
-        # cartographer,
-        # tf_localizer,   # debugging only
     ]
 
-    # Multi-robot safe: wrap everything under the namespace
     robot_localizers = namespace_wrap(namespace, localizer_actions)
 
     # ==========================

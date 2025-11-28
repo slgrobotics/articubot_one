@@ -53,7 +53,7 @@ def generate_launch_description():
     # see slam_toolbox_params.yaml
     ekf_localizer = include_launch(
         package_name,
-        ['launch', 'ekf_odom.launch.py'],
+        ['launch', 'ekf_imu_odom.launch.py'],
         {
             'use_sim_time': use_sim_time,
             'robot_model': robot_model,
