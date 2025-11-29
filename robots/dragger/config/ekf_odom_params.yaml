@@ -151,7 +151,7 @@ ekf_filter_node_odom:
 
     imu0: imu/data
     imu0_config: [false, false, false,
-                  true,  true,  true,  # can be: false, false, true
+                   true,  true,  true,  # can be: false, false, true
                   false, false, false,
                   false, false,  true,
                   false, false, false]  # having true in "x_accel" cell makes sim crazy
@@ -165,6 +165,7 @@ ekf_filter_node_odom:
 # ensure that the IMU always wins during rotations, fixing possible drift:
     imu0_pose_rejection_threshold: 2.5
     imu0_twist_rejection_threshold: 2.0
+    imu0_linear_acceleration_rejection_threshold: 0.8  #
 
 # If using a real robot you might want to set this to true,
 # since usually absolute measurements from real imu's are not very accurate:
@@ -172,11 +173,6 @@ ekf_filter_node_odom:
 
     imu0_relative: false
     imu0_queue_size: 20
-
-# IMU data is subject to outliers, try filter them out:
-    imu0_pose_rejection_threshold: 2.5                 # Note the difference in parameter names
-    imu0_twist_rejection_threshold: 2.0                #
-    imu0_linear_acceleration_rejection_threshold: 0.8  #
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
