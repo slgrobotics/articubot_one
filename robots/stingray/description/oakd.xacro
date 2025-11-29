@@ -3,9 +3,9 @@
 <!--  xacro macros for oakd mount -->
 <robot name="oakd" xmlns:xacro="http://ros.org/wiki/xacro">
       <xacro:macro name="oakd_link" params="mount_point">
-      <xacro:property name="oakd_length" value="0.0803" />
-      <xacro:property name="oakd_width" value="0.0957" />
-      <xacro:property name="oakd_depth" value="0.1267" />
+      <xacro:property name="oakd_x_length" value="0.033" />
+      <xacro:property name="oakd_y_width" value="0.110" />
+      <xacro:property name="oakd_z_height" value="0.0545" />
       <xacro:property name="oakd_mass" value="0.15" />
 
       <link name="oakd_${mount_point}">
@@ -18,16 +18,16 @@
                <material name="black" />
           </visual>
           <collision>
-              <origin rpy="0 0 0" xyz="0 0 0" />
+              <origin rpy="0 0 0" xyz="${-oakd_x_length/2} 0 ${-oakd_z_height/4}" />
               <geometry>
-                  <box size="${oakd_length} ${oakd_width} ${oakd_depth}"/>
+                  <box size="${oakd_x_length} ${oakd_y_width} ${oakd_z_height}"/>
               </geometry>
           </collision>
           <!-- <xacro:solid_cuboid_inertial -->
           <xacro:inertial_box
               mass="${oakd_mass}"
-              x="${oakd_length}" y="${oakd_width}" z="${oakd_depth}" >
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+              x="${oakd_x_length}" y="${oakd_y_width}" z="${oakd_z_height}" >
+            <origin xyz="${-oakd_x_length/2} 0.0 ${-oakd_z_height/4}" rpy="0.0 0.0 0.0"/>
           </xacro:inertial_box>
       </link>
       
@@ -68,7 +68,7 @@
   <!-- Gazebo plugin for greyscale left/right stereo pairs -->
 
       <gazebo reference="oakd_${mount_point}">
-    <material>Gazebo/DarkGrey</material>
+    <material>Gazebo/Grey</material>
     <sensor type="multicamera" name="stereo_camera">
       <update_rate>30.0</update_rate>
       <camera name="left">

@@ -65,7 +65,8 @@
     <!-- OAK-D Camera -->
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/oakd.xacro" />
     <xacro:oakd_link mount_point="front_panel"/>
-   <xacro:oakd_joint x="0.023" y="0.01" z="0.030" roll="0" pitch="0" yaw="0" mount_point="front_panel"/>
+    <xacro:oakd_joint x="0.023" y="0.01" z="0.030" roll="0" pitch="0" yaw="0" mount_point="front_panel"/>
+
     <!-- RealSense Camera -->
     <!-- <xacro:include filename="../../../description/RealSenseD455.xacro" /> -->
 
