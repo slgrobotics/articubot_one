@@ -87,23 +87,6 @@ def generate_launch_description():
     )
 
     # -------------------------------------------------------
-    # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
-    # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
-    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see slam_toolbox_params.yaml
-    # -------------------------------------------------------
-
-    ekf_imu_odom = include_launch(
-        package_name,
-        ['launch', 'ekf_imu_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
-
-    # -------------------------------------------------------
     # Timed includes — Localizers first, Nav2 after
     #
     # Note: TimerAction does not work inside included launch files:
@@ -155,7 +138,6 @@ def generate_launch_description():
         sensors_include,
         sonars_include,
         sonars_sim_include,
-        ekf_imu_odom,
         delayed_loc,
         delayed_nav,
     ])

@@ -31,14 +31,23 @@ def generate_launch_description():
     # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # ==========================
-    #
-    # Note: ekf_imu_odom.launch.py must be run in main dragger.launch.py
+    # -------------------------------------------------------
+    # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
     # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
-    # it is needed, among others, for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
     # see slam_toolbox_params.yaml
+    # -------------------------------------------------------
+
+    ekf_imu_odom = include_launch(
+        package_name,
+        ['launch', 'ekf_imu_odom.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'namespace': namespace
+        }
+    )
 
     # ==========================
     #
@@ -66,7 +75,7 @@ def generate_launch_description():
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            'localizer': 'map_server',   # or 'amcl' or 'slam_toolbox'  Default: 'map_server'
+            'localizer': 'slam_toolbox',   # 'cartographer' or 'amcl' or 'slam_toolbox'  Default: 'map_server'
             'map': map_yaml_file,        # optional map file for amcl or map_server
             #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
         }
@@ -74,6 +83,7 @@ def generate_launch_description():
 
     # Multi-robot safe: wrap everything under the namespace
     localizer_actions = [
+        ekf_imu_odom,
         outdoors_loc_nav, # external package preferred for outdoors
     ]
 
