@@ -6,9 +6,9 @@
         robot_core.xacro
         common_properties.xacro
         individual sensors - each with their positions
-            JP_lidar.xacro
+            ydlidar.xacro
             JP_imu.xacro
-            JP_camera.xacro
+            fisheye_camera.xacro
             OAK-D camera
             battery.xacro
             ros2_control.xacro   
@@ -31,19 +31,23 @@
     <!-- 
     <xacro:property name="camera_offset_x" value="${front_panel_offset}"/>
     <xacro:property name="camera_offset_z" value="0.01525"/>
-    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_camera.xacro" />
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/fisheye_camera.xacro" />
     <xacro:property name="camera_rotation_y" value="-0.1571"/>    =9 degrees 
     -->
 
-    <!-- LIDAR -->
-    <xacro:property name="lidar_support_offset_x" value="0.042"/>
-    <xacro:property name="lidar_support_offset_y" value="-0.02"/>
-    <xacro:property name="lidar_support_offset_z" value="${chassis_height/2 + 0.00375}"/>
-    <xacro:include filename="$(find articubot_one)/robots/stingray/description/lidar_support.xacro"/>
+    <!-- YDLIDAR  -->
+    <!-- <xacro:property name="ydlidar_support_offset_x" value="0.042"/>
+    <xacro:property name="ydlidar_support_offset_y" value="-0.02"/>
+    <xacro:property name="ydlidar_support_offset_z" value="${chassis_height/2 + 0.00375}"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/ydlidar_support.xacro"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/ydlidar.xacro" /> -->
 
-    <!-- <xacro:property name="laser_offset_x" value="${wheel_offset_x}"/> -->
-    <!-- <xacro:property name="laser_offset_z" value="0.50"/> -->
-    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_lidar.xacro" />
+    <!-- LDLIDAR LD19 -->
+    <xacro:property name="ldlidar_support_offset_x" value="0.04669"/>
+    <xacro:property name="ldlidar_support_offset_y" value="0.0"/>
+    <xacro:property name="ldlidar_support_offset_z" value="${chassis_height/2}"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/ldlidar_support.xacro"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/ldlidar.xacro"/>
 
     <!-- IMU -->
     <!-- BNO055 IMU is placed at the center of the wheel axis = base_link -->
@@ -53,7 +57,7 @@
     <xacro:property name="imu_rotation_x" value="0.0"/>
     <xacro:property name="imu_rotation_y" value="0.0"/>
     <xacro:property name="imu_rotation_z" value="0.0"/>
-    <xacro:include filename="$(find articubot_one)/robots/stingray/description/JP_imu.xacro"/>
+    <xacro:include filename="$(find articubot_one)/robots/stingray/description/BNO055_imu.xacro"/>
 
     <!-- BATTERY -->
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/Zeee_LiPo_battery.xacro" />
