@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:property name="lidar_mass" value="0.164"/>
+    <xacro:property name="lidar_radius" value="0.03025"/>
+    <xacro:property name="lidar_height" value="0.016"/>
+    <xacro:property name="lidar_support_height" value="0.0424"/>
+    <xacro:property name="lidar_offset_x" value="0.045"/>
+    <xacro:property name="lidar_offset_y" value="0.0"/>
+    <xacro:property name="lidar_offset_z" value="${(chassis_height/2) + (lidar_support_height) + (lidar_height/2) + 0.015}"/>
+    <xacro:property name="lidar_rotation_x" value="${pi}"/>
+    <xacro:property name="lidar_rotation_y" value="0.0"/>
+    <xacro:property name="lidar_rotation_z" value="${pi/2}"/>
+
+    <joint name="laser_joint" type="fixed">
+        <parent link="lidar_support_link"/>
+        <child link="laser_frame"/>
+        <origin xyz="${lidar_offset_x} ${lidar_offset_y} ${lidar_offset_z}" rpy="${lidar_rotation_x} ${lidar_rotation_y} ${lidar_rotation_z}"/>
+    </joint>
+
+    <link name="laser_frame">
+        <visual>
+            <geometry>
+                <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="${lidar_mass}" length="${lidar_height}" radius="${lidar_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <gazebo reference="laser_frame">
+        <material>Gazebo/Blue</material>
+    	    <sensor name="laser_frame" type="gpu_lidar">
+            <pose> 0.0 0.0 0.0 0.0 0.0 0.0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <topic>gz_scan</topic>
+            <gz_frame_id>laser_frame</gz_frame_id>
+            <frame_id>laser_frame</frame_id>
+            <ray> 
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-${pi}</min_angle>
+                        <max_angle>${pi}</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>1</samples>
+                        <resolution>1</resolution>
+                        <min_angle>0.0</min_angle>
+                        <max_angle>0.0</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>12</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+        </sensor>
+    </gazebo>
+
+
+</robot>

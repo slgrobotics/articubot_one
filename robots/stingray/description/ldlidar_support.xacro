@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <!-- origin in center of lidar cylinder -->
+    <!-- Consists of 3 x 1/4" x 1 1/2" hex standoff's -->
+    <!-- located origin + (0.0234,0,0); (-0.00843,-0.0233,0); (-0.00843,0.0233,0) -->
+    <!-- LIDAR SUPPORT JOINT -->
+
+    <xacro:property name="ldlidar_support_height" value="0.0381"/>
+    <joint name="lidar_support_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="ldlidar_support_link"/>
+        <origin xyz="0.0 0.0 ${chassis_height/2}"/>
+    </joint>
+
+    <!-- LIDAR SUPPORT LINK -->
+    <!-- 'Front' of ld19 lidar scan is the arrow on top pointing right if the center tab points forward
+    which in this instance points to the right of the robot
+    Consists of 3, 1/4" x 1.5" nylon hex standoffs placed in triangle around LD19 lidar at mounting holes
+    -->
+
+    <link name="ldlidar_support_link">
+        <!-- Front standoff -->
+        <visual name="ldlidar_support_front">
+            <origin xyz="${ldlidar_support_offset_x + 0.0234} ${ldlidar_support_offset_y} ${ldlidar_support_height/2}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="0.003175" length="${ldlidar_support_height}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <!-- Right rear standoff -->
+        <visual name="ldlidar_support_right">
+            <origin xyz="${ldlidar_support_offset_x - 0.00846} ${ldlidar_support_offset_y - 0.02333} ${ldlidar_support_height/2}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="0.003175" length="${ldlidar_support_height}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <!-- Left rear standoff -->
+        <visual name="ldlidar_support_left">
+            <origin xyz="${ldlidar_support_offset_x - 0.00846} ${ldlidar_support_offset_y + 0.02333} ${ldlidar_support_height/2}" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <cylinder radius="0.003175" length="${ldlidar_support_height}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+</robot>
+

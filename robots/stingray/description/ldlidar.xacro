@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <xacro:property name="ldlidar_mass" value="0.047"/>
+    <xacro:property name="ldlidar_radius" value="0.017645"/>
+    <xacro:property name="ldlidar_height" value="0.012"/>
+    <xacro:property name="ldlidar_chassis_height" value="0.0228"/>
+    <xacro:property name="ldlidar_chassis_width" value="0.038"/>
+    <xacro:property name="ldlidar_support_height" value="0.0381"/>
+    <xacro:property name="ldlidar_offset_x" value="0.04669"/>
+    <xacro:property name="ldlidar_offset_y" value="0.0"/>
+    <xacro:property name="ldlidar_offset_z" value="${ldlidar_support_height}"/>
+    <xacro:property name="ldlidar_rotation_x" value="0.0"/>
+    <xacro:property name="ldlidar_rotation_y" value="0.0"/>
+    <xacro:property name="ldlidar_rotation_z" value="${pi}"/>
+
+    <joint name="ldlaser_joint" type="fixed">
+        <parent link="ldlidar_support_link"/>
+        <child link="ldlaser_frame"/>
+        <origin xyz="${ldlidar_offset_x} ${ldlidar_offset_y} ${ldlidar_offset_z}" rpy="${ldlidar_rotation_x} ${ldlidar_rotation_y} ${ldlidar_rotation_z}"/>
+    </joint>
+
+    <link name="ldlaser_frame">
+        <visual>
+            <origin xyz="0 0 ${ldlidar_chassis_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${ldlidar_chassis_width} ${ldlidar_chassis_width} ${ldlidar_chassis_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 ${ldlidar_chassis_height + ldlidar_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="${ldlidar_radius}" length="${ldlidar_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${ldlidar_radius}" length="${ldlidar_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="${ldlidar_mass}" length="${ldlidar_height}" radius="${ldlidar_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <!-- Define the actual laser scan plane frame -->
+    <joint name="ldlaser_to_base_laser" type="fixed">
+        <parent link="ldlaser_frame"/>
+        <child link="base_laser"/>
+        <origin xyz="0 0 ${ldlidar_chassis_height + ldlidar_height/2 - 0.0015}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="base_laser"/>
+
+    <gazebo reference="ldlaser_frame">
+        <material><Gazebo/>
+        <Black></Black></material>
+    	    <sensor name="ldlaser_frame" type="gpu_lidar">
+            <pose> 0.0 0.0 0.0 0.0 0.0 0.0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <topic>gz_scan</topic>
+            <gz_frame_id>laser_frame</gz_frame_id>
+            <frame_id>laser_frame</frame_id>
+            <ray> 
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-${pi}</min_angle>
+                        <max_angle>${pi}</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>1</samples>
+                        <resolution>1</resolution>
+                        <min_angle>0.0</min_angle>
+                        <max_angle>0.0</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>12</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+        </sensor>
+    </gazebo>
+
+
+</robot>
