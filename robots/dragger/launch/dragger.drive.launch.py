@@ -49,7 +49,7 @@ def generate_launch_description():
         launch_arguments={
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
             # 'initial_x': '1.0',
             # 'initial_y': '1.0',
             # 'initial_z': '20.0',
