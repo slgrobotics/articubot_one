@@ -54,17 +54,15 @@ def generate_launch_description():
     # You generally want either:
     #   - map_server (GPS)
     #   - slam_toolbox (LIDAR)
-    # not both at once.
     #
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments.
     #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
     #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with mapper server.
+    #       Therefore, for outdoor use I am using only GPS-based localization with map server.
     #       Adding a previously saved map to the map server is possible.
-    #       If indoor use is needed, enable slam_toolbox instead.
     #
-    # See https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
-    #     https://github.com/slgrobotics/outdoors_loc_nav
+    # See https://github.com/slgrobotics/outdoors_loc_nav
+    #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
 
     map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
@@ -75,8 +73,8 @@ def generate_launch_description():
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            'localizer': 'slam_toolbox',   # 'map_server' or 'slam_toolbox' or 'cartographer' or 'amcl'  Default: 'map_server'
-            'map': map_yaml_file,        # optional map file for amcl or map_server
+            'localizer': 'slam_toolbox',  # 'map_server' or 'slam_toolbox' or 'cartographer' or 'amcl'  Default: 'map_server'
+            'map': map_yaml_file,         # optional map file for amcl or map_server
             #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
         }
     )
