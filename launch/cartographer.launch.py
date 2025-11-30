@@ -70,7 +70,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         LogInfo(msg=[
-            '============ [outdoors_loc_nav]  starting CARTOGRAPHER  namespace="', namespace,
+            '============ starting CARTOGRAPHER  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  config_dir=', cartographer_config_dir,
             '  config=', configuration_basename
