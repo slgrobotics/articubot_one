@@ -1,9 +1,9 @@
 #
-# Robot-specific SLAM Toolbox configuration file (Create 1 turtlebot version)
+# Robot-specific SLAM Toolbox configuration file (Dragger version)
 #
 # See https://github.com/SteveMacenski/slam_toolbox/blob/jazzy/config/mapper_params_localization.yaml
 #
-# meld /opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml ~/robot_ws/src/articubot_one/robots/turtle/config/mapper_params.yaml
+# meld /opt/ros/jazzy/share/slam_toolbox/config/mapper_params_online_async.yaml ~/robot_ws/src/articubot_one/robots/dragger/config/slam_toolbox_params.yaml
 #
 
 slam_toolbox:
@@ -38,22 +38,21 @@ slam_toolbox:
     # if you'd like to immediately start continuing a map at a given pose
     # or at the dock, but they are mutually exclusive, if pose is given
     # will use pose
-    map_file_name: turtle_map_serial   # will be saved in the directory where the robot was launched
+    map_file_name: dragger_map_serial   # will be saved in the directory where the robot was launched
     # map_start_pose: [0.0, 0.0, 0.0]
     #map_start_at_dock: true
 
     debug_logging: false
     throttle_scans: 1
-    transform_publish_period: 0.02 #if 0 never publishes odometry - if >0, wheels will be jumping off
+    # see https://chatgpt.com/s/t_692348bb05048191b24d621992e75b03
+    transform_publish_period: 0.0 #if 0 never publishes odometry - if >0, wheels will be jumping off
     map_update_interval: 5.0
-    resolution: 0.05
-    min_laser_range: 0.1
-    max_laser_range: 4.0  # for rastering images
+    resolution: 0.25
+    min_laser_range: 0.5
+    max_laser_range: 12.0 #for rastering images
     minimum_time_interval: 0.5
     transform_timeout: 0.2
-    tf_buffer_duration: 300.0    # Duration to store TF messages for lookup. Set high if running offline at multiple times speed in synchronous mode.
-    #tf_buffer_duration: 30.0    # mapper_params_online_async.yaml
-    #tf_buffer_duration: 14400.  # mapper_params_offline.yaml
+    tf_buffer_duration: 30.0
     stack_size_to_use: 40000000 #// program needs a larger stack size to serialize large maps
     #enable_interactive_mode: true
 

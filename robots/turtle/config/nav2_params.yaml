@@ -101,8 +101,8 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
-    costmap_update_timeout: 0.30
+    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step. Works for real robots too.
+    costmap_update_timeout: 0.50
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     odom_topic: /odometry/local   # works
     #odom_topic: /odometry/global  # works
@@ -291,8 +291,9 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.24  # Default: 0.55  Must be larger than robot footprint (0.23)
+        # See https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
+        inflation_radius: 0.24  # Default: 0.55. Should be larger than robot footprint (radius 0.22)
+        cost_scaling_factor: 4.0  # Much steeper decay near robot. Default: 1.0 The rate at which the cost decays exponentially across the inflation radius.
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -344,9 +345,10 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.24  # Default: 0.55  Must be larger than robot footprint (0.23)
+        # See http://wiki.ros.org/costmap_2d/hydro/inflation
+        #     https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
+        cost_scaling_factor: 4.0 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
+        inflation_radius: 0.26  # a bit more conservative globally. Robot radius 0.22.
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 

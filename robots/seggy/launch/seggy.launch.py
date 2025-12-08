@@ -74,8 +74,10 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    loc_delay = 8.0    # seconds
-    nav_delay = 15.0
+    # Localizers are run with a delay to allow IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow map to stabilize
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
 
     localizers_include = include_launch(
         package_name,
@@ -132,7 +134,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'namespace',
-            default_value='seggy1',
+            default_value='',
             description='Top-level namespace for multi-robot deployment'
         ),
 

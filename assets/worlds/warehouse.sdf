@@ -1,0 +1,347 @@
+<?xml version="1.0" ?>
+<sdf version='1.10'>
+  <world name='world_demo'>
+    <gravity>0 0 -9.8000000000000007</gravity>
+    <physics type='ode'>
+      <max_step_size>0.01</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <max_contacts>10</max_contacts>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    <plugin name='gz::sim::systems::Magnetometer' filename='gz-sim-magnetometer-system'/>
+    <plugin name='gz::sim::systems::AirPressure' filename='gz-sim-air-pressure-system'/>
+    <plugin name='gz::sim::systems::ApplyLinkWrench' filename='gz-sim-apply-link-wrench-system'/>
+    <plugin name='gz::sim::systems::NavSat' filename='gz-sim-navsat-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <!-- lat/lon/alt show up in gps/fix topic in sim -->
+      <latitude_deg>33.199840</latitude_deg>
+      <longitude_deg>-86.299795</longitude_deg>
+      <elevation>150</elevation>
+      <heading_deg>0</heading_deg>
+      <!-- see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+      currently gazebo has a bug: instead of outputting lat, long, altitude in ENU
+      (x = East, y = North and z = Up) as the default configurations, it's outputting (-E)(-N)U,
+      therefore we rotate the default frame 180 so that it would go back to ENU
+      see: https://github.com/osrf/gazebo/issues/2022 -->
+      <!-- heading_deg>180</heading_deg -->
+    </spherical_coordinates>
+
+    <gui fullscreen='false'>
+      <plugin name='3D View' filename='GzScene3D'>
+        <ignition-gui>
+          <title>3D View</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='string' key='state'>docked</property>
+        </ignition-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_pose>-3.10 3.81 4.51 0 0.79 -0.89</camera_pose>
+      </plugin>
+      <plugin name='World control' filename='WorldControl'>
+        <ignition-gui>
+          <title>World control</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='bool' key='resizable'>false</property>
+          <property type='double' key='height'>72</property>
+          <property type='double' key='width'>121</property>
+          <property type='double' key='z'>1</property>
+          <property type='string' key='state'>floating</property>
+          <anchors target='3D View'>
+            <line own='left' target='left'/>
+            <line own='bottom' target='bottom'/>
+          </anchors>
+        </ignition-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+      </plugin>
+      <plugin name='World stats' filename='WorldStats'>
+        <ignition-gui>
+          <title>World stats</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='bool' key='resizable'>false</property>
+          <property type='double' key='height'>110</property>
+          <property type='double' key='width'>290</property>
+          <property type='double' key='z'>1</property>
+          <property type='string' key='state'>floating</property>
+          <anchors target='3D View'>
+            <line own='right' target='right'/>
+            <line own='bottom' target='bottom'/>
+          </anchors>
+        </ignition-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin name='Transform control' filename='TransformControl'>
+        <ignition-gui>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property key='x' type='double'>0</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>250</property>
+          <property key='height' type='double'>50</property>
+          <property key='state' type='string'>floating</property>
+          <property key='cardBackground' type='string'>#666666</property>
+        </ignition-gui>
+      </plugin>
+      <plugin name='Shapes' filename='Shapes'>
+        <ignition-gui>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property key='x' type='double'>250</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>150</property>
+          <property key='height' type='double'>50</property>
+          <property key='state' type='string'>floating</property>
+          <property key='cardBackground' type='string'>#666666</property>
+        </ignition-gui>
+      </plugin>
+      <plugin name='Screenshot' filename='Screenshot'>
+        <ignition-gui>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property key='x' type='double'>400</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>50</property>
+          <property key='height' type='double'>50</property>
+          <property key='state' type='string'>floating</property>
+          <property key='cardBackground' type='string'>#666666</property>
+        </ignition-gui>
+      </plugin>
+      <plugin name='Component inspector' filename='ComponentInspector'>
+        <ignition-gui>
+          <property key='x' type='double'>0</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>400</property>
+          <property key='height' type='double'>375</property>
+          <property key='state' type='string'>docked_collapsed</property>
+        </ignition-gui>
+      </plugin>
+      <plugin name='Entity tree' filename='EntityTree'>
+        <ignition-gui>
+          <property key='x' type='double'>0</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>400</property>
+          <property key='height' type='double'>375</property>
+          <property key='state' type='string'>docked_collapsed</property>
+        </ignition-gui>
+      </plugin>
+      <plugin name='Teleop' filename='Teleop'>
+        <ignition-gui>
+          <property key='x' type='double'>0</property>
+          <property key='y' type='double'>0</property>
+          <property key='width' type='double'>400</property>
+          <property key='height' type='double'>900</property>
+          <property key='state' type='string'>docked</property>
+        </ignition-gui>
+        <topic>/model/tugbot/cmd_vel</topic>
+      </plugin>
+    </gui>
+    <scene>
+      <ambient>1 1 1 1</ambient>
+      <background>0.300000012 0.699999988 0.899999976 1</background>
+      <shadows>false</shadows>
+      <grid>false</grid>
+    </scene>
+    <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <model name='ground_plane'>
+      <static>true</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1 1</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Warehouse</uri>
+      <name>warehouse</name>
+      <pose>0 0 -0.089999999999999997 0 0 0</pose>
+    </include>
+
+    <!-- include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/Tugbot-charging-station</uri>
+      <name>charging_station</name>
+      <pose>14.699999999999999 -10.6 -0.040000000000000001 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/Tugbot</uri>
+      <name>tugbot</name>
+      <pose>13.9 -10.6 0.10000000000000001 0 0 0</pose>
+    </include -->
+
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/cart_model_2</uri>
+      <name>cart1</name>
+      <pose>-5.7300000000000004 15 0.25 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf_big</uri>
+      <name>shelf_big_0</name>
+      <pose>-9.3417700000000004 -13.559799999999999 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf</name>
+      <pose>-4.4152800000000001 -0.69098700000000002 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_0</name>
+      <pose>-4.4152800000000001 2.3069700000000002 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_1</name>
+      <pose>-4.4152800000000001 5.30708 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_2</name>
+      <pose>-4.4152800000000001 8.3435199999999998 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_3</name>
+      <pose>5.6014400000000002 8.3435199999999998 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_4</name>
+      <pose>5.6014400000000002 5.30708 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_5</name>
+      <pose>5.6014400000000002 -0.69098700000000002 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_6</name>
+      <pose>5.6014400000000002 2.3069700000000002 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/pallet_box_mobile</uri>
+      <name>pallet_box_mobile</name>
+      <pose>4.4161000000000001 14.6952 0.01 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/pallet_box_mobile</uri>
+      <name>pallet_box_mobile_0</name>
+      <pose>4.4541500000000003 13.6212 0.01 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/pallet_box_mobile</uri>
+      <name>pallet_box_mobile_1</name>
+      <pose>4.4467999999999996 12.228999999999999 0.01 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/pallet_box_mobile</uri>
+      <name>pallet_box</name>
+      <pose>-6.1191300000000002 13.7079 0.01 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf_big</uri>
+      <name>shelf_big_1</name>
+      <pose>13.982100000000001 15.319000000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf_big</uri>
+      <name>shelf_big_2</name>
+      <pose>6.1977700000000002 -12.964700000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf_big</uri>
+      <name>shelf_big_3</name>
+      <pose>0.59437600000000002 -12.964700000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf_big</uri>
+      <name>shelf_big_4</name>
+      <pose>-5.3628400000000003 -12.964700000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_7</name>
+      <pose>13.3818 -21.241599999999998 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_8</name>
+      <pose>13.3818 -19.002800000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_9</name>
+      <pose>13.3818 -16.447800000000001 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/shelf</uri>
+      <name>shelf_10</name>
+      <pose>13.3818 -14.1028 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/MovAi/models/pallet_box_mobile</uri>
+      <name>pallet_box_0</name>
+      <pose>14.0222 -24.335000000000001 0.01 0 0 0</pose>
+    </include>
+    <light name='sun' type='directional'>
+      <pose>-5 -3 10 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0 0 -1</direction>
+      <diffuse>1 1 1 1</diffuse>
+      <specular>1 1 1 1</specular>
+      <attenuation>
+        <range>10</range>
+        <linear>1</linear>
+        <constant>1</constant>
+        <quadratic>0</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+  </world>
+</sdf>

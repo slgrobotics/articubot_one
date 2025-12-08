@@ -69,7 +69,13 @@ def generate_launch_description():
             default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
-        LogInfo(msg=['============ starting CARTOGRAPHER  use_sim_time: ', use_sim_time]),
+        LogInfo(msg=[
+            '============ starting CARTOGRAPHER  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  config_dir=', cartographer_config_dir,
+            '  config=', configuration_basename
+        ]),
+
 
         Node(
             package='cartographer_ros',
@@ -83,8 +89,10 @@ def generate_launch_description():
             remappings=[
                 ('imu','imu/data'),
                 ('scan','scan'),
-                #('odom','diff_cont/odom')  # direct mapping
-                ('odom','odometry/local')   # ekf filter mapping
+                #('odom','diff_cont/odom'),  # direct wheels odometry mapping
+                ('odom','odometry/local'),  # "ekf_filter_node_odom" mapping
+                #('odom','odometry/global'),  # "ekf_filter_node_navsat" mapping
+                ('fix','gps/filtered'),      # when use_nav_sat = true
                 ]
             ),
 

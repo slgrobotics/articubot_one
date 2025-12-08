@@ -19,7 +19,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    slam_toolbox_params_file = os.path.join(package_path,'robots','plucky','config','mapper_params.yaml')
+    slam_toolbox_params_file = os.path.join(package_path,'robots','plucky','config','slam_toolbox_params.yaml')
 
     slam_toolbox = IncludeLaunchDescription(
                 # see /opt/ros/jazzy/share/slam_toolbox/launch

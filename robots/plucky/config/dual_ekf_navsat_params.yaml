@@ -226,7 +226,7 @@ ekf_filter_node_odom:
 
     initial_estimate_covariance: [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 
-ekf_filter_node_map:
+ekf_filter_node_navsat:
   ros__parameters:
     frequency: 6.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
 #    sensor_timeout: 0.1

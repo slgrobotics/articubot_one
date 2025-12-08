@@ -255,15 +255,15 @@ local_costmap:
 
       # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       #robot_radius: 0.30  # actual robot radius plus small safety margin
-      footprint: "[[ 0.340,  0.000],
-                  [ 0.241, -0.241],
-                  [ 0.000, -0.340],
-                  [-0.241, -0.241],
-                  [-0.340,  0.000],
-                  [-0.241,  0.241],
-                  [ 0.000,  0.340],
-                  [ 0.241,  0.241]]"
-      inflation_radius: 0.4  # Should be larger than robot_radius
+      footprint: "[[ 0.280,  0.000],
+                  [ 0.235, -0.235],
+                  [ 0.000, -0.280],
+                  [-0.235, -0.235],
+                  [-0.300, -0.140],
+                  [-0.300,  0.140],
+                  [-0.235,  0.235],
+                  [ 0.000,  0.280],
+                  [ 0.235,  0.235]]"
 
       plugins: ["voxel_layer", "denoise_layer", "inflation_layer"] # order matters here. “static_layer” is not needed for the local costmap.
 
@@ -301,8 +301,9 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.75  # Default: 0.55  Must be larger than robot footprint
+        # See https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
+        inflation_radius: 0.36  # Default: 0.55. Should be larger than robot footprint. 0.3549 computed bubble. It was 0.75 before.
+        cost_scaling_factor: 4.0  # Much steeper decay near robot. Default: 1.0 The rate at which the cost decays exponentially across the inflation radius.
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -323,14 +324,15 @@ global_costmap:
 
       # Define either robot_radius or footprint. See "consider_footprint" in controller above.:
       #robot_radius: 0.30  # actual robot radius plus small safety margin
-      footprint: "[[ 0.340,  0.000],
-                  [ 0.241, -0.241],
-                  [ 0.000, -0.340],
-                  [-0.241, -0.241],
-                  [-0.340,  0.000],
-                  [-0.241,  0.241],
-                  [ 0.000,  0.340],
-                  [ 0.241,  0.241]]"
+      footprint: "[[ 0.280,  0.000],
+                  [ 0.235, -0.235],
+                  [ 0.000, -0.280],
+                  [-0.235, -0.235],
+                  [-0.300, -0.140],
+                  [-0.300,  0.140],
+                  [-0.235,  0.235],
+                  [ 0.000,  0.280],
+                  [ 0.235,  0.235]]"
 
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
@@ -361,9 +363,10 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         enabled: true
-        # see http://wiki.ros.org/costmap_2d/hydro/inflation
-        cost_scaling_factor: 2.58 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.75  # Default: 0.55  Must be larger than robot footprint
+        # See http://wiki.ros.org/costmap_2d/hydro/inflation
+        #     https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
+        cost_scaling_factor: 4.0
+        inflation_radius: 0.37  # a bit more conservative globally. Default: 0.55. From footprint: 0.3549 computed bubble.
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -490,7 +493,7 @@ collision_monitor:
     cmd_vel_out_topic: "cmd_vel_nav" # Default: “cmd_vel”. The topic where safety-checked commands are sent. 
     state_topic: "collision_monitor_state" # Where to publish information about active safety behaviors.
     transform_tolerance: 0.5  # Default: 0.1  Delay in transform (tf) data that is tolerable in seconds
-    source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
+    source_timeout: 1.0 # Default: 2.0  How long to wait before assuming sensor data is too old. 
     base_shift_correction: True # true makes collision detection more accurate but uses more CPU power. Like taking a photo from a moving car.
     stop_pub_timeout: 2.0
     # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,

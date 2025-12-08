@@ -42,8 +42,17 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
     robot_model = LaunchConfiguration("robot_model")
 
-    ekf_params_file = PathJoinSubstitution([
-        FindPackageShare(package_name), "robots", robot_model, "config", "dual_ekf_navsat_params.yaml"
+    # robots/config folder should contain three files:
+    #   navsat_transform.yaml    - defines navsat_transform_node parameters to produce /odometry/gps from /gps/fix + /imu/data
+    #   ekf_odom_params.yaml     - defines EKF fusing /diff_cont/odom and /imu/data to produce /odometry/local (works indoors too)
+    #   ekf_navsat_params.yaml   - defines EKF fusing /odometry/local and /odometry/gps to produce /odometry/global
+
+    ekf_odom_params_file = PathJoinSubstitution([
+        FindPackageShare(package_name), "robots", robot_model, "config", "ekf_odom_params.yaml"
+    ])
+
+    ekf_navsat_params_file = PathJoinSubstitution([
+        FindPackageShare(package_name), "robots", robot_model, "config", "ekf_navsat_params.yaml"
     ])
 
     navsat_transform_params_file = PathJoinSubstitution([
@@ -68,7 +77,8 @@ def generate_launch_description():
         LogInfo(msg=["namespace: ", namespace]),
         LogInfo(msg=["robot_model: ", robot_model]),
         LogInfo(msg=["use_sim_time: ", use_sim_time]),
-        LogInfo(msg=["EKF params: ", ekf_params_file]),
+        LogInfo(msg=["EKF params   - odom: ", ekf_odom_params_file]),
+        LogInfo(msg=["EKF params - navsat: ", ekf_navsat_params_file]),
         LogInfo(msg=["NavSat Transform params: ", navsat_transform_params_file]),
 
         # ------------------ EKF (ODOM) ------------------
@@ -77,7 +87,7 @@ def generate_launch_description():
             executable="ekf_node",
             namespace=namespace,
             name="ekf_filter_node_odom",
-            parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
+            parameters=[ekf_odom_params_file, {"use_sim_time": use_sim_time}],
             remappings=[("odometry/filtered", "odometry/local")],
             output="screen"
         ),
@@ -87,8 +97,8 @@ def generate_launch_description():
             package="robot_localization",
             executable="ekf_node",
             namespace=namespace,
-            name="ekf_filter_node_map",
-            parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
+            name="ekf_filter_node_navsat",
+            parameters=[ekf_navsat_params_file, {"use_sim_time": use_sim_time}],
             remappings=[("odometry/filtered", "odometry/global")],
             output="screen"
         ),
@@ -101,11 +111,11 @@ def generate_launch_description():
             name="navsat_transform",
             parameters=[navsat_transform_params_file, {"use_sim_time": use_sim_time}],
             remappings=[
-                ("imu", "imu/data"),
-                ("gps/fix", "gps/fix"),
-                ("gps/filtered", "gps/filtered"),
-                ("odometry/gps", "odometry/gps"),
-                ("odometry/filtered", "odometry/global")
+                ('imu', 'imu/data'),                # sensor IMU input
+                ('gps/fix', 'gps/fix'),             # raw GPS fix
+                ('odometry/filtered', 'odometry/global'),  # odom input. "local" here will cause slow drift from initial position
+                ("odometry/gps", "odometry/gps"),   # output odom aligned to GPS
+                ('gps/filtered', 'gps/filtered')    # output filtered GPS
             ],
             output="screen"
         ),

@@ -24,7 +24,7 @@
     <!-- using arguments here, as that allows overriding default values -->
     <xacro:arg name="lidar_offset_x" default="${wheel_offset_x - 0.14}"/>
     <xacro:arg name="lidar_offset_z" default="0.57"/>
-    <xacro:arg name="lidar_base_length" default="0.06"/>
+    <xacro:arg name="lidar_pedestal_height" default="0.06"/>
     <xacro:include filename="../../../description/lidar.xacro" />
 
     <xacro:property name="sonars_offset_x" value="${chassis_length/2 + 0.005}"/>

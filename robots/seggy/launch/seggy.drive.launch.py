@@ -49,7 +49,12 @@ def generate_launch_description():
         launch_arguments={
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            # 'robot_world': 'warehouse', # see assets/worlds/*.sdf Default: 'test_robot_world'
+            # 'initial_x': '1.0',
+            # 'initial_y': '1.0',
+            # 'initial_z': '20.0',
+            # 'initial_yaw': '1.57'
         }.items(),
         condition=IfCondition(use_sim_time)
     )

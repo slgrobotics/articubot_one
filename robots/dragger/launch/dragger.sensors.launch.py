@@ -1,5 +1,6 @@
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 #
@@ -9,6 +10,8 @@ from launch_ros.actions import Node
 #   
 
 def generate_launch_description():
+
+    package_name = 'articubot_one'
 
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
@@ -42,6 +45,24 @@ def generate_launch_description():
           {'do_filtering': False},
           {'do_triplets': False}
         ]
+    )
+
+    # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO085%20IMU.md
+    bno08x_config_path = PathJoinSubstitution([
+        FindPackageShare(package_name), 'config', 'bno085_i2c.yaml'
+    ])
+
+    bno08x_driver_node = Node(
+        package="bno08x_driver",
+        namespace=namespace,
+        executable="bno08x_driver",
+        name="bno08x_driver",
+        output='screen',
+        respawn=True,
+        respawn_delay=4,
+        emulate_tty=True,
+        parameters=[bno08x_config_path],
+        remappings=[("imu", "imu/data")]
     )
 
     # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/MPU9250.md
@@ -98,6 +119,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         ldlidar_node,
-        mpu9250driver_node,
+        bno08x_driver_node,
+        #mpu9250driver_node,
         gps_node
     ])

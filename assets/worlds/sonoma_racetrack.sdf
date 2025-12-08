@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+<sdf version='1.10'>
+  <world name='sonoma'>
+    <physics name='1ms' type='ode'>
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    <plugin name="gz::sim::systems::Magnetometer" filename="gz-sim-magnetometer-system"></plugin>
+    <plugin name='gz::sim::systems::AirPressure' filename='gz-sim-air-pressure-system'/>
+    <plugin name='gz::sim::systems::ApplyLinkWrench' filename='gz-sim-apply-link-wrench-system'/>
+    <plugin name='gz::sim::systems::NavSat' filename='gz-sim-navsat-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <gravity>0 0 -9.8</gravity>
+    <!-- looks like magnetic field here is ignored, and is instead calculated by location in Gazebo Harmonic -->
+    <!-- magnetic_field>5.5645e-06 2.28758e-05 -4.23884e-05</magnetic_field -->
+    <atmosphere type='adiabatic'/>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <!-- lat/lon/alt show up in gps/fix topic in sim -->
+      <latitude_deg>38.16153</latitude_deg>
+      <longitude_deg>-122.45475</longitude_deg>
+      <elevation>150</elevation>
+      <heading_deg>0</heading_deg>
+      <!-- see https://docs.nav2.org/tutorials/docs/navigation2_with_gps.html
+      currently gazebo has a bug: instead of outputting lat, long, altitude in ENU
+      (x = East, y = North and z = Up) as the default configurations, it's outputting (-E)(-N)U,
+      therefore we rotate the default frame 180 so that it would go back to ENU
+      see: https://github.com/osrf/gazebo/issues/2022 -->
+      <!-- heading_deg>180</heading_deg -->
+    </spherical_coordinates>
+
+    <scene>
+      <grid>false</grid>
+      <ambient>0.400000006 0.400000006 0.400000006 1</ambient>
+      <background>0.699999988 0.699999988 0.699999988 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <gui fullscreen='false'>
+      <plugin name='3D View' filename='GzScene3D'>
+        <ignition-gui>
+          <title>3D View</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='string' key='state'>docked</property>
+        </ignition-gui>
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.5 0.8 0.95</background_color>
+        <camera_follow>
+          <target>my_robot</target>
+          <p_gain>0.5</p_gain>
+          <offset>0.5 5 2</offset>
+        </camera_follow>
+        <camera_pose>-3.10 3.81 4.51 0 0.79 -0.89</camera_pose>
+      </plugin>
+      <plugin name='World control' filename='WorldControl'>
+        <ignition-gui>
+          <title>World control</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='bool' key='resizable'>false</property>
+          <property type='double' key='height'>72</property>
+          <property type='double' key='width'>121</property>
+          <property type='double' key='z'>1</property>
+          <property type='string' key='state'>floating</property>
+          <anchors target='3D View'>
+            <line own='left' target='left'/>
+            <line own='bottom' target='bottom'/>
+          </anchors>
+        </ignition-gui>
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+      </plugin>
+      <plugin name='World stats' filename='WorldStats'>
+        <ignition-gui>
+          <title>World stats</title>
+          <property type='bool' key='showTitleBar'>false</property>
+          <property type='bool' key='resizable'>false</property>
+          <property type='double' key='height'>110</property>
+          <property type='double' key='width'>290</property>
+          <property type='double' key='z'>1</property>
+          <property type='string' key='state'>floating</property>
+          <anchors target='3D View'>
+            <line own='right' target='right'/>
+            <line own='bottom' target='bottom'/>
+          </anchors>
+        </ignition-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin name='dis' filename='ImageDisplay'>
+        <ignition-gui>
+          <property key='state' type='string'>docked</property>
+        </ignition-gui>
+        <topic>front_camera</topic>
+      </plugin>
+      <plugin name='Teleop' filename='Teleop'>
+        <ignition-gui>
+          <property type='string' key='state'>docked</property>
+        </ignition-gui>
+        <topic>/cmd_vel</topic>
+      </plugin>
+    </gui>
+    <include>
+      <uri>https://fuel.ignitionrobotics.org/1.0/openrobotics/models/Sonoma Raceway</uri>
+      <name>sonoma_raceway</name>
+      <pose>-282.0 138.0 -8.0 0 0 0</pose>
+    </include>
+
+    <!-- 
+        "<scale>0.3 0.3 0.3</scale>" - this does not work for included models
+        see http://models.gazebosim.org/construction_cone/
+            original cone scale is 10, mine is 6 -->
+    <include>
+      <!-- <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Construction Cone</uri> -->
+      <uri>model://models/construction_cone</uri>
+      <name>Construction Cone One</name>
+      <pose>6 -2 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://models/construction_cone</uri>
+      <name>Construction Cone Two</name>
+      <pose>5 -7 0 0 0 0</pose>
+    </include>
+
+    <light name="sunUTC" type="directional">
+      <pose>0 0 500 0 -0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.001 0.625 -0.78</direction>
+      <diffuse>0.904 0.904 0.904 1</diffuse>
+      <specular>0.271 0.271 0.271 1</specular>
+      <attenuation>
+        <range>2000</range>
+        <linear>0</linear>
+        <constant>1</constant>
+        <quadratic>0</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+  </world>
+</sdf>

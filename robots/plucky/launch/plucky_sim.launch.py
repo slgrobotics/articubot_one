@@ -75,16 +75,25 @@ def generate_launch_description():
     # ekf_localizer is needed for slam_toolbox, providing "a valid transform from your configured odom_frame to base_frame"
     # also, produces odom_topic: /odometry/local which can be used by Nav2
     # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see mapper_params.yaml
+    # see slam_toolbox_params.yaml
     ekf_localizer = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_odom.launch.py')]
+                PythonLaunchDescriptionSource([os.path.join(package_path,'launch','ekf_imu_odom.launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model}.items()
     )
 
     # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
     tf_localizer = Node(package = "tf2_ros", 
                     executable = "static_transform_publisher",
-                    arguments = ["0", "0", "0", "0", "0", "0", "odom", "base_link"]
+                    arguments=[
+                        '--x', '0.0',     # X translation in meters
+                        '--y', '0.0',     # Y translation in meters
+                        '--z', '0.0',     # Z translation in meters
+                        '--roll', '0.0',  # Roll in radians
+                        '--pitch', '0.0', # Pitch in radians
+                        '--yaw', '0.0',   # Yaw in radians (e.g., 90 degrees)
+                        '--frame-id', 'odom', # Parent frame ID
+                        '--child-frame-id', 'base_link' # Child frame ID
+                    ]
     )
     
     nav2_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'])
@@ -127,10 +136,7 @@ def generate_launch_description():
 
     # Specify the world SDF:
     gazebo_arguments = LaunchDescription([
-            DeclareLaunchArgument('world', default_value='test_robot_world',
-                                  description='Gz sim Test World'),
-            #DeclareLaunchArgument('world', default_value='baylands',
-            #                      description='Gz sim Baylands World'),
+            DeclareLaunchArgument('world', default_value='test_robot_world', description='Gz sim Test World')
         ]
     )
 

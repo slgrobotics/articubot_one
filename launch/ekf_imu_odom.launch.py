@@ -70,6 +70,7 @@ def generate_launch_description():
                 name="ekf_filter_node_odom",
                 output="screen",
                 parameters=[ekf_params_file, {"use_sim_time": use_sim_time}],
+                #remappings=[("odometry/filtered", "odometry/local"),("/tf", "tf_trash")],
                 remappings=[("odometry/filtered", "odometry/local")],
             )
         ]

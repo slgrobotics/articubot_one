@@ -22,7 +22,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # Include twist_mux for command velocity arbitration
+    # For real robot, include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
@@ -32,7 +32,6 @@ def generate_launch_description():
     )
 
     # For real robot, include the Roomba Create 1 specific drive launch and pass through all arguments.
-    # Use the non-sim drive when "use_sim_time" is false
     drive_launch = Node(
         package='create_driver',
         namespace=namespace,
@@ -69,7 +68,12 @@ def generate_launch_description():
         launch_arguments={
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            # 'robot_world': 'warehouse', # see assets/worlds/*.sdf Default: 'test_robot_world'
+            # 'initial_x': '1.0',
+            # 'initial_y': '1.0',
+            # 'initial_z': '20.0',
+            # 'initial_yaw': '1.57'
         }.items(),
         condition=IfCondition(use_sim_time)
     )

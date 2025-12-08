@@ -24,7 +24,12 @@ from nav2_common.launch import ReplaceString
 #     launch_arguments={
 #         'namespace': namespace,
 #         'use_sim_time': use_sim_time,
-#         'robot_model': robot_model
+#         'robot_model': robot_model,
+#         # 'robot_world': 'empty_world', # see assets/worlds/*.sdf Default: 'test_robot_world'
+#         # 'initial_x': '1.0',
+#         # 'initial_y': '1.0',
+#         # 'initial_z': '20.0',
+#         # 'initial_yaw': '1.57'
 #     }.items(),
 #     condition=IfCondition(use_sim_time)
 # )
@@ -41,6 +46,14 @@ def generate_launch_description():
 
     # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
+
+    # can be one of the files in assets/worlds: 
+    robot_world = LaunchConfiguration('robot_world', default='')
+
+    initial_x = LaunchConfiguration('initial_x', default='0.0') # meters, positive - towards East
+    initial_y = LaunchConfiguration('initial_y', default='0.0') # meters, positive - towards North
+    initial_z = LaunchConfiguration('initial_z', default='0.4') # let the robot gently settle on the ground plane
+    initial_yaw = LaunchConfiguration('initial_yaw', default='0.333') # radians, related to 0=East, default - 30 degrees towards North
 
     # Include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
@@ -64,10 +77,7 @@ def generate_launch_description():
 
     # Specify the world SDF:
     gazebo_arguments = LaunchDescription([
-            DeclareLaunchArgument('world', default_value='test_robot_world',
-                                  description='Gz sim Test World'),
-            #DeclareLaunchArgument('world', default_value='baylands',
-            #                      description='Gz sim Baylands World'),
+            DeclareLaunchArgument('world', default_value=robot_world, description='Gz sim Test World'),
         ]
     )
 
@@ -95,10 +105,10 @@ def generate_launch_description():
             '-name', robot_model,
             '-topic', '/robot_description',
             # Robot's starting position on the Grid:
-            '-x', '0.0', # positive - towards East
-            '-y', '0.0', # positive - towards North
-            '-z', '0.4', # let it gently settle on the ground plane
-            '-Y', '0.333', # yaw (heading) in radians, related to 0=East, e.g. 0.333 = 30 degrees towards North
+            '-x', initial_x, # positive - towards East
+            '-y', initial_y, # positive - towards North
+            '-z', initial_z, # positive - up. default 0.4 meters - let it gently settle on the ground plane
+            '-Y', initial_yaw, # yaw (heading) in radians, related to 0=East, e.g. 0.333 = 30 degrees towards North
             '-allow_renaming', 'true'],
         parameters=[{'use_sim_time': use_sim_time}],
         output='screen')
@@ -218,7 +228,12 @@ def generate_launch_description():
             default_value='',
             description='Robot model (e.g., seggy, plucky, dragger)'),
 
-        LogInfo(msg=['============ starting ROBOT DRIVE (SIM)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
+        DeclareLaunchArgument(
+            'robot_world',
+            default_value='test_robot_world',
+            description='Robot world (e.g., test_robot_world, empty_world, baylands)'),
+
+        LogInfo(msg=['============ starting ROBOT DRIVE (SIM)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model, ', robot_world: ', robot_world]),
 
         gz_include,
         drive_include
