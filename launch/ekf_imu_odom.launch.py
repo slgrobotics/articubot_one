@@ -75,3 +75,24 @@ def generate_launch_description():
             )
         ]
     )
+
+"""
+When TF is redirected, "ros2 topic echo /tf_trash":
+transforms:
+- header:
+    stamp: ...
+    frame_id: odom
+  child_frame_id: base_link
+  transform:
+    translation:
+      x, y, z: 0.0  initially, then x,y grow as robot moves
+    rotation:
+      x: 0.0
+      y: 0.0
+      z: 0.17050162685961162  # 30 degrees initially, then changes as robot rotates
+      w: 0.9853573946737426
+
+To disable TF publishing by EKF node, use "publish_tf: false" in ekf_odom_params.yaml file
+SLAM Toolbox requires this TF to be published by EKF node.
+Cartographer provides better localization when this TF is not published and "provide_odom_frame = true" in the .lua file
+"""
