@@ -1,6 +1,7 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.actions import DeclareLaunchArgument, GroupAction, LogInfo
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, EqualsSubstitution, NotEqualsSubstitution
+from launch.conditions import IfCondition
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import SetParameter
 from launch_ros.actions import Node
@@ -49,6 +50,7 @@ def generate_launch_description():
     start_map_server = GroupAction(
         actions=[
             SetParameter('use_sim_time', use_sim_time),
+            # If the 'map' argument is an empty string, use the packaged default map YAML
             Node(
                 package='nav2_map_server',
                 executable='map_server',
@@ -60,6 +62,20 @@ def generate_launch_description():
                 parameters=[{'yaml_filename': map_yaml_file}],
                 arguments=['--ros-args', '--log-level', log_level, '--params-file', params_file],
                 remappings=remappings,
+                condition=IfCondition(NotEqualsSubstitution(map_yaml_file, '')),
+            ),
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='map_server',
+                namespace=namespace,
+                output='screen',
+                respawn=True,
+                respawn_delay=2.0,
+                parameters=[{'yaml_filename': map_yaml_file_default}],
+                arguments=['--ros-args', '--log-level', log_level, '--params-file', params_file],
+                remappings=remappings,
+                condition=IfCondition(EqualsSubstitution(map_yaml_file, '')),
             ),
             Node(
                 package='nav2_lifecycle_manager',
@@ -83,6 +99,14 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_log_level_cmd)
+
+    # Log the map file being used
+    ld.add_action(LogInfo(msg=[
+        '============ starting MAP_SERVER  namespace="', namespace,
+        '"  use_sim_time=', use_sim_time,
+        '  map=', map_yaml_file
+    ]))
+    ld.add_action(LogInfo(msg=['params file:', params_file]))
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_map_server)

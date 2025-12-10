@@ -330,15 +330,6 @@ global_costmap:
 
       always_send_full_costmap: True
 
-# see https://docs.nav2.org/configuration/packages/configuring-map-server.html
-map_saver:
-  ros__parameters:
-    enable_stamped_cmd_vel: true
-    save_map_timeout: 5.0 # Default: 2.0
-    free_thresh_default: 0.25 # Increasing this means being more strict about what counts as empty space.
-    occupied_thresh_default: 0.65 # Occupied space minimum probability threshold value for occupancy grid.
-    map_subscribe_transient_local: True # Setting this to true means getting more reliable, complete map data but might take slightly longer.
-
 # see https://docs.nav2.org/configuration/packages/configuring-planner-server.html
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
