@@ -22,7 +22,8 @@ def generate_launch_description():
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'slam_toolbox_params.yaml'
     ])
 
-    # EKF localizer (needed for slam_toolbox to provide odom->base_link transform)
+    # SLAM Toolbox only publishes the map to odom transform. 
+    # It needs EKF filter to publish odom to base_link transform.
     ekf_localizer = include_launch(
         package_name,
         ['launch', 'ekf_imu_odom.launch.py'],
