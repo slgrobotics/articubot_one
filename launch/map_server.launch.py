@@ -50,6 +50,20 @@ def generate_launch_description():
     start_map_server = GroupAction(
         actions=[
             SetParameter('use_sim_time', use_sim_time),
+
+            LogInfo(msg=[
+                '============ starting MAP_SERVER  namespace="', namespace,
+                '"  use_sim_time=', use_sim_time,
+            ]),
+
+            LogInfo(msg=[
+                '============ Map Server params file: ', params_file,
+            ]),
+
+            LogInfo(msg=[
+                '             map="', map_yaml_file, '" (if empty - default: ', map_yaml_file_default, ')'
+            ]),
+
             # If the 'map' argument is an empty string, use the packaged default map YAML
             Node(
                 package='nav2_map_server',
@@ -99,14 +113,6 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_log_level_cmd)
-
-    # Log the map file being used
-    ld.add_action(LogInfo(msg=[
-        '============ starting MAP_SERVER  namespace="', namespace,
-        '"  use_sim_time=', use_sim_time,
-        '  map=', map_yaml_file
-    ]))
-    ld.add_action(LogInfo(msg=['Map Server params file:', params_file]))
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_map_server)

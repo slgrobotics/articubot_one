@@ -70,7 +70,9 @@ def generate_launch_description():
 
     # Outdoors only
     #  - localization with GPS + LIDAR (SLAM Toolbox)
-    map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
+
+    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
+    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
 
     outdoors_loc_nav = include_launch(
         "outdoors_loc_nav",
@@ -79,8 +81,7 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'namespace': namespace,
             'localizer': 'map_server',  # 'map_server' or 'slam_toolbox' or 'cartographer' or 'amcl'  Default: 'map_server'
-            'map': map_yaml_file,         # optional map file for amcl or map_server
-            #'map': '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml',
+            #'map': map_yaml_file,         # optional map file for amcl or map_server. Empty map if not provided.
         }
     )
 
