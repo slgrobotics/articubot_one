@@ -98,13 +98,18 @@ def generate_launch_description():
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
 
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default
+
     localizers_include = include_launch(
         package_name,
         ['robots', robot_model, 'launch', 'dragger.localizers.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'map': map_file
         }
     )
 

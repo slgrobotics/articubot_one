@@ -16,7 +16,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='dragger')
-    map_file = LaunchConfiguration('map', default='') # for indoors use
+    map_file = LaunchConfiguration('map', default='') # can be '' for empty map
 
     # -------------------------------------------------------
     # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
@@ -70,10 +70,6 @@ def generate_launch_description():
 
     # Outdoors only
     #  - localization with GPS + LIDAR (SLAM Toolbox)
-
-    #map_yaml_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
-    map_yaml_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
-
     outdoors_loc_nav = include_launch(
         "outdoors_loc_nav",
         ['launch', 'outdoors_loc.launch.py'],
@@ -81,7 +77,7 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'namespace': namespace,
             'localizer': 'map_server',  # 'map_server' or 'slam_toolbox' or 'cartographer' or 'amcl'  Default: 'map_server'
-            #'map': map_yaml_file,         # optional map file for amcl or map_server. Empty map if not provided.
+            'map': map_file,
         }
     )
 
