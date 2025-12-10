@@ -5,8 +5,7 @@ Includes the generic launch/localizers.launch.py with dragger defaults.
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration
 from articubot_one.launch_utils.helpers import include_launch, namespace_wrap
 
 
@@ -52,7 +51,8 @@ def generate_launch_description():
     #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
 
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server', 'cartographer', 'slam_toolbox'
+    #localizer_type = 'slam_toolbox' # Indoors:  'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox' - usually 'slam_toolbox'
+    localizer_type = 'map_server' # Outdoors: 'amcl', 'map_server', 'cartographer', 'slam_toolbox' - usually 'map_server'
 
     # Indoors only
     # Include the generic localizers launcher with dragger defaults
@@ -76,7 +76,7 @@ def generate_launch_description():
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            'localizer': 'map_server',  # 'map_server' or 'slam_toolbox' or 'cartographer' or 'amcl'  Default: 'map_server'
+            'localizer': localizer_type,  # Default: 'map_server'
             'map': map_file,
         }
     )
@@ -101,7 +101,9 @@ def generate_launch_description():
 
         LogInfo(msg=[
             '============ starting Dragger LOCALIZERS  namespace="', namespace,
-            '"  use_sim_time=', use_sim_time, '  robot_model=', robot_model
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model,
+            '  localizer_type', localizer_type
         ]),
 
         robot_localizers
