@@ -106,7 +106,7 @@ def generate_launch_description():
         '"  use_sim_time=', use_sim_time,
         '  map=', map_yaml_file
     ]))
-    ld.add_action(LogInfo(msg=['params file:', params_file]))
+    ld.add_action(LogInfo(msg=['Map Server params file:', params_file]))
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(start_map_server)
