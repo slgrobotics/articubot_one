@@ -71,6 +71,17 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
+            ['launch', 'localizers', 'map_server_tf.launch.py'],
+            {
+                'use_sim_time': use_sim_time,
+                'namespace': namespace,
+                'robot_model': robot_model,
+                'map': map_file
+            },
+            condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'map_server_tf'))
+        ),
+        include_launch(
+            package_name,
             ['launch', 'localizers', 'amcl.launch.py'],
             {
                 'use_sim_time': use_sim_time,
@@ -112,7 +123,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'localizer_type',
             default_value='slam_toolbox',
-            choices=['slam_toolbox', 'cartographer', 'map_server', 'amcl'],
+            choices=['slam_toolbox', 'cartographer', 'map_server', 'map_server_tf', 'amcl'],
             description='Localizer type to use: slam_toolbox, cartographer, map_server, or amcl'
         ),
 

@@ -1,11 +1,13 @@
 """
-Cartographer Localizer Launch Wrapper
-Provides SLAM-based localization using Cartographer with orientation initialization.
+Map Server Localizer Launch Wrapper
+Provides static map serving for GPS-based navigation or obstacle avoidance with empty maps.
+Convenient when used with GPS, does not provide pose estimation.
 """
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import include_launch
 
 
@@ -15,6 +17,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
+    map_file = LaunchConfiguration('map', default='')
 
     # EKF localizer (needed for slam_toolbox to provide odom->base_link transform)
     ekf_localizer = include_launch(
@@ -27,22 +30,24 @@ def generate_launch_description():
         }
     )
 
-    cartographer_orientator = include_launch(
-        'outdoors_loc_nav',
-        ['launch', 'orientation_initializer.launch.py'],
+    tf_map_odom = include_launch(
+        package_name,
+        ['launch', 'tf_map_odom.launch.py'],
         {
             'use_sim_time': use_sim_time,
-            'namespace': namespace,
+            'namespace': namespace
         }
     )
 
-    cartographer = include_launch(
+    # Map server with map_server and map_saver params from config
+    map_server = include_launch(
         package_name,
-        ['launch', 'cartographer.launch.py'],
+        ['launch', 'map_server.launch.py'],
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            'robot_model': robot_model
+            'map': map_file,
+            'params_file': PathJoinSubstitution([FindPackageShare(package_name), 'config', 'map_server_params.yaml']),
         }
     )
 
@@ -50,7 +55,8 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
+        DeclareLaunchArgument('map', default_value='', description='Path to map YAML file for map_server (optional)'),
         ekf_localizer,
-        cartographer_orientator,
-        cartographer,
+        tf_map_odom,
+        map_server,
     ])
