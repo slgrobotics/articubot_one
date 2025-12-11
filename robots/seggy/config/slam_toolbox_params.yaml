@@ -38,7 +38,9 @@ slam_toolbox:
     # if you'd like to immediately start continuing a map at a given pose
     # or at the dock, but they are mutually exclusive, if pose is given
     # will use pose
-    map_file_name: seggy_map_serial   # will be saved in the directory where the robot was launched
+    # Map file is normally retrieved from the directory where the robot was launched.
+    # See "map" launch argument in seggy.launch.py - it has priority.
+    #map_file_name: seggy_map_serial  # this works for serialized maps in ~/robot_ws Full path is OK too
     # map_start_pose: [0.0, 0.0, 0.0]
     #map_start_at_dock: true
 

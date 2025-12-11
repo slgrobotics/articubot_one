@@ -5,7 +5,7 @@ Convenient when used with GPS, does not provide pose estimation.
 """
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import include_launch
@@ -56,6 +56,14 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
         DeclareLaunchArgument('map', default_value='', description='Path to map YAML file for map_server (optional)'),
+
+        LogInfo(msg=[
+            '============ starting EKF + static TF + MAP SERVER LOCALIZER  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model,
+            '  map=', map_file
+        ]),
+
         ekf_localizer,
         tf_map_odom,
         map_server,

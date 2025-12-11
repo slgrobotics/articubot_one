@@ -44,7 +44,8 @@ def generate_launch_description():
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
-                'robot_model': robot_model
+                'robot_model': robot_model,
+                'map': map_file
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'slam_toolbox'))
         ),
@@ -54,7 +55,8 @@ def generate_launch_description():
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
-                'robot_model': robot_model
+                'robot_model': robot_model,
+                'map': map_file
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'cartographer'))
         ),

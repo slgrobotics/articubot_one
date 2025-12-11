@@ -4,7 +4,7 @@ Provides SLAM-based localization using Cartographer with orientation initializat
 """
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.substitutions import LaunchConfiguration
 from articubot_one.launch_utils.helpers import include_launch
 
@@ -15,6 +15,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
+    map_file = LaunchConfiguration('map', default='')
 
     # EKF localizer (needed for slam_toolbox to provide odom->base_link transform)
     ekf_localizer = include_launch(
@@ -50,6 +51,15 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
+        DeclareLaunchArgument('map', default_value='', description='Path to map YAML file for map_server (optional)'),
+
+        LogInfo(msg=[
+            '============ starting EKF + CARTOGRAPHER LOCALIZER  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model,
+            '  map=', map_file
+        ]),
+
         ekf_localizer,
         cartographer_orientator,
         cartographer,

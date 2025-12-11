@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
@@ -53,6 +53,14 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
         DeclareLaunchArgument('map', default_value='', description='Path to map YAML file for map_server (optional)'),
+
+        LogInfo(msg=[
+            '============ starting AMCL + MAP SERVER LOCALIZER  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model,
+            '  map=', map_file
+        ]),
+
         map_server,
         amcl_node,
     ])
