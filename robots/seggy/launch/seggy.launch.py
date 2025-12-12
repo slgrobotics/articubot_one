@@ -102,18 +102,6 @@ def generate_launch_description():
     )
 
     # -------------------------------------------------------
-    # Timed includes — Localizers first, Nav2 after
-    #
-    # Note: TimerAction does not work inside included launch files:
-    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
-    # -------------------------------------------------------
-
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
-    loc_delay = 18.0    # seconds
-    nav_delay = 25.0
-
-    # -------------------------------------------------------
     # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
 
@@ -126,6 +114,18 @@ def generate_launch_description():
             'robot_model': robot_model
         }
     )
+
+    # -------------------------------------------------------
+    # Timed includes — Localizers first, Nav2 after
+    #
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    # Localizers are run with a delay to allow IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow map to stabilize
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
 
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
@@ -167,7 +167,7 @@ def generate_launch_description():
         ),
 
         LogInfo(msg=[
-            '============ starting SEGGY (multi-robot)  namespace="', namespace,
+            '============ starting SEGGY  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model
         ]),

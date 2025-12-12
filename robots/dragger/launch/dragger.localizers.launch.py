@@ -17,23 +17,7 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='dragger')
     map_file = LaunchConfiguration('map', default='') # can be '' for empty map
 
-    # -------------------------------------------------------
-    # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
-    # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
-    # also, produces odom_topic: /odometry/local which can be used by Nav2
-    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see slam_toolbox_params.yaml
-    # -------------------------------------------------------
-
-    ekf_imu_odom = include_launch(
-        package_name,
-        ['launch', 'ekf_imu_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
     # ==========================
     #
@@ -50,10 +34,10 @@ def generate_launch_description():
     # See https://github.com/slgrobotics/outdoors_loc_nav
     #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
+    # ==========================
 
-    #localizer_type = 'slam_toolbox' # Indoors:  'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox' - usually 'slam_toolbox'
-    localizer_type = 'map_server' # Outdoors: 'amcl', 'map_server', 'cartographer', 'slam_toolbox' - usually 'map_server'
 
+    # -----------------------------------------------------------------------------------
     # Indoors only
     # Include the generic localizers launcher with dragger defaults
     indoor_localizers = include_launch(
@@ -68,6 +52,7 @@ def generate_launch_description():
         }
     )
 
+    # -----------------------------------------------------------------------------------
     # Outdoors only
     #  - localization with GPS + LIDAR (SLAM Toolbox)
     outdoors_loc_nav = include_launch(
@@ -81,13 +66,30 @@ def generate_launch_description():
         }
     )
 
+    # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
+    # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
+    # also, produces odom_topic: /odometry/local which can be used by Nav2
+    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
+    # see slam_toolbox_params.yaml
+
+    ekf_imu_odom = include_launch(
+        package_name,
+        ['launch', 'ekf_imu_odom.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'namespace': namespace
+        }
+    )
+
     # Multi-robot safe: wrap everything under the namespace
     outdoor_localizers = [
         ekf_imu_odom,
         outdoors_loc_nav, # external package preferred for outdoors
     ]
 
-    # ---- Choose indoors or outdoors ----
+    # -----------------------------------------------------------------------------------
+    # Choose indoors or outdoors
     #robot_localizers = namespace_wrap(namespace, indoor_localizers)
     robot_localizers = namespace_wrap(namespace, outdoor_localizers)
 
@@ -103,7 +105,8 @@ def generate_launch_description():
             '============ starting Dragger LOCALIZERS  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model,
-            '  localizer_type', localizer_type
+            '  localizer_type=', localizer_type,
+            '  map=', map_file
         ]),
 
         robot_localizers

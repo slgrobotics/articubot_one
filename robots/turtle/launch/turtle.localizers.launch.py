@@ -16,10 +16,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='turtle')
     map_file = LaunchConfiguration('map', default='') # can be '' for empty map
-
-    # Note: we can only use 'map_server_tf' here as Turtle is indoors only and does not have Navsat to provide map->odom TF
-
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
     # Include the generic localizers launcher with turtle defaults
     localizers = include_launch(
@@ -48,7 +45,8 @@ def generate_launch_description():
             '============ starting Seggy LOCALIZERS  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model,
-            '  localizer_type', localizer_type
+            '  localizer_type=', localizer_type,
+            '  map=', map_file
         ]),
 
         robot_localizers

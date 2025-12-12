@@ -1,7 +1,8 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
     delayed_include,
@@ -29,6 +30,53 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    # Note: for Gazebo simulation choose "robot_world" in dragger.drive.launch.py
+
+    # -------------------------------------------------------
+    # Localizers include - use dragger specific localizers launch
+    # -------------------------------------------------------
+
+    localizer_type = 'map_server' # 'amcl', 'map_server', 'cartographer', 'slam_toolbox'
+
+    # You generally want either:
+    #   - map_server (GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
+    #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in environment
+    #
+    # Dragger is outdoors only and has Navsat to provide map->odom TF
+    #
+    # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments (not many static features).
+    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
+    #       Therefore, for outdoor use I am using only GPS-based localization with map server.
+    #       Adding a previously saved map to the map server is possible.
+    #
+    # See https://github.com/slgrobotics/outdoors_loc_nav
+    #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
+    #
+
+    # Choose one:
+    # Map file for localizers that support it (map_server, amcl):
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #
+    # For SlAM Toolbox, we can use previously saved serialized map:
+    #map_file = 'dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #map_file = '/home/sergei/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'dragger.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'localizer_type': localizer_type,
+            'map': map_file
+        }
+    )
 
     # -------------------------------------------------------
     # Robot State Publisher
@@ -87,31 +135,8 @@ def generate_launch_description():
     )
 
     # -------------------------------------------------------
-    # Timed includes — Localizers first, Nav2 after
-    #
-    # Note: TimerAction does not work inside included launch files:
-    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
-
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
-    loc_delay = 18.0    # seconds
-    nav_delay = 25.0
-
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])   # this is similar to the "outdoors_loc_nav" default
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default
-
-    localizers_include = include_launch(
-        package_name,
-        ['robots', robot_model, 'launch', 'dragger.localizers.launch.py'],
-        {
-            'namespace': namespace,
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'map': map_file
-        }
-    )
 
     navigation_include = include_launch(
         package_name,
@@ -122,6 +147,18 @@ def generate_launch_description():
             'robot_model': robot_model
         }
     )
+
+    # -------------------------------------------------------
+    # Timed includes — Localizers first, Nav2 after
+    #
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    # Localizers are run with a delay to allow IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow map to stabilize
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
 
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
@@ -165,7 +202,7 @@ def generate_launch_description():
         ),
 
         LogInfo(msg=[
-            '============ starting DRAGGER (multi-robot)  namespace="', namespace,
+            '============ starting DRAGGER  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model
         ]),
