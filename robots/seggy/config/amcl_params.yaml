@@ -15,7 +15,11 @@ amcl:
     alpha3: 0.2
     alpha4: 0.2
     alpha5: 0.2
+
     base_frame_id: "base_footprint"
+    scan_topic: "scan"
+    #odom_topic: "odometry/local"  # for now, using remapping in amcl.launch.py
+
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
     beam_skip_threshold: 0.3
@@ -46,4 +50,3 @@ amcl:
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.1 # Default 0.005. Greater value compensates for short readings, such as small obstacles or reflective surfaces
-    scan_topic: scan

@@ -24,6 +24,17 @@ def generate_launch_description():
     # Optional map file to pass to map_server (empty -> map_server default)
     map_file = LaunchConfiguration('map', default='')
 
+    # EKF localizer (needed to provide odom->base_link transform)
+    ekf_localizer = include_launch(
+        package_name,
+        ['launch', 'ekf_imu_odom.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'namespace': namespace
+        }
+    )
+
     # Include map server for AMCL (AMCL expects a map)
     map_server = include_launch(
         package_name,
@@ -46,6 +57,21 @@ def generate_launch_description():
         executable='amcl',
         namespace=namespace,
         parameters=[amcl_params_file, {'use_sim_time': use_sim_time}],
+        remappings=[('odom', 'odometry/local'), ('scan', 'scan')],
+        name='amcl',  # Explicit name for lifecycle manager
+    )
+
+    # Lifecycle manager to activate AMCL
+    lifecycle_manager = Node(
+        package='nav2_lifecycle_manager',
+        executable='lifecycle_manager',
+        namespace=namespace,
+        name='lifecycle_manager_amcl',
+        output='screen',
+        parameters=[{
+            'autostart': True,
+            'node_names': ['amcl']
+        }],
     )
 
     return LaunchDescription([
@@ -58,9 +84,15 @@ def generate_launch_description():
             '============ starting AMCL + MAP SERVER LOCALIZER  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model,
+        ]),
+
+        LogInfo(msg=[
+            '  amcl_params_file=', amcl_params_file,
             '  map=', map_file
         ]),
 
+        ekf_localizer,
         map_server,
         amcl_node,
+        lifecycle_manager,
     ])

@@ -1,7 +1,8 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
     delayed_include,
@@ -44,7 +45,8 @@ def generate_launch_description():
     # Map file for localizers that support it (map_server, amcl):
     map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
     #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
     # For SlAM Toolbox, we can use previously saved serialized map:
     #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
