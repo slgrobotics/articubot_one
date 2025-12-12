@@ -30,6 +30,38 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
+    # Note: for Gazebo simulation choose "robot_world" in seggy.drive.launch.py
+
+    # -------------------------------------------------------
+    # Localizers include - use seggy specific localizers launch
+    # -------------------------------------------------------
+
+    # Note: we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
+
+    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+
+    # Choose one:
+    # Map file for localizers that support it (map_server, amcl):
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
+    #
+    # For SlAM Toolbox, we can use previously saved serialized map:
+    #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #map_file = '/home/sergei/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'seggy.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'localizer_type': localizer_type,
+            'map': map_file
+        }
+    )
+
     # -------------------------------------------------------
     # Robot State Publisher
     # -------------------------------------------------------
@@ -78,36 +110,6 @@ def generate_launch_description():
     # Navigation stack is run with a further delay to allow map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
-
-    # -------------------------------------------------------
-    # Localizers include - use seggy specific localizers launch
-    # -------------------------------------------------------
-
-    # Note: we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
-
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
-
-    # Choose one:
-    # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml'
-    #
-    # For SlAM Toolbox, we can use previously saved serialized map:
-    #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/sergei/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
-
-    localizers_include = include_launch(
-        package_name,
-        ['robots', robot_model, 'launch', 'seggy.localizers.launch.py'],
-        {
-            'namespace': namespace,
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'localizer_type': localizer_type,
-            'map': map_file
-        }
-    )
 
     # -------------------------------------------------------
     # Navigation include - use generic navigation.launch.py
