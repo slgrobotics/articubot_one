@@ -102,17 +102,23 @@ controller_server:
       time_steps: 20 # Default: 56
       model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 3.5
+
+      # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+      # The velocity smoother refines these commands within the controller's limits,
+      # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+      ax_max: 1.0  # max forward acceleration
+      ax_min: -1.0 # max reverse acceleration
+      ay_max: 0.0  # Default: 3.0 Should be 0.0 when lateral movement is not possible?
+      az_max: 1.5  # max turning acceleration (reduce for smoother turns)
       vx_std: 0.2
-      vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
-      wz_std: 0.4 # Default: 0.2
-      vx_max: 0.5
-      vx_min: -0.35
-      vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 1.9
+      vy_std: 0.0  # Default: 0.2 Should be 0.0 when lateral movement is not possible?
+      wz_std: 0.4  # Default: 0.2
+      vx_max: 0.3  # max forward speed
+      vx_min: -0.2 # max reverse speed
+      vy_max: 0.0  # Default: 0.5 Should be 0.0 when lateral movement is not possible?
+      wz_max: 0.8  # max turning speed (less aggressive)
+
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
@@ -386,12 +392,17 @@ behavior_server:
     transform_timeout: 0.8   # Default: 0.1
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5  # m/s^2
-    deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1       # m/s
-    max_rotational_vel: 1.0  # rad/s Default: 1.0
-    min_rotational_vel: 0.4  # rad/s Default: 0.4
-    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
+
+    # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    acceleration_limit: 1.0  # max acceleration for recovery behaviors
+    deceleration_limit: -1.0 # max deceleration for recovery behaviors
+    minimum_speed: 0.05      # minimum speed for recovery behaviors
+    max_rotational_vel: 0.5  # max turning speed for recovery behaviors
+    min_rotational_vel: 0.2  # min turning speed for recovery behaviors
+    rotational_acc_lim: 1.0  # max rotational acceleration for recovery behaviors
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -419,12 +430,17 @@ velocity_smoother:
     scale_velocities: true        # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
-    max_velocity: [0.2, 0.0, 1.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
-    min_velocity: [-0.1, 0.0, -1.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
-    max_accel: [0.3, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
-    max_decel: [-0.3, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
-    odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
-    #odom_topic: /diff_cont/odom   # works
+
+    # The MPPI Controller generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    max_velocity: [0.3, 0.0, 0.8]    # Reduced to match MPPI controller vx_max and wz_max
+    min_velocity: [-0.2, 0.0, -0.8]  # Reduced to match controller vx_min and wz_min
+    max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max
+    max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min
+    odom_topic: /odometry/local    # works  # Topic of odometry to use for estimating current velocities
+    #odom_topic: /diff_cont/odom   # works, but we better use fused odom
     odom_duration: 0.2  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
