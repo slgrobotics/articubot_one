@@ -37,20 +37,28 @@ def generate_launch_description():
     # Localizers include - use seggy specific localizers launch
     # -------------------------------------------------------
 
-    # Note: we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
+    # Note: 
+    #  - we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
+    #  - SLAM Toolbox can save maps in PGM/YAML or serialized format for later use with map_server or itself
+    #      these maps are saved in the launch directory (normally ~/robot_ws or ~/launch)
+    #  - Map Server can be used to save PGM/YAML maps, here is the command:
+    #      ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args --params-file <path_to_map_server_params.yaml>
+    #
 
     localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
 
     # Choose one:
     # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox) - use outdoors
+    #map_file = 'basement.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
+    #map_file = 'basement' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
     #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's run in Warehouse world
     #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
     # For SlAM Toolbox, we can use previously saved serialized map:
     #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/sergei/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
+    #map_file = '/home/ros/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
