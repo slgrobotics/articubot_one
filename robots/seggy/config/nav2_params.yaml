@@ -110,14 +110,14 @@ controller_server:
       ax_max: 1.0  # max forward acceleration
       ax_min: -1.0 # max reverse acceleration
       ay_max: 0.0  # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 1.5  # max turning acceleration (reduce for smoother turns)
+      az_max: 0.5  # max turning acceleration (reduce for smoother turns)
       vx_std: 0.2
       vy_std: 0.0  # Default: 0.2 Should be 0.0 when lateral movement is not possible?
       wz_std: 0.4  # Default: 0.2
       vx_max: 0.3  # max forward speed
       vx_min: -0.2 # max reverse speed
       vy_max: 0.0  # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 0.8  # max turning speed (less aggressive)
+      wz_max: 0.1  # max turning speed (less aggressive)
 
       iteration_count: 1
       prune_distance: 1.7
@@ -435,8 +435,8 @@ velocity_smoother:
     # The velocity smoother refines these commands within the controller's limits,
     # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
 
-    max_velocity: [0.3, 0.0, 0.8]    # Reduced to match MPPI controller vx_max and wz_max
-    min_velocity: [-0.2, 0.0, -0.8]  # Reduced to match controller vx_min and wz_min
+    max_velocity: [0.3, 0.0, 0.1]    # Reduced to match MPPI controller vx_max and wz_max
+    min_velocity: [-0.2, 0.0, -0.1]  # Reduced to match controller vx_min and wz_min
     max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max
     max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min
     odom_topic: /odometry/local    # works  # Topic of odometry to use for estimating current velocities
@@ -544,4 +544,3 @@ loopback_simulator:
     map_frame_id: "map"
     scan_frame_id: "laser_frame"
     update_duration: 0.02
-
