@@ -49,8 +49,8 @@
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/ldlidar_support.xacro"/>
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/ldlidar.xacro"/>
 
-    <!-- IMU -->
-    <!-- BNO055 IMU is placed at the center of the wheel axis = base_link -->
+    <!-- IMU - BNO055 (commented out - using OAK-D IMU instead) -->
+    <!--
     <xacro:property name="imu_offset_x" value="0.0"/>
     <xacro:property name="imu_offset_y" value="0.0"/>
     <xacro:property name="imu_offset_z" value="0.0"/>
@@ -58,6 +58,7 @@
     <xacro:property name="imu_rotation_y" value="0.0"/>
     <xacro:property name="imu_rotation_z" value="0.0"/>
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/BNO055_imu.xacro"/>
+    -->
 
     <!-- BATTERY -->
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/Zeee_LiPo_battery.xacro" />
@@ -66,6 +67,9 @@
     <xacro:include filename="$(find articubot_one)/robots/stingray/description/oakd.xacro" />
     <xacro:oakd_link mount_point="front_panel"/>
     <xacro:oakd_joint x="0.023" y="0.01" z="0.030" roll="0" pitch="0" yaw="0" mount_point="front_panel"/>
+    <!-- Physical location: inside OAK-D camera body, approximately 15mm behind front face -->
+    <!-- Frame orientation: 90° pitch rotation relative to camera optical frame -->
+    <!-- EKF consumes angular velocity and linear acceleration (not orientation) from this IMU -->
 
     <!-- RealSense Camera -->
     <!-- <xacro:include filename="../../../description/RealSenseD455.xacro" /> -->

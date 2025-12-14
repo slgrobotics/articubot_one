@@ -2,7 +2,7 @@
 
 # For parameter descriptions, please refer to the template parameter files for each node.
 
-ekf_filter_node_odom:
+ekf_filter_node:
   ros__parameters:
 
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
@@ -146,12 +146,13 @@ ekf_filter_node_odom:
 #        odom0_twist_rejection_threshold: 1.0
 
     # imu0: imu/data
-    imu0: bno055imu
+    # imu0: bno055imu
+    imu0: oak/imu/data
     imu0_config: [false, false, false,
+                  false, false, false,
+                  false, false, false,
                   false, false,  true,
-                  false, false, false,
-                  false, false, false,
-                  false, false, false]
+                  false, false,  false]
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,

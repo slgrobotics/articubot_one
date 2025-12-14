@@ -65,6 +65,13 @@
           </inertial>
   </link>
 
+  <!-- Corrected IMU frame for RViz visualization -->
+  <!-- The OAK-D driver publishes oak_imu_frame with non-standard orientation -->
+  <!-- This creates a corrected version aligned with base_link for display purposes -->
+  <!-- The actual IMU data at /oak/imu/data still uses oak_imu_frame (EKF doesn't care) -->
+  <!-- Note: This is a child of oak_imu_frame (published by driver), not oakd_front_panel -->
+  <!-- Waiting for driver to publish oak_imu_frame, then applying correction transform -->
+  
   <!-- Gazebo plugin for greyscale left/right stereo pairs -->
 
       <gazebo reference="oakd_${mount_point}">

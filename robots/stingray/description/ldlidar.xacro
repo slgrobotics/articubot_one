@@ -12,7 +12,7 @@
     <xacro:property name="ldlidar_offset_z" value="${ldlidar_support_height}"/>
     <xacro:property name="ldlidar_rotation_x" value="0.0"/>
     <xacro:property name="ldlidar_rotation_y" value="0.0"/>
-    <xacro:property name="ldlidar_rotation_z" value="${pi}"/>
+    <xacro:property name="ldlidar_rotation_z" value="0.0"/>
 
     <joint name="ldlaser_joint" type="fixed">
         <parent link="ldlidar_support_link"/>

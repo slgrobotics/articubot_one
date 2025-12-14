@@ -182,9 +182,14 @@ def generate_launch_description():
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,
+            "camera_model": "OAK-D",
+            "parent_frame": "oakd_front_panel",
+            "cam_pos_x": "0.0",
+            "cam_pos_y": "0.0",
+            "cam_pos_z": "0.0",
         }.items(),
     )
-    # ld.add_action(oakd_camera)
+    ld.add_action(oakd_camera)
 
     # Bring up the twist multiplexer.
     twist_mux = IncludeLaunchDescription(
