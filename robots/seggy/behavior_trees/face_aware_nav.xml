@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
+     https://github.com/slgrobotics/face_gesture_sensor
+
+What this tree does:
+
+    STOP gesture
+        Immediately cancels the current Nav2 goal
+        Works even while robot is moving
+
+    Normal navigation
+        Uses Nav2 NavigateToPose
+
+    Face detected
+        Robot turns toward the person
+        Does not block navigation forever
+
+    No face
+        Tree behaves exactly like stock Nav2
+-->
+
+<root main_tree_to_execute="MainTree">
+
+  <!-- ===================================================== -->
+  <!-- Blackboard entries populated from ROS topics          -->
+  <!-- ===================================================== -->
+
+  <BehaviorTree ID="MainTree">
+
+    <!-- Highest priority: STOP gesture cancels navigation -->
+    <ReactiveFallback name="TopLevel">
+
+      <!-- ---------- STOP gesture handling ---------- -->
+      <Sequence name="StopOnGesture">
+        <IsStopGesture   gesture="{gesture_cmd}" />
+        <CancelNavGoal />
+      </Sequence>
+
+      <!-- ---------- Normal navigation + face reaction ---------- -->
+      <PipelineSequence name="NavigateWithAwareness">
+
+        <!-- Standard Nav2 navigation -->
+        <NavigateToPose goal="{goal}" />
+
+        <!-- Optional face reaction when idle or navigating -->
+        <Fallback name="FaceReaction">
+
+          <!-- Do nothing if no face -->
+          <Inverter>
+            <IsFaceDetected face_detected="{face_detected}" />
+          </Inverter>
+
+          <!-- Turn robot toward face -->
+          <Sequence>
+            <IsFaceDetected face_detected="{face_detected}" />
+            <TurnToFace yaw_error="{face_yaw_error}" />
+          </Sequence>
+
+        </Fallback>
+
+      </PipelineSequence>
+
+    </ReactiveFallback>
+
+  </BehaviorTree>
+</root>
