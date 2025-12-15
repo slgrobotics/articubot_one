@@ -110,9 +110,22 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time}],
     )
 
+    # Face gesture perception adapter node - prepares data for Behavior Trees
+    perception_adapter = Node(
+        package="face_gesture_sensor",
+        namespace=namespace,
+        executable="perception_adapter",
+        name="perception_adapter",
+        output='screen',
+        respawn=True,
+        respawn_delay=4,
+        parameters=[{'use_sim_time': use_sim_time}],
+    )
+
     return LaunchDescription([
         ldlidar_node,
         bno08x_driver_node,
         #mpu9250_driver_node,
-        face_gesture_sensor
+        face_gesture_sensor,
+        perception_adapter
     ])
