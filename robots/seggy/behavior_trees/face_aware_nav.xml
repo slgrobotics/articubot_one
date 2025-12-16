@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
 
 <!--
  see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
@@ -21,8 +21,6 @@ What this tree does:
     No face
         Tree behaves exactly like stock Nav2
 -->
-
-<root main_tree_to_execute="MainTree">
 
   <Sequence name="BlackboardSubscriptions">
 
