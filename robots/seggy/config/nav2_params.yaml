@@ -42,16 +42,12 @@ bt_navigator:
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
-    # Built-in plugins are added automatically
-    # plugin_lib_names: []
+    # Built-in plugins are added automatically - you only need to include your new custom plugins (new to Jazzy)
     plugin_lib_names:
-      - nav2_compute_path_to_pose_action_bt_node
-      - nav2_follow_path_action_bt_node
-      - nav2_stop_action_bt_node
-      - slg_bt_plugins # Nav2 should discover IsStopGesture, IsFaceDetected, etc.
+      - slg_bt_plugins # to discover IsStopGesture, IsFaceDetected, etc. See https://github.com/slgrobotics/slg_bt_plugins
 
     #error_code_names: # works for Jazzy, must be removed for Kilted
-    error_code_name_prefixes: # works for Kilted
+    error_code_name_prefixes: # works for Kilted, does not cause trouble in Jazzy
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
