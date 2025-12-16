@@ -44,6 +44,11 @@ bt_navigator:
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
     # Built-in plugins are added automatically
     # plugin_lib_names: []
+    plugin_lib_names:
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_stop_action_bt_node
+      - slg_bt_plugins # Nav2 should discover IsStopGesture, IsFaceDetected, etc.
 
     #error_code_names: # works for Jazzy, must be removed for Kilted
     error_code_name_prefixes: # works for Kilted

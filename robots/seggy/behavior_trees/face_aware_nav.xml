@@ -3,6 +3,7 @@
 <!--
  see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
      https://github.com/slgrobotics/face_gesture_sensor
+     https://github.com/slgrobotics/slg_bt_plugins
 
 What this tree does:
 
@@ -23,45 +24,53 @@ What this tree does:
 
 <root main_tree_to_execute="MainTree">
 
-  <!-- ===================================================== -->
-  <!-- Blackboard entries populated from ROS topics          -->
-  <!-- ===================================================== -->
+  <Sequence name="BlackboardSubscriptions">
+
+    <!-- ===================================================== -->
+    <!-- Blackboard entries populated from ROS topics          -->
+    <!-- ===================================================== -->
+
+    <TopicBool
+        topic_name="/bt/face_detected"
+        output_key="face_detected"
+    />
+
+    <TopicFloat
+        topic_name="/bt/face_yaw_error"
+        output_key="face_yaw_error"
+    />
+
+    <TopicString
+        topic_name="/bt/gesture_command"
+        output_key="gesture_cmd"
+    />
+
+  </Sequence>
 
   <BehaviorTree ID="MainTree">
 
     <!-- Highest priority: STOP gesture cancels navigation -->
     <ReactiveFallback name="TopLevel">
 
-      <!-- ---------- STOP gesture handling ---------- -->
-      <Sequence name="StopOnGesture">
-        <IsStopGesture   gesture="{gesture_cmd}" />
-        <CancelNavGoal />
+      <Sequence name="StopGestureSequence">
+        <IsStopGesture/>
+        <CancelNav2Goal action_name="navigate_to_pose"/>
       </Sequence>
 
-      <!-- ---------- Normal navigation + face reaction ---------- -->
-      <PipelineSequence name="NavigateWithAwareness">
+      <!-- Next priority: Face detected - turn toward the person -->
+      <Sequence name="FaceDetectedSequence">
+        <IsFaceDetected/>
+        <TurnTowardFace
+            angle_key="face_yaw_error"
+            angle_tolerance="0.1"
+            max_turn_rate="0.5"
+        />
+      </Sequence>
 
-        <!-- Standard Nav2 navigation -->
-        <NavigateToPose goal="{goal}" />
-
-        <!-- Optional face reaction when idle or navigating -->
-        <Fallback name="FaceReaction">
-
-          <!-- Do nothing if no face -->
-          <Inverter>
-            <IsFaceDetected face_detected="{face_detected}" />
-          </Inverter>
-
-          <!-- Turn robot toward face -->
-          <Sequence>
-            <IsFaceDetected face_detected="{face_detected}" />
-            <TurnToFace yaw_error="{face_yaw_error}" />
-          </Sequence>
-
-        </Fallback>
-
-      </PipelineSequence>
-
+      <!-- Default behavior: normal Nav2 navigation -->
+      <NavigateToPoseAction
+          action_name="navigate_to_pose"
+      />
     </ReactiveFallback>
 
   </BehaviorTree>
