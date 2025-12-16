@@ -52,7 +52,7 @@ What this tree does:
 
       <Sequence name="StopGestureSequence">
         <IsStopGesture/>
-        <CancelNav2Goal action_name="navigate_to_pose"/>
+        <CancelControl/>
       </Sequence>
 
       <!-- Next priority: Face detected - turn toward the person -->
@@ -66,9 +66,8 @@ What this tree does:
       </Sequence>
 
       <!-- Default behavior: normal Nav2 navigation -->
-      <NavigateToPoseAction
-          action_name="navigate_to_pose"
-      />
+      <NavigateToPose/>
+
     </ReactiveFallback>
 
   </BehaviorTree>
