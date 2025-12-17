@@ -1,74 +1,55 @@
 <root BTCPP_format="4" main_tree_to_execute="MainTree">
 
-<!--
- see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
-     https://github.com/slgrobotics/face_gesture_sensor
-     https://github.com/slgrobotics/slg_bt_plugins
+  <!--
+  see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
+      https://github.com/slgrobotics/face_gesture_sensor
+      https://github.com/slgrobotics/slg_bt_plugins
 
-What this tree does:
+  What this tree does:
 
-    STOP gesture
-        Immediately cancels the current Nav2 goal
-        Works even while robot is moving
+      STOP gesture
+          Immediately cancels the current Nav2 goal
+          Works even while robot is moving
 
-    Normal navigation
-        Uses Nav2 NavigateToPose
+      Normal navigation
+          Uses Nav2 NavigateToPose
 
-    Face detected
-        Robot turns toward the person
-        Does not block navigation forever
+      Face detected
+          Robot turns toward the person
+          Does not block navigation forever
 
-    No face
-        Tree behaves exactly like stock Nav2
--->
-
-  <Sequence name="BlackboardSubscriptions">
-
-    <!-- ===================================================== -->
-    <!-- Blackboard entries populated from ROS topics          -->
-    <!-- ===================================================== -->
-
-    <TopicBool
-        topic_name="/bt/face_detected"
-        output_key="face_detected"
-    />
-
-    <TopicFloat
-        topic_name="/bt/face_yaw_error"
-        output_key="face_yaw_error"
-    />
-
-    <TopicString
-        topic_name="/bt/gesture_command"
-        output_key="gesture_cmd"
-    />
-
-  </Sequence>
+      No face
+          Tree behaves exactly like stock Nav2
+  -->
 
   <BehaviorTree ID="MainTree">
 
-    <!-- Highest priority: STOP gesture cancels navigation -->
-    <ReactiveFallback name="TopLevel">
+    <Sequence name="Root">
 
-      <Sequence name="StopGestureSequence">
-        <IsStopGesture/>
-        <CancelControl/>
-      </Sequence>
+      <!-- Highest priority: STOP gesture cancels navigation -->
+      <ReactiveFallback name="TopLevel">
 
-      <!-- Next priority: Face detected - turn toward the person -->
-      <Sequence name="FaceDetectedSequence">
-        <IsFaceDetected/>
-        <TurnTowardFace
-            angle_key="face_yaw_error"
-            angle_tolerance="0.1"
-            max_turn_rate="0.5"
-        />
-      </Sequence>
+        <Sequence name="StopGestureSequence">
+          <IsStopGesture/>
+          <CancelControl/>
+        </Sequence>
 
-      <!-- Default behavior: normal Nav2 navigation -->
-      <NavigateToPose/>
+        <!-- Next priority: Face detected - turn toward the person -->
+        <Sequence name="FaceDetectedSequence">
+          <IsFaceDetected/>
+          <TurnTowardFace
+              angle_tolerance="0.1"
+              max_turn_rate="0.5"
+          />
+        </Sequence>
 
-    </ReactiveFallback>
+        <!-- Default behavior: normal Nav2 navigation -->
+        <NavigateToPose/>
+
+      </ReactiveFallback>
+
+    </Sequence>
 
   </BehaviorTree>
+
 </root>
