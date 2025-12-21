@@ -1,4 +1,5 @@
-<root BTCPP_format="4" main_tree_to_execute="MainTree">
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
 
   <!--
   see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
@@ -23,33 +24,62 @@
   -->
 
   <BehaviorTree ID="MainTree">
+    <!-- 
+      failure_count="2": The Parallel returns SUCCESS if at least 2 children succeeds.
+      success_count="2": The Parallel returns FAILURE if at least 2 children fail.
+    -->
+    <Parallel failure_count="2" success_count="2">
+      
+      <!-- 1. Background Data Pump: Runs constantly -->
+      <KeepRunningUntilFailure>
 
-    <Sequence name="Root">
+        <Sequence name="DataPumpRoot">
 
-      <!-- Highest priority: STOP gesture cancels navigation -->
-      <ReactiveFallback name="TopLevel">
-
-        <Sequence name="StopGestureSequence">
-          <IsStopGesture/>
-          <CancelControl/>
-        </Sequence>
-
-        <!-- Next priority: Face detected - turn toward the person -->
-        <Sequence name="FaceDetectedSequence">
-          <IsFaceDetected/>
-          <TurnTowardFace
-              angle_tolerance="0.1"
-              max_turn_rate="0.5"
+          <!-- Pump perception data into the Blackboard -->
+          <!-- Note: map Outputs to BLACKBOARD Keys -->
+          <FgsTopicToBlackboard
+            topic_name="/bt/face_gesture_detect"
+            is_face_detected="{is_face_detected}"
+            face_yaw_error="{face_yaw_error}"
+            gesture="{gesture}"
+            is_stop_gesture="{is_stop_gesture}"
+            is_like_gesture="{is_like_gesture}"
+            is_ok_gesture="{is_ok_gesture}"
+            is_yes_gesture="{is_yes_gesture}"
+            is_six_gesture="{is_six_gesture}"
           />
+          <!-- Always succeed so the Sequence keeps ticking -->
+          <AlwaysSuccess/>
+
         </Sequence>
 
-        <!-- Default behavior: normal Nav2 navigation -->
-        <NavigateToPose/>
+      </KeepRunningUntilFailure>
 
-      </ReactiveFallback>
+      <!-- 2. Face Reaction Logic: Doesn't kill the tree if face is missing -->
+      <KeepRunningUntilFailure>
 
-    </Sequence>
+          <Fallback name="FaceReactionLogic">
 
+            <Sequence name="StopGestureSequence">
+              <IsStopGesture is_stop_gesture="{is_stop_gesture}"/>
+              <CancelControl/>
+            </Sequence>
+
+            <Sequence name="TurnIfDetected">
+              <IsFaceDetected is_face_detected="{is_face_detected}"/>
+              <TurnTowardFace angle_tolerance="0.1" max_turn_rate="0.5" is_face_detected="{is_face_detected}" face_yaw_error="{face_yaw_error}"/>
+            </Sequence>
+
+            <!-- Default behavior: normal Nav2 navigation -->
+            <NavigateToPose/>
+
+            <!-- If IsFaceDetected fails, this branch succeeds so the tree keeps running -->
+            <!-- AlwaysSuccess/ -->
+
+          </Fallback>
+
+      </KeepRunningUntilFailure>
+
+    </Parallel>
   </BehaviorTree>
-
 </root>
