@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root BTCPP_format="4">
+<root BTCPP_format="4" main_tree_to_execute="CustomNavTree">
+
+  <!-- Include the default Nav2 tree - usually seen in "nav2_params.yaml":
+           default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+  -->
+  <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
 
   <!--
   see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
@@ -23,7 +28,8 @@
           Tree behaves exactly like stock Nav2
   -->
 
-  <BehaviorTree ID="MainTree">
+  <!-- Give YOUR root tree a unique ID like "CustomNavTree" -->
+  <BehaviorTree ID="CustomNavTree">
     <!-- 
       failure_count="2": The Parallel returns SUCCESS if at least 2 children succeeds.
       success_count="2": The Parallel returns FAILURE if at least 2 children fail.
@@ -58,22 +64,23 @@
       <!-- 2. Face Reaction Logic: Doesn't kill the tree if face is missing -->
       <KeepRunningUntilFailure>
 
-          <Fallback name="FaceReactionLogic">
+          <Fallback name="CustomOrStandardNav">
 
+            <!-- 2a. Face reaction: turn if face is detected, stop if STOP gesture is detected etc. -->
             <Sequence name="StopGestureSequence">
               <IsStopGesture is_stop_gesture="{is_stop_gesture}"/>
               <CancelControl/>
             </Sequence>
 
-            <Sequence name="TurnIfDetected">
+            <Sequence name="TurnIfFaceDetected">
               <IsFaceDetected is_face_detected="{is_face_detected}"/>
               <TurnTowardFace angle_tolerance="0.1" max_turn_rate="0.5" is_face_detected="{is_face_detected}" face_yaw_error="{face_yaw_error}"/>
             </Sequence>
 
-            <!-- Default behavior: normal Nav2 navigation -->
-            <NavigateToPose/>
+            <!-- 2b. Default behavior: normal Nav2 navigation. Call the Nav2 tree using its specific ID from the included file -->
+            <SubTree ID="MainTree" _autoremap="true" goal="{goal}"/>
 
-            <!-- If IsFaceDetected fails, this branch succeeds so the tree keeps running -->
+            <!-- If all fails, this branch succeeds so the tree keeps running -->
             <!-- AlwaysSuccess/ -->
 
           </Fallback>

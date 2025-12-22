@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="CustomNavTree">
+
+  <!-- Include the default Nav2 tree -->
+  <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
+
+  <!-- Give YOUR root tree a unique ID like "CustomNavTree" -->
+  <BehaviorTree ID="CustomNavTree">
+    <Fallback name="CustomOrStandardNav">
+      
+      <!-- 1. Your Custom Logic -->
+      <Sequence name="MyCustomLogic">
+        <IsFaceDetected is_face_detected="{is_face_detected}"/>
+        <!-- do something non-blocking -->
+        <CancelControl/>
+      </Sequence>
+
+      <!-- 2. Call the Nav2 tree using its specific ID from the included file -->
+      <SubTree ID="MainTree" _autoremap="true" goal="{goal}"/>
+
+    </Fallback>
+  </BehaviorTree>
+</root>
