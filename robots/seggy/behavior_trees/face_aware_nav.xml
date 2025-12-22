@@ -13,19 +13,21 @@
 
   What this tree does:
 
-      STOP gesture
-          Immediately cancels the current Nav2 goal
-          Works even while robot is moving
+      Normal navigation by default
+          Uses Nav2 default "navigate_to_pose_w_replanning_and_recovery.xml" tree
+          Tree behaves exactly like stock Nav2
 
-      Normal navigation
-          Uses Nav2 NavigateToPose
+      STOP gesture detected
+          Immediately cancels the current Nav2 goal
+          Works even while robot is moving/navigating
 
       Face detected
           Robot turns toward the person
           Does not block navigation forever
+          Falls back to default navigation if face is lost
 
-      No face
-          Tree behaves exactly like stock Nav2
+      No face in view
+          Robot continues with default navigation
   -->
 
   <!-- Give YOUR root tree a unique ID like "CustomNavTree" -->
