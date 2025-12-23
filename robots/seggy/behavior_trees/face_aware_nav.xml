@@ -28,6 +28,11 @@
 
       No face in view
           Robot continues with default navigation
+
+  To use this tree, edit config/nav2_params.yaml:
+     default_nav_to_pose_bt_xml: "$(find-pkg-share articubot_one)/robots/seggy/behavior_trees/face_aware_nav.xml"
+
+  It will start executing once you set "Nav2 Goal" via RViz or programmatically.
   -->
 
   <!-- Give YOUR root tree a unique ID like "CustomNavTree" -->
@@ -43,8 +48,8 @@
 
         <Sequence name="DataPumpRoot">
 
-          <!-- Pump perception data into the Blackboard -->
-          <!-- Note: map Outputs to BLACKBOARD Keys -->
+          <!-- Pump "perception adapter" data from the ROS2 topic into the BT Blackboard -->
+          <!-- Note: assign map Outputs to BLACKBOARD Keys so that plugins know where to look -->
           <FgsTopicToBlackboard
             topic_name="/bt/face_gesture_detect"
             is_face_detected="{is_face_detected}"
@@ -56,36 +61,69 @@
             is_yes_gesture="{is_yes_gesture}"
             is_six_gesture="{is_six_gesture}"
           />
-          <!-- Always succeed so the Sequence keeps ticking -->
-          <AlwaysSuccess/>
+          <!-- The FgsTopicToBlackboard always succeeds anyway, so the Sequence keeps ticking -->
+          <!-- AlwaysSuccess/ -->
 
         </Sequence>
 
       </KeepRunningUntilFailure>
 
-      <!-- 2. Face Reaction Logic: Doesn't kill the tree if face is missing -->
+      <!-- 2. "STOP" gesture and Face-in-view Reaction Logic: Doesn't kill the tree if face is missing -->
       <KeepRunningUntilFailure>
 
-          <Fallback name="CustomOrStandardNav">
+          <!-- ReactiveFallback does not focus on RUNNING children, but ticks all children in order until it receives SUCCESS or RUNNING -->
+          <ReactiveFallback name="CustomOrStandardNav">
 
             <!-- 2a. Face reaction: turn if face is detected, stop if STOP gesture is detected etc. -->
             <Sequence name="StopGestureSequence">
-              <IsStopGesture is_stop_gesture="{is_stop_gesture}"/>
-              <CancelControl/>
+              <IsStopGesture is_stop_gesture="{is_stop_gesture}"/>  <!-- If STOP gesture is detected returns SUCCESS -->
+              <!-- we don't get here if previous node fails -->
+
+              <!-- Wrap cancellations to be executed only once, not hammered on every tick -->
+              <RetryUntilSuccessful num_attempts="1">
+                <SequenceWithMemory name="CancelNavOnce">
+
+                  <!-- optional: slam the brakes immediately (although not for long: path planner will quickly re-publish the path) -->
+                  <CancelControl server_name="/follow_path" server_timeout="2.0"/>
+
+                  <!-- true Nav2 goal cancel with a custom plugin (similar to a CLI command):
+                          ros2 service call /navigate_to_pose/_action/cancel_goal action_msgs/srv/CancelGoal "{}" -->
+                  <CancelNavToPose action_name="/navigate_to_pose" timeout_ms="500"/>
+
+                </SequenceWithMemory>
+              </RetryUntilSuccessful>
+
+              <!-- Optional: keep this branch selected as long as STOP is true. Note: it can mask service failures -->
+              <!-- AlwaysSuccess/ -->
+
             </Sequence>
 
             <Sequence name="TurnIfFaceDetected">
-              <IsFaceDetected is_face_detected="{is_face_detected}"/>
-              <TurnTowardFace angle_tolerance="0.1" max_turn_rate="0.5" is_face_detected="{is_face_detected}" face_yaw_error="{face_yaw_error}"/>
+              <IsFaceDetected is_face_detected="{is_face_detected}"/>  <!-- If face is in view returns SUCCESS -->
+              <!-- we don't get here if previous node fails -->
+
+              <!-- If we are here, the subtree below won't be ticked. But its controller is still working
+                   So, we must stop Nav2 controller so it stops publishing the last cmd_vel it received
+                   Wrap it so that the CancelControl is executed only once, not hammered on every tick
+                   Wait for 5 seconds optional -->
+              <RetryUntilSuccessful num_attempts="1">
+                <SequenceWithMemory name="CancelControlOnceForFace">
+                  <CancelControl server_name="/follow_path" server_timeout="2.0"/>
+                  <!-- Wait wait_duration="5.0"/ -->
+                </SequenceWithMemory>
+              </RetryUntilSuccessful>
+
+              <!-- TurnTowardFace is an StatefulActionNode node and can be in RUNNING state for a while -->
+              <TurnTowardFace angle_tolerance="0.1" max_turn_rate="0.5"
+                              is_face_detected="{is_face_detected}"
+                              face_yaw_error="{face_yaw_error}"/>
             </Sequence>
 
             <!-- 2b. Default behavior: normal Nav2 navigation. Call the Nav2 tree using its specific ID from the included file -->
+            <!-- Subtree nodes can be in RUNNING state for a while-->
             <SubTree ID="MainTree" _autoremap="true" goal="{goal}"/>
 
-            <!-- If all fails, this branch succeeds so the tree keeps running -->
-            <!-- AlwaysSuccess/ -->
-
-          </Fallback>
+          </ReactiveFallback>
 
       </KeepRunningUntilFailure>
 
