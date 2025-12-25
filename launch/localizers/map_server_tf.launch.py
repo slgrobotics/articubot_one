@@ -19,16 +19,8 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
     map_file = LaunchConfiguration('map', default='')
 
-    # EKF localizer (needed for slam_toolbox to provide odom->base_link transform)
-    ekf_localizer = include_launch(
-        package_name,
-        ['launch', 'ekf_imu_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
+    # Note: EKF localizer must be launched prior (in the Drive or Sensors launch file) 
+    # It is needed to provide odom->base_link transform
 
     tf_map_odom = include_launch(
         package_name,
@@ -64,7 +56,6 @@ def generate_launch_description():
             '  map=', map_file
         ]),
 
-        #ekf_localizer,
         tf_map_odom,
         map_server,
     ])

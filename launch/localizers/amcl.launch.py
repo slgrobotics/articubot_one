@@ -24,16 +24,8 @@ def generate_launch_description():
     # Optional map file to pass to map_server (empty -> map_server default)
     map_file = LaunchConfiguration('map', default='')
 
-    # EKF localizer (needed to provide odom->base_link transform)
-    ekf_localizer = include_launch(
-        package_name,
-        ['launch', 'ekf_imu_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
+    # Note: EKF localizer must be launched prior (in the Drive or Sensors launch file) 
+    # It is needed to provide odom->base_link transform
 
     # Include map server for AMCL (AMCL expects a map)
     map_server = include_launch(
@@ -91,7 +83,6 @@ def generate_launch_description():
             '  map=', map_file
         ]),
 
-        #ekf_localizer,
         map_server,
         amcl_node,
         lifecycle_manager,
