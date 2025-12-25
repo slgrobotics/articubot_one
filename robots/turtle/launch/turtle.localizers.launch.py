@@ -42,7 +42,7 @@ def generate_launch_description():
         DeclareLaunchArgument('map', default_value=map_file),
 
         LogInfo(msg=[
-            '============ starting Seggy LOCALIZERS  namespace="', namespace,
+            '============ starting Turtle LOCALIZERS  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model,
             '  localizer_type=', localizer_type,

@@ -18,7 +18,7 @@ def generate_launch_description():
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from seggy.launch.py
+    # Keep interface compatible with being included from turtle.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # sensor nodes don't depend on robot_model and don't use package_name
