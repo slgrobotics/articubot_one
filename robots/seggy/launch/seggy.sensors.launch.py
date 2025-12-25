@@ -14,6 +14,8 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
+    robot_model = 'seggy'  # static per robot type
+
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
