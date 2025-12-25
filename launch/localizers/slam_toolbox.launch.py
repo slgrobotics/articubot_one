@@ -23,7 +23,7 @@ def generate_launch_description():
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'slam_toolbox_params.yaml'
     ])
 
-    # Note: EKF localizer must be launched prior (in the Drive or Sensors launch file) 
+    # Note: EKF filter must be launched prior (in the Drive or Sensors launch file) 
     # It is needed to provide odom->base_link transform
 
     #

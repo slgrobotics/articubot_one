@@ -17,7 +17,7 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
     map_file = LaunchConfiguration('map', default='')
 
-    # Note: EKF localizer must be launched prior (in the Drive or Sensors launch file) 
+    # Note: EKF filter must be launched prior (in the Drive or Sensors launch file) 
     # It is needed to provide odom->base_link transform
 
     cartographer_orientator = include_launch(

@@ -24,7 +24,7 @@ def generate_launch_description():
     # Optional map file to pass to map_server (empty -> map_server default)
     map_file = LaunchConfiguration('map', default='')
 
-    # Note: EKF localizer must be launched prior (in the Drive or Sensors launch file) 
+    # Note: EKF filter must be launched prior (in the Drive or Sensors launch file) 
     # It is needed to provide odom->base_link transform
 
     # Include map server for AMCL (AMCL expects a map)

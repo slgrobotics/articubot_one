@@ -120,7 +120,7 @@ def generate_launch_description():
         remappings=[("fix", "gps/fix")]
     )
 
-    # We need to run an EKF localizer here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
+    # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
     # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
     # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
     # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
