@@ -26,7 +26,7 @@ def generate_launch_description():
         description='Use simulation (Gazebo) clock if true',
     )
 
-    # for experiments: a bad alternative to ekf_localizer for slam_toolbox - static transform publisher
+    # for experiments: a bad alternative to ekf_imu_odom for slam_toolbox - static transform publisher
     start_tf = Node(package = "tf2_ros", 
                     executable = "static_transform_publisher",
                     arguments=[

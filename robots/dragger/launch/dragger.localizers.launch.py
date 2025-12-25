@@ -55,7 +55,7 @@ def generate_launch_description():
     # -----------------------------------------------------------------------------------
     # Outdoors only
     #  - localization with GPS + LIDAR (SLAM Toolbox)
-    outdoors_loc_nav = include_launch(
+    outdoor_localizers = include_launch(
         "outdoors_loc_nav",
         ['launch', 'outdoors_loc.launch.py'],
         {
@@ -66,30 +66,8 @@ def generate_launch_description():
         }
     )
 
-    # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
-    # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
-    # also, produces odom_topic: /odometry/local which can be used by Nav2
-    # see https://github.com/SteveMacenski/slam_toolbox?tab=readme-ov-file#api
-    # see slam_toolbox_params.yaml
-
-    ekf_imu_odom = include_launch(
-        package_name,
-        ['launch', 'ekf_imu_odom.launch.py'],
-        {
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model,
-            'namespace': namespace
-        }
-    )
-
-    # Multi-robot safe: wrap everything under the namespace
-    outdoor_localizers = [
-        ekf_imu_odom,
-        outdoors_loc_nav, # external package preferred for outdoors
-    ]
-
     # -----------------------------------------------------------------------------------
-    # Choose indoors or outdoors
+    # Choose indoors or outdoors:
     #robot_localizers = namespace_wrap(namespace, indoor_localizers)
     robot_localizers = namespace_wrap(namespace, outdoor_localizers)
 

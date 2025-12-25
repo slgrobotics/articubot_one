@@ -212,7 +212,7 @@ def generate_launch_description():
 
     # We need to run an EKF localizer here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
     # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
-    ekf_localizer = include_launch(
+    ekf_imu_odom = include_launch(
         package_name,
         ['launch', 'ekf_imu_odom.launch.py'],
         {
@@ -250,5 +250,5 @@ def generate_launch_description():
 
         gz_include,
         drive_include,
-        ekf_localizer
+        ekf_imu_odom
     ])

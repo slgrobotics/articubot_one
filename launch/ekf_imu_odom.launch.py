@@ -24,7 +24,7 @@ import launch_ros.actions
 # (typically specifies wheels odometry and IMU inputs to fuse for better odometry)
 #
 # Example usage (see seggy.localizers.launch.py):
-#    ekf_localizer = IncludeLaunchDescription(
+#    ekf_imu_odom = IncludeLaunchDescription(
 #                PythonLaunchDescriptionSource(ekf_odom_path)
 #                ), launch_arguments={'use_sim_time': use_sim_time, 'robot_model' : robot_model, 'namespace': namespace}.items()
 #    )
