@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from articubot_one.launch_utils.helpers import include_launch
 
 #
 # Generate launch description for Seggy robot sensors
@@ -98,6 +99,18 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
+    # We need to run an EKF localizer here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
+    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    ekf_localizer = include_launch(
+        package_name,
+        ['launch', 'ekf_imu_odom.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'namespace': namespace
+        }
+    )
+
     # Face gesture sensor - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/FaceGesture.md
     face_gesture_sensor = Node(
         package="face_gesture_sensor",
@@ -126,6 +139,7 @@ def generate_launch_description():
         ldlidar_node,
         bno08x_driver_node,
         #mpu9250_driver_node,
+        ekf_localizer,
         face_gesture_sensor,
         perception_adapter
     ])

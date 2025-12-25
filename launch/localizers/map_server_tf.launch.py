@@ -64,7 +64,7 @@ def generate_launch_description():
             '  map=', map_file
         ]),
 
-        ekf_localizer,
+        #ekf_localizer,
         tf_map_odom,
         map_server,
     ])
