@@ -22,6 +22,8 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Seggy uses common differential drive system, and we have a "generic" drive launch for that.
+    #       see https://github.com/slgrobotics/diffdrive_arduino
+    #
     # Include the "generic" drive launch and pass through all arguments.
     # Use the non-sim drive when "use_sim_time" is false
     drive_launch_path = PathJoinSubstitution([

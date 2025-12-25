@@ -1,7 +1,8 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
     delayed_include,
@@ -29,6 +30,39 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    # Note: for Gazebo simulation choose "robot_world" in turtle.drive.launch.py
+
+    # -------------------------------------------------------
+    # Localizers include - use turtle specific localizers launch
+    # -------------------------------------------------------
+
+    # Note: we can only use 'map_server_tf' here as Turtle is indoors only and does not have Navsat to provide map->odom TF
+
+    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+
+    # Choose one:
+    # Map file for localizers that support it (map_server, amcl):
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #
+    # For SlAM Toolbox, we can use previously saved serialized map:
+    #map_file = 'turtle_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #map_file = '/home/sergei/robot_ws/turtle_map_serial' # previously saved serialized map, full path OK too
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'turtle.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'localizer_type': localizer_type,
+            'map': map_file
+        }
+    )
 
     # -------------------------------------------------------
     # Robot State Publisher
@@ -68,26 +102,8 @@ def generate_launch_description():
     )
 
     # -------------------------------------------------------
-    # Timed includes — Localizers first, Nav2 after
-    #
-    # Note: TimerAction does not work inside included launch files:
-    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
-
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
-    loc_delay = 18.0    # seconds
-    nav_delay = 25.0
-
-    localizers_include = include_launch(
-        package_name,
-        ['robots', robot_model, 'launch', 'turtle.localizers.launch.py'],
-        {
-            'namespace': namespace,
-            'use_sim_time': use_sim_time,
-            'robot_model': robot_model
-        }
-    )
 
     navigation_include = include_launch(
         package_name,
@@ -98,6 +114,18 @@ def generate_launch_description():
             'robot_model': robot_model
         }
     )
+
+    # -------------------------------------------------------
+    # Timed includes — Localizers first, Nav2 after
+    #
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    # Localizers are run with a delay to allow IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow map to stabilize
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
 
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
@@ -139,7 +167,7 @@ def generate_launch_description():
         ),
 
         LogInfo(msg=[
-            '============ starting TURTLE (multi-robot)  namespace="', namespace,
+            '============ starting TURTLE  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
             '  robot_model=', robot_model
         ]),

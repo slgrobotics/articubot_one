@@ -83,16 +83,28 @@ def generate_launch_description():
             executable='cartographer_node',
             name='cartographer_node',
             output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
-            arguments=['-configuration_directory', cartographer_config_dir,
-                       '-configuration_basename', configuration_basename],
+            parameters=[{
+                    'use_sim_time': use_sim_time,
+                    #'pure_localization': True,
+                    #'start_trajectory_with_default_topics': False
+                }],
+            # see https://docs.ros.org/en/indigo/api/cartographer_ros/html/node__main_8cc.html
+            arguments=[
+                '-configuration_directory', cartographer_config_dir,
+                '-configuration_basename', configuration_basename,
+                #'-start_trajectory_with_default_topics', 'false'  # "Enable to immediately start the first trajectory with default topics."
+                ],
             remappings=[
-                ('imu','imu/data'),
                 ('scan','scan'),
-                #('odom','diff_cont/odom'),  # direct wheels odometry mapping
-                ('odom','odometry/local'),  # "ekf_filter_node_odom" mapping
-                #('odom','odometry/global'),  # "ekf_filter_node_navsat" mapping
-                ('fix','gps/filtered'),      # when use_nav_sat = true
+                ('odom','odometry/local'),   # IMU + wheel odometry "ekf_filter_node_odom" output
+                #
+                # Cartographer works better with ONLY lidar scan and local odometry.
+                # Other remappings below are just for academic interest
+                #
+                #('odom','odometry/global'), # "ekf_filter_node_navsat" output
+                #('odom','diff_cont/odom'),  # direct wheels odometry output
+                ('imu','imu/data'),          # when "TRAJECTORY_BUILDER_2D.use_imu_data=true"
+                ('fix','gps/filtered'),      # when "use_nav_sat=true", "navsat_transform" node output
                 ]
             ),
 
@@ -102,7 +114,9 @@ def generate_launch_description():
             executable='cartographer_occupancy_grid_node',
             name='cartographer_occupancy_grid_node',
             output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
+            parameters=[{
+                'use_sim_time': use_sim_time
+            }],
             arguments=['-resolution', resolution,
                        '-publish_period_sec', publish_period_sec])
     ])

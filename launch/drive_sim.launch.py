@@ -6,6 +6,7 @@ from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from nav2_common.launch import ReplaceString
+from articubot_one.launch_utils.helpers import include_launch
 
 #
 # Generate launch description for a typical differential drive robot drive system
@@ -209,6 +210,18 @@ def generate_launch_description():
         ]
     )
 
+    # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
+    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    ekf_imu_odom = include_launch(
+        package_name,
+        ['launch', 'ekf_imu_odom.launch.py'],
+        {
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'namespace': namespace
+        }
+    )
+
     # Launch them all!
 
     return LaunchDescription([
@@ -236,5 +249,6 @@ def generate_launch_description():
         LogInfo(msg=['============ starting ROBOT DRIVE (SIM)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model, ', robot_world: ', robot_world]),
 
         gz_include,
-        drive_include
+        drive_include,
+        ekf_imu_odom
     ])

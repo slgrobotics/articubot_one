@@ -21,6 +21,10 @@ from launch.actions import DeclareLaunchArgument, LogInfo
 from launch_ros.actions import Node
 
 #
+# -------------- Deprecated: use https://github.com/slgrobotics/outdoors_loc_nav ---------------------------------------------
+#
+
+#
 # Generate launch description for robot_localization dual EKF with navsat (GNSS) transform node
 #
 # Use robot-specific configuration file from robots/<robot_model>/config/dual_ekf_navsat_transform_params_file.yaml

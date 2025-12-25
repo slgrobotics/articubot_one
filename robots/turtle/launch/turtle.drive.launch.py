@@ -9,8 +9,12 @@ from launch_ros.actions import Node
 #
 # Generate launch description for Turtle robot drive system
 #
-# This launch file includes the generic "drive_sim.launch.py" with appropriate
-# parameters for turtle robot in simulation.
+# Real robot: Unlike other robots (based on https://github.com/slgrobotics/diffdrive_arduino) 
+#             Turtle cannot use generic "drive.launch.py" and must run Create1 driver and twist_mux
+#             Same pattern can be used for robots with RoboClaw type hardware
+#
+# Gazebo sim: This launch file includes the generic "drive_sim.launch.py" with appropriate
+#             parameters for turtle robot in simulation.
 #
 
 def generate_launch_description():
@@ -22,6 +26,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
 
+    # -----------------------------------------------------------------------------
     # For real robot, include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -57,7 +62,8 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time)
     )
 
-    # Use the sim-specific generic drive launch when "use_sim_time" is true.
+    # -----------------------------------------------------------------------------
+    # Gazebo sim: Use the sim-specific generic drive launch when "use_sim_time" is true.
     # It will pick URDF and controller config based on robot_model argument.
     drive_sim_launch_path = PathJoinSubstitution([
         FindPackageShare(package_name), 'launch', 'drive_sim.launch.py'
@@ -78,6 +84,7 @@ def generate_launch_description():
         condition=IfCondition(use_sim_time)
     )
 
+    # -----------------------------------------------------------------------------
     # add any robot-specific drive launch operations here if needed
 
     return LaunchDescription([

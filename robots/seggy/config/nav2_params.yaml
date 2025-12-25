@@ -6,48 +6,6 @@
 #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
 
-# see https://docs.nav2.org/configuration/packages/configuring-amcl.html
-amcl:
-  ros__parameters:
-    enable_stamped_cmd_vel: true
-    alpha1: 0.2
-    alpha2: 0.2
-    alpha3: 0.2
-    alpha4: 0.2
-    alpha5: 0.2
-    base_frame_id: "base_footprint"
-    beam_skip_distance: 0.5
-    beam_skip_error_threshold: 0.9
-    beam_skip_threshold: 0.3
-    do_beamskip: false
-    global_frame_id: "map"
-    lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
-    laser_max_range: -1.0 # use range reported by the sensor
-    laser_min_range: -1.0
-    laser_model_type: "likelihood_field"
-    max_beams: 60
-    max_particles: 1000 # Reduced to optimize performance
-    min_particles: 300 # Reduced to optimize performance
-    odom_frame_id: "odom"
-    pf_err: 0.05
-    pf_z: 0.99
-    recovery_alpha_fast: 0.0
-    recovery_alpha_slow: 0.0
-    resample_interval: 1
-    robot_model_type: "nav2_amcl::DifferentialMotionModel"
-    save_pose_rate: 0.5
-    sigma_hit: 0.2
-    tf_broadcast: true # Broadcasting the map->odom transform is why we use ACML.
-    transform_tolerance: 0.3  # delay in transform (tf) data that is tolerable in seconds. Default 1.0
-    update_min_a: 0.1 # Radians. Default 0.2=11.5 degrees. Less is better for slow or precise movements.
-    update_min_d: 0.1 # Meters. Default 0.25. Less is better for slow-moving robots.
-    z_hit: 0.5
-    z_max: 0.05
-    z_rand: 0.5
-    z_short: 0.1 # Default 0.005. Greater value compensates for short readings, such as small obstacles or reflective surfaces
-    scan_topic: scan
-
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
 bt_navigator:
   ros__parameters:
@@ -68,13 +26,22 @@ bt_navigator:
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+
     # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
-    default_nav_to_pose_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
-    default_nav_through_poses_bt_xml: "/opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+    #default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    default_nav_to_pose_bt_xml: "$(find-pkg-share articubot_one)/robots/seggy/behavior_trees/face_aware_nav.xml"
+
+    default_nav_through_poses_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+
     navigate_to_pose: # Go to a single location
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+      enable_groot_monitoring: true
+      groot_server_port: 1667
+
     navigate_through_poses: # Follow a series of waypoints 
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+      enable_groot_monitoring: true
+      groot_server_port: 1669
 
       # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
 
@@ -84,11 +51,12 @@ bt_navigator:
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
-    # Built-in plugins are added automatically
-    # plugin_lib_names: []
+    # Built-in plugins are added automatically - you only need to include your new custom plugins (new to Jazzy)
+    plugin_lib_names:
+      - slg_bt_plugins # to discover IsStopGesture, IsFaceDetected, etc. See https://github.com/slgrobotics/slg_bt_plugins
 
     #error_code_names: # works for Jazzy, must be removed for Kilted
-    error_code_name_prefixes: # works for Kilted
+    error_code_name_prefixes: # works for Kilted, does not cause trouble in Jazzy
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
@@ -144,17 +112,23 @@ controller_server:
       time_steps: 20 # Default: 56
       model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 3.5
+
+      # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+      # The velocity smoother refines these commands within the controller's limits,
+      # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+      ax_max: 1.0  # max forward acceleration
+      ax_min: -1.0 # max reverse acceleration
+      ay_max: 0.0  # Default: 3.0 Should be 0.0 when lateral movement is not possible?
+      az_max: 0.5  # max turning acceleration (reduce for smoother turns)
       vx_std: 0.2
-      vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
-      wz_std: 0.4 # Default: 0.2
-      vx_max: 0.5
-      vx_min: -0.35
-      vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 1.9
+      vy_std: 0.0  # Default: 0.2 Should be 0.0 when lateral movement is not possible?
+      wz_std: 0.4  # Default: 0.2
+      vx_max: 0.3  # max forward speed
+      vx_min: -0.2 # max reverse speed
+      vy_max: 0.0  # Default: 0.5 Should be 0.0 when lateral movement is not possible?
+      wz_max: 0.1  # max turning speed (less aggressive)
+
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
@@ -372,15 +346,6 @@ global_costmap:
 
       always_send_full_costmap: True
 
-# see https://docs.nav2.org/configuration/packages/configuring-map-server.html
-map_saver:
-  ros__parameters:
-    enable_stamped_cmd_vel: true
-    save_map_timeout: 5.0 # Default: 2.0
-    free_thresh_default: 0.25 # Increasing this means being more strict about what counts as empty space.
-    occupied_thresh_default: 0.65 # Occupied space minimum probability threshold value for occupancy grid.
-    map_subscribe_transient_local: True # Setting this to true means getting more reliable, complete map data but might take slightly longer.
-
 # see https://docs.nav2.org/configuration/packages/configuring-planner-server.html
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
@@ -437,12 +402,17 @@ behavior_server:
     transform_timeout: 0.8   # Default: 0.1
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5  # m/s^2
-    deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1       # m/s
-    max_rotational_vel: 1.0  # rad/s Default: 1.0
-    min_rotational_vel: 0.4  # rad/s Default: 0.4
-    rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
+
+    # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    acceleration_limit: 1.0  # max acceleration for recovery behaviors
+    deceleration_limit: -1.0 # max deceleration for recovery behaviors
+    minimum_speed: 0.05      # minimum speed for recovery behaviors
+    max_rotational_vel: 0.5  # max turning speed for recovery behaviors
+    min_rotational_vel: 0.2  # min turning speed for recovery behaviors
+    rotational_acc_lim: 1.0  # max rotational acceleration for recovery behaviors
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -470,12 +440,17 @@ velocity_smoother:
     scale_velocities: true        # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
     #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
-    max_velocity: [0.2, 0.0, 1.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
-    min_velocity: [-0.1, 0.0, -1.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
-    max_accel: [0.3, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
-    max_decel: [-0.3, 0.0, -3.2]     # Minimum acceleration, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
-    odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
-    #odom_topic: /diff_cont/odom   # works
+
+    # The MPPI Controller generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    max_velocity: [0.3, 0.0, 0.1]    # Reduced to match MPPI controller vx_max and wz_max
+    min_velocity: [-0.2, 0.0, -0.1]  # Reduced to match controller vx_min and wz_min
+    max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max
+    max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min
+    odom_topic: /odometry/local    # works  # Topic of odometry to use for estimating current velocities
+    #odom_topic: /diff_cont/odom   # works, but we better use fused odom
     odom_duration: 0.2  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
     deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
     velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
@@ -579,4 +554,3 @@ loopback_simulator:
     map_frame_id: "map"
     scan_frame_id: "laser_frame"
     update_duration: 0.02
-
