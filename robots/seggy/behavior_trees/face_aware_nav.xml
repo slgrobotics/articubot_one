@@ -7,7 +7,7 @@
   <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
 
   <!--
-  see https://chatgpt.com/s/t_69405ba56e04819185f0ac4cf0a9cde6
+  see https://github.com/slgrobotics/articubot_one/wiki/Behavior-Tree-for-Gesture-and-Face-Detection-Sensor
       https://github.com/slgrobotics/face_gesture_sensor
       https://github.com/slgrobotics/slg_bt_plugins
 

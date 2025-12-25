@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="CustomNavTree">
 
+  <!-- This is a minimal behavior tree, combining standard Nav2 navigation with custom logic -->
+
   <!-- Include the default Nav2 tree -->
   <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
 
