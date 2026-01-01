@@ -113,6 +113,22 @@ def generate_launch_description():
         remappings=[("imu", "imu/data")]
     )
 
+    icm20948_driver_node = Node(
+        package="ros2_icm20948",
+        executable="icm20948_node",
+        name="icm20948_node",
+        parameters=[{
+            # Note: for Linux on Raspberry Pi iBus=1 is hardcoded in linux_i2c.py
+            # SparkFun address is likely 0x69, generic GY-ICM20948 - 0x68
+            # Use "i2cdetect -y 1"
+            "i2c_address": 0x68,
+            "frame_id": "imu_link",
+            "pub_rate": 100,
+            "madgwick_beta": 0.08,
+            "madgwick_use_mag": True
+        }],
+    )
+
     # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
     # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
     ekf_imu_odom = include_launch(
@@ -129,5 +145,6 @@ def generate_launch_description():
         xv_11_driver_node,
         #mpu9250_driver_node,
         bno055_driver_node,
+        #icm20948_driver_node,
         ekf_imu_odom
     ])
