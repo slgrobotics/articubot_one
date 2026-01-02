@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- See common Gazebo pugins in the world file -->
+    
+    <!--
+        To re-generate robot.urdf.generated.xml manually for troubleshooting:
+          cd ~/robot_ws
+          colcon build
+          xacro install/articubot_one/share/articubot_one/robots/stingray/description/robot.urdf.xacro sim_mode:=false > src/articubot_one/robots/stingray/description/robot.urdf.generated.xml
+    -->
+
+    <!-- 
+             The *.xacro files are moved here because robot_description topic is published on the Desktop, not the robot RPi
+    -->
+
+    <xacro:include filename="../../../description/inertial_macros.xacro" />
+
+    <xacro:include filename="../../../description/common_properties.xacro" />
+
+    <xacro:include filename="stingray.urdf.xacro" />
+
+    <xacro:include filename="ros2_control.xacro" />
+
+    <xacro:property name="open_circuit_voltage" value="14.0"/>
+    <xacro:property name="battery_capacity" value="2.5"/>
+    <xacro:include filename="../../../description/battery.xacro" />
+
+</robot>

@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <ros2_control name="StingraySimRobot" type="system">
+
+        <!-- Wheel geometry information - see controllers.yaml -->
+
+        <hardware>
+            <xacro:unless value="$(arg sim_mode)">
+                <!-- Actual Stingray base hardware driver runs on the Stingray robot's Raspberry Pi 3B
+                     It publishes /joint_states [wheel_left_joint, wheel_right_joint] <- ! note the names !
+                     see https://github.com/slgrobotics/robots_bringup/tree/main/Docs/Stingray -->
+            </xacro:unless>
+
+            <xacro:if value="$(arg sim_mode)">
+                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+            </xacro:if>
+        </hardware>
+
+        <joint name="wheel_left_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="velocity">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <!-- state_interface name="effort">
+                <param name="initial_value">0.0</param>
+            </state_interface -->
+        </joint>
+
+        <joint name="wheel_right_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="velocity">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <!-- state_interface name="effort">
+                <param name="initial_value">0.0</param>
+            </state_interface -->
+        </joint>
+
+    </ros2_control>
+
+    <gazebo>
+        <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+
+            <!-- the following are just default parameters anyway. Skip them unless you want to reassign them:
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node> -->
+
+            <parameters>$(find articubot_one)/robots/stingray/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+</robot>

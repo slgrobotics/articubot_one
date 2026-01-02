@@ -1,0 +1,177 @@
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.conditions import IfCondition, UnlessCondition
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
+from articubot_one.launch_utils.helpers import (
+    include_launch,
+    delayed_include,
+    namespace_wrap,
+)
+
+#
+# Generate launch description for Stingray robot — multi-robot safe version
+#
+# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+#
+# Multi-robot usage example. On the robots' Raspberry Pi's:
+#
+#   ros2 launch articubot_one stingray.launch.py namespace:=robot1
+#   ros2 launch articubot_one stingray.launch.py namespace:=robot2
+#
+# Every robot runs a fully isolated stack under its namespace.
+#
+
+def generate_launch_description():
+
+    package_name = 'articubot_one'
+    robot_model = 'stingray'  # static per robot type
+
+    # Launch arguments (can be overridden)
+    namespace = LaunchConfiguration('namespace', default='')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    # Note: for Gazebo simulation choose "robot_world" in stingray.drive.launch.py
+
+    # -------------------------------------------------------
+    # Localizers include - use stingray specific localizers launch
+    # -------------------------------------------------------
+
+    # Note: we can only use 'map_server_tf' here as Stingray is indoors only and does not have Navsat to provide map->odom TF
+
+    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+
+    # Choose one:
+    # Map file for localizers that support it (map_server, amcl):
+    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
+    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
+    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #
+    # For SlAM Toolbox, we can use previously saved serialized map:
+    #map_file = 'stingray_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #map_file = '/home/sergei/robot_ws/stingray_map_serial' # previously saved serialized map, full path OK too
+
+    localizers_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'stingray.localizers.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model,
+            'localizer_type': localizer_type,
+            'map': map_file
+        }
+    )
+
+    # -------------------------------------------------------
+    # Robot State Publisher
+    # -------------------------------------------------------
+    robot_state_publisher = include_launch(
+        package_name,
+        ['launch', 'rsp.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
+    )
+
+    # -------------------------------------------------------
+    # Drive & Sensors
+    # -------------------------------------------------------
+    drive_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'stingray.drive.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
+    )
+
+    sensors_include = include_launch(
+        package_name,
+        ['robots', robot_model, 'launch', 'stingray.sensors.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        },
+        condition=UnlessCondition(use_sim_time),  # real robot only
+    )
+
+    # -------------------------------------------------------
+    # Navigation include - use generic navigation.launch.py
+    # -------------------------------------------------------
+
+    navigation_include = include_launch(
+        package_name,
+        ['launch', 'navigation.launch.py'],
+        {
+            'namespace': namespace,
+            'use_sim_time': use_sim_time,
+            'robot_model': robot_model
+        }
+    )
+
+    # -------------------------------------------------------
+    # Timed includes — Localizers first, Nav2 after
+    #
+    # Note: TimerAction does not work inside included launch files:
+    #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
+    # -------------------------------------------------------
+
+    # Localizers are run with a delay to allow IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow map to stabilize
+    loc_delay = 18.0    # seconds
+    nav_delay = 25.0
+
+    delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
+    delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
+
+    # -------------------------------------------------------
+    # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
+    #
+    # Ensures:
+    #   /robot1/tf
+    #   /robot1/odom
+    #   /robot1/map
+    #   /robot1/scan
+    #   /robot1/nav2/...
+    # -------------------------------------------------------
+
+    namespaced_actions = namespace_wrap(namespace, [
+        robot_state_publisher,
+        drive_include,
+        sensors_include,
+        delayed_loc,
+        delayed_nav,
+    ])
+
+    # -------------------------------------------------------
+    # Final LaunchDescription
+    # -------------------------------------------------------
+    return LaunchDescription([
+
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'
+        ),
+
+        DeclareLaunchArgument(
+            'namespace',
+            default_value='',
+            description='Top-level namespace for multi-robot deployment'
+        ),
+
+        LogInfo(msg=[
+            '============ starting STINGRAY  namespace="', namespace,
+            '"  use_sim_time=', use_sim_time,
+            '  robot_model=', robot_model
+        ]),
+
+        # EVERYTHING runs inside namespace_wrap()
+        namespaced_actions,
+    ])
