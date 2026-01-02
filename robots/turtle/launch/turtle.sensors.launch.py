@@ -123,9 +123,12 @@ def generate_launch_description():
             # Use "i2cdetect -y 1"
             "i2c_address": 0x68,
             "frame_id": "imu_link",
-            "pub_rate": 100,
+            "pub_rate_hz": 100,      # integer, default 50
+            "temp_pub_rate_hz": 1.0, # float, default 1.0
             "madgwick_beta": 0.08,
-            "madgwick_use_mag": True
+            "madgwick_use_mag": True,
+            "gyro_calib_seconds": 5.0, # default 3 seconds
+            "gyro_calib_max_std_dps": 1.0 # warning threshold - if std dev is too high during calibration
         }],
     )
 
