@@ -65,25 +65,6 @@
           </inertial>
   </link>
 
-  <!-- OAK-D IMU frame -->
-  <!-- The depthai driver publishes oak_imu_frame with its own orientation -->
-  <!-- Add this link to the URDF so we can adjust its rotation to align with robot axes -->
-  <joint name="oak_imu_joint" type="fixed">
-    <!-- Rotation to align IMU axes with robot coordinate frame -->
-    <!-- Adjust these values to match your robot's coordinate system -->
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <parent link="oakd_${mount_point}" />
-    <child link="oak_imu_frame" />
-  </joint>
-
-  <link name="oak_imu_frame">
-    <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
-    </inertial>
-  </link>
-
   <!-- Gazebo plugin for greyscale left/right stereo pairs -->
 
       <gazebo reference="oakd_${mount_point}">
