@@ -10,8 +10,9 @@ from launch_ros.actions import Node
 # Generate launch description for Stingray robot drive system
 #
 # Real robot: Unlike other robots (based on https://github.com/slgrobotics/diffdrive_arduino) 
-#             Stingray cannot use generic "drive.launch.py" and must run Create1 driver and twist_mux
-#             Same pattern can be used for robots with RoboClaw type hardware
+#             Stingray cannot use generic "drive.launch.py" and must run RoboClaw driver and twist_mux
+#             Same pattern can be used for robots with custom wheels driving hardware
+#             See https://github.com/wimblerobotics/roboclaw_driver
 #
 # Gazebo sim: This launch file includes the generic "drive_sim.launch.py" with appropriate
 #             parameters for stingray robot in simulation.
@@ -36,28 +37,20 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time)
     )
 
-    # For real robot, include the Roomba Create 1 specific drive launch and pass through all arguments.
-    drive_launch = Node(
-        package='create_driver',
-        namespace=namespace,
-        executable='create_driver',
-        name='create_driver',
-        output='screen',
-        respawn=True,
-        respawn_delay=4,
-        parameters=[{
-            'robot_model': 'CREATE_1', # not the same as robot_model argument
-            'dev': '/dev/ttyUSB0',
-            'baud': 57600,
-            'base_frame': 'base_link',
-            'odom_frame': 'odom',
-            'latch_cmd_duration': 2.0,
-            'loop_hz': 66.0,    # control loop frequency, odom publishing etc. Create 1 sends all sensor data every 15ms (66Hz)
-            'publish_tf': False,
-            'gyro_offset': 0.0,
-            'gyro_scale': 1.21,
-            'distance_scale': 1.05
-        }],
+    roboclaw_launch_file = PathJoinSubstitution([
+        FindPackageShare(package_name), "robots", robot_model, "config", "roboclaw.yaml"
+    ])
+
+    roboclaw_params_file = PathJoinSubstitution([
+        FindPackageShare("roboclaw_driver"), "launch", "roboclaw_driver.launch.py"
+    ])
+
+    # For real robot, include the RoboClaw driver:
+    drive_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(roboclaw_launch_file),
+        launch_arguments={
+            "params_file": roboclaw_params_file,
+        }.items(),
         remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')],
         condition=UnlessCondition(use_sim_time)
     )

@@ -1,0 +1,124 @@
+#
+# See https://github.com/wimblerobotics/roboclaw_driver/blob/main/config/motor_driver.yaml
+#
+
+roboclaw_driver:
+  ros__parameters:
+    # ============================================================================
+    # DEVICE COMMUNICATION SETTINGS
+    # ============================================================================
+    device_name: "/dev/ttyAMA0"           # Serial device path for RoboClaw
+                                          # Common values: /dev/ttyUSB0, /dev/ttyAMA0, /dev/ttyACM0
+                                          # Use 'ls /dev/tty*' to find your device
+    
+    baud_rate: 230400                     # Serial communication baud rate
+                                          # Must match RoboClaw configuration! 
+                                          # Common values: 38400, 115200, 230400
+                                          
+    device_timeout: 100                   # Command timeout in milliseconds
+                                          # How long to wait for RoboClaw responses
+
+    # ============================================================================
+    # PUBLISHING RATES (Hz) - Controls how often data is published
+    # ============================================================================
+    odometry_rate: 67.0                   # Rate for publishing odometry data
+                                          # Higher = more frequent position updates
+                                          # TeensyV2 compatible default: 67.0
+                                          
+    joint_states_rate: 30.0               # Rate for publishing wheel joint states  
+                                          # Used by robot_state_publisher and rviz
+                                          
+    status_rate: 10.0                     # Rate for reading and publishing status information
+                                          # Includes motor currents, temperature, battery voltage
+
+    # ============================================================================
+    # ROBOT PHYSICAL PARAMETERS - CRITICAL: MEASURE YOUR ROBOT CAREFULLY!
+    # ============================================================================
+    wheel_radius: 0.051112072             # Wheel radius in meters
+                                          # ⚠️  MEASURE THIS PRECISELY! Affects odometry accuracy
+                                          # Measure from wheel center to contact point with ground
+                                          
+    wheel_separation: 0.3906              # Distance between wheel centers in meters  
+                                          # ⚠️  MEASURE THIS PRECISELY! Affects turning accuracy
+                                          # Measure center-to-center distance between drive wheels
+                                          
+    encoder_counts_per_revolution: 1000   # Total encoder counts per wheel revolution
+                                          # ⚠️  CHECK YOUR ENCODER SPECS! Critical for speed/position
+                                          # For quadrature encoders: 4 × (pulses per revolution)
+                                          # Example: 250 PPR encoder = 1000 counts/rev
+
+    # ============================================================================
+    # ROS FRAME NAMES - For TF tree and coordinate systems
+    # ============================================================================
+    base_frame: "base_link"               # Robot base frame for TF
+                                          # Standard ROS convention, usually don't change
+                                          
+    odom_frame: "odom"                    # Odometry frame for TF
+                                          # Standard ROS convention, usually don't change
+
+    # ============================================================================
+    # SAFETY LIMITS - Prevents dangerous robot behavior
+    # ============================================================================
+    max_angular_velocity: 0.7             # Maximum turning speed (radians/second)
+                                          # Clamps angular velocity commands for safety
+                                          # Start conservative, increase as needed
+                                          
+    max_linear_velocity: 0.3              # Maximum forward/backward speed (meters/second)
+                                          # Clamps linear velocity commands for safety  
+                                          # Start conservative, increase as needed
+
+    max_seconds_uncommanded_travel: 0.05   # Maximum time to allow robot to travel without receiving new commands
+                                          # Safety timeout: motors stop if no cmd_vel for this duration
+                                          # Prevents runaway robot if communication fails
+
+    # ============================================================================
+    # MOTOR PID CONTROL PARAMETERS
+    # ============================================================================
+    # These values control how motors respond to speed commands
+    # Use BasicMicro Motion Studio to tune these values for your specific motors
+    # Start with manufacturer recommendations, then fine-tune for performance
+    
+    # Motor 1 (typically left wheel)
+    m1_p: 7.26239                         # Proportional gain - higher = more aggressive response
+    m1_i: 2.43                            # Integral gain - eliminates steady-state error  
+    m1_d: 0.0                             # Derivative gain - reduces overshoot
+    m1_qpps: 2437                         # Maximum quadrature pulses per second
+                                          # Should match your motor's maximum speed capability
+    
+    # Motor 2 (typically right wheel)  
+    m2_p: 7.26239                         # Proportional gain
+    m2_i: 2.43                            # Integral gain
+    m2_d: 0.0                             # Derivative gain  
+    m2_qpps: 2437                         # Maximum quadrature pulses per second
+
+    # ============================================================================
+    # MOTOR ACCELERATION SETTINGS
+    # ============================================================================
+    accel: 3000                           # Motor acceleration in encoder counts per second squared
+                                          # Higher = faster acceleration, but may cause wheel slip
+                                          # Lower = smoother but slower acceleration
+
+    # ============================================================================
+    # PUBLISHING CONTROL - Enable/disable specific data publishing
+    # ============================================================================
+    publish_odom: true                   # Publish odometry messages (/odom topic)
+                                          # Set to true for navigation, SLAM, or position tracking
+                                          # Required for publish_tf to work
+                                          
+    publish_tf: false                     # Publish TF transforms (odom → base_link)
+                                          # Set to true for navigation stack integration
+                                          # Requires publish_odom: true
+                                          
+    publish_joint_states: false           # Publish wheel joint states (/joint_states topic)
+                                          # Set to true for robot_state_publisher and visualization
+
+    # ============================================================================
+    # DEBUGGING CONTROL - Enable for troubleshooting
+    # ============================================================================
+    do_debug: true                       # True => Log RoboClaw commands and responses
+                                          # Enable to see detailed communication info
+                                          # Useful for troubleshooting communication issues
+                                          
+    do_low_level_debug: false             # True => Log low-level serial and RoboClaw data
+                                          # Very verbose! Only enable for deep debugging
+                                          # Shows raw bytes sent/received
