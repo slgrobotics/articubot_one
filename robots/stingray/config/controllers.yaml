@@ -37,8 +37,8 @@ diff_cont:
 
     wheels_per_side: 1
 
-    wheel_separation: 0.258  # distance between left and right wheels - as defined in ~/create_robot_ws/src/libcreate/src/types.cpp
-    wheel_radius: 0.033
+    wheel_separation: 0.26  # distance between left and right wheels - as defined in robots/stingray/description/stingray_properties.xacro
+    wheel_radius: 0.0615
   
     # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
     # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false
@@ -67,8 +67,8 @@ diff_cont:
     # Note: if not specified below, there will be no limits applied (default is NAN for missing parameters)
     linear:
       x:
-        max_velocity           : 0.1 # m/s - experimental on actual robot
-        min_velocity           : -0.05 # m/s
+        max_velocity           : 0.15 # m/s - experimental on actual robot
+        min_velocity           : -0.01 # m/s
         max_acceleration       : 0.2  # m/s^2
         min_acceleration       : -0.1 # m/s^2
         max_jerk               : 0.8  # m/s^3
