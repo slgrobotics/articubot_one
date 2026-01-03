@@ -29,6 +29,8 @@
     <xacro:property name="laser_offset_x" value="0.085"/>
     <xacro:property name="laser_offset_z" value="0.033"/>
 
+    <!-- Note: regular camera and depth camera share chassis' "camera_link". Use one or another.  -->
+    <!-- xacro:include filename="stingray_camera.xacro" / -->
     <xacro:include filename="stingray_depth_camera.xacro" />
     <xacro:include filename="stingray_lidar.urdf.xacro" />
 
