@@ -9,7 +9,7 @@
         <geometry>
           <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
         </geometry>
-        <material name="grey"/>
+        <material name="gray"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>
@@ -53,7 +53,7 @@
           <geometry>
               <cylinder radius="${base_diameter/2 + 0.01}" length="0.003"/>
           </geometry>
-          <material name="shadow_grey"/>
+          <material name="shadow_gray"/>
       </visual>
     </link>
 
@@ -148,7 +148,7 @@
         <geometry>
           <sphere radius="0.018"/>
         </geometry>
-        <material name="grey"/>
+        <material name="gray"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>

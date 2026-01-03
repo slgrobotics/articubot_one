@@ -27,11 +27,7 @@
         <color rgba="0.6 0.6 0.6 1.0"/>
     </material>
 
-    <material name="grey">
-        <color rgba="0.5 0.5 0.5 1"/>
-    </material>
-
-    <material name="shadow_grey">
+    <material name="shadow_gray">
         <color rgba="0.3 0.3 0.3 0.5"/>
     </material>
 

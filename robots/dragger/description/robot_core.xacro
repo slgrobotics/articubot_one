@@ -63,7 +63,7 @@
                 <!-- box size="${wheel_offset_y * 2 + wheel_thickness} ${wheel_offset_y * 2 + wheel_thickness} 0.02"/ -->
                 <cylinder radius="${wheel_offset_y + wheel_thickness / 2}" length="0.02"/>
             </geometry>
-            <material name="shadow_grey"/>
+            <material name="shadow_gray"/>
         </visual>
      </link>
 
