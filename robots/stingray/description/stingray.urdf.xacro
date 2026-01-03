@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" ?>
 <robot name="stingray" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:include filename="stingray_properties.xacro" />
   <xacro:include filename="stingray_base.urdf.xacro" />
 
   <xacro:property name="imu_offset_x" value="-0.04"/>
@@ -12,11 +13,5 @@
   <xacro:property name="laser_offset_z" value="0.033"/>
 
   <xacro:include filename="stingray_sensors.urdf.xacro" />
-
-  <!-- wheel_separation - distance between left and right wheels, defined in ~/stingray_robot_ws/src/libstingray/src/types.cpp -->
-
-  <xacro:stingray_base wheel_separation="0.258" base_diameter="0.3302" wheel_radius="0.033" wheel_width="0.024" mass_kg="3.5">
-    <mesh filename="package://articubot_one/assets/meshes/Stingray.stl" />
-  </xacro:stingray_base>
 
 </robot>

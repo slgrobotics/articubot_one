@@ -2,173 +2,162 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:macro name="stingray_wheel" params="prefix y_offset wheel_radius wheel_width">
-    <link name="${prefix}_wheel_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>
-        <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
-        </geometry>
-        <material name="grey"/>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>
-        <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
-        </geometry>
-      </collision>
-      <xacro:inertial_cylinder mass="0.01" length="${wheel_width}" radius="${wheel_radius}">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-      </xacro:inertial_cylinder>
-    </link>
-
-    <!-- joint name="${prefix}_wheel_joint" type="fixed" -->
-    <joint name="wheel_${prefix}_joint" type="continuous">
-      <origin xyz="0 ${y_offset} ${-wheel_radius}" rpy="0 0 0"/>
-      <parent link="chassis_link"/>
-      <child link="${prefix}_wheel_link"/>
-      <axis xyz="0 1 0"/>
-    </joint>
-
-  </xacro:macro>
-
-  <xacro:macro name="stingray_base" 
-               params="wheel_separation base_diameter wheel_radius wheel_width mass_kg *mesh">
-
-    <!-- The coordinate frame called base_link is rigidly attached to the robot root body. -->
+    <!-- BASE LINK -->
     <link name="base_link">
-      <visual name="baselink_visual">
-          <origin xyz="0 0 0"/>
-          <geometry>
-              <sphere radius="0.01"/>
-          </geometry>
-          <material name="red"/>
-      </visual>
+    <!-- Is located center wheel axles  in mid Y and Z axes of the chassis -->
+    <!-- It needs to sit above the world origin by the wheel radius -->
+        <origin xyz="0.0 0.0 ${wheel_radius}"/>
     </link>
 
-    <!-- Define the center of the main robot chassis projected on the ground -->   
+    <!-- BASE JOINT -->
+    <joint name="base_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_footprint"/>
+        <origin xyz="0.0 0.0 -${wheel_radius}" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <!-- BASE FOOTPRINT -->
+    <!-- Represents the 'shadow'of the robot on the floor/ground -->
+    <!-- It is the 2d outside dimension of the robot and minimal thickness -->
     <link name="base_footprint">
-      <visual name="footprint_visual">
-          <origin xyz="0 0 0"/>
-          <geometry>
-              <cylinder radius="${base_diameter/2 + 0.01}" length="0.003"/>
-          </geometry>
-          <material name="shadow_grey"/>
-      </visual>
+        <visual name="footprint_visual">
+            <origin xyz="-${chassis_offset + caster_radius} 0.0 0.0"/>
+            <geometry>
+                <box size="${chassis_length + (caster_radius * 2)} ${wheel_separation + wheel_thickness} 0.001"/>
+            </geometry>
+            <material name="gray"/>
+        </visual>
     </link>
-
-    <!-- The base footprint of the robot is located underneath the chassis -->
-    <joint name="base_footprint_joint" type="fixed">
-      <parent link="base_link"/>
-      <child link="base_footprint" />
-      <origin xyz="0 0 -${wheel_radius}" rpy="0 0 0"/>
-    </joint>
-
-    <joint name="chassis_joint" type="fixed">
-      <parent link="base_link"/>
-      <child link="chassis_link"/>
-      <origin xyz="0 0 ${wheel_radius}"/>
-    </joint>
 
     <!-- CHASSIS LINK -->
+    <joint name="chassis_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="chassis_link"/>
+    </joint>
     <link name="chassis_link">
+        <visual name="chassis_gz_visual">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <!-- box size="${chassis_length} ${chassis_width} ${chassis_height}"/ -->
+                <!-- mesh filename="package://stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
+                <!-- mesh filename="/home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
+                <mesh filename="file://$(find articubot_one)/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="gray"/>
+        </visual>
+        <visual name="chassis_rviz_visual">
+             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <!-- box size="${chassis_length} ${chassis_width} ${chassis_height}"/ -->
+                <mesh filename="file://$(find articubot_one)/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
+                <!-- mesh filename="/home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
+                <!-- mesh filename="file://home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
+            </geometry>
+            <material name="gray"/>
+        </visual>
 
-      <visual name="chassis_gz_visual">
-        <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
-        <geometry>
-            <mesh filename="model://meshes/Stingray.stl" scale="0.002 0.002 0.002"/>
-        </geometry>
-      </visual>
-      <visual name="chassis_rviz_visual">
-        <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
-        <geometry>
-          <xacro:insert_block name="mesh"/>
-        </geometry>
-      </visual>
-
-      <collision>
-        <origin xyz="0.0 0.0 0" rpy="0 0 0"/>
-        <geometry>
-          <cylinder length="0.0611632" radius="${base_diameter/2}"/>
-        </geometry>
-      </collision>
-      <xacro:inertial_cylinder mass="${mass_kg}" length="0.0611632" radius="${base_diameter/2}">
-        <!-- cheat: origin moved forward a bit, so that center mass is forward of the wheels axis -->  
-        <origin xyz="0.03 0 0" rpy="0 0 0"/>
-      </xacro:inertial_cylinder>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <!-- mesh filename="package://articubot_one/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/ -->
+		            <!-- collision doesn't need to be a mesh, a box is sufficient -->
+                <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_height}">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_box>
     </link>
 
-    <link name="wall_sensor_link">
-    </link>
-
-    <link name="left_cliff_sensor_link">
-    </link>
-
-    <link name="right_cliff_sensor_link">
-    </link>
-
-    <link name="leftfront_cliff_sensor_link">
-    </link>
-
-    <link name="rightfront_cliff_sensor_link">
-    </link>
-
-    <joint name="base_wall_sensor_joint" type="fixed">
-      <origin xyz="0.09 -0.120 0.042" rpy="0 0 -1.0"/>
-      <parent link="chassis_link"/>
-      <child link="wall_sensor_link"/>
-    </joint>
-    <joint name="base_left_cliff_sensor_joint" type="fixed">
-      <origin xyz="0.07 0.14 0.01" rpy="0 ${pi/2} 0"/>
-      <parent link="chassis_link"/>
-      <child link="left_cliff_sensor_link"/>
-    </joint>
-    <joint name="base_right_cliff_sensor_joint" type="fixed">
-      <origin xyz="0.07 -0.14 0.01" rpy="0 ${pi/2} 0"/>
-      <parent link="chassis_link"/>
-      <child link="right_cliff_sensor_link"/>
-    </joint>
-    <joint name="base_leftfront_cliff_sensor_joint" type="fixed">
-      <origin xyz="0.15 0.04 0.01" rpy="0 ${pi/2} 0"/>
-      <parent link="chassis_link"/>
-      <child link="leftfront_cliff_sensor_link"/>
-    </joint>
-    <joint name="base_rightfront_cliff_sensor_joint" type="fixed">
-      <origin xyz="0.15 -0.04 0.01" rpy="0 ${pi/2} 0"/>
-      <parent link="chassis_link"/>
-      <child link="rightfront_cliff_sensor_link"/>
+    <!-- WHEEL LINKS -->
+    <joint name="wheel_left_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="left_wheel_link"/>
+        <origin xyz="0.0 0.13 0.0" rpy="-${pi/2} 0.0 0.0"/>
+        <axis xyz="0 0 1"/>
     </joint>
 
-    <xacro:stingray_wheel prefix="left" y_offset="${wheel_separation / 2}" wheel_radius="${wheel_radius}" wheel_width="${wheel_width}"/>
-    <xacro:stingray_wheel prefix="right" y_offset="${wheel_separation / -2}" wheel_radius="${wheel_radius}" wheel_width="${wheel_width}"/>
-
-    <link name="front_castor_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>
-        <geometry>
-          <sphere radius="0.018"/>
-        </geometry>
-        <material name="grey"/>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 ${pi/2} ${pi/2}"/>
-        <geometry>
-          <sphere radius="0.018"/>
-        </geometry>
-      </collision>
-      <xacro:inertial_sphere mass="0.01" radius="0.018">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-      </xacro:inertial_sphere>
+    <link name="left_wheel_link">
+        <visual name="left_wheel_visual">
+            <geometry>
+                <cylinder radius="0.062" length="0.02"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <visual name="left_wheel_marker_visual">
+            <origin xyz="0 ${wheel_radius*0.7} 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.062" length="0.02"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.141" length="0.02" radius="0.062">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_cylinder>
     </link>
 
-    <!-- fixed because there's no transmission -->
-    <joint name="front_castor_joint" type="fixed">
-      <origin xyz="0.13 0 -0.048" rpy="0 0 0"/>
-      <parent link="chassis_link"/>
-      <child link="front_castor_link"/>
-      <axis xyz="0 1 0"/>
+
+    <joint name="wheel_right_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="right_wheel_link"/>
+        <origin xyz="0.0 -0.13 0.0" rpy="${pi/2} 0.0 0.0"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
-  </xacro:macro>
+    <link name="right_wheel_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.062" length="0.02"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <visual name="right_wheel_marker_visual">
+            <origin xyz="0 ${-wheel_radius*0.7} 0" rpy="0 0 0" />
+            <geometry>
+                <box size="${wheel_radius*0.2} ${wheel_radius*0.3} ${wheel_thickness*1.1}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="0.062" length="0.02"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="0.141" length="0.02" radius="0.062">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <joint name="caster_wheel_joint" type="fixed">
+        <origin xyz="${caster_x_offset} 0.0 ${caster_z_offset}" rpy="0.0 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="caster_wheel_link"/>
+        <axis xyz="0.0 0.0 0.0"/>
+        <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0"/>
+    </joint>
+    <link name="caster_wheel_link">
+        <visual name="">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <sphere radius=".028"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <sphere radius="0.028"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_sphere mass="0.152" radius="0.058">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_sphere>
+    </link>
 
 </robot>

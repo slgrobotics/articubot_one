@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="chassis_length" value="0.266"/>
+    <xacro:property name="chassis_width" value="0.228"/>
+    <xacro:property name="chassis_height" value="0.081"/>
+    <!--chassis_offset is distance from center of chassis 
+    to chassis origin between the wheels at base_link -->
+    <xacro:property name="chassis_offset" value="0.0455"/>
+    <!-- front_panel_offset is distance from chassis origin
+    at base_link to the front of the chassis -->
+    <xacro:property name="front_panel_offset" value="0.090"/>
+    <xacro:property name="wheel_radius" value="0.0615"/>
+    <xacro:property name="wheel_thickness" value="0.02"/>
+    <xacro:property name="wheel_offset" value="0.13"/>
+    <xacro:property name="wheel_separation" value="0.26"/>
+    <xacro:property name="caster_radius" value="0.028"/>
+    <xacro:property name="caster_x_offset" value="-0.207"/>
+    <xacro:property name="caster_z_offset" value="-0.035"/>
+    <xacro:property name="chassis_mass" value="0.98"/>
+    <xacro:property name="wheel_mass" value="0.058"/>
+    <xacro:property name="caster_mass" value="0.022"/>
+    <xacro:property name="lidar_mass" value="0.207"/>
+    <xacro:property name="lidar_radius" value="0.03025"/>
+    <xacro:property name="lidar_height" value="0.016"/>
+    <xacro:property name="lidar_stand_height" value="0.0424"/>
+    <xacro:property name="lidar_offset_X" value="0.045"/>
+    <xacro:property name="camera_height" value="0.040"/>
+    <xacro:property name="camera_width" value="0.040"/>
+    <xacro:property name="camera_depth" value="0.0016"/>
+    <xacro:property name="camera_lens_radius" value="0.009"/>
+    <xacro:property name="camera_offset_Z" value="0.016"/>
+    <xacro:property name="camera_lens_length" value="0.0256"/>    
+    <xacro:property name="BLANK" value="0.0"/>
+
+</robot>

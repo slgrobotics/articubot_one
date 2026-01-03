@@ -23,6 +23,10 @@
         <color rgba="0 0 1 1"/>
     </material>
 
+    <material name="gray">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+    </material>
+
     <material name="grey">
         <color rgba="0.5 0.5 0.5 1"/>
     </material>
