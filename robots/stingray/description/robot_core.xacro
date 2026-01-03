@@ -7,6 +7,13 @@
     <!-- Is located center wheel axles  in mid Y and Z axes of the chassis -->
     <!-- It needs to sit above the world origin by the wheel radius -->
         <origin xyz="0.0 0.0 ${wheel_radius}"/>
+        <visual name="baselink_visual">
+            <origin xyz="0 0 0"/>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
     </link>
 
     <!-- BASE JOINT -->
@@ -25,7 +32,7 @@
             <geometry>
                 <box size="${chassis_length + (caster_radius * 2)} ${wheel_separation + wheel_thickness} 0.001"/>
             </geometry>
-            <material name="gray"/>
+            <material name="shadow_grey"/>
         </visual>
     </link>
 
@@ -44,7 +51,7 @@
                 <!-- mesh filename="/home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
                 <mesh filename="file://$(find articubot_one)/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/>
             </geometry>
-            <material name="gray"/>
+            <material name="body_gray"/>
         </visual>
         <visual name="chassis_rviz_visual">
              <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
@@ -54,7 +61,7 @@
                 <!-- mesh filename="/home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
                 <!-- mesh filename="file://home/ubuntu/stingray_ws/src/stingray/assets/meshes/Stingray.stl" scale="0.001 0.001 0.001"/-->
             </geometry>
-            <material name="gray"/>
+            <material name="body_gray"/>
         </visual>
 
         <collision>

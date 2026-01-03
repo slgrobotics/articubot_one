@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <joint name="camera_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="camera_link"/>
+        <!-- mount camera front panel top center, zero focus offset -->
+        <origin xyz="${front_panel_offset} 0.0 ${camera_offset_Z}" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="camera_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 ${pi/2} 0.0"/>
+            <geometry>
+                <box size="${camera_height} ${camera_width} ${camera_depth}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${camera_height} ${camera_width} ${camera_depth}"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="camera_lens_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_lens_link"/>        
+    </joint>
+    
+    <link name="camera_lens_link">
+        <visual>
+            <origin xyz="${camera_lens_length/2} 0.0 0.0" rpy="0.0 ${pi/2} 0.0"/>
+            <geometry>
+                <cylinder radius="${camera_lens_radius}" length="${camera_lens_length}"/>        
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${camera_lens_radius}" length="${camera_lens_length}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="${0.012}" length="${camera_lens_length}" radius="${camera_lens_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+
+    <joint name="camera_optical_joint" type="fixed">
+        <parent link="camera_link"/>
+        <child link="camera_link_optical"/>
+        <!-- rotate OPTICAL link to standard optical orientation (x=right, y=down, z= outward) -->
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <link name="camera_link_optical"></link>
+
+    <!-- gz model -m stingray -s rgb_camera -->
+    <gazebo reference="camera_link">
+        <material>Gazebo/blue</material>
+    </gazebo>
+
+    <gazebo reference="camera_lens_link">
+        <material>Gazebo/black</material>
+    </gazebo>
+
+	<gazebo reference="camera_link_optical">
+        <sensor name='depth_camera' type='depth'>
+            <pose>0 0 0 0 0 0</pose>
+		        <always_on>true</always_on>
+            <topic>gz_camera</topic>
+            <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+            <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
+            <update_rate>10</update_rate>
+            <visualize>true</visualize>
+            <enable_metrics>false</enable_metrics>
+            <camera name='__default__'>
+                <pose>0 0 0 0 0 0</pose>
+                <horizontal_fov>1.047</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>RGB_INT8</format>
+                    <anti_aliasing>4</anti_aliasing>
+                </image>
+                <camera_info_topic>gz_camera_info</camera_info_topic>
+                <trigger_topic></trigger_topic>
+                <triggered>false</triggered>
+                <clip>
+                    <near>0.10000000000000001</near>
+                    <far>100</far>
+                </clip>
+                <save enabled='false'>
+                    <path>__default__</path>
+                </save>
+                <visibility_mask>4294967295</visibility_mask>
+                <noise>
+                    <type>none</type>
+                    <mean>0</mean>
+                    <stddev>0</stddev>
+                </noise>
+                <distortion>
+                    <k1>0</k1>
+                    <k2>0</k2>
+                    <k3>0</k3>
+                    <p1>0</p1>
+                    <p2>0</p2>
+                    <center>0.5 0.5</center>
+                </distortion>
+                <lens>
+                    <type>stereographic</type>
+                    <scale_to_hfov>true</scale_to_hfov>
+                    <cutoff_angle>${pi/2}</cutoff_angle>
+                    <env_texture_size>256</env_texture_size>
+                </lens>
+                <optical_frame_id>camera_link_optical</optical_frame_id>
+            </camera>
+        </sensor>
+    </gazebo>
+
+</robot>
