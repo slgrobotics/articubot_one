@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -43,14 +43,18 @@ def generate_launch_description():
     ])
 
     # For real robot, include the RoboClaw driver:
-    drive_launch = Node(
-        package='roboclaw_driver',
-        executable='roboclaw_driver_node',
-        name='roboclaw_driver',
-        parameters=[roboclaw_params_file],
-        remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')],
-        output='screen',
-        emulate_tty=True,
+    drive_launch = GroupAction(
+        actions=[
+            Node(
+                package='roboclaw_driver',
+                executable='roboclaw_driver_node',
+                name='roboclaw_driver',
+                parameters=[roboclaw_params_file],
+                remappings=[('cmd_vel', 'diff_cont/cmd_vel'), ('odom', 'diff_cont/odom')],
+                output='screen',
+                emulate_tty=True,
+            )
+        ],
         condition=UnlessCondition(use_sim_time),
     )
 
