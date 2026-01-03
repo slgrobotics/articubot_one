@@ -1,74 +1,65 @@
-<?xml version="1.0" ?>
-
-<robot xmlns:xacro="http://ros.org/wiki/xacro">
-
-<!--  
-We want Stingray's LIDAR (XV-11) to look a bit different, so we don't use common description.
-
-meld ~/robot_ws/src/articubot_one/robots/stingray/description/stingray_sensors.urdf.xacro ~/robot_ws/src/articubot_one/description/lidar.xacro 
--->
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
 
     <joint name="laser_joint" type="fixed">
-      <parent link="chassis_link"/>
-      <child link="laser_frame"/>
-      <origin xyz="${laser_offset_x} 0 ${laser_offset_z}" rpy="0 0 0"/>
+        <parent link="chassis_link"/>
+        <child link="laser_frame"/>
+        <origin xyz="${lidar_offset_X} 0 ${(chassis_height/2) + (lidar_stand_height) + (lidar_height/2)}" rpy="0 0 0"/>
     </joint>
 
     <link name="laser_frame">
-      <visual>
-        <geometry>
-          <cylinder radius="0.0375" length="0.025"/>
-        </geometry>
-        <material name="sensor_blue"/>
-      </visual>
-      <visual>
-        <origin xyz="0 0 -0.01"/>
-        <geometry>
-          <cylinder radius="0.01" length="0.02"/>
-        </geometry>
-        <material name="sensor_blue"/>
-      </visual>
+        <visual>
+            <geometry>
+                <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${lidar_radius}" length="${lidar_height}"/>
+            </geometry>
+        </collision>
+        <xacro:inertial_cylinder mass="${lidar_mass}" length="${lidar_height}" radius="${lidar_radius}">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:inertial_cylinder>
     </link>
 
-    <!-- gz model -m stingray -s laser_frame -->
     <gazebo reference="laser_frame">
-        <!-- name must be "laser_frame", specifically for lasers. Must reference an actual link in .xacro -->
-        <sensor name='laser_frame' type='gpu_lidar'>
-          <pose>0 0 0 0 0 0</pose>
-          <always_on>1</always_on>
-          <!-- 6 Hz for LD14 - see "frequency" in dual_ekf_navsat_parameters.yaml -->
-          <update_rate>6</update_rate>
-          <topic>gz_scan</topic>
-          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-          <gz_frame_id>laser_frame</gz_frame_id>
-          <frame_id>laser_frame</frame_id>
-          <ray>
-            <scan>
-              <horizontal>
-                <samples>360</samples>
-                <resolution>1</resolution>
-                <min_angle>-${pi}</min_angle>
-                <max_angle>${pi}</max_angle>
-              </horizontal>
-              <vertical>
-                <samples>1</samples>
-                <resolution>1</resolution>
-                <min_angle>0.0</min_angle>
-                <max_angle>0.0</max_angle>
-              </vertical>
-            </scan>
-            <range>
-              <min>0.3</min>
-              <max>12.0</max>
-              <resolution>0.01</resolution>
-            </range>
-            <noise>
-              <type>gaussian</type>
-              <mean>0</mean>
-              <stddev>0.01</stddev>
-            </noise>
-          </ray>
-          <visualize>true</visualize>
+        <material>Gazebo/Red</material>
+        <!--sensor name="laser" type="ray" JHP 2024.10.03-->
+	    <sensor name="laser_frame" type="gpu_lidar">
+            <pose> 0.0 0.0 0.0 0.0 0.0 0.0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <topic>gz_scan</topic>
+            <gz_frame_id>laser_frame</gz_frame_id>
+            <frame_id>laser_frame</frame_id>
+            <ray> 
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-${pi}</min_angle>
+                        <max_angle>${pi}</max_angle>
+                    </horizontal>
+                    <vertical>
+                        <samples>1</samples>
+                        <resolution>1</resolution>
+                        <min_angle>0.0</min_angle>
+                        <max_angle>0.0</max_angle>
+                    </vertical>
+                </scan>
+                <range>
+                    <min>0.3</min>
+                    <max>12</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
         </sensor>
     </gazebo>
 
