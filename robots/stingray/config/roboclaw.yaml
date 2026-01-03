@@ -34,11 +34,11 @@ roboclaw_driver:
     # ============================================================================
     # ROBOT PHYSICAL PARAMETERS - CRITICAL: MEASURE YOUR ROBOT CAREFULLY!
     # ============================================================================
-    wheel_radius: 0.051112072             # Wheel radius in meters
+    wheel_radius: 0.0615                  # Wheel radius in meters
                                           # ⚠️  MEASURE THIS PRECISELY! Affects odometry accuracy
                                           # Measure from wheel center to contact point with ground
                                           
-    wheel_separation: 0.3906              # Distance between wheel centers in meters  
+    wheel_separation: 0.26                # Distance between wheel centers in meters  
                                           # ⚠️  MEASURE THIS PRECISELY! Affects turning accuracy
                                           # Measure center-to-center distance between drive wheels
                                           

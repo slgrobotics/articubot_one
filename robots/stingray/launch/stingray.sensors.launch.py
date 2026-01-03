@@ -23,7 +23,9 @@ def generate_launch_description():
 
     # sensor nodes don't depend on robot_model and don't use package_name
 
-    # Lidar node
+    # Lidar node - see:
+    #     https://github.com/Slamtec/rplidar_ros/tree/ros2-devel
+    #     https://github.com/Slamtec/rplidar_ros/tree/ros2-devel/launch
     rplidar_node = Node(
             package='rplidar_ros',
             executable='rplidar_composition',

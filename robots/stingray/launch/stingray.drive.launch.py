@@ -37,22 +37,21 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time)
     )
 
-    roboclaw_launch_file = PathJoinSubstitution([
+    # See https://github.com/wimblerobotics/roboclaw_driver
+    roboclaw_params_file = PathJoinSubstitution([
         FindPackageShare(package_name), "robots", robot_model, "config", "roboclaw.yaml"
     ])
 
-    roboclaw_params_file = PathJoinSubstitution([
-        FindPackageShare("roboclaw_driver"), "launch", "roboclaw_driver.launch.py"
-    ])
-
     # For real robot, include the RoboClaw driver:
-    drive_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(roboclaw_launch_file),
-        launch_arguments={
-            "params_file": roboclaw_params_file,
-        }.items(),
+    drive_launch = Node(
+        package='roboclaw_driver',
+        executable='roboclaw_driver_node',
+        name='roboclaw_driver',
+        parameters=[roboclaw_params_file],
         remappings=[('cmd_vel', 'diff_cont/cmd_vel'),('odom','diff_cont/odom')],
-        condition=UnlessCondition(use_sim_time)
+        output='screen',
+        emulate_tty=True,
+        condition=UnlessCondition(use_sim_time),
     )
 
     # -----------------------------------------------------------------------------
