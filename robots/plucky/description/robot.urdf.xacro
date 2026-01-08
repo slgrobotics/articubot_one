@@ -19,8 +19,6 @@
     <xacro:property name="imu_visual_size" value="0.01"/>
     <xacro:include filename="../../../description/imu.xacro" />
 
-    <xacro:include filename="../../../description/magnetometer.xacro" />
-
     <!-- using arguments here, as that allows overriding default values -->
     <xacro:arg name="lidar_offset_x" default="${wheel_offset_x}"/>
     <xacro:arg name="lidar_offset_z" default="0.47"/>
