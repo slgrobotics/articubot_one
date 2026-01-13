@@ -15,16 +15,36 @@
              The AutonomyLab *.xacro files are moved here because robot_description topic is published on the Desktop, not the robot RPi
     -->
 
-    <xacro:include filename="../../../description/inertial_macros.xacro" />
-
     <xacro:include filename="../../../description/common_properties.xacro" />
 
-    <xacro:include filename="create_1.urdf.xacro" />
+    <!-- =========== an equivalent of "robot_core.xacro" here: ============== -->
+
+    <xacro:include filename="../../../description/inertial_macros.xacro" />
+
+    <!-- wheel_separation - distance between left and right wheels, defined in ~/create_robot_ws/src/libcreate/src/types.cpp -->
+
+    <xacro:include filename="create_base.urdf.xacro" />
+
+    <xacro:create_base wheel_separation="0.258" base_diameter="0.3302" wheel_radius="0.033" wheel_width="0.024" mass_kg="3.5">
+        <mesh filename="package://articubot_one/assets/meshes/create_1.dae" />
+    </xacro:create_base>
+
+    <!-- ===================================================================== -->
+
+    <xacro:property name="imu_offset_x" value="-0.04"/>
+    <xacro:property name="imu_offset_z" value="0"/>
+    <xacro:property name="imu_visual_size" value="0.01"/>
+    <xacro:include filename="../../../description/imu.xacro" />
+
+    <xacro:property name="laser_offset_x" value="0.085"/>
+    <xacro:property name="laser_offset_z" value="0.033"/>
 
     <xacro:include filename="ros2_control.xacro" />
 
     <xacro:property name="open_circuit_voltage" value="14.0"/>
     <xacro:property name="battery_capacity" value="2.5"/>
     <xacro:include filename="../../../description/battery.xacro" />
+
+    <xacro:include filename="create_sensors.urdf.xacro" />
 
 </robot>

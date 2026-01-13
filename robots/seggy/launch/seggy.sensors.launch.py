@@ -64,7 +64,7 @@ def generate_launch_description():
         respawn_delay=4,
         emulate_tty=True,
         parameters=[bno08x_config_path],
-        remappings=[("imu", "imu/data")]
+        remappings=[("imu", "imu/data"), ("magnetic_field","imu/mag")]
     )
 
     # IMU node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/MPU9250.md
