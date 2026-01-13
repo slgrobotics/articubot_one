@@ -20,7 +20,7 @@ bno08x_driver:
 
     publish:
       magnetic_field:
-        enabled: false
+        enabled: true
         rate: 60   # max 100 Hz
       imu:
         enabled: true

@@ -26,6 +26,8 @@
 
     <!-- gz model -m dragger -s imu_link -->
     <gazebo reference="imu_link">
+        <!-- IMU sensor, with "enable_orientation" publishes /imu/data, without - /imu/data_raw
+             See https://github.com/CCNYRoboticsLab/imu_tools -->
         <sensor name="imu_link" type="imu">
         <pose>0 0 0 0 0 0</pose>
         <always_on>1</always_on>
@@ -111,6 +113,39 @@
                     </z>
                 </linear_acceleration>
             </imu>
+        </sensor>
+
+        <!-- Magnetometer sharing the IMU link, taking magnetic field from "gz::sim::systems::Magnetometer" Gazebo plugin -->
+        <sensor name="magnetometer" type="magnetometer">
+          <pose>0 0 0 0 0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>100</update_rate>
+          <visualize>true</visualize>
+          <topic>gz_magnetometer/data</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <gz_frame_id>imu_link</gz_frame_id>
+          <frame_id>imu_link</frame_id>
+          <enable_metrics>true</enable_metrics>
+          <magnetometer>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+              </noise>
+            </z>
+          </magnetometer>
         </sensor>
     </gazebo>
 
