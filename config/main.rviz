@@ -800,6 +800,22 @@ Visualization Manager:
         Reliability Policy: Best Effort
         Value: /particle_cloud
       Value: true
+    - Angle Units: Degrees
+      Class: rviz_attitude_plugin/Attitude
+      Current Type: sensor_msgs/msg/Imu
+      Display Mode: Full
+      Enabled: true
+      Name: Attitude
+      Refresh Topics: false
+      Show Overlay:
+        Overlay Anchor: Bottom Right
+        Overlay Height: 240
+        Overlay Width: 320
+        Overlay X: 16
+        Overlay Y: 16
+        Value: true
+      Topic: /imu/data
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
