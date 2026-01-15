@@ -168,9 +168,9 @@ def generate_launch_description():
         parameters=[{
             "stateless": False,
             "use_mag": True,
-            "publish_tf": True,
+            "publish_tf": False,
             "reverse_tf": False,
-            "fixed_frame": "odom",
+            "fixed_frame": "imu_link",
             "constant_dt": 0.0,
             "publish_debug_topics": False,
             "world_frame": "enu",
