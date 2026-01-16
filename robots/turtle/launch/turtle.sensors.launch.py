@@ -120,6 +120,7 @@ def generate_launch_description():
 
     icm20948_driver_node = Node(
         package="ros2_icm20948",
+        namespace=namespace,
         executable="icm20948_node",
         name="icm20948_node",
         parameters=[{
@@ -130,14 +131,18 @@ def generate_launch_description():
             "frame_id": "imu_link",
             "pub_rate_hz": 100,  # integer, default 50 in code, 200 here
             "temp_pub_rate_hz": 1.0,     # float, default 1.0
-            "startup_calib_seconds": 5.0,     # default 3 seconds
-            "gyro_calib_max_std_dps": 2.0,    # warning threshold - if std dev is too high during calibration; default 1.0
-            "accel_calib_max_std_mps2": 0.35  # same for accel; default 0.35
+            "startup_calib_seconds": 5.0,      # default 3 seconds
+            "gyro_calib_max_std_dps": 2.0,     # warning threshold - if std dev is too high during calibration; default 1.0
+            "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
+            "magnetometer_bias": [-3.28, -25.93, 21.88],  # use icm_calibrate_mag.py to find these values
+            "madgwick_beta": 0.05,
+            "madgwick_use_mag": True
         }],
     )
 
     icm20948_driver_raw_node = Node(
         package="ros2_icm20948",
+        namespace=namespace,
         executable="icm20948_raw_node",
         name="icm20948_raw_node",
         parameters=[{
@@ -148,11 +153,10 @@ def generate_launch_description():
             "frame_id": "imu_link",
             "pub_rate_hz": 100,  # integer, default 50 in code, 200 here
             "temp_pub_rate_hz": 1.0,     # float, default 1.0
-            "madgwick_beta": 0.08,
-            "madgwick_use_mag": True,
             "startup_calib_seconds": 5.0,     # default 3 seconds
             "gyro_calib_max_std_dps": 2.0,    # warning threshold - if std dev is too high during calibration; default 1.0
-            "accel_calib_max_std_mps2": 0.35  # same for accel; default 0.35
+            "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
+            "magnetometer_bias": [-3.28, -25.93, 21.88]  # use icm_calibrate_mag.py to find these values
         }],
     )
 
@@ -174,7 +178,7 @@ def generate_launch_description():
             "constant_dt": 0.0,
             "publish_debug_topics": False,
             "world_frame": "enu",
-            "gain": 0.1,
+            "gain": 0.05,
             "zeta": 0.0,
             "mag_bias_x": 0.0,
             "mag_bias_y": 0.0,
