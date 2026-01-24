@@ -51,7 +51,7 @@ def generate_launch_description():
         respawn_delay=4,
         emulate_tty=True,
         parameters=[{
-                #"print": True,       # default False
+                "verbose": True,      # default False
                 #"raw_only": True,    # default False ("fusing" mode). When True - only publish raw IMU data - /imu/data_raw and /imu/mag
                 "frequency": 30,
                 "temp_pub_rate_hz": 1.0,  # temperature publish rate in Hz
@@ -61,21 +61,16 @@ def generate_launch_description():
                 "acceleration_scale": [1.0, 1.0, 1.0],  # small adjustment of scale factors for each axis, should be around 1.0
                 "acceleration_bias": [0.0, 0.0, 0.0],
                 "gyro_bias": [0.0, 0.0, 0.0],
+                # use tests/calibrate_mag.py to get mag calibration values
                 "magnetometer_scale": [1.0, 1.0, 1.0],  # should be around 1.0
-                "magnetometer_bias": [0.0, 0.0, 0.0],
+                "magnetometer_bias": [1.672994523195427e-05, 1.777942953037992e-05, 3.2817091139903744e-05],
                 "magnetometer_transform": [
-                    1.0, 0.0, 0.0,
-                    0.0, 1.0, 0.0,
-                    0.0, 0.0, 1.0]
-                #"acceleration_scale": [1.0072387165748442, 1.0081436035838134, 0.9932769089604535],
-                #"acceleration_bias": [0.17038044467587418, 0.20464685207217453, -0.12461014438322202],
-                #"gyro_bias": [0.0069376404996494, -0.0619247665634732, 0.05717760948453845],
-                #"magnetometer_bias": [0.4533159894397744, 3.4555818146055564, -5.984038606178013],
-                #"magnetometer_transform": [   0.9983016121720226, 0.044890057238382707, 0.007231924972024632,
-                #                    0.044890057238382707, 1.2981683205953654, -0.1173361838042438, 
-                #                    0.007231924972024633, -0.11733618380424381, 0.7835617468652673]
-        }],
-        remappings=[("imu", "imu/data")]
+                    1.0160951390293467, 0.008597352199034276, -0.008498487872556243,
+                    0.008597352199034368, 1.0040890425158557, 0.014842492476619326,
+                    -0.008498487872556252, 0.014842492476619368, 0.980515572473782],
+                "madgwick_beta": 0.1,       # beta is often in the 0.01–0.2 ballpark, weight of correction from accelerometer/magnetometer vs gyroscope
+                "madgwick_use_mag": True
+        }]
     )
 
     bno055_driver_node = Node(
@@ -127,14 +122,16 @@ def generate_launch_description():
             # Note: for Linux on Raspberry Pi iBus=1 is hardcoded in linux_i2c.py
             # SparkFun address is likely 0x69, generic GY-ICM20948 - 0x68
             # Use "i2cdetect -y 1"
-            "i2c_address": 0x68,
+            "print": True,
+            "i2c_address": [0x68, 0x69],  # try both common addresses by default
             "frame_id": "imu_link",
+            "raw_only": False,   # default False ("fusing" mode). When True - only publish raw IMU data - /imu/data_raw and /imu/mag
             "pub_rate_hz": 100,  # integer, default 50 in code, 200 here
             "temp_pub_rate_hz": 1.0,     # float, default 1.0
             "startup_calib_seconds": 5.0,      # default 3 seconds
             "gyro_calib_max_std_dps": 2.0,     # warning threshold - if std dev is too high during calibration; default 1.0
             "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
-            "magnetometer_bias": [-3.28, -25.93, 21.88],  # use icm_calibrate_mag.py to find these values
+            "magnetometer_bias": [-3.28, -25.93, 21.88],
             "madgwick_beta": 0.05,
             "madgwick_use_mag": True
         }],
@@ -143,20 +140,22 @@ def generate_launch_description():
     icm20948_driver_raw_node = Node(
         package="ros2_icm20948",
         namespace=namespace,
-        executable="icm20948_raw_node",
+        executable="icm20948_node",
         name="icm20948_raw_node",
         parameters=[{
             # Note: for Linux on Raspberry Pi iBus=1 is hardcoded in linux_i2c.py
             # SparkFun address is likely 0x69, generic GY-ICM20948 - 0x68
             # Use "i2cdetect -y 1"
-            "i2c_address": 0x68,
+            "print": True,
+            "i2c_address": [0x68, 0x69],  # try both common addresses by default
             "frame_id": "imu_link",
+            "raw_only": True,    # default False ("fusing" mode). When True - only publish raw IMU data - /imu/data_raw and /imu/mag
             "pub_rate_hz": 100,  # integer, default 50 in code, 200 here
             "temp_pub_rate_hz": 1.0,     # float, default 1.0
             "startup_calib_seconds": 5.0,     # default 3 seconds
             "gyro_calib_max_std_dps": 2.0,    # warning threshold - if std dev is too high during calibration; default 1.0
             "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
-            "magnetometer_bias": [-3.28, -25.93, 21.88]  # use icm_calibrate_mag.py to find these values
+            "magnetometer_bias": [-3.28, -25.93, 21.88]
         }],
     )
 
@@ -178,7 +177,7 @@ def generate_launch_description():
             "constant_dt": 0.0,
             "publish_debug_topics": False,
             "world_frame": "enu",
-            "gain": 0.05,
+            "gain": 0.03,
             "zeta": 0.0,
             "mag_bias_x": 0.0,
             "mag_bias_y": 0.0,
