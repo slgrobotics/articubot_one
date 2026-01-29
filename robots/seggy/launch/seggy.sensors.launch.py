@@ -54,6 +54,9 @@ def generate_launch_description():
         FindPackageShare(package_name), 'config', 'bno085_i2c.yaml'
     ])
 
+    # BNO085 by default has active DMP (Digital Motion Processor) and does not need running
+    #        a imu_filter_madgwick node from imu_tools to fuse raw IMU data into AHRS orientation quaternion.
+    #        The driver takes advantage of that. Device does not need calibration.
     bno08x_driver_node = Node(
         package="bno08x_driver",
         namespace=namespace,
