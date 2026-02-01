@@ -62,12 +62,12 @@ def generate_launch_description():
                 "acceleration_bias": [0.0, 0.0, 0.0],
                 "gyro_bias": [0.0, 0.0, 0.0],
                 # use tests/calibrate_mag.py to get mag calibration values
-                "magnetometer_scale": [1.0, 1.0, 1.0],  # should be around 1.0
-                "magnetometer_bias": [1.672994523195427e-05, 1.777942953037992e-05, 3.2817091139903744e-05],
+                #"magnetometer_scale": [1.0, 1.0, 1.0],  # should be 1.0 or omitted if "magnetometer_transform" is present
+                "magnetometer_bias": [1.879474231677064e-05, 1.2669697764271128e-05, -3.0470527626723397e-05],
                 "magnetometer_transform": [
-                    1.0160951390293467, 0.008597352199034276, -0.008498487872556243,
-                    0.008597352199034368, 1.0040890425158557, 0.014842492476619326,
-                    -0.008498487872556252, 0.014842492476619368, 0.980515572473782],
+                    1.0000000521217702, 1.2535309229370016e-08, -1.6163252600070903e-09,
+                    1.2535309234403542e-08, 0.9999999234564466, 2.4705503080522403e-08,
+                    -1.6163252598524059e-09, 2.470550306997046e-08, 1.000000024421789],
                 "madgwick_beta": 0.1,       # beta is often in the 0.01–0.2 ballpark, weight of correction from accelerometer/magnetometer vs gyroscope
                 "madgwick_use_mag": True
         }]
