@@ -229,7 +229,7 @@ def generate_launch_description():
         ]
     )
 
-    mpu9250driver_node = Node(
+    mpu9250_driver_node = Node(
         package="mpu9250",
         namespace=namespace,
         executable="mpu9250",
@@ -240,22 +240,24 @@ def generate_launch_description():
         emulate_tty=True,
         parameters=[
           {
-              #"print" : True,
-              "frequency" : 60,
-              "i2c_address" : 0x68,
-              "i2c_port" : 1,
-              "frame_id" : "imu_link",
-              "acceleration_scale": [1.0072387165748442, 1.0081436035838134, 0.9932769089604535],
-              "acceleration_bias": [0.17038044467587418, 0.20464685207217453, -0.12461014438322202],
-              "gyro_bias": [0.0069376404996494, -0.0619247665634732, 0.05717760948453845],
-              "magnetometer_scale": [1.0, 1.0, 1.0],
-              #"magnetometer_bias": [1.3345253592582676, 2.6689567513691685, -2.5294210260199957],
-              #"magnetometer_bias": [1.335, 4.0, 1.0],
-              #"magnetometer_bias": [1.335, 3.8, -2.5294210260199957],
-              "magnetometer_bias": [1.335, 4.0, -2.53],
-              "magnetometer_transform": [1.0246518952703103, -0.0240401565528902, 0.0030740476998857395,
-                                        -0.024040156552890175, 0.9926708357001245, 0.002288563295390304,
-                                         0.0030740476998857356, 0.0022885632953903268, 0.9837206150979054]
+            "verbose": True,      # default False
+            #"raw_only": True,    # default False ("fusing" mode). When True - only publish raw IMU data - /imu/data_raw and /imu/mag
+            "frequency" : 60,
+            "i2c_address" : 0x68,
+            "i2c_port" : 1,
+            "frame_id" : "imu_link",
+            "acceleration_scale": [1.0072387165748442, 1.0081436035838134, 0.9932769089604535],
+            "acceleration_bias": [0.17038044467587418, 0.20464685207217453, -0.12461014438322202],
+            "gyro_bias": [0.0069376404996494, -0.0619247665634732, 0.05717760948453845],
+            # use tests/calibrate_mag.py to get mag calibration values
+            #"magnetometer_scale": [1.0, 1.0, 1.0],  # should be 1.0 or omitted if "magnetometer_transform" is present
+            "magnetometer_bias": [1.879474231677064e-05, 1.2669697764271128e-05, -3.0470527626723397e-05],
+            "magnetometer_transform": [
+                1.0000000521217702, 1.2535309229370016e-08, -1.6163252600070903e-09,
+                1.2535309234403542e-08, 0.9999999234564466, 2.4705503080522403e-08,
+                -1.6163252598524059e-09, 2.470550306997046e-08, 1.000000024421789],
+            "madgwick_beta": 0.1,       # beta is often in the 0.01–0.2 ballpark, weight of correction from accelerometer/magnetometer vs gyroscope
+            "madgwick_use_mag": True
           }
         ],
         remappings=[("imu", "imu/data")]
@@ -338,7 +340,7 @@ def generate_launch_description():
         actions=[
             ldlidar_node,
             gps_node,
-            mpu9250driver_node
+            mpu9250_driver_node
             #bno055_driver_node
         ]
     )
