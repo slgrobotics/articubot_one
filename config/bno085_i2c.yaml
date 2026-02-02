@@ -15,8 +15,8 @@ bno08x_driver:
     # (see documentation for more information)
     i2c:
       enabled: true
-      bus: "/dev/i2c-1"
-      address: "0x4B"
+      bus: "/dev/i2c-1"   # I2C bus device (bus "1" is default on Raspberry Pi, use "ls /dev/i2c*")
+      address: "0x4B"     # I2C address (0x4A or 0x4B depending on the board configuration, use "i2cdetect -y 1")
 
     publish:
       magnetic_field:
