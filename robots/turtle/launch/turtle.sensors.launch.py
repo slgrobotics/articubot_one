@@ -131,7 +131,7 @@ def generate_launch_description():
             "startup_calib_seconds": 5.0,      # default 3 seconds
             "gyro_calib_max_std_dps": 2.0,     # warning threshold - if std dev is too high during calibration; default 1.0
             "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
-            "magnetometer_bias": [-3.28, -25.93, 21.88],
+            "magnetometer_bias": [-4.24107093, -26.30849772, 25.83791568],  # Adafruit on Turtle, calibrated using tests/calibrate_mag.py
             "madgwick_beta": 0.05,
             "madgwick_use_mag": True
         }],
@@ -155,7 +155,7 @@ def generate_launch_description():
             "startup_calib_seconds": 5.0,     # default 3 seconds
             "gyro_calib_max_std_dps": 2.0,    # warning threshold - if std dev is too high during calibration; default 1.0
             "accel_calib_max_std_mps2": 0.35,  # same for accel; default 0.35
-            "magnetometer_bias": [-3.28, -25.93, 21.88]
+            "magnetometer_bias": [-4.24107093, -26.30849772, 25.83791568]  # Adafruit on Turtle, calibrated using tests/calibrate_mag.py
         }],
     )
 
