@@ -208,8 +208,8 @@ def generate_launch_description():
     return LaunchDescription([
         xv_11_driver_node,
         #mpu9250_driver_node,
-        #bno055_driver_node,
-        icm20948_driver_node,
+        bno055_driver_node,
+        #icm20948_driver_node,
         #icm20948_driver_raw_node,
         #madgwick_filter_node,
         ekf_imu_odom
