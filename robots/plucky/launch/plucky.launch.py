@@ -272,32 +272,39 @@ def generate_launch_description():
         respawn=True,
         respawn_delay=4,
         parameters=[{
-            # see https://github.com/flynneva/bno055
+            # see https://github.com/slgrobotics/bno055
             #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
-            'ros_topic_prefix': '',
+            'ros_topic_prefix': 'imu/',
             'connection_type': 'i2c',
             'i2c_bus': 1,
-            'i2c_addr': 0x28,   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
+            'i2c_addr': [0x29,0x28],   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
             'data_query_frequency': 20,
             'calib_status_frequency': 0.1,
-            'frame_id': 'imu_link', 
-            'operation_mode': 0x0C, # 0x0C = FMC_ON, 0x0B - FMC_OFF, 0x05 - ACCGYRO, 0x06 - MAGGYRO
-            'placement_axis_remap': 'P1', # P1 - default, ENU
+            'frame_id': 'imu_link',
+            # Fast Magnetometer Calibration mode (FMC) provides faster magnetometer calibration
+            #  at the cost of slightly higher noise. NDOF_FMC_OFF is the default mode with slower calibration but lower noise.
+            #  ACCGYRO and MAGGYRO modes provide raw accelerometer and gyroscope data without sensor fusion,
+            #  which can be useful for certain applications but may require additional processing to obtain orientation data.
+            'operation_mode': 0x0C, # 0x0C = NDOF (with FMC), 0x0B - NDOF_FMC_OFF, 0x07 - ACC+GYRO+MAG (AMG)
+            'placement_axis_remap': 'P1', # P1 - default, ENU. See Bosch BNO055 datasheet section "Axis Remap"
             'acc_factor': 100.0,
             'mag_factor': 16000000.0,
             'gyr_factor': 900.0,
             'grav_factor': 100.0,
             'set_offsets': False, # set to true to use offsets below
             'offset_acc': [0xFFEC, 0x00A5, 0xFFE8],
-            'offset_mag': [0xFFB4, 0xFE9E, 0x027D],
             'offset_gyr': [0x0002, 0xFFFF, 0xFFFF],
+            'offset_mag': [0xFFB4, 0xFE9E, 0x027D],
+            'radius_mag': 800,   # means 800 microtesla per LSB
+            'radius_acc': 1000,  # means 1G = 1000 units LSB
             # Sensor standard deviation [x,y,z]
             # Used to calculate covariance matrices
-            # defaults are used if parameters below are not provided
-            'variance_acc': [0.017, 0.017, 0.017], # [m/s^2]
-            'variance_angular_vel': [0.04, 0.04, 0.04], # [rad/s]
-            'variance_orientation': [0.0159, 0.0159, 0.0159], # [rad]
-            'variance_mag': [0.0, 0.0, 0.0], # [Tesla]
+            # driver defaults are used if parameters below are not provided - bno055/src/bno055/bno055/registers.py:255
+            # see https://chatgpt.com/s/t_691b60f38e1c8191a0a309cbcf99e478
+            'variance_acc': [0.017, 0.017, 0.017],  # [m/s^2]      defaults: [0.017, 0.017, 0.017]
+            'variance_angular_vel': [0.04, 0.04, 0.04],  # [rad/s] defaults: [0.04, 0.04, 0.04]
+            'variance_orientation': [0.0159, 0.0159, 0.0159],  # [rad] - (roll, pitch, yaw)  defaults: [0.0159, 0.0159, 0.0159]
+            'variance_mag': [-1.0, 0.0, 0.0],  # [Tesla]           defaults: [-1.0, 0.0, 0.0] - "unknown" covariance, see REP 117
         }],
         remappings=[("imu", "imu/data")]
     )
