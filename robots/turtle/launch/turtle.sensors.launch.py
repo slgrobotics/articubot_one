@@ -84,7 +84,7 @@ def generate_launch_description():
         parameters=[{
             # see https://github.com/slgrobotics/bno055
             #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/BNO055%20IMU.md
-            'ros_topic_prefix': '',
+            'ros_topic_prefix': 'imu/',
             'connection_type': 'i2c',
             'i2c_bus': 1,
             'i2c_addr': [0x29,0x28],   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
@@ -116,7 +116,7 @@ def generate_launch_description():
             'variance_orientation': [0.0159, 0.0159, 0.0159],  # [rad] - (roll, pitch, yaw)  defaults: [0.0159, 0.0159, 0.0159]
             'variance_mag': [-1.0, 0.0, 0.0],  # [Tesla]           defaults: [-1.0, 0.0, 0.0] - "unknown" covariance, see REP 117
         }],
-        remappings=[("imu", "imu/data")]
+        remappings=[("imu/imu", "imu/data"), ("imu/imu_raw", "imu/data_raw")]
     )
 
     icm20948_driver_node = Node(
