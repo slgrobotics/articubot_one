@@ -279,7 +279,7 @@ def generate_launch_description():
             'i2c_bus': 1,
             'i2c_addr': [0x29,0x28],   # Adafruit - 0x28, GY Clone - 0x29 (with both jumpers closed)
             'data_query_frequency': 20,
-            'calib_status_frequency': 0.1,
+            'calib_status_frequency': 1.0,
             'frame_id': 'imu_link',
             # Fast Magnetometer Calibration mode (FMC) provides faster magnetometer calibration
             #  at the cost of slightly higher noise. NDOF_FMC_OFF is the default mode with slower calibration but lower noise.
