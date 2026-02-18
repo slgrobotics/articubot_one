@@ -84,6 +84,10 @@ ekf_filter_node_navsat:
     imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
     imu0_twist_rejection_threshold: 0.8                #
     imu0_linear_acceleration_rejection_threshold: 0.8  #
+
+# Place the robot flat and stationary:
+#    If accelerometer Z reads about +9.81 m/s², gravity is included → set true
+#    If it reads about 0 m/s², gravity is already removed → set false
     imu0_remove_gravitational_acceleration: true
 
     use_control: false
