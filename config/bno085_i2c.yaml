@@ -7,6 +7,7 @@ bno08x_driver:
   ros__parameters:
 
     frame_id: "imu_link"  # The frame_id to use for the sensor data
+    verbose: false        # Enable verbose logging (default false)
 
     # Communication Interface
     # Select the communication interface to use 
