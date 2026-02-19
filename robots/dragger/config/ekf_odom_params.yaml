@@ -176,6 +176,9 @@ ekf_filter_node_odom:
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
+# Place the robot flat and stationary:
+#    If accelerometer Z reads about +9.81 m/s², gravity is included → set true
+#    If it reads about 0 m/s², gravity is already removed → set false
     imu0_remove_gravitational_acceleration: true
 
 # [ADVANCED]  The EKF and UKF models follow a standard predict/correct cycle. During prediction, if there is no
