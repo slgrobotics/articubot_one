@@ -52,7 +52,7 @@ def generate_launch_description():
 
     # See https://www.youtube.com/watch?v=PN_AxCug5lg
     #     https://answers.ros.org/question/370487/what-is-interactive_marker_twist_server-package/
-    #     https://github.com/ros-visualization/interactive_marker_twist_server/tree/humble-devel
+    #     https://github.com/ros-visualization/interactive_marker_twist_server
     #
     # In robotics, a twist is a 6x1 column vector of linear and angular velocities. In ROS, this is implemented as a Twist message,
     #  which you can see for yourself by entering the following in a terminal:
