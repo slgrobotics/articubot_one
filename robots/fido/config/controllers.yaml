@@ -1,0 +1,138 @@
+controller_manager:     # target node name
+  ros__parameters:
+    #update_rate: 30 # Hz
+    update_rate: 60 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
+    #use_sim_time: false
+
+    diff_cont:
+      type: diff_drive_controller/DiffDriveController
+
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    battery_state_broadcaster:
+      type: battery_state_broadcaster/BatteryStateBroadcaster
+
+diff_cont:
+  ros__parameters:
+
+    # See http://wiki.ros.org/diff_drive_controller  
+    #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
+    #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
+
+    publish_rate: 60.0 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
+
+    # Name of frame to publish odometry in. Default: "/odom"
+    odom_frame_id: 'odom'
+
+    # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
+    base_frame_id: base_link
+    #base_frame_id: base_footprint
+
+    # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
+    # make it false, or there will be a lot of jumping and wheels will be separated from the body.
+    # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
+    # Note the "--remap /tf:=diff_cont/tf" in launch file to isolate TFs, if published.
+    enable_odom_tf: false
+
+    use_stamped_vel: true
+
+    left_wheel_names: ["left_wheel_joint"]
+    right_wheel_names: ["right_wheel_joint"]
+
+    wheels_per_side: 1
+
+    wheel_separation: 0.473             # distance between left and right wheels
+    wheel_radius: 0.122
+
+    # adjust so that when robot rotates in place the odom vector rotation follows it exactly.
+    # expect multipliers to be 1.0 (default) when position_feedback: true, open_loop: false
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    # Is there position feedback from hardware (wheel encoders), default to "true":
+    position_feedback: true
+    # If set to true the odometry of the robot will be calculated from the commanded values and not from feedback.
+    # default to "false":
+    open_loop: false
+
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
+
+    # Timeout in seconds, after which input command on ``cmd_vel`` topic is considered staled:
+    cmd_vel_timeout: 0.2
+
+    # publish_limited_velocity: true
+    # velocity_rolling_window_size: 10
+
+    # Velocity and acceleration limits
+    # Whenever a min_* is unspecified, default to -max_*
+    # Note: if not specified below, there will be no limits applied (default is NAN for missing parameters)
+    linear:
+      x:
+        max_velocity           : 0.5  # m/s - 0.3 - experimental max on actual robot (3 rad/sec wheel speed, 25 cm wheel radius)
+        min_velocity           : -0.1 # m/s
+        max_acceleration       : 1.0  # m/s^2 - "3" is aggressive
+        min_acceleration       : -0.5 # m/s^2
+        max_jerk               : 0.5  # m/s^3 - "1.0" is aggressive
+    angular:
+      z:
+        # Note: angular velocity must be limited to avoid losing mapping capabilities.
+        max_velocity           : 0.3  # rad/s - limit robot turn rate to ~17 deg/sec, feels fast enough, mapping still works.
+        # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
+        max_acceleration       : NAN  # rad/s^2  NAN - no limits
+        max_jerk               : NAN  # rad/s^3
+
+#
+# By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
+#    under /joint_states topic (position and velocity changing, effort 0)
+#    there is no need to configure joint_state_broadcaster explicitly,
+#    anything defined in rsp.launch.py will be published.
+#
+#joint_broad:
+#  ros__parameters:
+#    interfaces:
+##      - effort
+#      - position
+##      - velocity
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+##    extra_joints:
+##    map_interface_to_joint_state:
+##      effort: effort
+##      position: position
+##      velocity: velocity
+## "true" means the topic will be /joint_broad/joint_states, false - /joint_states:
+#    use_local_topics: false
+
+#joint_broad:
+#  ros__parameters:
+#    joints:
+#      - left_wheel_joint
+#      - right_wheel_joint
+#    extra_joints:
+#      - left_caster_wheel_joint
+#      - right_caster_wheel_joint
+
+battery_state_broadcaster:
+  ros__parameters:
+    sensor_name: "main_battery"
+    frame_id: "battery_frame"
+    power_supply_technology: 4
+    design_capacity: 20.0
+    location: "robot Fido"
+    serial_number: "3.0001"
+    # https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/BatteryState.msg
+    # https://github.com/ipa320/ros_battery_monitoring/blob/main/battery_state_broadcaster/src/BatteryStateBroadcaster.cpp
+    state_interfaces:
+      - voltage
+      - temperature
+      - current
+      - charge
+      - capacity
+      - percentage
+      - power_supply_status
+      - power_supply_health
+      - present
