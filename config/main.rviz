@@ -5,6 +5,9 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /LaserScan1/Topic1
+        - /WiFi Costmap1/Topic1
+        - /WiFi Heat Markers1/Topic1
+        - /WiFi Heat dBm1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 606
   - Class: rviz_common/Selection
@@ -57,13 +60,11 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        camera_link:
-          Value: true
-        camera_link_optical:
-          Value: true
         chassis_link:
           Value: true
-        gps_link:
+        depth_camera_link:
+          Value: true
+        depth_camera_link_optical:
           Value: true
         imu_link:
           Value: true
@@ -75,21 +76,29 @@ Visualization Manager:
           Value: true
         map:
           Value: true
+        oak-d_frame:
+          Value: true
+        oak_imu_frame:
+          Value: true
+        oak_left_camera_frame:
+          Value: true
+        oak_left_camera_optical_frame:
+          Value: true
+        oak_model_origin:
+          Value: true
+        oak_rgb_camera_frame:
+          Value: true
+        oak_rgb_camera_optical_frame:
+          Value: true
+        oak_right_camera_frame:
+          Value: true
+        oak_right_camera_optical_frame:
+          Value: true
         odom:
           Value: true
         right_caster_wheel:
           Value: true
         right_wheel:
-          Value: true
-        sonar_B_L_frame:
-          Value: true
-        sonar_B_R_frame:
-          Value: true
-        sonar_F_L_frame:
-          Value: true
-        sonar_F_R_frame:
-          Value: true
-        utm:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -103,11 +112,23 @@ Visualization Manager:
               base_footprint:
                 {}
               chassis_link:
-                camera_link:
-                  camera_link_optical:
-                    {}
-                gps_link:
+                depth_camera_link:
                   {}
+                depth_camera_link_optical:
+                  oak-d_frame:
+                    oak_imu_frame:
+                      {}
+                    oak_left_camera_frame:
+                      oak_left_camera_optical_frame:
+                        {}
+                    oak_model_origin:
+                      {}
+                    oak_rgb_camera_frame:
+                      oak_rgb_camera_optical_frame:
+                        {}
+                    oak_right_camera_frame:
+                      oak_right_camera_optical_frame:
+                        {}
                 imu_link:
                   {}
                 laser_frame:
@@ -120,16 +141,6 @@ Visualization Manager:
                   {}
                 right_wheel:
                   {}
-                sonar_B_L_frame:
-                  {}
-                sonar_B_R_frame:
-                  {}
-                sonar_F_L_frame:
-                  {}
-                sonar_F_R_frame:
-                  {}
-          utm:
-            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -160,25 +171,20 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        camera_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        camera_link_optical:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         chassis_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        gps_link:
+        depth_camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        depth_camera_link_optical:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         imu_link:
           Alpha: 1
           Show Axes: false
@@ -199,32 +205,49 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        oak-d_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_model_origin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oak_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         right_caster_wheel:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         right_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        sonar_B_L_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        sonar_B_R_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        sonar_F_L_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        sonar_F_R_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -252,9 +275,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 255; 0
-      Max Intensity: 3.615185022354126
+      Max Intensity: 4.234938621520996
       Min Color: 255; 0; 0
-      Min Intensity: -2.1553475856781006
+      Min Intensity: -5.223998546600342
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -783,7 +806,7 @@ Visualization Manager:
       Value: true
     - Angle Units: Degrees
       Class: rviz_attitude_plugin/Attitude
-      Current Type: sensor_msgs/msg/Imu
+      Current Type: geometry_msgs/msg/PoseWithCovarianceStamped
       Display Mode: Full
       Enabled: true
       Name: Attitude
@@ -795,7 +818,7 @@ Visualization Manager:
         Overlay X: 16
         Overlay Y: 16
         Value: true
-      Topic: /imu/data
+      Topic: /amcl_pose
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/Polygon
@@ -814,9 +837,7 @@ Visualization Manager:
       Enabled: true
       Name: Geofence
       Namespaces:
-        geofence_boundary: true
-        geofence_inward_normal: true
-        geofence_vertices: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -867,6 +888,81 @@ Visualization Manager:
       size: 128
       text size: 14
       top: 128
+    - Align Bottom: false
+      Background Alpha: 0.800000011920929
+      Background Color: 0; 0; 0
+      Class: rviz_2d_overlay_plugins/TextOverlay
+      Enabled: true
+      Foreground Alpha: 0.800000011920929
+      Foreground Color: 25; 255; 240
+      Invert Shadow: false
+      Name: WiFi Text Panel
+      Overtake BG Color Properties: false
+      Overtake FG Color Properties: false
+      Overtake Position Properties: false
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /wifi/overlay
+      Value: true
+      font: DejaVu Sans Mono
+      height: 128
+      hor_alignment: left
+      hor_dist: 0
+      line width: 2
+      text size: 12
+      ver_alignment: top
+      ver_dist: 0
+      width: 128
+    - Alpha: 0.699999988079071
+      Binary representation: false
+      Binary threshold: 100
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: WiFi Costmap
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /wifi_link_quality_costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /wifi_link_quality_costmap_updates
+      Use Timestamp: false
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: WiFi Heat Markers
+      Namespaces:
+        wifi_heatmap: true
+      Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /wifi_heat_markers
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: WiFi Heat dBm
+      Namespaces:
+        wifi_heatmap_text: true
+      Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /wifi_heat_text_markers
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
