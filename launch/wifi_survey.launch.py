@@ -18,12 +18,6 @@ def generate_launch_description():
     db_path = LaunchConfiguration('db_path')
     config_filepath = LaunchConfiguration('config_filepath')
 
-    ld.add_action(LogInfo(msg=[
-        '[wifi_survey.launch.py] ',
-        'config_filepath: ', config_filepath,
-        ' db_path: ', db_path,
-    ]))
-
     db_path_arg = DeclareLaunchArgument(
         'db_path',
         default_value=os.path.join(os.getcwd(), 'wifi_data.db'),
@@ -35,6 +29,18 @@ def generate_launch_description():
         default_value=default_config_filepath,
         description='Path to the configuration file'
     )
+
+    for action in [
+        db_path_arg,
+        config_filepath_arg,
+    ]:
+        ld.add_action(action)
+
+    ld.add_action(LogInfo(msg=[
+        '[wifi_survey.launch.py] ',
+        'config_filepath: ', config_filepath,
+        ' db_path: ', db_path,
+    ]))
 
     for action in [
         db_path_arg,
