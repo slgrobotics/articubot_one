@@ -109,6 +109,11 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
+    wifi_survey_include = include_launch(
+        package_name,
+        ['launch', 'wifi_survey.launch.py'],
+    )
+
     # -------------------------------------------------------
     # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
@@ -134,9 +139,11 @@ def generate_launch_description():
     # Navigation stack is run with a further delay to allow map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
+    survey_delay = 30.0  # seconds - after navigation is running, we can start wifi survey
 
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
+    delayed_wifi_survey = delayed_include(survey_delay, "WIFI_SURVEY", wifi_survey_include)
 
     # -------------------------------------------------------
     # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
@@ -155,6 +162,7 @@ def generate_launch_description():
         sensors_include,
         delayed_loc,
         delayed_nav,
+        delayed_wifi_survey,
     ])
 
     # -------------------------------------------------------
