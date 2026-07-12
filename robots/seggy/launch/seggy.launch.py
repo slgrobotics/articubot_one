@@ -109,9 +109,20 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
+    wifi_survey_config = PathJoinSubstitution([
+        FindPackageShare(package_name),
+        'robots',
+        robot_model,
+        'config',
+        'wifi_survey_config.yaml'
+    ])
+
     wifi_survey_include = include_launch(
         package_name,
         ['launch', 'wifi_survey.launch.py'],
+        {
+            'config_filepath': wifi_survey_config
+        }
     )
 
     # -------------------------------------------------------
