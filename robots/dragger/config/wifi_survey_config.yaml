@@ -1,0 +1,52 @@
+/wifi_logger_node:
+  ros__parameters:
+    use_gps: true  # Set false on robots without a GPS receiver (skips /gps/filtered sub + stale warnings)
+    db_path: "wifi_data.db"
+    wifi_interface: ""  # Leave empty for auto-detection
+    update_interval: 1.0
+    max_signal_strength: -30.0
+    min_signal_strength: -90.0
+    publish_metrics: true
+    publish_overlay: true
+    # RViz2 overlay parameters:
+    ov_horizontal_alignment: 2  # LEFT:0 RIGHT:1 CENTER:2
+    ov_vertical_alignment: 3    # CENTER:2 TOP:3 Bottom:4
+    ov_horizontal_distance: 10
+    ov_vertical_distance: 10
+    ov_width_factor: 1.0
+    ov_height_factor: 1.0
+    ov_font: "DejaVu Sans Mono"
+    ov_font_size: 12.0
+    ov_font_color: "0.1 0.1 0.1 1.0"  # RGBA
+    ov_bg_color: "1.0 1.0 1.0 0.5"    # RGBA
+    ov_do_short: true
+    ov_do_full: true
+
+/wifi_visualizer_node:
+  ros__parameters:
+    db_path: "wifi_data.db"
+    publish_frequency: 1.0
+    db_check_frequency: 2.0
+    max_interpolation_distance: 1.0
+    enable_link_quality: true
+    enable_signal_level: true
+    enable_bit_rate: true
+    costmap_topic: "/global_costmap/costmap"
+
+/heat_mapper_node:
+  ros__parameters:
+    standalone: false
+    db_path: "wifi_data.db"
+    costmap_topic: "/global_costmap/costmap"
+    do_publish_markers: true
+    do_publish_text_markers: true
+    min_signal_level: -80.0
+    max_signal_level: -30.0
+    # When true, the RViz color ramp is auto-fit to the observed min/max
+    # signal in the current data set each publish cycle. When false, the
+    # fixed min_signal_level / max_signal_level window above is used.
+    normalize: true
+    marker_alpha: 1.0            # Opacity of cube markers (0..1)
+    scale_factor: 1.0            # Standalone matplotlib scale factor
+    text_size: 0.08              # Height of text markers in meters
+    use_redblue_colormap: false  # smooth red->blue ramp instead of ROYGB rainbow
