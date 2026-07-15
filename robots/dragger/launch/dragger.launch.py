@@ -175,7 +175,7 @@ def generate_launch_description():
     # Navigation stack is run with a further delay to allow map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
-    survey_delay = 30.0  # seconds - after navigation is running, we can start wifi survey
+    survey_delay = 40.0  # seconds - after navigation is running, we can start wifi survey
 
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
