@@ -4,6 +4,7 @@
     db_path: "wifi_data.db"
     wifi_interface: ""  # Leave empty for auto-detection
     update_interval: 1.0
+    grid_density: 0     # rounding factor for x,y,z coordinates, 1 means 0.1 meter grid (usually indoors), 0 means 1 meter grid (usually outdoors)
     max_signal_strength: -30.0
     min_signal_strength: -90.0
     publish_metrics: true
@@ -49,4 +50,4 @@
     marker_alpha: 1.0            # Opacity of cube markers (0..1)
     scale_factor: 1.0            # Standalone matplotlib scale factor
     text_size: 0.08              # Height of text markers in meters
-    use_redblue_colormap: false  # smooth red->blue ramp instead of ROYGB rainbow
+    use_redblue_colormap: true   # smooth red->blue ramp instead of ROYGB rainbow
