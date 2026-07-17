@@ -52,9 +52,9 @@ def generate_launch_description():
         package=package_name,
         executable='wifi_logger_node.py',
         name='wifi_logger_node',
+        output='screen',
         parameters=[config_filepath, {'db_path': db_path}],
         # arguments=['--ros-args', '--log-level', 'DEBUG'],
-        output='screen'
     )
     ld.add_action(wifi_logger_node)
 
@@ -63,7 +63,7 @@ def generate_launch_description():
         executable='wifi_visualizer_node.py',
         name='wifi_visualizer_node',
         output='screen',
-        parameters=[config_filepath],
+        parameters=[config_filepath, {'db_path': db_path}],
     )
     ld.add_action(wifi_visualizer_node)
 
@@ -71,8 +71,8 @@ def generate_launch_description():
         package=package_name,
         executable='heat_mapper_node.py',
         name='heat_mapper_node',
-        parameters=[config_filepath],
         output='screen',
+        parameters=[config_filepath, {'db_path': db_path}],
     )
     ld.add_action(heat_mapper_node)
 

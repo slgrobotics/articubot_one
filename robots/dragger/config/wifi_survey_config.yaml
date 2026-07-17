@@ -2,6 +2,7 @@
   ros__parameters:
     use_gps: true  # Set false on robots without a GPS receiver (skips /gps/filtered sub + stale warnings)
     db_path: "wifi_data.db"
+    db_clear_on_start: false  # Clear existing records from the database when the logger starts
     wifi_interface: ""  # Leave empty for auto-detection
     update_interval: 1.0
     grid_density: 0     # rounding factor for x,y,z coordinates, 1 means 0.1 meter grid (usually indoors), 0 means 1 meter grid (usually outdoors)
