@@ -33,6 +33,7 @@ def generate_launch_description():
         }
     )
 
+    # Launch visual SLAM/localization with RTAB-Map if requested.
     rtabmap = include_launch(
         package_name,
         ['launch', 'rtabmap.launch.py'],
@@ -41,6 +42,9 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'frame_id': 'base_link',
             'map_frame_id': 'map',
+            'database_path': '~/.ros/rtabmap.db',
+            'delete_db_on_start': 'true',
+            'localization': 'false',
             'odom_topic': '/odometry/filtered',
             'rgb_topic': '/oak/rgb/image_rect',
             'depth_topic': '/oak/stereo/image_raw',

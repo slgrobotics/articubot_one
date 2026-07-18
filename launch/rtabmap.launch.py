@@ -131,7 +131,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "rtabmap_viz",
-            default_value="true",
+            default_value="false",
             description="Start the RTAB-Map GUI.",
         ),
         DeclareLaunchArgument(
