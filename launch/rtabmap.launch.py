@@ -68,7 +68,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "odom_topic",
-            default_value="/odometry/filtered",
+            default_value="/odometry/local",
             description="External robot odometry topic.",
         ),
         DeclareLaunchArgument(
