@@ -45,7 +45,7 @@ def generate_launch_description():
             'database_path': '~/.ros/rtabmap.db',
             'delete_db_on_start': 'true',
             'localization': 'false',
-            'odom_topic': '/odometry/filtered',
+            'odom_topic': '/odometry/local',
             'rgb_topic': '/oak/rgb/image_rect',
             'depth_topic': '/oak/stereo/image_raw',
             'camera_info_topic': '/oak/rgb/camera_info',
