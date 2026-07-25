@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+    <!-- See:
+             - https://github.com/slgrobotics/ros2_inference_stereo/blob/main/README.md
+             - https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map
+    -->
+
+    <!-- parameters: camera_stereo_offset_x
+                     camera_stereo_offset_z -->
+
+    <joint name="camera_stereo_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="camera_stereo_link"/>
+        <origin xyz="${camera_stereo_offset_x} 0 ${camera_stereo_offset_z}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="camera_stereo_link">
+        <visual>
+            <geometry>
+                <box size="0.05 0.10 0.05"/>
+            </geometry>
+            <material name="sensor_blue"/>
+        </visual>
+        <visual name="stereo_camera_visual_lens_right">
+            <origin xyz="0.010 -0.032 0.006" rpy="0 ${pi/2} 0"/>
+            <geometry>
+                <cylinder radius="0.006" length="0.04"/>
+            </geometry>
+            <material name="sensor_lens_blue"/>
+        </visual>
+        <visual name="stereo_camera_visual_lens_left">
+            <origin xyz="0.010 0.032 0.006" rpy="0 ${pi/2} 0"/>
+            <geometry>
+                <cylinder radius="0.006" length="0.04"/>
+            </geometry>
+            <material name="sensor_lens_blue"/>
+        </visual>
+    </link>
+
+    <joint name="camera_stereo_optical_joint" type="fixed">
+        <parent link="camera_stereo_link"/>
+        <child link="camera_stereo_link_optical"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="camera_stereo_link_optical">
+    </link>
+
+    <!-- gz model -m dragger -s rgb_camera_left -->
+	  <gazebo reference="camera_stereo_link_optical">
+        <sensor name='rgb_camera_left' type='camera'>
+          <pose>0 0 0 0 0 0</pose>
+		      <always_on>true</always_on>
+          <topic>gz_camera</topic>
+          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
+          <!-- see <optical_frame_id> below     <gz_frame_id>camera_stereo_link_optical</gz_frame_id> -->
+          <update_rate>10</update_rate>
+          <visualize>true</visualize>
+          <enable_metrics>false</enable_metrics>
+          <camera name='__default__'>
+            <pose>0 0 0 0 0 0</pose>
+            <horizontal_fov>1.047</horizontal_fov>
+            <image>
+              <width>320</width>
+              <height>240</height>
+              <format>RGB_INT8</format>
+              <anti_aliasing>4</anti_aliasing>
+            </image>
+            <camera_stereo_info_topic>gz_camera_stereo_info</camera_stereo_info_topic>
+            <trigger_topic></trigger_topic>
+            <triggered>false</triggered>
+            <clip>
+              <near>0.10000000000000001</near>
+              <far>100</far>
+            </clip>
+            <save enabled='false'>
+              <path>__default__</path>
+            </save>
+            <visibility_mask>4294967295</visibility_mask>
+            <noise>
+              <type>none</type>
+              <mean>0</mean>
+              <stddev>0</stddev>
+            </noise>
+            <distortion>
+              <k1>0</k1>
+              <k2>0</k2>
+              <k3>0</k3>
+              <p1>0</p1>
+              <p2>0</p2>
+              <center>0.5 0.5</center>
+            </distortion>
+            <lens>
+              <type>stereographic</type>
+              <scale_to_hfov>true</scale_to_hfov>
+              <cutoff_angle>${pi/2}</cutoff_angle>
+              <env_texture_size>256</env_texture_size>
+            </lens>
+            <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
+          </camera>
+        </sensor>
+    </gazebo>
+
+</robot>

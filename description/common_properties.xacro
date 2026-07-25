@@ -35,6 +35,10 @@
         <color rgba="0.2 0.2 1 1"/>
     </material>
 
+    <material name="sensor_lens_blue">
+        <color rgba="0.26 0.34 0.55 1"/>
+    </material>
+
     <material name="sensor_yellow">
         <color rgba="0.8 0.8 0.2 1"/>
     </material>

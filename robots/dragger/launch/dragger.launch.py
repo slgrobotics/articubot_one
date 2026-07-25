@@ -147,7 +147,8 @@ def generate_launch_description():
         ['launch', 'wifi_survey.launch.py'],
         {
             'config_filepath': wifi_survey_config
-        }
+        },
+        condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
     # -------------------------------------------------------
