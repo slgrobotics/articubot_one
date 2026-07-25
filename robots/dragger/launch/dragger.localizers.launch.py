@@ -94,8 +94,8 @@ def generate_launch_description():
 
     # -----------------------------------------------------------------------------------
     # Choose indoors or outdoors:
-    #robot_localizers = namespace_wrap(namespace, [indoor_localizers], rtabmap)
-    robot_localizers = namespace_wrap(namespace, [outdoor_localizers], rtabmap)
+    #robot_localizers = namespace_wrap(namespace, [indoor_localizers, rtabmap])
+    robot_localizers = namespace_wrap(namespace, [outdoor_localizers, rtabmap])
 
     return LaunchDescription([
         
