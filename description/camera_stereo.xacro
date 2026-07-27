@@ -47,14 +47,14 @@
     <link name="camera_stereo_link_optical">
     </link>
 
-    <!-- gz model -m dragger -s rgb_camera_left -->
+    <!-- gz model -m dragger -s depth_camera -->
 	  <gazebo reference="camera_stereo_link_optical">
-        <sensor name='rgb_camera_left' type='camera'>
+        <sensor name='depth_camera' type='depth'>
           <pose>0 0 0 0 0 0</pose>
 		      <always_on>true</always_on>
-          <topic>gz_camera</topic>
+          <topic>gz_depth_camera</topic>
           <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-          <!-- see <optical_frame_id> below     <gz_frame_id>camera_stereo_link_optical</gz_frame_id> -->
+          <!-- see <optical_frame_id> below     <gz_frame_id>depth_camera_link_optical</gz_frame_id> -->
           <update_rate>10</update_rate>
           <visualize>true</visualize>
           <enable_metrics>false</enable_metrics>
@@ -64,15 +64,17 @@
             <image>
               <width>320</width>
               <height>240</height>
-              <format>RGB_INT8</format>
+              <!--format>RGB_INT8</format -->
+              <!--format>B8G8R8</format -->
+              <format>L_INT16</format>
               <anti_aliasing>4</anti_aliasing>
             </image>
-            <camera_stereo_info_topic>gz_camera_stereo_info</camera_stereo_info_topic>
+            <camera_info_topic>gz_depth_camera_info</camera_info_topic>
             <trigger_topic></trigger_topic>
             <triggered>false</triggered>
             <clip>
-              <near>0.10000000000000001</near>
-              <far>100</far>
+              <near>0.1</near>
+              <far>8</far>
             </clip>
             <save enabled='false'>
               <path>__default__</path>
