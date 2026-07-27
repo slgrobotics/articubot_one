@@ -57,6 +57,7 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
+# Note: camera and depth sensors are lazy-loaded by default
 - ros_topic_name: "camera"
   gz_topic_name: "gz_camera"
   ros_type_name: "sensor_msgs/msg/Image"
@@ -69,6 +70,7 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
+# Note: camera and depth sensors are lazy-loaded by default
 # see ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
 - ros_topic_name: "depth_camera"
   gz_topic_name: "gz_depth_camera"
@@ -76,12 +78,18 @@
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-# TODO: is there depth_camera_info?
-#- ros_topic_name: "depth_camera_info"
-#  gz_topic_name: "gz_depth_camera_info"
-#  ros_type_name: "sensor_msgs/msg/CameraInfo"
-#  gz_type_name: "gz.msgs.CameraInfo"
-#  direction: GZ_TO_ROS
+# See description/depth_camera.xacro and description/camera_stereo.xacro
+- ros_topic_name: "depth_camera_info"
+  gz_topic_name: "gz_depth_camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+- ros_topic_name: "depth_camera/points"
+  gz_topic_name: "gz_depth_camera/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
 
 - ros_topic_name: "gps/fix"
   gz_topic_name: "gz_navsat/fix"
@@ -96,7 +104,7 @@
   direction: GZ_TO_ROS
 
 # Note: IMU in Gazebo may report orientation as all zeroes. Set <enable_orientation> to 1 in SDF to allow reporting real values. 
-- ros_topic_name: "imu/data"
+- ros_topic_name: "imu/data_raw"
   gz_topic_name: "gz_imu/data"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
