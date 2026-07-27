@@ -41,7 +41,7 @@
     <joint name="camera_stereo_optical_joint" type="fixed">
         <parent link="camera_stereo_link"/>
         <child link="camera_stereo_link_optical"/>
-        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <link name="camera_stereo_link_optical">
