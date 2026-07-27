@@ -58,6 +58,7 @@
   direction: GZ_TO_ROS
 
 # Note: camera and depth sensors are lazy-loaded by default
+# Regular camera - see description/camera.xacro
 - ros_topic_name: "camera"
   gz_topic_name: "gz_camera"
   ros_type_name: "sensor_msgs/msg/Image"
@@ -71,26 +72,31 @@
   direction: GZ_TO_ROS
 
 # Note: camera and depth sensors are lazy-loaded by default
-# see ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
-- ros_topic_name: "depth_camera"
-  gz_topic_name: "gz_depth_camera"
+# See:
+#    - description/depth_camera.xacro and description/camera_stereo.xacro
+#    - ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
+# 1. RGB Color Stream
+- ros_topic_name: "/camera_stereo/image_raw"
+  gz_topic_name: "/camera_stereo/image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-# See description/depth_camera.xacro and description/camera_stereo.xacro
-- ros_topic_name: "depth_camera_info"
-  gz_topic_name: "gz_depth_camera_info"
+# 2. Synchronized Depth Stream
+- ros_topic_name: "/camera_stereo/depth/image_rect_raw"
+  gz_topic_name: "/camera_stereo/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# 3. Unified Camera Info
+- ros_topic_name: "/camera_stereo/camera_info"
+  gz_topic_name: "/camera_stereo/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "depth_camera/points"
-  gz_topic_name: "gz_depth_camera/points"
-  ros_type_name: "sensor_msgs/msg/PointCloud2"
-  gz_type_name: "gz.msgs.PointCloudPacked"
-  direction: GZ_TO_ROS
-
+# Navsat related:
 - ros_topic_name: "gps/fix"
   gz_topic_name: "gz_navsat/fix"
   ros_type_name: "sensor_msgs/msg/NavSatFix"

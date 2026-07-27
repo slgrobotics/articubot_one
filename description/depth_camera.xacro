@@ -82,7 +82,7 @@
               <format>B8G8R8</format>
               <anti_aliasing>4</anti_aliasing>
             </image>
-            <camera_info_topic>gz_depth_camera_info</camera_info_topic>
+            <camera_info_topic>/gz_depth_camera_info</camera_info_topic>
             <trigger_topic></trigger_topic>
             <triggered>false</triggered>
             <clip>

@@ -41,67 +41,52 @@
     <joint name="camera_stereo_optical_joint" type="fixed">
         <parent link="camera_stereo_link"/>
         <child link="camera_stereo_link_optical"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
     </joint>
 
     <link name="camera_stereo_link_optical">
     </link>
 
     <!-- gz model -m dragger -s depth_camera -->
-	  <gazebo reference="camera_stereo_link_optical">
-        <sensor name='depth_camera' type='depth'>
-          <pose>0 0 0 0 0 0</pose>
-		      <always_on>true</always_on>
-          <topic>gz_depth_camera</topic>
-          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-          <!-- see <optical_frame_id> below     <gz_frame_id>depth_camera_link_optical</gz_frame_id> -->
-          <update_rate>10</update_rate>
-          <visualize>true</visualize>
-          <enable_metrics>false</enable_metrics>
-          <camera name='__default__'>
-            <pose>0 0 0 0 0 0</pose>
-            <horizontal_fov>1.047</horizontal_fov>
-            <image>
-              <width>320</width>
-              <height>240</height>
-              <!--format>RGB_INT8</format -->
-              <!--format>B8G8R8</format -->
-              <format>L_INT16</format>
-              <anti_aliasing>4</anti_aliasing>
-            </image>
-            <camera_info_topic>gz_depth_camera_info</camera_info_topic>
-            <trigger_topic></trigger_topic>
-            <triggered>false</triggered>
-            <clip>
-              <near>0.1</near>
-              <far>8</far>
-            </clip>
-            <save enabled='false'>
-              <path>__default__</path>
-            </save>
-            <visibility_mask>4294967295</visibility_mask>
-            <noise>
-              <type>none</type>
-              <mean>0</mean>
-              <stddev>0</stddev>
-            </noise>
-            <distortion>
-              <k1>0</k1>
-              <k2>0</k2>
-              <k3>0</k3>
-              <p1>0</p1>
-              <p2>0</p2>
-              <center>0.5 0.5</center>
-            </distortion>
-            <lens>
-              <type>stereographic</type>
-              <scale_to_hfov>true</scale_to_hfov>
-              <cutoff_angle>${pi/2}</cutoff_angle>
-              <env_texture_size>256</env_texture_size>
-            </lens>
-            <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
-          </camera>
-        </sensor>
+    <gazebo reference="camera_stereo_link_optical">
+      <!-- This sensor type is optimized for use with RTAB-Map on Dragger and Seggy ronots
+           See https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map -->
+      <sensor name="rgbd_camera" type="rgbd">
+
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <visualize>true</visualize>
+
+        <topic>/camera_stereo</topic>
+        <camera_info_topic>/camera_stereo/camera_info</camera_info_topic>
+
+        <camera>
+
+          <horizontal_fov>1.047</horizontal_fov>
+
+          <image>
+            <!-- Use full size 820x616 or a 0.5 scale 408x308 -->
+            <width>820</width>
+            <height>616</height>
+            <format>R8G8B8</format>
+          </image>
+
+          <clip>
+            <near>0.1</near>
+            <far>8.0</far>
+          </clip>
+
+          <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
+
+          <noise>
+            <type>gaussian</type>
+            <mean>0</mean>
+            <stddev>0.005</stddev>
+          </noise>
+
+        </camera>
+
+      </sensor>
     </gazebo>
 
 </robot>
