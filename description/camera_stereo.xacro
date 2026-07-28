@@ -38,22 +38,6 @@
         </visual>
     </link>
 
-    <!-- REP-103 defines a Right-Handed, Z-Up coordinate system.
-        - X-Axis (Red in RViz):   Points Forward (the direction the robot drives)
-        - Y-Axis (Green in RViz): Points Left
-        - Z-Axis (Blue in RViz):  Points Up (against gravity)
-      The Gazebo camera is operating in that frame, with no rotation needed
-    -->
-
-    <joint name="camera_stereo_head_joint" type="fixed">
-        <parent link="camera_stereo_link"/>
-        <child link="camera_stereo_link_head"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-    </joint>
-
-    <link name="camera_stereo_link_head">
-    </link>
-
     <!--  The Optical Coordinate System (For Cameras and Sensors)
       Cameras view the world from a pixel grid perspective rather than a driving perspective.
       Because of this, REP-103 defines a completely different axis standard for optical frames:
@@ -62,6 +46,7 @@
         - X-Axis: Points Right   (horizontal pixel axis)
         - Y-Axis: Points Down    (vertical pixel axis)
       RTAB-Map relies on this standard to calculate visual odometry and project depth pixels into a 3D world
+      So, we use <optical_frame_id>camera_stereo_link_optical</optical_frame_id> to force frame_id in message headers.
     -->
 
     <joint name="camera_stereo_optical_joint" type="fixed">
@@ -73,8 +58,15 @@
     <link name="camera_stereo_link_optical">
     </link>
 
-    <!-- gz model -m dragger -s depth_camera -->
-    <gazebo reference="camera_stereo_link_head">
+    <!-- REP-103 defines a Right-Handed, Z-Up coordinate system.
+        - X-Axis (Red in RViz):   Points Forward (the direction the robot drives)
+        - Y-Axis (Green in RViz): Points Left
+        - Z-Axis (Blue in RViz):  Points Up (against gravity)
+      The Gazebo camera is operating in that frame, with no rotation needed (uses camera_stereo_link)
+    -->
+
+    <!-- gz model -m dragger -s rgbd_camera -->
+    <gazebo reference="camera_stereo_link">
       <!-- This sensor type is optimized for use with RTAB-Map on Dragger and Seggy robots
            See https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map
                https://github.com/slgrobotics/ros2_inference_stereo -->
