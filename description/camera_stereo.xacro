@@ -38,6 +38,13 @@
         </visual>
     </link>
 
+    <!-- REP-103 defines a Right-Handed, Z-Up coordinate system.
+        - X-Axis (Red in RViz):   Points Forward (the direction the robot drives)
+        - Y-Axis (Green in RViz): Points Left
+        - Z-Axis (Blue in RViz):  Points Up (against gravity)
+      The Gazebo camera is operating in that frame, with no rotation needed
+    -->
+
     <joint name="camera_stereo_optical_joint" type="fixed">
         <parent link="camera_stereo_link"/>
         <child link="camera_stereo_link_optical"/>
@@ -45,6 +52,25 @@
     </joint>
 
     <link name="camera_stereo_link_optical">
+    </link>
+
+    <!--  The Optical Coordinate System (For Cameras and Sensors)
+      Cameras view the world from a pixel grid perspective rather than a driving perspective.
+      Because of this, REP-103 defines a completely different axis standard for optical frames:
+      When looking out through the camera lens:
+        - Z-Axis: Points Forward (into the scene, acting as the Depth axis)
+        - X-Axis: Points Right   (horizontal pixel axis)
+        - Y-Axis: Points Down    (vertical pixel axis)
+      RTAB-Map relies on this standard to calculate visual odometry and project depth pixels into a 3D world
+    -->
+
+    <joint name="camera_stereo_optical2_joint" type="fixed">
+        <parent link="camera_stereo_link"/>
+        <child link="camera_stereo_link_optical2"/>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    </joint>
+
+    <link name="camera_stereo_link_optical2">
     </link>
 
     <!-- gz model -m dragger -s depth_camera -->
@@ -82,7 +108,7 @@
             <far>5.0</far>
           </clip>
 
-          <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
+          <optical_frame_id>camera_stereo_link_optical2</optical_frame_id>
 
           <noise>
             <type>gaussian</type>
