@@ -50,7 +50,6 @@
   gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS
 
-
 - ros_topic_name: "pointcloud2d"
   gz_topic_name: "pointcloud2d"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
@@ -94,6 +93,13 @@
   gz_topic_name: "gz_camera_stereo/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# 4. PointCloud2 Stream
+- ros_topic_name: "camera_stereo/pointcloud2d"
+  gz_topic_name: "gz_camera_stereo/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
 # Navsat related:
