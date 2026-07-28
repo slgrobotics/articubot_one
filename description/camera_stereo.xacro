@@ -63,7 +63,12 @@
 
         <camera>
 
-          <horizontal_fov>1.047</horizontal_fov>
+          <!-- Dragger has two "Arducam 8MP IMX219 Camera Module for Raspberry Pi, with Low Distortion 105°(D) FOV M12 Lens"
+               a 105° diagonal FOV corresponds approximately to:
+                  - Horizontal: ≈ 88–90°
+                  - Vertical: ≈ 66–68°
+                  - 1.56 rad ≈ 89.4° -->
+          <horizontal_fov>1.56</horizontal_fov>
 
           <image>
             <!-- Use full size 820x616 or a 0.5 scale 408x308 -->
@@ -82,7 +87,7 @@
           <noise>
             <type>gaussian</type>
             <mean>0</mean>
-            <stddev>0.005</stddev>
+            <stddev>0.003</stddev>
           </noise>
 
         </camera>
