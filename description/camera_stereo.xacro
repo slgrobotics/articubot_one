@@ -49,8 +49,9 @@
 
     <!-- gz model -m dragger -s depth_camera -->
     <gazebo reference="camera_stereo_link_optical">
-      <!-- This sensor type is optimized for use with RTAB-Map on Dragger and Seggy ronots
-           See https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map -->
+      <!-- This sensor type is optimized for use with RTAB-Map on Dragger and Seggy robots
+           See https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map
+               https://github.com/slgrobotics/ros2_inference_stereo -->
       <sensor name="rgbd_camera" type="rgbd">
 
         <always_on>true</always_on>
@@ -73,7 +74,7 @@
 
           <clip>
             <near>0.1</near>
-            <far>8.0</far>
+            <far>5.0</far>
           </clip>
 
           <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
