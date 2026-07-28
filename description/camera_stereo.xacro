@@ -45,13 +45,13 @@
       The Gazebo camera is operating in that frame, with no rotation needed
     -->
 
-    <joint name="camera_stereo_optical_joint" type="fixed">
+    <joint name="camera_stereo_head_joint" type="fixed">
         <parent link="camera_stereo_link"/>
-        <child link="camera_stereo_link_optical"/>
+        <child link="camera_stereo_link_head"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
-    <link name="camera_stereo_link_optical">
+    <link name="camera_stereo_link_head">
     </link>
 
     <!--  The Optical Coordinate System (For Cameras and Sensors)
@@ -64,17 +64,17 @@
       RTAB-Map relies on this standard to calculate visual odometry and project depth pixels into a 3D world
     -->
 
-    <joint name="camera_stereo_optical2_joint" type="fixed">
+    <joint name="camera_stereo_optical_joint" type="fixed">
         <parent link="camera_stereo_link"/>
-        <child link="camera_stereo_link_optical2"/>
+        <child link="camera_stereo_link_optical"/>
         <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
     </joint>
 
-    <link name="camera_stereo_link_optical2">
+    <link name="camera_stereo_link_optical">
     </link>
 
     <!-- gz model -m dragger -s depth_camera -->
-    <gazebo reference="camera_stereo_link_optical">
+    <gazebo reference="camera_stereo_link_head">
       <!-- This sensor type is optimized for use with RTAB-Map on Dragger and Seggy robots
            See https://github.com/slgrobotics/articubot_one/wiki/Visual-SLAM-with-RTAB%E2%80%90Map
                https://github.com/slgrobotics/ros2_inference_stereo -->
@@ -108,7 +108,7 @@
             <far>5.0</far>
           </clip>
 
-          <optical_frame_id>camera_stereo_link_optical2</optical_frame_id>
+          <optical_frame_id>camera_stereo_link_optical</optical_frame_id>
 
           <noise>
             <type>gaussian</type>
