@@ -65,8 +65,8 @@
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
-- ros_topic_name: "camera_info"
-  gz_topic_name: "gz_camera_info"
+- ros_topic_name: "camera/camera_info"
+  gz_topic_name: "gz_camera/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
@@ -77,21 +77,21 @@
 #    - ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
 # 1. RGB Color Stream
 - ros_topic_name: "camera_stereo/image_raw"
-  gz_topic_name: "camera_stereo/image"
+  gz_topic_name: "gz_camera_stereo/image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
 # 2. Synchronized Depth Stream
 - ros_topic_name: "camera_stereo/depth/image_rect_raw"
-  gz_topic_name: "camera_stereo/depth_image"
+  gz_topic_name: "gz_camera_stereo/depth_image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
   direction: GZ_TO_ROS
 
 # 3. Unified Camera Info
 - ros_topic_name: "camera_stereo/camera_info"
-  gz_topic_name: "camera_stereo/camera_info"
+  gz_topic_name: "gz_camera_stereo/camera_info"
   ros_type_name: "sensor_msgs/msg/CameraInfo"
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS

@@ -58,8 +58,8 @@
         <update_rate>10</update_rate>
         <visualize>true</visualize>
 
-        <topic>/camera_stereo</topic>
-        <camera_info_topic>/camera_stereo/camera_info</camera_info_topic>
+        <topic>/gz_camera_stereo</topic>
+        <camera_info_topic>/gz_camera_stereo/camera_info</camera_info_topic>
 
         <camera>
 

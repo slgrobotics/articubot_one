@@ -36,58 +36,40 @@
     </link>
 
     <!-- gz model -m dragger -s rgb_camera -->
-	  <gazebo reference="camera_link_optical">
-        <sensor name='rgb_camera' type='camera'>
-          <pose>0 0 0 0 0 0</pose>
-		      <always_on>true</always_on>
-          <topic>gz_camera</topic>
-          <!-- future Gazebo versions might require "<frame_id>" here. Must reference an actual link in .xacro -->
-          <!-- see <optical_frame_id> below     <gz_frame_id>camera_link_optical</gz_frame_id> -->
-          <update_rate>10</update_rate>
-          <visualize>true</visualize>
-          <enable_metrics>false</enable_metrics>
-          <camera name='__default__'>
-            <pose>0 0 0 0 0 0</pose>
-            <horizontal_fov>1.047</horizontal_fov>
-            <image>
-              <width>320</width>
-              <height>240</height>
-              <format>RGB_INT8</format>
-              <anti_aliasing>4</anti_aliasing>
-            </image>
-            <camera_info_topic>gz_camera_info</camera_info_topic>
-            <trigger_topic></trigger_topic>
-            <triggered>false</triggered>
-            <clip>
-              <near>0.10000000000000001</near>
-              <far>100</far>
-            </clip>
-            <save enabled='false'>
-              <path>__default__</path>
-            </save>
-            <visibility_mask>4294967295</visibility_mask>
-            <noise>
-              <type>none</type>
-              <mean>0</mean>
-              <stddev>0</stddev>
-            </noise>
-            <distortion>
-              <k1>0</k1>
-              <k2>0</k2>
-              <k3>0</k3>
-              <p1>0</p1>
-              <p2>0</p2>
-              <center>0.5 0.5</center>
-            </distortion>
-            <lens>
-              <type>stereographic</type>
-              <scale_to_hfov>true</scale_to_hfov>
-              <cutoff_angle>${pi/2}</cutoff_angle>
-              <env_texture_size>256</env_texture_size>
-            </lens>
-            <optical_frame_id>camera_link_optical</optical_frame_id>
-          </camera>
-        </sensor>
+    <gazebo reference="camera_link_optical">
+      <sensor name="rgb_camera" type="camera">
+
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <visualize>true</visualize>
+
+        <topic>/gz_camera</topic>
+        <camera_info_topic>/gz_camera/camera_info</camera_info_topic>
+
+        <camera>
+          <!-- "Arducam 8MP IMX219 Camera Module for Raspberry Pi, with Low Distortion 105°(D) FOV M12 Lens"
+                a 105° diagonal FOV corresponds approximately to:
+                  - Horizontal: ≈ 88–90°
+                  - Vertical: ≈ 66–68°
+                  - 1.56 rad ≈ 89.4° -->
+          <horizontal_fov>1.56</horizontal_fov>
+
+          <image>
+            <!-- Use reasonable frame size 820x616 for fast transmission and rendering -->
+            <width>820</width>
+            <height>616</height>
+            <format>R8G8B8</format>
+          </image>
+
+          <clip>
+            <near>0.05</near>
+            <far>100</far>
+          </clip>
+
+          <optical_frame_id>camera_link_optical</optical_frame_id>
+        </camera>
+
+      </sensor>
     </gazebo>
 
 </robot>
