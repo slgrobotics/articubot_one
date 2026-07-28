@@ -82,7 +82,7 @@ def generate_launch_description():
             'delete_db_on_start': 'true',
             'localization': 'false',
             'odom_topic': '/odometry/local',
-            'rgb_topic': '/camera_stereo/image_raw',
+            'rgb_topic': '/camera_stereo/rgb/image_raw',
             'depth_topic': '/camera_stereo/depth/image_rect_raw',
             'camera_info_topic': '/camera_stereo/camera_info',
             'subscribe_scan': 'false',

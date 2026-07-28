@@ -75,7 +75,7 @@
 #    - description/depth_camera.xacro and description/camera_stereo.xacro
 #    - ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
 # 1. RGB Color Stream
-- ros_topic_name: "camera_stereo/image_raw"
+- ros_topic_name: "camera_stereo/rgb/image_raw"
   gz_topic_name: "gz_camera_stereo/image"
   ros_type_name: "sensor_msgs/msg/Image"
   gz_type_name: "gz.msgs.Image"
