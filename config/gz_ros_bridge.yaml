@@ -56,7 +56,8 @@
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS
 
-# Note: camera and depth sensors are lazy-loaded by default
+# ------- generic RGB Camera -----------------------------------
+# Note: RGB camera and depth sensors are lazy-loaded by default
 # Regular camera - see description/camera.xacro
 - ros_topic_name: "camera"
   gz_topic_name: "gz_camera"
@@ -70,7 +71,8 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-# Note: camera and depth sensors are lazy-loaded by default
+# ------- Raspberry Pi Stereo/RGBD Camera -----------------------------------
+# Note: RGB camera and depth sensors are lazy-loaded by default
 # See:
 #    - description/depth_camera.xacro and description/camera_stereo.xacro
 #    - ~/template_ws/src/ros_gz/ros_gz_sim_demos/launch/depth_camera.launch.py
@@ -95,9 +97,41 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-# 4. PointCloud2 Stream
+# 4. PointCloud2 Stream (only in sim)
 - ros_topic_name: "camera_stereo/pointcloud2d"
   gz_topic_name: "gz_camera_stereo/points"
+  ros_type_name: "sensor_msgs/msg/PointCloud2"
+  gz_type_name: "gz.msgs.PointCloudPacked"
+  direction: GZ_TO_ROS
+
+# ------- OAK-D Lite Camera (RGBD mode) -----------------------------------
+# Note: RGB camera and depth sensors are lazy-loaded by default
+# See:
+#    - description/camera_oakd.xacro
+# 1. RGB Color Stream
+- ros_topic_name: "oak/rgb/image_rect"
+  gz_topic_name: "gz_camera_oakd/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# 2. Synchronized Depth Stream
+- ros_topic_name: "oak/stereo/image_raw"
+  gz_topic_name: "gz_camera_oakd/depth_image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+
+# 3. Unified Camera Info
+- ros_topic_name: "oak/rgb/camera_info"
+  gz_topic_name: "gz_camera_oakd/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+
+# 4. PointCloud2 Stream (only in sim)
+- ros_topic_name: "oak/pointcloud2d"
+  gz_topic_name: "gz_camera_oakd/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
   gz_type_name: "gz.msgs.PointCloudPacked"
   direction: GZ_TO_ROS

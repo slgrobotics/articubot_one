@@ -47,7 +47,6 @@
     <xacro:property name="battery_capacity" value="50.0"/>
     <xacro:include filename="../../../description/battery.xacro" />
 
-    <!-- xacro:include filename="../../../description/depth_camera.xacro" / -->
     <!-- xacro:include filename="../../../description/face.xacro" / -->
     
     <xacro:include filename="ros2_control.xacro" />

@@ -31,12 +31,30 @@
     <xacro:property name="battery_capacity" value="20.0"/>
     <xacro:include filename="../../../description/battery.xacro" />
 
-    <xacro:property name="depth_camera_offset_x" value="${wheel_offset_x + 0.03}"/>
-    <xacro:property name="depth_camera_offset_z" value="${chassis_top_offset + 0.11}"/>
-    <xacro:include filename="../../../description/depth_camera.xacro"/>
+    <xacro:property name="camera_oakd_offset_x" value="${wheel_offset_x + 0.03}"/>
+    <xacro:property name="camera_oakd_offset_z" value="${chassis_top_offset + 0.115}"/>
+    <!-- URDF definitions for OAK-D Lite camera and Gazebo sim sensor -->
+    <xacro:include filename="../../../description/camera_oakd.xacro"/>
+
+    <!-- add a visual - mount for OAK-D Lite -->
+    <joint name="camera_oakd_mount_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="camera_oakd_mount_link"/>
+        <origin xyz="${camera_oakd_offset_x - 0.01} 0 ${camera_oakd_offset_z - 0.057}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="camera_oakd_mount_link">
+            <visual>
+            <geometry>
+                <box size="0.002 0.07 0.115"/>
+            </geometry>
+            <material name="body_color"/>
+        </visual>
+    </link>
 
     <xacro:unless value="$(arg sim_mode)">
-        <xacro:arg name="parent_frame" default="depth_camera_link_optical" />
+        <!-- real OAK-D Lite camera -->
+        <xacro:arg name="parent_frame" default="camera_oakd_link_optical" />
         <xacro:include filename="$(find depthai_descriptions)/urdf/depthai_descr.urdf.xacro"/>
     </xacro:unless>
     
