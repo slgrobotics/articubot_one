@@ -97,7 +97,9 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-# 4. PointCloud2 Stream (only in sim)
+# 4. PointCloud2 Stream (only in sim, for debugging)
+#    Note: the cloud appears rotated due to "camera_stereo_link_optical" rotation. This is normal.
+#          Downstream nodes (like RTAB-Map) will interpret Depth and RGB properly.
 - ros_topic_name: "camera_stereo/pointcloud2d"
   gz_topic_name: "gz_camera_stereo/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
@@ -129,7 +131,9 @@
   gz_type_name: "gz.msgs.CameraInfo"
   direction: GZ_TO_ROS
 
-# 4. PointCloud2 Stream (only in sim)
+# 4. PointCloud2 Stream (only in sim, for debugging)
+#    Note: the cloud appears rotated due to "camera_oakd_link_optical" rotation. This is normal.
+#          Downstream nodes (like RTAB-Map) will interpret Depth and RGB properly.
 - ros_topic_name: "oak/pointcloud2d"
   gz_topic_name: "gz_camera_oakd/points"
   ros_type_name: "sensor_msgs/msg/PointCloud2"
