@@ -76,7 +76,14 @@
     <joint name="camera_oakd_optical_joint" type="fixed">
         <parent link="camera_oakd_link"/>
         <child link="camera_oakd_link_optical"/>
-        <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        <xacro:if value="$(arg sim_mode)">
+          <!-- for Gazebo we need to rotate 'camera_oakd_link_optical' -->
+          <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+        </xacro:if>
+        <xacro:unless value="$(arg sim_mode)">
+          <!-- real OAK-D camera creates 'camera_oakd_link_optical' already rotated -->
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:unless>
     </joint>
 
     <xacro:if value="$(arg sim_mode)">
