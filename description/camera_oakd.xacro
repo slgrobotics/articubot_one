@@ -63,7 +63,9 @@
     </joint>
 
     <xacro:if value="$(arg sim_mode)">
-      <!-- OAK-D depthai_descr.urdf.xacro generates its own "parent_frame", in our case we want it to be "depth_camera_link_optical" -->
+      <!-- OAK-D depthai_descr.urdf.xacro generates its own parent frame on real robot,
+           in our case we want it to be "camera_oakd_link_optical"
+           as specified in the robots/seggy/launch/seggy.sensors.launch.py - 'parent_frame' -->
       <link name="camera_oakd_link_optical">
       </link>
     </xacro:if>
