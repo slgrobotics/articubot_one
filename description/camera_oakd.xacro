@@ -16,12 +16,29 @@
     </joint>
 
     <link name="camera_oakd_link">
+
+        <visual name="oak-d_visual">
+            <origin xyz="0.007 0 0.005" rpy="${pi/2} 0 ${pi/2}" />
+            <geometry>
+                <mesh filename="model:/opt/ros/jazzy/share/depthai_descriptions/urdf/models/OAK-D-LITE.stl" scale="1.0 1.0 1.0"/>
+            </geometry>
+            <material name="dark_grey"/>
+        </visual>
+        <visual name="oak-d_visual_rviz">
+            <origin xyz="0.007 0 0.005" rpy="${pi/2} 0 ${pi/2}" />
+            <geometry>
+                <mesh filename="package://depthai_descriptions/urdf/models/OAK-D-LITE.stl" scale="1.0 1.0 1.0"/>
+            </geometry>
+            <material name="dark_grey"/>
+        </visual>
+        <!-- Use this when STL doesn't work:
         <visual>
             <geometry>
                 <box size="0.018 0.095 0.03"/>
             </geometry>
             <material name="sensor_blue"/>
         </visual>
+        -->
         <visual name="stereo_camera_visual_lens_center">
             <origin xyz="0.010 0 0.005" rpy="0 ${pi/2} 0"/>
             <geometry>
