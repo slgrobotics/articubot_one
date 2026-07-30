@@ -62,8 +62,11 @@
         <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
     </joint>
 
-    <link name="camera_oakd_link_optical">
-    </link>
+    <xacro:if value="$(arg sim_mode)">
+      <!-- OAK-D depthai_descr.urdf.xacro generates its own "parent_frame", in our case we want it to be "depth_camera_link_optical" -->
+      <link name="camera_oakd_link_optical">
+      </link>
+    </xacro:if>
 
     <!-- REP-103 defines a Right-Handed, Z-Up coordinate system.
         - X-Axis (Red in RViz):   Points Forward (the direction the robot drives)
