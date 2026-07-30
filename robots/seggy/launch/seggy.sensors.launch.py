@@ -84,7 +84,7 @@ def generate_launch_description():
 
     # OAK-D camera launch We only supply the camera model and its position/rotation relative to the robot base frame. 
     # The rest of the launch arguments are defaults from launch/oakd.launch.py
-    # As the parent is depth_camera_link_optical, the current positioning zero values are reasonable
+    # As the parent is camera_oakd_link_optical, the current positioning zero values are reasonable
     oakd_camera = include_launch(
         package_name,
         ['launch', 'oakd.launch.py'],
@@ -92,7 +92,7 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'namespace': namespace,
             'name': 'oak',
-            'parent_frame': 'depth_camera_link_optical',
+            'parent_frame': 'camera_oakd_link_optical',
             'camera_model': 'OAK-D-LITE',
             'cam_pos_x': '0.0',
             'cam_pos_y': '0.0',
