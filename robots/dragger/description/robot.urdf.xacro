@@ -54,6 +54,12 @@
     <!-- URDF definitions for OAK-D Lite camera and Gazebo sim sensor -->
     <xacro:include filename="../../../description/camera_oakd.xacro"/>
 
+    <xacro:unless value="$(arg sim_mode)">
+        <!-- real OAK-D Lite camera -->
+        <xacro:arg name="parent_frame" default="camera_oakd_link_optical" />
+        <xacro:include filename="$(find depthai_descriptions)/urdf/depthai_descr.urdf.xacro"/>
+    </xacro:unless>
+    
     <!-- xacro:include filename="../../../description/face.xacro" / -->
     
     <xacro:include filename="ros2_control.xacro" />
