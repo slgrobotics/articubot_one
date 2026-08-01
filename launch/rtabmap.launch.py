@@ -86,7 +86,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "publish_tf_map",
-            default_value="true",
+            default_value="false",
             description="Publish map->odom TF from RTAB-Map.",
         ),
         DeclareLaunchArgument(

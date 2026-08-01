@@ -39,13 +39,20 @@
     <xacro:property name="camera_offset_z" value="0.55"/>
     <xacro:include filename="../../../description/camera.xacro" />
 
+    <!--
     <xacro:property name="camera_stereo_offset_x" value="${wheel_offset_x + 0.19}"/>
     <xacro:property name="camera_stereo_offset_z" value="0.2"/>
     <xacro:include filename="../../../description/camera_stereo.xacro" />
+    -->
 
     <xacro:property name="open_circuit_voltage" value="12.592"/>
     <xacro:property name="battery_capacity" value="50.0"/>
     <xacro:include filename="../../../description/battery.xacro" />
+
+    <xacro:property name="camera_oakd_offset_x" value="${wheel_offset_x + 0.19}"/>
+    <xacro:property name="camera_oakd_offset_z" value="0.48"/>
+    <!-- URDF definitions for OAK-D Lite camera and Gazebo sim sensor -->
+    <xacro:include filename="../../../description/camera_oakd.xacro"/>
 
     <!-- xacro:include filename="../../../description/face.xacro" / -->
     
