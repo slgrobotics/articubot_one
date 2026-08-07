@@ -170,5 +170,5 @@ def generate_launch_description():
         #mpu9250_driver_node,
         gps_node,
         ekf_imu_odom,
-        oakd_camera
+        #oakd_camera
     ])
