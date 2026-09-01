@@ -8,7 +8,16 @@ bno08x_driver:
 
     frame_id: "imu_link"  # The frame_id to use for the sensor data
     verbose: false        # Enable verbose logging (default false)
+
     scale_covariance_by_calib: false  # Scale covariance by calibration accuracy (default false)
+
+    # false (default): 9-DOF orientation (accel+gyro+mag, SH2_ROTATION_VECTOR) — matches the sensor's
+    #                  advertised capability and provides absolute (magnetic-north) yaw.
+    # true:            6-DOF orientation (accel+gyro,     SH2_GAME_ROTATION_VECTOR) — use when the
+    #                  magnetometer is unusable (indoor, ferrous chassis, magnetic interference) and
+    #                  the SH-2 fusion stalls waiting on mag calibration. Yaw is relative, not
+    #                  magnetic-north-referenced.
+    enable_6dof_mode: false
 
     # Communication Interface
     # Select the communication interface to use 
@@ -20,6 +29,13 @@ bno08x_driver:
       bus: "/dev/i2c-1"   # I2C bus device (bus "1" is default on Raspberry Pi, use "ls /dev/i2c*")
       address: "0x4B"     # I2C address (0x4A or 0x4B depending on the board configuration, use "i2cdetect -y 1")
 
+    uart:
+      enabled: false
+      device: "/dev/ttyACM0"
+    spi:
+      enabled: false
+      device: "/dev/spidev0.0"
+
     publish:
       magnetic_field:
         enabled: true
@@ -27,5 +43,5 @@ bno08x_driver:
       imu:
         enabled: true
         rate: 60   # max 400 Hz (anything above 100Hz depends on your hardware)
-        orientation_yaw_variance: 0.005  # 5e-3 = 0.005 is default
+        orientation_yaw_variance: 0.005  # 5e-3 = 0.005  default 0.0075 (≈5°) means pretty trustworthy
 
