@@ -222,6 +222,35 @@ def generate_launch_description():
         }
     )
 
+    # Madgwick filter node to compute orientation quaternion *ONLY from raw IMU data* - do not run with "fusing" IMUs!
+    # publishes to "imu/data" topic
+    # https://github.com/CCNYRoboticsLab/imu_tools
+    # sudo apt install ros-${ROS_DISTRO}-imu-tools
+    madgwick_filter_node = Node(
+        package='imu_filter_madgwick',
+        executable='imu_filter_madgwick_node',
+        name='imu_filter',
+        output='screen',
+        parameters=[{
+            "stateless": False,
+            "use_mag": True,
+            "publish_tf": False,
+            "reverse_tf": False,
+            "fixed_frame": "imu_link",
+            "constant_dt": 0.0,
+            "publish_debug_topics": False,
+            "world_frame": "enu",
+            "gain": 0.03,
+            "zeta": 0.0,
+            "mag_bias_x": 0.0,
+            "mag_bias_y": 0.0,
+            "mag_bias_z": 0.0,
+            "orientation_stddev": 0.0
+        }],
+        #remappings=[("imu/mag", "imu/mag"), ("imu/data_raw", "imu/data_raw"), ("imu/data", "imu/data")],
+    )
+
+
     # Launch them all!
 
     return LaunchDescription([
@@ -250,5 +279,6 @@ def generate_launch_description():
 
         gz_include,
         drive_include,
+        #madgwick_filter_node,
         ekf_imu_odom
     ])
