@@ -25,7 +25,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
-    seggy_launch = IncludeLaunchDescription(
+    robot_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'seggy.launch.py'])
         ),
@@ -45,7 +45,7 @@ def generate_launch_description():
 
     return LaunchDescription([
 
-        seggy_launch,
+        robot_launch,
         #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
     ])
 

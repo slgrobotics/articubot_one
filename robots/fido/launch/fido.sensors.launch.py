@@ -110,6 +110,6 @@ def generate_launch_description():
         ldlidar_node,
         bno08x_driver_node,
         ekf_imu_odom,
-        face_gesture_sensor,
-        perception_adapter
+        #face_gesture_sensor,
+        #perception_adapter
     ])
