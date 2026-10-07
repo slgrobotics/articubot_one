@@ -27,7 +27,7 @@ def generate_launch_description():
 
     robot_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', 'fido.launch.py'])
+            PathJoinSubstitution([FindPackageShare(package_name), 'robots', robot_model, 'launch', f'{robot_model}.launch.py'])
         ),
         launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time}.items()
     )
