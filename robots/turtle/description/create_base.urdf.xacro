@@ -73,13 +73,7 @@
     <!-- CHASSIS LINK -->
     <link name="chassis_link">
 
-      <visual name="chassis_gz_visual">
-        <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
-        <geometry>
-            <mesh filename="model://meshes/create_1.dae"/>
-        </geometry>
-      </visual>
-      <visual name="chassis_rviz_visual">
+      <visual name="chassis_visual">
         <origin xyz=" 0 0 -0.015" rpy="0 0 0"/>
         <geometry>
           <xacro:insert_block name="mesh"/>

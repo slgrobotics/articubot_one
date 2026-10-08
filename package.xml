@@ -32,5 +32,7 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- Resolve package://articubot_one/... resources in Gazebo as well as RViz. -->
+    <gazebo_ros gazebo_model_path="${prefix}/../"/>
   </export>
 </package>

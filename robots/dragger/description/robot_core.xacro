@@ -153,14 +153,7 @@
     </joint>
 
     <link name="left_wheel">
-        <visual name="left_wheel_tire_gz_visual">
-            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
-            <geometry>
-                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
-            </geometry>
-            <material name="port_red"/>
-        </visual>
-        <visual name="left_wheel_tire_rviz_visual">
+        <visual name="left_wheel_tire_visual">
             <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
@@ -227,14 +220,7 @@
     </joint>
 
     <link name="right_wheel">
-        <visual name="right_wheel_tire_gz_visual">
-            <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
-            <geometry>
-                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
-            </geometry>
-            <material name="starboard_green"/>
-        </visual>
-        <visual name="right_wheel_tire_rviz_visual">
+        <visual name="right_wheel_tire_visual">
             <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
