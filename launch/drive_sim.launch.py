@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, TextSubstitution
-from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, GroupAction, RegisterEventHandler, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, GroupAction, RegisterEventHandler, SetEnvironmentVariable, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
@@ -148,39 +148,53 @@ def generate_launch_description():
     # We only need to point spawners to the correct controller_manager instance in the arguments.
     # Only configure controllers, after the robot shows up live in GZ:
 
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["joint_broad", "--controller-manager", "/controller_manager"],
-        output="screen"
-    )
+    def launch_controller_spawners(context):
+        # Resolve delayed process arguments while the robot launch scope is active.
+        # Lyrical no longer forwards controller-manager ROS arguments to controllers.
+        # Pass the robot's parameter file explicitly when loading each controller.
+        controller_params = PathJoinSubstitution([
+            FindPackageShare(package_name), 'robots', robot_model, 'config', 'controllers.yaml'
+        ]).perform(context)
+        controller_namespace = namespace.perform(context)
 
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["diff_cont", "--controller-manager", "/controller_manager", "--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published.
-                   # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
-                   #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
-                   #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
-                   ],
-        output="screen"
-    )
-
-    delayed_joint_broad_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=spawn_sim_robot,
-            on_start=[joint_broad_spawner],
+        joint_broad_spawner = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="spawner",
+            arguments=["joint_broad", "--controller-manager", "/controller_manager",
+                       "--param-file", controller_params],
+            output="screen"
         )
-    )
 
-    delayed_diff_drive_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner],
+        diff_drive_spawner = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="spawner",
+            arguments=["diff_cont", "--controller-manager", "/controller_manager",
+                       "--param-file", controller_params,
+                       "--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published.
+                       # remappings don't work in simulation. Use relay. They aren't needed anyway, all is configured to subscribe to /diff_cont/odom topic.
+                       #"--controller-ros-args", "--remap odom:=/odom", # remap odom to root namespace, if needed
+                       #"--controller-ros-args", "--remap /tf:=diff_cont/tf" # isolate TFs, if published (it is not, "enable_odom_tf:false" in controllers.yaml).
+                       ],
+            output="screen"
         )
-    )
+
+        delayed_joint_broad_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=spawn_sim_robot,
+                on_start=[joint_broad_spawner],
+            )
+        )
+
+        delayed_diff_drive_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=joint_broad_spawner,
+                on_start=[diff_drive_spawner],
+            )
+        )
+
+        return [delayed_diff_drive_spawner, delayed_joint_broad_spawner]
 
     # =========================================================================
 
@@ -204,8 +218,7 @@ def generate_launch_description():
         actions=[
             rviz_and_joystick,
             twist_mux,
-            delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner,
+            OpaqueFunction(function=launch_controller_spawners),
             #waypoint_follower    # or, "ros2 run articubot_one xy_waypoint_follower.py"
         ]
     )
