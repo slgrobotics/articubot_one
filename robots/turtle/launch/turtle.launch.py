@@ -54,7 +54,7 @@ def generate_launch_description():
 
     localizers_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'turtle.localizers.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.localizers.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -82,7 +82,7 @@ def generate_launch_description():
     # -------------------------------------------------------
     drive_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'turtle.drive.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.drive.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -92,7 +92,7 @@ def generate_launch_description():
 
     sensors_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'turtle.sensors.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.sensors.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
