@@ -117,6 +117,9 @@ controller_server:
       temperature: 0.3 # Higher values make selection more random, potentially finding creative solutions
       gamma: 0.015 # cost sensitivity setting
       motion_model: "DiffDrive"
+      # Lyrical loads motion models as plugins under the selected namespace.
+      DiffDrive:
+        plugin: "mppi::DiffDriveMotionModel"
       visualize: true
       regenerate_noises: true
       TrajectoryVisualizer:
