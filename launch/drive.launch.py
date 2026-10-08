@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, TimerAction, GroupAction, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, LogInfo, IncludeLaunchDescription, TimerAction, GroupAction, RegisterEventHandler, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessStart
 from launch_ros.actions import Node
@@ -54,68 +54,77 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
-    controller_manager = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="ros2_control_node",
-        parameters=[controllers_params_file_sub],
-        output="screen"
-    )
+    def launch_hardware_controllers(context):
+        # Capture parameters and namespace before delayed actions leave this scope.
+        controller_params = controllers_params_file_sub.perform(context)
+        controller_namespace = namespace.perform(context)
 
-    delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
-
-    joint_broad_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["joint_broad"],
-        output="screen"
-    )
-
-    battery_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["battery_state_broadcaster", "--controller-ros-args", "--remap battery_state_broadcaster/battery_state:=battery/battery_state"],
-        output="screen"
-    )
-
-    diff_drive_spawner = Node(
-        package="controller_manager",
-        namespace=namespace,
-        executable="spawner",
-        arguments=["diff_cont", "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
-        output="screen"
-    )
-
-    delayed_joint_broad_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[joint_broad_spawner]
+        controller_manager = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="ros2_control_node",
+            parameters=[controller_params],
+            output="screen"
         )
-    )
 
-    delayed_battery_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[battery_state_broadcaster_spawner]
-        )
-    )
+        delayed_controller_manager = TimerAction(period=5.0, actions=[controller_manager])
 
-    delayed_diff_drive_spawner = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=joint_broad_spawner,
-            on_start=[diff_drive_spawner]
+        joint_broad_spawner = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="spawner",
+            arguments=["joint_broad", "--param-file", controller_params],
+            output="screen"
         )
-    )
+
+        battery_state_broadcaster_spawner = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="spawner",
+            arguments=["battery_state_broadcaster", "--param-file", controller_params, "--controller-ros-args", "--remap battery_state_broadcaster/battery_state:=battery/battery_state"],
+            output="screen"
+        )
+
+        diff_drive_spawner = Node(
+            package="controller_manager",
+            namespace=controller_namespace,
+            executable="spawner",
+            arguments=["diff_cont", "--param-file", controller_params, "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
+            output="screen"
+        )
+
+        delayed_joint_broad_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=controller_manager,
+                on_start=[joint_broad_spawner]
+            )
+        )
+
+        delayed_battery_state_broadcaster_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=controller_manager,
+                on_start=[battery_state_broadcaster_spawner]
+            )
+        )
+
+        delayed_diff_drive_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=joint_broad_spawner,
+                on_start=[diff_drive_spawner]
+            )
+        )
+
+        return [
+            delayed_diff_drive_spawner,
+            delayed_joint_broad_spawner,
+            delayed_battery_state_broadcaster_spawner,
+            delayed_controller_manager,
+        ]
 
     drive_include = GroupAction(
         actions=[
             twist_mux,
-            delayed_controller_manager,
-            delayed_diff_drive_spawner,
-            delayed_joint_broad_spawner,
-            delayed_battery_state_broadcaster_spawner
+            OpaqueFunction(function=launch_hardware_controllers)
         ]
     )
 
