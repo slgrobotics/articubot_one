@@ -81,8 +81,11 @@ diff_cont:
         # Note: angular velocity must be limited to avoid losing mapping capabilities.
         max_velocity           : 0.3  # rad/s - limit robot turn rate to ~17 deg/sec, feels fast enough, mapping still works.
         # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
-        max_acceleration       : NAN  # rad/s^2  NAN - no limits
-        max_jerk               : NAN  # rad/s^3
+        # Leave max_acceleration and max_jerk unset to disable these limits.
+        # The controller defaults to NaN; YAML's bare NAN is a string.
+        #max_acceleration       : NAN  # rad/s^2  NAN - no limits
+        #max_jerk               : NAN  # rad/s^3
+
 
 #
 # By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
