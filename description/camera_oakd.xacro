@@ -20,13 +20,6 @@
         <visual name="oak-d_visual">
             <origin xyz="0.007 0 0.005" rpy="${pi/2} 0 ${pi/2}" />
             <geometry>
-                <mesh filename="model:/opt/ros/jazzy/share/depthai_descriptions/urdf/models/OAK-D-LITE.stl" scale="1.0 1.0 1.0"/>
-            </geometry>
-            <material name="dark_grey"/>
-        </visual>
-        <visual name="oak-d_visual_rviz">
-            <origin xyz="0.007 0 0.005" rpy="${pi/2} 0 ${pi/2}" />
-            <geometry>
                 <mesh filename="package://depthai_descriptions/urdf/models/OAK-D-LITE.stl" scale="1.0 1.0 1.0"/>
             </geometry>
             <material name="dark_grey"/>
