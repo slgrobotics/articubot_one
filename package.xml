@@ -29,6 +29,9 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>depthai_ros_driver</exec_depend>
+  <exec_depend>depthai_descriptions</exec_depend>
+  <exec_depend>rviz_2d_overlay_plugins</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
