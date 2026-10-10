@@ -174,7 +174,7 @@ def generate_launch_description():
         sensors_include,
         delayed_loc,
         delayed_nav,
-        delayed_wifi_survey,
+        #delayed_wifi_survey,
     ])
 
     # -------------------------------------------------------
