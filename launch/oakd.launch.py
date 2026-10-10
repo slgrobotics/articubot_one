@@ -284,7 +284,6 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    depthai_prefix = PathJoinSubstitution([FindPackageShare('depthai_ros_driver')])
 
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
@@ -299,7 +298,8 @@ def generate_launch_description():
         DeclareLaunchArgument("cam_yaw", default_value="0.0"),
         DeclareLaunchArgument(
             "params_file",
-            default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'camera.yaml']),
+            #default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'camera.yaml']),
+            default_value=PathJoinSubstitution([FindPackageShare('articubot_one'), 'config', 'camera_oakd.yaml']),
         ),
         DeclareLaunchArgument("use_rviz", default_value="false"),
         DeclareLaunchArgument(

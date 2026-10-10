@@ -1,0 +1,13 @@
+
+# Copied from /opt/ros/jazzy/share/depthai_ros_driver/config/camera.yaml
+# not found in Lyrical
+
+/**:
+  ros__parameters:
+    camera:
+      i_enable_imu: true
+      i_enable_ir: true
+      i_nn_type: spatial
+      i_pipeline_type: RGBD
+    nn:
+      i_nn_config_path: depthai_ros_driver/mobilenet
