@@ -36,16 +36,16 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': use_sim_time,
             # see https://github.com/slgrobotics/ros_battery_monitoring/blob/main/battery_state_rviz_overlay/src/battery_state_rviz_overlay_parameters.yaml
-            'width' : 450,
-            'height' : 10,
+            'width' : 570,
+            'height' : 42,
             'line_height' : 25,
             'horizontal_distance' : 20,
             'vertical_distance' : 20,
             'font' : 'DejaVu Sans Mono',
-            'text_size' : 15.0,
-            'horizontal_alignment' : 0,
-            'vertical_alignment' : 3,
-            'bg_color_a' : 0.1,
+            'text_size' : 12.0,
+            'horizontal_alignment' : 0,  # 0 — left  1 — right  2 — center - location of the the overlay window in RViz screen
+            'vertical_alignment' : 3,    # 2 - center, 3 - top, 4 - bottom
+            'bg_color_a' : 0.05,
             'fg_color_rgba' : '0.0 0.8 0.6 1.0'
         }],
         output='screen',
@@ -83,7 +83,7 @@ def generate_launch_description():
         LogInfo(msg=['============ starting RViz and Joystick  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
 
         joystick,
-        #battery_pie_chart_relay,  # TODO: topic_tools do not work after October 2025 ROS2 Jazzy update
+        battery_pie_chart_relay,  # TODO: topic_tools do not work after October 2025 ROS2 Jazzy update
         rviz,
         rviz_overlay
     ])
