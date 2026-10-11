@@ -818,7 +818,7 @@ Visualization Manager:
         Overlay X: 16
         Overlay Y: 16
         Value: true
-      Topic: /amcl_pose
+      Topic: /imu/data_raw
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/Polygon
