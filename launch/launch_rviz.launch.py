@@ -52,7 +52,7 @@ def generate_launch_description():
         remappings=[('battery_state','battery/battery_state')]
     )
 
-    # topic_tools don't work after October 2025 ROS2 Jazzy update:
+    # '--wait-for-start' - wait for input-topic discovery before resolving its message type.
     battery_pie_chart_relay = Node(
         package='topic_tools',
         namespace=namespace,
@@ -62,8 +62,7 @@ def generate_launch_description():
         output='screen',
         respawn=True,
         respawn_delay=2.0,
-        arguments=['battery/battery_state', 'battery/percentage', 'std_msgs/Float32', '{ data: m.percentage }', '--qos-reliability', 'reliable' ]
-        #arguments=['battery/battery_state', '--field percentage', 'battery/percentage', 'std_msgs/Float32', '--qos-reliability', 'reliable' ]
+        arguments=['battery/battery_state', 'battery/percentage', 'std_msgs/msg/Float32', '{ data: m.percentage }', '--wait-for-start', '--qos-reliability', 'reliable' ]
     )
 
     joystick = IncludeLaunchDescription(
@@ -83,7 +82,7 @@ def generate_launch_description():
         LogInfo(msg=['============ starting RViz and Joystick  namespace: "', namespace, '"  use_sim_time: ', use_sim_time]),
 
         joystick,
-        battery_pie_chart_relay,  # TODO: topic_tools do not work after October 2025 ROS2 Jazzy update
+        battery_pie_chart_relay,
         rviz,
         rviz_overlay
     ])
