@@ -877,7 +877,7 @@ Visualization Manager:
       foreground alpha: 0.699999988079071
       foreground alpha 2: 0.4000000059604645
       foreground color: 25; 255; 240
-      left: 128
+      left: 40
       max color: 255; 0; 0
       max color change threthold: 0
       max value: 1
@@ -885,9 +885,9 @@ Visualization Manager:
       med color change threthold: 0
       min value: 0
       show caption: true
-      size: 128
-      text size: 14
-      top: 128
+      size: 165
+      text size: 12
+      top: 155
     - Align Bottom: false
       Background Alpha: 0.800000011920929
       Background Color: 0; 0; 0
