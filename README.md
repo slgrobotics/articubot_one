@@ -4,7 +4,7 @@
 
 This is an on-board software, normally residing under Ubuntu Server on a Raspberry Pi. It runs under ROS2 Lyrical (or Jazzy) *base*.
 
-Its Gazebo Simulation side runs on a Ubuntu 24.04 or 26.04 workstation (no robot hardware required) - see [ROS2 Jazzy Setup](https://github.com/slgrobotics/robots_bringup/tree/main/Docs/ROS-Jazzy) 
+Its Gazebo Simulation side runs on a Ubuntu 24.04 or 26.04 workstation (no robot hardware required) - see [ROS2 Setup](https://github.com/slgrobotics/robots_bringup/tree/main/Docs/ROS-Jazzy) 
 (scroll down to [here](https://github.com/slgrobotics/robots_bringup/tree/main/Docs/ROS-Jazzy#bringing-up-robot-simulation-in-gazebo)).
 
 For actual physical robots and other information look at [Project Wiki](https://github.com/slgrobotics/articubot_one/wiki)
