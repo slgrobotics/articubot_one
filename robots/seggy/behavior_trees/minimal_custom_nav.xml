@@ -5,6 +5,10 @@
        Navigation resumes when the face disappears. -->
   <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
   <BehaviorTree ID="CustomNavTree">
+    <!-- ReactiveSequence refreshes perception before the selected behavior on
+         every tick, including while navigation, turning, or cancellation runs.
+         Navigation SUCCESS/FAILURE reaches the root without a background loop
+         masking the result. -->
     <ReactiveSequence name="PumpAndNavigate">
       <FgsTopicToBlackboard
         topic_name="/bt/face_gesture_detect"

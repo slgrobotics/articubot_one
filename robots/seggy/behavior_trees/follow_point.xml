@@ -1,7 +1,10 @@
 <!--
-  See /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees
+  See /opt/ros/lyrical/share/nav2_bt_navigator/behavior_trees
 
-  This Behavior Tree follows a dynamic pose to a certain distance
+  This Behavior Tree follows a dynamic pose to a certain distance.
+  GoalUpdater receives target updates; planning and path truncation run at 1 Hz.
+  KeepRunningUntilFailure restarts FollowPath after reaching the truncated goal,
+  so following continues until canceled or a planning/controller action fails.
 -->
 
 <root BTCPP_format="4" main_tree_to_execute="MainTree">
