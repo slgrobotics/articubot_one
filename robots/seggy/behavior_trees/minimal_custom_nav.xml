@@ -1,25 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="CustomNavTree">
-
-  <!-- This is a minimal behavior tree, combining standard Nav2 navigation with custom logic -->
-
-  <!-- Include the default Nav2 tree -->
+  <!-- Requires the default data-pump build of slg_bt_plugins.
+       Minimal navigation example: STOP cancels; a detected face pauses motion.
+       Navigation resumes when the face disappears. -->
   <include ros_pkg="nav2_bt_navigator" path="behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"/>
-
-  <!-- Give YOUR root tree a unique ID like "CustomNavTree" -->
   <BehaviorTree ID="CustomNavTree">
-    <Fallback name="CustomOrStandardNav">
-      
-      <!-- 1. Your Custom Logic -->
-      <Sequence name="MyCustomLogic">
-        <IsFaceDetected is_face_detected="{is_face_detected}"/>
-        <!-- do something non-blocking -->
-        <CancelControl/>
-      </Sequence>
-
-      <!-- 2. Call the Nav2 tree using its specific ID from the included file -->
-      <SubTree ID="MainTree" _autoremap="true" goal="{goal}"/>
-
-    </Fallback>
+    <ReactiveSequence name="PumpAndNavigate">
+      <FgsTopicToBlackboard
+        topic_name="/bt/face_gesture_detect"
+        is_face_detected="{is_face_detected}"
+        face_yaw_error="{face_yaw_error}"
+        gesture="{gesture}"
+        is_stop_gesture="{is_stop_gesture}"
+        is_like_gesture="{is_like_gesture}"
+        is_ok_gesture="{is_ok_gesture}"
+        is_yes_gesture="{is_yes_gesture}"
+        is_six_gesture="{is_six_gesture}"
+      />
+      <ReactiveFallback name="CancelOrTurnOrNavigate">
+        <!-- Sequence remembers STOP once detected, even if the gesture clears.
+             Retry cancellation without resuming motion. Stay RUNNING after
+             acceptance until the navigator processes its cancellation request. -->
+        <Sequence name="CancelOnStop">
+          <IsStopGesture is_stop_gesture="{is_stop_gesture}"/>
+          <RetryUntilSuccessful num_attempts="-1">
+            <CancelNavToPose action_name="navigate_to_pose" timeout_ms="500"/>
+          </RetryUntilSuccessful>
+          <KeepRunningUntilFailure>
+            <AlwaysSuccess/>
+          </KeepRunningUntilFailure>
+        </Sequence>
+        <!-- Keep the goal RUNNING while a face is present. Reactive guards
+             recheck perception every tick and halt the active navigation action. -->
+        <ReactiveSequence name="PauseWhileFaceDetected">
+          <IsFaceDetected is_face_detected="{is_face_detected}"/>
+          <KeepRunningUntilFailure>
+            <AlwaysSuccess/>
+          </KeepRunningUntilFailure>
+        </ReactiveSequence>
+        <SubTree ID="NavigateToPoseWReplanningAndRecovery" _autoremap="true"/>
+      </ReactiveFallback>
+    </ReactiveSequence>
   </BehaviorTree>
 </root>
