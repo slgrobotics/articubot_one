@@ -28,8 +28,8 @@ bt_navigator:
     navigators: ["navigate_to_pose", "navigate_through_poses"]
 
     # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
-    #default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
-    default_nav_to_pose_bt_xml: "$(find-pkg-share articubot_one)/robots/fido/behavior_trees/face_aware_nav.xml"
+    default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
+    #default_nav_to_pose_bt_xml: "$(find-pkg-share articubot_one)/robots/fido/behavior_trees/face_aware_nav.xml"
 
     default_nav_through_poses_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
 
@@ -52,8 +52,8 @@ bt_navigator:
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
     # Built-in plugins are added automatically - you only need to include your new custom plugins (new to Jazzy)
-    plugin_lib_names:
-      - slg_bt_plugins # to discover IsStopGesture, IsFaceDetected, etc. See https://github.com/slgrobotics/slg_bt_plugins
+    #plugin_lib_names:
+    #  - slg_bt_plugins # to discover IsStopGesture, IsFaceDetected, etc. See https://github.com/slgrobotics/slg_bt_plugins
 
     #error_code_names: # works for Jazzy, must be removed for Kilted
     error_code_name_prefixes: # works for Kilted, does not cause trouble in Jazzy
