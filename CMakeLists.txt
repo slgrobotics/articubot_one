@@ -27,9 +27,15 @@ install(
 
 # Install Python executables
 install(PROGRAMS
+  scripts/run_battery_state_compat.py
   scripts/gps_waypoint_follower.py
   scripts/xy_waypoint_follower.py
   DESTINATION lib/${PROJECT_NAME}
 )
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(battery_state_compat_test test/test_battery_state_compat.py)
+endif()
 
 ament_package()

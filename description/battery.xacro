@@ -16,21 +16,22 @@
                   battery_capacity
   -->
 
-  <ros2_control name="BatteryState" type="diffdrive_arduino/DiffDriveArduino">
-    <sensor name="main_battery">
-        <!-- See diffdrive_arduino/src/diffdrive_arduino.cpp export_state_interfaces()-->
-        <state_interface name="voltage"/>
-        <state_interface name="temperature"/>
-        <state_interface name="current"/>
-        <state_interface name="charge"/>
-        <state_interface name="capacity"/>
-        <state_interface name="percentage"/>
-        <state_interface name="power_supply_status"/>
-        <state_interface name="power_supply_health"/>
-        <state_interface name="present"/>
-   </sensor>
-  </ros2_control>
+  <!-- Included inside the real drive system's ros2_control element. Gazebo
+       publishes BatteryState through ros_gz_bridge instead of this broadcaster. -->
+  <xacro:macro name="battery_state_interfaces" params="battery_name:=main_battery">
+    <sensor name="${battery_name}">
+      <state_interface name="battery_voltage"/>
+      <state_interface name="battery_temperature"/>
+      <state_interface name="battery_current"/>
+      <state_interface name="battery_charge"/>
+      <state_interface name="battery_percentage"/>
+      <state_interface name="battery_power_supply_status"/>
+      <state_interface name="battery_power_supply_health"/>
+      <state_interface name="battery_present" data_type="bool"/>
+    </sensor>
+  </xacro:macro>
 
+  <xacro:if value="$(arg sim_mode)">
   <gazebo>
     <plugin name="gz::sim::systems::LinearBatteryPlugin" filename="gz-sim-linearbatteryplugin-system">
       <!--Li-ion battery spec from LIR18650 datasheet-->
@@ -59,5 +60,6 @@
       <start_on_motion>true</start_on_motion>
     </plugin>
   </gazebo>
+  </xacro:if>
 
 </robot>

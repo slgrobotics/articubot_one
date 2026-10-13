@@ -25,6 +25,10 @@
   <depend>cartographer_ros</depend>
   <depend>rviz_satellite</depend>
   <depend>battery_state_rviz_overlay</depend>
+  <exec_depend>battery_state_broadcaster</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>launch</exec_depend>

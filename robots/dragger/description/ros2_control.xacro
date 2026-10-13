@@ -82,6 +82,10 @@
             </joint>
         </xacro:if>
 
+        <xacro:unless value="$(arg sim_mode)">
+            <xacro:battery_state_interfaces battery_name="main_battery"/>
+        </xacro:unless>
+
     </ros2_control>
 
     <gazebo>

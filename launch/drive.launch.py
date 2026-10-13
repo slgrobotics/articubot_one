@@ -81,7 +81,17 @@ def generate_launch_description():
             package="controller_manager",
             namespace=controller_namespace,
             executable="spawner",
-            arguments=["battery_state_broadcaster", "--param-file", controller_params, "--controller-ros-args", "--remap battery_state_broadcaster/battery_state:=battery/battery_state"],
+            arguments=["battery_state_broadcaster", 
+                       "--param-file", controller_params, "--controller-ros-args",
+                       "--remap ~/raw_battery_states:=battery/raw_battery_states --remap ~/battery_state:=battery/aggregate_state"],
+            output="screen"
+        )
+
+        battery_state_compat = Node(
+            package=package_name,
+            executable="run_battery_state_compat.py",
+            namespace=controller_namespace,
+            parameters=[{"use_sim_time": use_sim_time}],
             output="screen"
         )
 
@@ -89,7 +99,9 @@ def generate_launch_description():
             package="controller_manager",
             namespace=controller_namespace,
             executable="spawner",
-            arguments=["diff_cont", "--param-file", controller_params, "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
+            arguments=["diff_cont", 
+                       "--param-file", controller_params,
+                       "--controller-ros-args", "--remap /tf:=diff_cont/tf"], # isolate TFs, if published.
             output="screen"
         )
 
@@ -115,6 +127,7 @@ def generate_launch_description():
         )
 
         return [
+            battery_state_compat,
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             delayed_battery_state_broadcaster_spawner,

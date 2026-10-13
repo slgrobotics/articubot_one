@@ -126,24 +126,25 @@ diff_cont:
 
 battery_state_broadcaster:
   ros__parameters:
-    sensor_name: "main_battery"
-    frame_id: "battery_frame"
-    power_supply_technology: 4
-    design_capacity: 20.0
-    location: "robot Plucky"
-    serial_number: "3.0001"
-    # https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/BatteryState.msg
-    # https://github.com/ipa320/ros_battery_monitoring/blob/main/battery_state_broadcaster/src/BatteryStateBroadcaster.cpp
-    state_interfaces:
-      - voltage
-      - temperature
-      - current
-      - charge
-      - capacity
-      - percentage
-      - power_supply_status
-      - power_supply_health
-      - present
+    batteries: ["main_battery"]
+    interfaces:
+      main_battery:
+        battery_temperature: true
+        battery_current: true
+        battery_charge: true
+        battery_percentage: true
+        battery_power_supply_status: true
+        battery_power_supply_health: true
+        battery_present: true
+    main_battery:
+      # Match the hardware driver's estimated full capacity (90% of design capacity).
+      capacity: 18.0
+      design_capacity: 20.0
+      power_supply_technology: 4
+      location: "robot Plucky"
+      serial_number: "3.0001"
+    # The official controller publishes percentage in 0..100. battery_state_compat
+    # selects this battery's raw message and restores the 0..1 ROS message convention.
 
 # Plucky has four sensors on all four corners.
 # see https://control.ros.org/jazzy/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html
