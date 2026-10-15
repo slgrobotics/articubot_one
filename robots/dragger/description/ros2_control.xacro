@@ -22,6 +22,7 @@
                 <param name="battery_num_cells">4</param>
                 <param name="battery_technology">4</param>
                 <param name="battery_design_capacity">50</param>
+                <param name="sonar_no_return_range">1000.0</param>
             </xacro:unless>
 
             <xacro:if value="$(arg sim_mode)">
