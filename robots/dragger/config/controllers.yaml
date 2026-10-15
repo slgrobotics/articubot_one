@@ -157,7 +157,8 @@ sonar_broadcaster_F_L:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_F_L_frame'
-    max_range: 2.5
+    max_range: 5.1  # actually 2.5, but set to 5.1 to avoid ".inf" values in sonar readings, which Nav2 Collision Monitor does not accept.
+                    # see robots/dragger/description/ros2_control.xacro
     min_range: 0.01
     radiation_type: 0   # ULTRASOUND=0 INFRARED=1
     sensor_name: 'sonar_F_L'
@@ -167,7 +168,7 @@ sonar_broadcaster_F_R:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_F_R_frame'
-    max_range: 2.5
+    max_range: 5.1
     min_range: 0.01
     radiation_type: 0   # ULTRASOUND=0 INFRARED=1
     sensor_name: 'sonar_F_R'
@@ -177,7 +178,7 @@ sonar_broadcaster_B_L:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_B_L_frame'
-    max_range: 2.5
+    max_range: 5.1
     min_range: 0.01
     radiation_type: 0   # ULTRASOUND=0 INFRARED=1
     sensor_name: 'sonar_B_L'
@@ -187,7 +188,7 @@ sonar_broadcaster_B_R:
   ros__parameters:
     field_of_view: 0.1
     frame_id: 'sonar_B_R_frame'
-    max_range: 2.5
+    max_range: 5.1
     min_range: 0.01
     radiation_type: 0   # ULTRASOUND=0 INFRARED=1
     sensor_name: 'sonar_B_R'

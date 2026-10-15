@@ -22,7 +22,10 @@
                 <param name="battery_num_cells">4</param>
                 <param name="battery_technology">4</param>
                 <param name="battery_design_capacity">50</param>
-                <param name="sonar_no_return_range">1000.0</param>
+                <!-- A workaround for sonar no-return ".inf" values 
+                 Set sonar_broadcaster's max_range: 5.1 in robots/dragger/config/controllers.yaml
+                 Proper fix woild be in Nav2 Collision Monitor code to accept .inf values -->
+                <param name="sonar_no_return_range">5.0</param>
             </xacro:unless>
 
             <xacro:if value="$(arg sim_mode)">
