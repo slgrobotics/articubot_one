@@ -153,8 +153,11 @@
   gz_type_name: "gz.msgs.NavSat"
   direction: GZ_TO_ROS
 
-# Note: IMU in Gazebo may report orientation as all zeroes. Set <enable_orientation> to 1 in SDF to allow reporting real values. 
-- ros_topic_name: "imu/data_raw"
+# Gazebo supplies ENU orientation ("enable_orientation" in description/imu.xacro).
+# Publish directly to the topic consumed by the EKFs and navsat_transform;
+# the simulation does not launch Madgwick to convert imu/data_raw to imu/data.
+#- ros_topic_name: "imu/data_raw"     # with Madgwick
+- ros_topic_name: "imu/data"          # without Madgwick
   gz_topic_name: "gz_imu/data"
   ros_type_name: "sensor_msgs/msg/Imu"
   gz_type_name: "gz.msgs.IMU"
