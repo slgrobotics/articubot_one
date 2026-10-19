@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
+    <!-- Override this path for machine-specific real-hardware calibration. -->
+    <xacro:arg name="hardware_config"
+               default="$(find articubot_one)/robots/dragger/config/hardware.yaml"/>
+
     <!-- See common Gazebo pugins in the world file -->
     
     <!--

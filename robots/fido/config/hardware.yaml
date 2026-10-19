@@ -1,0 +1,11 @@
+# Fido Arduino hardware settings, loaded by ros2_control.xacro.
+# Wheel geometry and the actual control update rate remain in controllers.yaml.
+device: /dev/ttyACM0
+baud_rate: 115200
+timeout: 1000  # serial response timeout, ms
+enc_counts_per_rev: 60
+wheels_pwm_factor: 60.0  # rad/s to firmware motor setpoint percent
+
+battery_num_cells: 4
+battery_technology: 4  # BatteryState LiFePO4
+battery_design_capacity: 20.0  # Ah; keep broadcaster metadata in sync

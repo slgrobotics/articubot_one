@@ -1,6 +1,8 @@
+import shlex
+
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
-from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.actions import DeclareLaunchArgument, LogInfo, OpaqueFunction, SetLaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
@@ -18,6 +20,13 @@ from launch_ros.substitutions import FindPackageShare
 #        launch_arguments={'namespace': namespace, 'use_sim_time': use_sim_time, 'robot_model': robot_model}.items()
 #    )
 #
+
+def configure_hardware_argument(context):
+    # An empty override preserves each robot Xacro's own default (or no argument).
+    path = LaunchConfiguration('hardware_config').perform(context)
+    argument = ' ' + shlex.quote('hardware_config:=' + path) if path else ''
+    return [SetLaunchConfiguration('hardware_config_xacro_arg', argument)]
+
 
 def generate_launch_description():
 
@@ -39,7 +48,8 @@ def generate_launch_description():
     ])
 
     # Produce full XML/SDF description by invoking xacro on the substitution path
-    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
+    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time,
+                                     LaunchConfiguration('hardware_config_xacro_arg')])
     
     # Create a robot_state_publisher node
     # See https://github.com/ros/robot_state_publisher/tree/jazzy
@@ -83,6 +93,11 @@ def generate_launch_description():
             'use_sim_time',
             default_value='false',
             description='Use sim time if true'),
+
+        DeclareLaunchArgument(
+            'hardware_config', default_value='',
+            description='Optional hardware YAML path; empty uses the robot Xacro default'),
+        OpaqueFunction(function=configure_hardware_argument),
 
         LogInfo(msg=['============ starting ROBOT STATE PUBLISHER  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
         LogInfo(msg=['xacro_file: ', xacro_file]),

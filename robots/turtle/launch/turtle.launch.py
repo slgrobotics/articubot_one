@@ -30,6 +30,7 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    hardware_config = LaunchConfiguration('hardware_config')
 
     # Note: for Gazebo simulation choose "robot_world" in turtle.drive.launch.py
 
@@ -86,7 +87,8 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'hardware_config': hardware_config
         },
     )
 
@@ -164,6 +166,14 @@ def generate_launch_description():
             'namespace',
             default_value='',
             description='Top-level namespace for multi-robot deployment'
+        ),
+
+        DeclareLaunchArgument(
+            'hardware_config',
+            default_value=PathJoinSubstitution([
+                FindPackageShare(package_name), 'robots', robot_model, 'config', 'hardware.yaml'
+            ]),
+            description='Create driver hardware YAML path'
         ),
 
         LogInfo(msg=[
