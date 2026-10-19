@@ -29,7 +29,7 @@ def generate_launch_description():
     # Keep interface compatible with being included from <robot_model>.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, turtle...
+    # Robot specific files reside under "robots" directory - dragger, fido, seggy, turtle, plucky...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Optional map file for localizers that support it (map_server, amcl)
@@ -51,7 +51,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'cartographer.launch.py'],
+            ['launch', 'localizers', 'cartographer_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
