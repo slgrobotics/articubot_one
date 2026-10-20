@@ -6,6 +6,7 @@
         <!-- Wheel geometry information - see controllers.yaml -->
 
         <hardware>
+            <!-- See https://github.com/slgrobotics/diffdrive_arduino-->
             <xacro:unless value="$(arg sim_mode)">
                 <!-- Load only for real hardware; simulation needs no hardware YAML. -->
                 <xacro:property name="hw" value="${xacro.load_yaml('$(arg hardware_config)')}"/>
@@ -17,6 +18,8 @@
                 <param name="baud_rate">${hw['baud_rate']}</param>
                 <param name="timeout">${hw['timeout']}</param>
                 <param name="enc_counts_per_rev">${hw['enc_counts_per_rev']}</param>
+                <!-- Arduino expects wheel speed setpoints in the range -100..100 (percent of max speed)
+                     Use wheels_pwm_factor parameter (multiplier) to bring interface speed input into this range -->
                 <param name="wheels_pwm_factor">${hw['wheels_pwm_factor']}</param>
                 <!-- See https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#battery-monitoring -->
                 <param name="battery_name">main_battery</param>

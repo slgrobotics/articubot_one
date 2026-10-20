@@ -21,7 +21,7 @@
                 <!-- Arduino expects wheel speed setpoints in the range -100..100 (percent of max speed)
                      Use wheels_pwm_factor parameter (multiplier) to bring interface speed input into this range -->
                 <param name="wheels_pwm_factor">${hw['wheels_pwm_factor']}</param>
-                <!-- See https://docs.ros.org/en/jazzy/p/sensor_msgs/interfaces/msg/BatteryState.html -->
+                <!-- See https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#battery-monitoring -->
                 <param name="battery_name">main_battery</param>
                 <param name="battery_num_cells">${hw['battery_num_cells']}</param>
                 <param name="battery_technology">${hw['battery_technology']}</param>
