@@ -3,10 +3,10 @@
 
   <!-- ********************* The Battery (Power System) SETUP *********************************  -->
 
-  <!-- See https://docs.ros.org/en/jazzy/p/battery_state_broadcaster/
-           https://github.com/gazebosim/ros_gz/blob/jazzy/ros_gz_sim_demos/README.md#battery
-           /opt/ros/jazzy/opt/gz_sim_vendor/share/gz/gz-sim8/worlds/linear_battery_demo.sdf
-           /opt/ros/jazzy/share/ros_gz_sim_demos
+  <!-- See https://docs.ros.org/en/lyrical/p/battery_state_broadcaster/
+           https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_sim_demos/README.md
+           /opt/ros/${ROS_DISTRO}/opt/gz_sim_vendor/share/gz/gz-sim8/worlds/linear_battery_demo.sdf
+           /opt/ros/${ROS_DISTRO}/share/ros_gz_sim_demos
            https://gazebosim.org/api/sim/7/battery.html
 
       Note: This is generic SIM battery. Copy to robots/<robot_model>/description/. and customize.

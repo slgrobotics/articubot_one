@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /opt/ros/jazzy/setup.bash
+source /opt/ros/lyrical/setup.bash
 
 cd /home/ros/robot_ws
 colcon build

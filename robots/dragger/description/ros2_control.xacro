@@ -18,7 +18,7 @@
                 <param name="timeout">${hw['timeout']}</param>
                 <param name="enc_counts_per_rev">${hw['enc_counts_per_rev']}</param>
                 <param name="wheels_pwm_factor">${hw['wheels_pwm_factor']}</param>
-                <!-- See https://docs.ros.org/en/jazzy/p/sensor_msgs/interfaces/msg/BatteryState.html -->
+                <!-- See https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#battery-monitoring -->
                 <param name="battery_name">main_battery</param>
                 <param name="battery_num_cells">${hw['battery_num_cells']}</param>
                 <param name="battery_technology">${hw['battery_technology']}</param>

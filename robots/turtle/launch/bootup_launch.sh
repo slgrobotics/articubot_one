@@ -9,7 +9,7 @@
 #     cd ~/robot_ws; colcon build; ros2 launch articubot_one launch_rviz.launch.py use_sim_time:=false
 #
 
-source /opt/ros/jazzy/setup.bash
+source /opt/ros/lyrical/setup.bash
 
 cd /home/ros/robot_ws
 colcon build

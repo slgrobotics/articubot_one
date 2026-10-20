@@ -1,7 +1,7 @@
 # See https://github.com/ros-teleop/twist_mux/tree/rolling/config
 
 #
-# /opt/ros/jazzy/share/twist_mux/config/twist_mux_topics.yaml
+# /opt/ros/${ROS_DISTRO}/share/twist_mux/config/twist_mux_topics.yaml
 #
 # Input topics handled/muxed.
 # For each topic:
@@ -40,7 +40,7 @@ twist_mux:
         priority: 100
 
 #
-# /opt/ros/jazzy/share/twist_mux/config/twist_mux_locks.yaml
+# /opt/ros/${ROS_DISTRO}/share/twist_mux/config/twist_mux_locks.yaml
 #
 # Locks to stop the twist inputs.
 # For each lock:

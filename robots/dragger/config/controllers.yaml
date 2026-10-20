@@ -28,7 +28,7 @@ diff_cont:
   ros__parameters:
 
     # See http://wiki.ros.org/diff_drive_controller  
-    #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
+    #     https://control.ros.org/rolling/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
     #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
 
     publish_rate: 50.0
@@ -148,7 +148,7 @@ battery_state_broadcaster:
     # selects this battery's raw message and restores the 0..1 ROS message convention.
 
 # Dragger and Plucky have four sensors on all four corners.
-# see https://control.ros.org/jazzy/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html
+# see https://control.ros.org/rolling/doc/ros2_controllers/range_sensor_broadcaster/doc/userdoc.html
 #     https://github.com/ros-controls/ros2_controllers/blob/master/range_sensor_broadcaster/src/range_sensor_broadcaster.cpp
 #     https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/DraggerROS
 #     https://github.com/slgrobotics/diffdrive_arduino/tree/main

@@ -15,18 +15,18 @@ from launch_ros.actions import Node
 # See https://github.com/slgrobotics/scan_to_range
 #
 
-# See https://github.com/ros-tooling/topic_tools/tree/jazzy?tab=readme-ov-file#relayfield
+# See https://github.com/ros-tooling/topic_tools#relayfield
 #     https://github.com/gazebosim/ros_gz/issues/586
 #     https://github.com/ros/ros_comm/pull/639
-#     https://github.com/ros-tooling/topic_tools/tree/jazzy/topic_tools
+#     https://github.com/ros-tooling/topic_tools#topic_tools
 
 def generate_launch_description():
 
     namespace = LaunchConfiguration('namespace', default='')
 
     # Note: radiation_type ULTRASOUND=0 INFRARED=1
-    # See https://github.com/ros-tooling/topic_tools/blob/jazzy/topic_tools/topic_tools/relay_field.py
-
+    # See https://github.com/ros-tooling/topic_tools/blob/rolling/topic_tools/topic_tools/relay_field.py
+    
     sonar_F_L_node = Node(
                 package='topic_tools',
                 namespace=namespace,

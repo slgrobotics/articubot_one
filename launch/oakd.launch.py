@@ -3,6 +3,9 @@
 #      https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/OAK-D_Lite.md
 #
 #   meld ~/robot_ws/src/articubot_one/launch/oakd.launch.py /opt/ros/jazzy/share/depthai_ros_driver/launch/camera.launch.py
+#   meld ~/robot_ws/src/articubot_one/launch/oakd.launch.py /opt/ros/${ROS_DISTRO}/share/depthai_ros_driver/launch/driver.launch.py
+#
+#   see other launch files in /opt/ros/${ROS_DISTRO}/share/depthai_ros_driver/launch/
 #
 
 from ament_index_python.packages import get_package_share_directory

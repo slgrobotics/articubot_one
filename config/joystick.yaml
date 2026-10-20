@@ -1,5 +1,5 @@
 #
-# See /opt/ros/jazzy/share/teleop_twist_joy/config/xbox.config.yaml
+# See /opt/ros/${ROS_DISTRO}/share/teleop_twist_joy/config/xbox.config.yaml
 #
 
 #joy_node:

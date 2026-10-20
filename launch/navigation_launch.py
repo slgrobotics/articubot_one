@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# originally from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
-# meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
+# originally from /opt/ros/${ROS_DISTRO}/share/nav2_bringup/launch/navigation_launch.py
+# meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/${ROS_DISTRO}/share/nav2_bringup/launch/navigation_launch.py
 
 from ament_index_python.packages import get_package_share_directory
 

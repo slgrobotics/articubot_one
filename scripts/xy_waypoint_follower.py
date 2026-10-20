@@ -14,7 +14,7 @@
 # limitations under the License.
 
 #
-# See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
+# See /opt/ros/${ROS_DISTRO}/lib/python3.*/site-packages/nav2_simple_commander/example_waypoint_follower.py
 #     https://github.com/ros-navigation/navigation2/tree/main/nav2_simple_commander/nav2_simple_commander
 #     https://automaticaddison.com/how-to-send-waypoints-to-the-ros-2-navigation-stack-nav-2/
 #

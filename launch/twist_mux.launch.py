@@ -21,13 +21,13 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # See /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
+    # See /opt/ros/${ROS_DISTRO}/share/twist_mux/launch/twist_mux_launch.py
     #     https://github.com/ros-teleop/twist_mux/tree/rolling/src
 
     twist_mux_params = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'twist_mux.yaml'])
 
     # Note: this is how it should be, but "use_stamped" isn't working in that launch file
-    #       see /opt/ros/jazzy/share/twist_mux/launch/twist_mux_launch.py
+    #       see /opt/ros/${ROS_DISTRO}/share/twist_mux/launch/twist_mux_launch.py
     twist_mux_ = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare('twist_mux'), 'launch', 'twist_mux_launch.py'])

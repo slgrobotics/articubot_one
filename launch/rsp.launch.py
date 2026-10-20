@@ -52,7 +52,7 @@ def generate_launch_description():
                                      LaunchConfiguration('hardware_config_xacro_arg')])
     
     # Create a robot_state_publisher node
-    # See https://github.com/ros/robot_state_publisher/tree/jazzy
+    # See https://github.com/ros/robot_state_publisher
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         namespace=namespace,
