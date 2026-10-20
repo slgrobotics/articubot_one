@@ -33,7 +33,7 @@ def generate_launch_description():
     )
 
     # start the demo autonomy task (script)
-    # See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
+    # See /opt/ros/${ROS_DISTRO}/lib/python3.*/site-packages/nav2_simple_commander/example_waypoint_follower.py
     #
     # waypoint_follower = Node(
     #    package='nav2_simple_commander',

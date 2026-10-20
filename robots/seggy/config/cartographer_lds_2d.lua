@@ -14,9 +14,12 @@
 
 -- /* Author: Darby Lim */
 
--- See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
+-- See:
+--     https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#cartographer-port
+--     turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
 --     https://github.com/ROBOTIS-GIT/turtlebot3/blob/main/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
---     /opt/ros/jazzy/share/cartographer_ros/configuration_files/mir-100-mapping.lua (MiR100 Mobile Robot)
+--     /opt/ros/${ROS_DISTRO}/share/cartographer_ros/configuration_files/mir-100-mapping.lua (MiR100 Mobile Robot) - if present
+--     https://github.com/slgrobotics/cartographer_ros/blob/lyrical/cartographer_ros/configuration_files/mir-100-mapping.lua
 
 include "map_builder.lua"
 include "trajectory_builder.lua"
@@ -56,7 +59,7 @@ options = {
   landmarks_sampling_ratio = 1.0,
 }
 
--- Override some default parameters from files in /opt/ros/jazzy/share/cartographer/configuration_files
+-- Override some default parameters from files in /opt/ros/${ROS_DISTRO}/share/cartographer/configuration_files
 --    map_builder.lua
 --    map_builder_server.lua
 --    pose_graph.lua

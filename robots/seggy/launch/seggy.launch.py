@@ -55,7 +55,7 @@ def generate_launch_description():
     #map_file = 'basement' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
     #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
     #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's run in Warehouse world
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
     # For SlAM Toolbox, we can use previously saved serialized map:
     #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
