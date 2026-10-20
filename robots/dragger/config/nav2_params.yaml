@@ -28,13 +28,20 @@ bt_navigator:
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+
     # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
     default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
     default_nav_through_poses_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+
     navigate_to_pose: # Go to a single location
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+      # enable_groot_monitoring: true
+      # groot_server_port: 1667
+
     navigate_through_poses: # Follow a series of waypoints 
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+      # enable_groot_monitoring: true
+      # groot_server_port: 1669
 
       # /opt/ros/${ROS_DISTRO}/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
 
@@ -44,7 +51,7 @@ bt_navigator:
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
-    # Built-in plugins are added automatically
+    # Built-in plugins are added automatically - you only need to include your new custom plugins
     # plugin_lib_names: []
 
     error_code_name_prefixes: # works since Kilted
@@ -61,7 +68,7 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
+    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step. Works for real robots too.
     costmap_update_timeout: 0.50
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
@@ -103,17 +110,23 @@ controller_server:
       time_steps: 20 # Default: 56
       model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 3.5
+
+      # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+      # The velocity smoother refines these commands within the controller's limits,
+      # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+      ax_max: 3.0   # max forward acceleration
+      ax_min: -3.0  # max reverse acceleration
+      ay_max: 0.0   # Default: 3.0 Should be 0.0 when lateral movement is not possible?
+      az_max: 3.5   # max turning acceleration (reduce for smoother turns)
       vx_std: 0.2
-      vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
-      wz_std: 0.4 # Default: 0.2
-      vx_max: 0.5
-      vx_min: -0.35
-      vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 1.9
+      vy_std: 0.0   # Default: 0.2 Should be 0.0 when lateral movement is not possible?
+      wz_std: 0.4   # Default: 0.2
+      vx_max: 0.5   # max forward speed
+      vx_min: -0.35 # max reverse speed
+      vy_max: 0.0   # Default: 0.5 Should be 0.0 when lateral movement is not possible?
+      wz_max: 1.9   # max turning speed (pretty aggressive)
+
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
@@ -327,7 +340,7 @@ global_costmap:
         # See http://wiki.ros.org/costmap_2d/hydro/inflation
         #     https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
         cost_scaling_factor: 2.0 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.65  #a bit more conservative globally. Default: 0.55  Must be larger than robot footprint (radius 0.45)
+        inflation_radius: 0.65   # a bit more conservative globally. Default: 0.55  Must be larger than robot footprint (radius 0.45)
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -389,11 +402,16 @@ behavior_server:
     transform_timeout: 0.8   # Default: 0.1
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5  # m/s^2
-    deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1       # m/s
-    max_rotational_vel: 1.0  # rad/s Default: 1.0
-    min_rotational_vel: 0.4  # rad/s Default: 0.4
+
+    # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    acceleration_limit: 2.5  # m/s^2  max acceleration for recovery behaviors
+    deceleration_limit: -2.5 # m/s^2  max deceleration for recovery behaviors
+    minimum_speed: 0.1       # m/s    minimum speed for recovery behaviors
+    max_rotational_vel: 1.0  # rad/s  Default: 1.0
+    min_rotational_vel: 0.4  # rad/s  Default: 0.4
     rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm

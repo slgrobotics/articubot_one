@@ -1,9 +1,11 @@
 #
-# copied from /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
+# originally copied from /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
 #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
+#
+# meld /opt/ros/${ROS_DISTRO}/share/nav2_bringup/params/nav2_params.yaml ~/robot_ws/src/articubot_one/robots/fido/config/nav2_params.yaml
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
@@ -35,15 +37,15 @@ bt_navigator:
 
     navigate_to_pose: # Go to a single location
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
-      enable_groot_monitoring: true
-      groot_server_port: 1667
+      # enable_groot_monitoring: true
+      # groot_server_port: 1667
 
     navigate_through_poses: # Follow a series of waypoints 
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
-      enable_groot_monitoring: true
-      groot_server_port: 1669
+      # enable_groot_monitoring: true
+      # groot_server_port: 1669
 
-      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+      # /opt/ros/${ROS_DISTRO}/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
 
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
@@ -51,12 +53,11 @@ bt_navigator:
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
-    # Built-in plugins are added automatically - you only need to include your new custom plugins (new to Jazzy)
+    # Built-in plugins are added automatically - you only need to include your new custom plugins
     #plugin_lib_names:
     #  - slg_bt_plugins # to discover IsStopGesture, IsFaceDetected, etc. See https://github.com/slgrobotics/slg_bt_plugins
 
-    #error_code_names: # works for Jazzy, must be removed for Kilted
-    error_code_name_prefixes: # works for Kilted, does not cause trouble in Jazzy
+    error_code_name_prefixes: # works since Kilted
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
@@ -65,8 +66,8 @@ bt_navigator:
 
     transform_tolerance: 0.5 # Default: 0.1 - How old position information can be before it’s considered outdated.
 
-# See https://docs.ros.org/en/jazzy/p/nav2_mppi_controller/index.html
-#     https://docs.nav2.org/configuration/packages/configuring-controller-server.html
+# See https://docs.ros.org/en/lyrical/p/nav2_mppi_controller/index.html
+#     https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/controller_server/
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
@@ -313,7 +314,7 @@ global_costmap:
 
       resolution: 0.05 # Default: 0.1
       track_unknown_space: true # Default: False. True to distinguish between free, occupied, and unknown space
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"] # no "range_sensor_layer" here, it is for obstacle avoidance and local costmap
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -342,8 +343,8 @@ global_costmap:
         enabled: true
         # See http://wiki.ros.org/costmap_2d/hydro/inflation
         #     https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
-        cost_scaling_factor: 4.0
-        inflation_radius: 0.37  # a bit more conservative globally. Default: 0.55. From footprint: 0.3549 computed bubble.
+        cost_scaling_factor: 4.0 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
+        inflation_radius: 0.37   # a bit more conservative globally. Default: 0.55. From footprint: 0.3549 computed bubble.
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -410,12 +411,12 @@ behavior_server:
     # The velocity smoother refines these commands within the controller's limits,
     # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
 
-    acceleration_limit: 1.0  # max acceleration for recovery behaviors
-    deceleration_limit: -1.0 # max deceleration for recovery behaviors
-    minimum_speed: 0.05      # minimum speed for recovery behaviors
-    max_rotational_vel: 0.5  # max turning speed for recovery behaviors
-    min_rotational_vel: 0.2  # min turning speed for recovery behaviors
-    rotational_acc_lim: 1.0  # max rotational acceleration for recovery behaviors
+    acceleration_limit: 1.0  # max acceleration for recovery behaviors m/s^2 
+    deceleration_limit: -1.0 # max deceleration for recovery behaviors m/s^2 
+    minimum_speed: 0.05      # minimum speed for recovery behaviors m/s
+    max_rotational_vel: 0.5  # max turning speed for recovery behaviors rad/s Default: 1.0
+    min_rotational_vel: 0.2  # min turning speed for recovery behaviors rad/s Default: 0.4
+    rotational_acc_lim: 1.0  # max rotational acceleration for recovery behaviors rad/s^2 Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
@@ -448,10 +449,10 @@ velocity_smoother:
     # The velocity smoother refines these commands within the controller's limits,
     # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
 
-    max_velocity: [0.3, 0.0, 0.1]    # Reduced to match MPPI controller vx_max and wz_max
-    min_velocity: [-0.2, 0.0, -0.1]  # Reduced to match controller vx_min and wz_min
-    max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max
-    max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min
+    max_velocity: [0.3, 0.0, 0.1]    # Reduced to match MPPI controller vx_max and wz_max , ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.2, 0.0, -0.1]  # Reduced to match controller vx_min and wz_min, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
+    max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
+    max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     odom_topic: /odometry/local    # works  # Topic of odometry to use for estimating current velocities
     #odom_topic: /diff_cont/odom   # works, but we better use fused odom
     odom_duration: 0.2  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
@@ -557,3 +558,4 @@ loopback_simulator:
     map_frame_id: "map"
     scan_frame_id: "laser_frame"
     update_duration: 0.02
+

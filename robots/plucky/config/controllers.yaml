@@ -41,7 +41,7 @@ diff_cont:
     #base_frame_id: base_footprint
 
     # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
-    # make it false, or there will be a lot of jumping and wheels will be sepatared from the body.
+    # make it false, or there will be a lot of jumping and wheels will be separated from the body.
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
     enable_odom_tf: false
 

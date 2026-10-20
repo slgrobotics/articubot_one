@@ -17,7 +17,7 @@ diff_cont:
   ros__parameters:
 
     # See http://wiki.ros.org/diff_drive_controller  
-    #     https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
+    #     https://control.ros.org/rolling/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html
     #     https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/diff_drive_controller_parameter.yaml
 
     publish_rate: 60.0 # Hz - higher rate for better odometry with wheel encoders (30 Hz max) and IMU
