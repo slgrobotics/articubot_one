@@ -28,7 +28,7 @@
                 <param name="battery_design_capacity">${hw['battery_design_capacity']}</param>
                 <!-- A workaround for sonar no-return ".inf" values 
                  Set sonar_broadcaster's max_range: 5.1 in robots/dragger/config/controllers.yaml
-                 Proper fix woild be in Nav2 Collision Monitor code to accept .inf values
+                 A proper fix would be in Nav2 Collision Monitor code to accept .inf values
                  See https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#sonars-inf-problem-in-collision-monitor -->
                 <!-- param name="sonar_no_return_range">5.0</param -->
             </xacro:unless>

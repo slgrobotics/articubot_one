@@ -7,9 +7,9 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 #
-# Generate launch description for a typical differential drive robot drive system
+# Generate a launch description for a typical differential drive robot drive system
 #
-# This includes controller manager and necessary controllers:
+# This includes the controller manager and the necessary controllers:
 # - twist mux for cmd_vel arbitration
 # - controller manager,
 # - diff drive,
@@ -32,13 +32,13 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time

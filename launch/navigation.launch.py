@@ -18,7 +18,7 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept launch arguments from parent (for example, seggy.launch.py)
+    # Accept launch arguments from the parent (for example, seggy.launch.py)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
@@ -39,7 +39,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # You need to press "Startup" button in RViz when autostart=false
+    # You need to press the "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])

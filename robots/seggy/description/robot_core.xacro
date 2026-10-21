@@ -53,7 +53,7 @@
     
     <!-- ****************** ROBOT BASE FOOTPRINT ***************************  -->
     <!-- The base_footprint is the representation of the robot position on the floor. 
-         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole height respecitvely.
+         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole heights, respectively.
          The translation component of the frame should be the barycenter of the feet projections on the floor.
          With respect to the odom frame, the roll and pitch angles should be zero and the yaw angle should correspond to the base_link yaw angle.
          Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. -->

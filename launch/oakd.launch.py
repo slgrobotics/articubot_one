@@ -97,7 +97,7 @@ def launch_setup(context, *args, **kwargs):
         infra_profile = LaunchConfiguration("depth_module.infra_profile").perform(
             context
         )
-        # split profile string (0,0,0 or 0x0x0 or 0X0X0) into with (int) height(int) and fps(double)
+        # split profile string (0,0,0 or 0x0x0 or 0X0X0) into width (int), height (int), and fps (double)
         # find delimiter
         delimiter = ","
         if "x" in depth_profile:

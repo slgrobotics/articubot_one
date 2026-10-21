@@ -61,13 +61,13 @@ class GpsWpCommander(Node):
         print("IP: GpsWpCommander::start_wpf()")
         # Wait for navigation to fully activate. Use this line if autostart is set to true.
         # https://github.com/ros-navigation/navigation2/issues/2283
-        #navigator.waitUntilNav2Active()  # must use AMCL, will wait for amcl/get_state service available
+        #navigator.waitUntilNav2Active()  # must use AMCL, will wait for the amcl/get_state service to become available
         self.navigator.waitUntilNav2Active(localizer='bt_navigator')
         #self.navigator.waitUntilNav2Active(localizer='controller_server')
         wps = self.wp_parser.get_wps()
 
         for wp in wps:
-            # Convert GPS coordinates to map frame using FromLL service
+            # Convert GPS coordinates to the map frame using the FromLL service
             self.req = FromLL.Request()
             self.req.ll_point.longitude = wp.position.longitude
             self.req.ll_point.latitude = wp.position.latitude
@@ -85,7 +85,7 @@ class GpsWpCommander(Node):
                 self.get_logger().error("Failed to convert GPS to map coordinates")
                 return
 
-            # Create PoseStamped message for the current waypoint
+            # Create a PoseStamped message for the current waypoint
             pose = PoseStamped()
             pose.header.frame_id = 'map'
             pose.header.stamp = self.get_clock().now().to_msg()

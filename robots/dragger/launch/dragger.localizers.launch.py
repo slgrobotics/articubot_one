@@ -27,9 +27,9 @@ def generate_launch_description():
     #   - slam_toolbox (LIDAR)
     #
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments.
-    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The Navsat transform keeps drifting even with a good non-RTK GPS signal.
     #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with map server.
+    #       Therefore, for outdoor use I am using only GPS-based localization with a map server.
     #       Adding a previously saved map to the map server is possible.
     #
     # See https://github.com/slgrobotics/outdoors_loc_nav
@@ -68,7 +68,7 @@ def generate_launch_description():
     )
 
     # Launch visual SLAM/localization with RTAB-Map if requested.
-    # Dragger uses separate Raspberry Pi with dual cameras
+    # Dragger uses a separate Raspberry Pi with dual cameras
     #  - see https://github.com/slgrobotics/ros2_inference_stereo
     rtabmap = include_launch(
         package_name,

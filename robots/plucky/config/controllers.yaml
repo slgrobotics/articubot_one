@@ -33,14 +33,14 @@ diff_cont:
 
     publish_rate: 50.0
 
-    # Name of frame to publish odometry in. Default: "/odom"
+    # Name of the frame to publish odometry in. Default: "/odom"
     odom_frame_id: 'odom'
 
     # Base frame_id, which is used to fill in the child_frame_id of the Odometry messages and TF. Default: base_link
     base_frame_id: base_link
     #base_frame_id: base_footprint
 
-    # Publish to TF directly transformation between odom_frame_id and base_frame_id. Default: true
+    # Publish directly to TF the transformation between odom_frame_id and base_frame_id. Default: true
     # make it false, or there will be a lot of jumping and wheels will be separated from the body.
     # Odometry fused with IMU is published by robot_localization, so no need to publish a TF based on encoders alone.
     enable_odom_tf: false
@@ -70,7 +70,7 @@ diff_cont:
     pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
     twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.03]
 
-    # Timeout in seconds, after which input command on ``cmd_vel`` topic is considered staled:
+    # Timeout in seconds, after which an input command on the ``cmd_vel`` topic is considered stale:
     cmd_vel_timeout: 0.2
 
     # publish_limited_velocity: true
@@ -95,7 +95,7 @@ diff_cont:
 #
 # By default, published values for *_wheel_joint and *_caster_wheel_joint will appear
 #    under /joint_states topic (position and velocity changing, effort 0)
-#    there is no need to configure joint_state_broadcaster explicitly,
+#    there is no need to configure joint_state_broadcaster explicitly;
 #    anything defined in rsp.launch.py will be published.
 #
 #joint_broad:

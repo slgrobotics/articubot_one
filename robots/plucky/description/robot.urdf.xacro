@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
-    <!-- See common Gazebo pugins in the world file -->
+    <!-- See common Gazebo plugins in the world file -->
     
     <!--
         To re-generate robot.urdf.generated.xml manually for troubleshooting:

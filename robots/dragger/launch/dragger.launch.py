@@ -10,11 +10,11 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for Dragger robot — multi-robot safe version
+# Generate a launch description for Dragger robot — multi-robot safe version
 #
-# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+# If launched with "use_sim_time=true", the robot will run in Gazebo simulation.
 #
-# Multi-robot usage example. On the robots' Raspberry Pi's:
+# Multi-robot usage example. On the robots' Raspberry Pis:
 #
 #   ros2 launch articubot_one dragger.launch.py namespace:=robot1
 #   ros2 launch articubot_one dragger.launch.py namespace:=robot2
@@ -42,14 +42,14 @@ def generate_launch_description():
 
     # You generally want either:
     #   - map_server (GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
-    #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in environment
+    #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in the environment
     #
     # Dragger is outdoors only and has Navsat to provide map->odom TF
     #
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments (not many static features).
-    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The Navsat transform keeps drifting even with a good non-RTK GPS signal.
     #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with map server.
+    #       Therefore, for outdoor use I am using only GPS-based localization with a map server.
     #       Adding a previously saved map to the map server is possible.
     #
     # See https://github.com/slgrobotics/outdoors_loc_nav
@@ -63,7 +63,7 @@ def generate_launch_description():
     #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
     #map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
-    # For SlAM Toolbox, we can use previously saved serialized map:
+    # For SLAM Toolbox, we can use a previously saved serialized map:
     #map_file = 'dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
     #map_file = '/home/sergei/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
 
@@ -174,8 +174,8 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
+    # Localizers are run with a delay to allow the IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow the map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
     survey_delay = 40.0  # seconds - after navigation is running, we can start wifi survey

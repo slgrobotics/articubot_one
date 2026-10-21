@@ -12,10 +12,10 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for robot localizers
+# Generate a launch description for robot localizers
 #
 # Localizers are SLAM and/or EKF nodes that provide robot pose estimates
-# to be used by navigation stack (Nav2) and other components.
+# to be used by the navigation stack (Nav2) and other components.
 # They can be robot-specific, and that's why we have this separate launch file.
 #
 
@@ -23,13 +23,13 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from <robot_model>.launch.py
+    # Keep the interface compatible with being included from <robot_model>.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - dragger, fido, seggy, turtle, plucky...
+    # Robot-specific files reside under the "robots" directory - dragger, fido, seggy, turtle, plucky...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Optional map file for localizers that support it (map_server, amcl)

@@ -87,7 +87,7 @@
         </geometry>
       </collision>
       <xacro:inertial_cylinder mass="${mass_kg}" length="0.0611632" radius="${base_diameter/2}">
-        <!-- cheat: origin moved forward a bit, so that center mass is forward of the wheels axis -->  
+        <!-- cheat: origin moved forward a bit, so that the center of mass is forward of the wheel axis -->
         <origin xyz="0.03 0 0" rpy="0 0 0"/>
       </xacro:inertial_cylinder>
     </link>

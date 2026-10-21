@@ -14,7 +14,7 @@
 
 ekf_filter_node_navsat:
   ros__parameters:
-    frequency: 15.0 # must be greater or equal to LIDAR /scan rate. No need for too high value here.
+    frequency: 15.0 # must be greater than or equal to LIDAR /scan rate. No need for too high a value here.
 #    sensor_timeout: 0.1
     two_d_mode: true
     transform_time_offset: 0.0
@@ -75,12 +75,12 @@ ekf_filter_node_navsat:
 #    imu0_nodelay: false
 
 # If using a real robot you might want to set this to true,
-# since usually absolute measurements from real imu's are not very accurate:
+# since usually absolute measurements from real IMUs are not very accurate:
     imu0_differential: false
     imu0_relative: false
     imu0_queue_size: 10
 
-# IMU data is subject to outliers, try filter them out:
+# IMU data is subject to outliers; try to filter them out:
     imu0_pose_rejection_threshold: 0.8                 # Note the difference in parameter names
     imu0_twist_rejection_threshold: 0.8                #
     imu0_linear_acceleration_rejection_threshold: 0.8  #

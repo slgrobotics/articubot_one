@@ -5,7 +5,7 @@
     <xacro:arg name="hardware_config"
                default="$(find articubot_one)/robots/seggy/config/hardware.yaml"/>
 
-    <!-- See common Gazebo pugins in the world file -->
+    <!-- See common Gazebo plugins in the world file -->
     
     <!--
         To re-generate robot.urdf.generated.xml manually for troubleshooting:

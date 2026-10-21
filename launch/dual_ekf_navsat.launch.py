@@ -25,7 +25,7 @@ from launch_ros.actions import Node
 #
 
 #
-# Generate launch description for robot_localization dual EKF with navsat (GNSS) transform node
+# Generate a launch description for robot_localization dual EKF with navsat (GNSS) transform node
 #
 # Use robot-specific configuration file from robots/<robot_model>/config/dual_ekf_navsat_transform_params_file.yaml
 # and robots/<robot_model>/config/navsat_transform.yaml

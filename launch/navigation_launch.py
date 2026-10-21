@@ -44,7 +44,7 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
 
     # composition is used to run multiple Nav2 nodes in a single process to lower the memory utilization and CPU utilization of Nav2.
-    # This is specially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
+    # This is especially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
     # If you don’t use composition you will have a higher memory utilization and CPU utilization.
 
     lifecycle_nodes = [

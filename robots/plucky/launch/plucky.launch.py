@@ -98,7 +98,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # You need to press "Startup" button in RViz when autostart=false
+    # You need to press the "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,

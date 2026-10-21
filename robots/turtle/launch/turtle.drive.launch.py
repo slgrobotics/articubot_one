@@ -7,28 +7,28 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 #
-# Generate launch description for Turtle robot drive system
+# Generate a launch description for Turtle robot drive system
 #
 # Real robot: Unlike other robots (based on https://github.com/slgrobotics/diffdrive_arduino) 
-#             Turtle cannot use generic "drive.launch.py" and must run Create1 driver and twist_mux
-#             Same pattern can be used for robots with RoboClaw type hardware
+#             Turtle cannot use the generic "drive.launch.py" and must run the Create1 driver and twist_mux
+#             The same pattern can be used for robots with RoboClaw type hardware
 #
 # Gazebo sim: This launch file includes the generic "drive_sim.launch.py" with appropriate
-#             parameters for turtle robot in simulation.
+#             parameters for the turtle robot in simulation.
 #
 
 def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept launch arguments from parent (turtle.launch.py)
+    # Accept launch arguments from the parent (turtle.launch.py)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
     hardware_config = LaunchConfiguration('hardware_config')
 
     # -----------------------------------------------------------------------------
-    # For real robot, include twist_mux for command velocity arbitration
+    # For a real robot, include twist_mux for command velocity arbitration
     twist_mux = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'twist_mux.launch.py'])
@@ -37,7 +37,7 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time)
     )
 
-    # For real robot, include the Roomba Create 1 specific drive launch and pass through all arguments.
+    # For a real robot, include the Roomba Create 1 specific drive launch and pass through all arguments.
     drive_launch = Node(
         package='create_driver',
         namespace=namespace,
@@ -53,7 +53,7 @@ def generate_launch_description():
 
     # -----------------------------------------------------------------------------
     # Gazebo sim: Use the sim-specific generic drive launch when "use_sim_time" is true.
-    # It will pick URDF and controller config based on robot_model argument.
+    # It will pick URDF and controller config based on the robot_model argument.
     drive_sim_launch_path = PathJoinSubstitution([
         FindPackageShare(package_name), 'launch', 'drive_sim.launch.py'
     ])  

@@ -6,7 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 #
-# Generate launch description for joystick teleoperation using teleop_twist_joy
+# Generate a launch description for joystick teleoperation using teleop_twist_joy
 #
 # Typically called with RViz2 launch so that joystick can control the robot from the Desktop
 # See launch_rviz.launch.py
@@ -19,7 +19,7 @@ def generate_launch_description():
     package_name='articubot_one'
 
     # See XBox buttons mapping: https://europe1.discourse-cdn.com/unity/original/3X/5/8/58e7b2a50ec35ea142ae9c4d27c9df2d372cd1f3.jpeg
-    # Overriding '/opt/ros/${ROS_DISTRO}/share/teleop_twist_joy/config/xbox.config.yaml' - because teleop-launch.py isn't accepting buttons assignments:
+    # Overriding '/opt/ros/${ROS_DISTRO}/share/teleop_twist_joy/config/xbox.config.yaml' - because teleop-launch.py isn't accepting button assignments:
     joystick_params_file = PathJoinSubstitution([FindPackageShare(package_name), 'config', 'joystick.yaml'])
 
     joystick = IncludeLaunchDescription(

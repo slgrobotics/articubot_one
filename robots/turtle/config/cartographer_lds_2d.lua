@@ -31,7 +31,7 @@ options = {
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
   tracking_frame = "base_footprint", -- places map at footprint level
-  published_frame = "base_link",     -- why "odom" doesn't work?
+  published_frame = "base_link",     -- why doesn't "odom" work?
   odom_frame = "odom",
   provide_odom_frame = true,         -- note this
   publish_frame_projected_to_2d = true,

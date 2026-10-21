@@ -8,9 +8,9 @@ from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 #
-# Generate launch description for robot_state_publisher
+# Generate a launch description for robot_state_publisher
 #
-# Will load robot description from "robot.urdf.xacro" file located at robot's "description" directory
+# Will load the robot description from the "robot.urdf.xacro" file located in the robot's "description" directory
 #
 # Typical use (see seggy.launch.py):
 #    robot_state_publisher = IncludeLaunchDescription(
@@ -32,13 +32,13 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time
@@ -66,7 +66,7 @@ def generate_launch_description():
                     }]
     )
 
-    # Optional nodes to interact with joints from the RViz2:
+    # Optional nodes to interact with joints from RViz2:
     node_joint_state_publisher = Node(
         package='joint_state_publisher',
         namespace=namespace,
@@ -82,7 +82,7 @@ def generate_launch_description():
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
         output=['screen'],
-        # no need to supply SDF source here, it will be picked from topic /robot_description by default
+        # no need to supply SDF source here, it will be picked up from the /robot_description topic by default
         #arguments=[robot_description_sdf]
     )
 
@@ -104,7 +104,7 @@ def generate_launch_description():
 
         node_robot_state_publisher,
 
-        # Either of these two will override /joint_states topic with zeroes.
+        # Either of these two will override the /joint_states topic with zeroes.
         # Normally, joint_state_broadcaster publishes it.
         #node_joint_state_publisher,
         #node_joint_state_publisher_gui

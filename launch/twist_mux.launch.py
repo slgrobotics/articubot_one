@@ -15,7 +15,7 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time

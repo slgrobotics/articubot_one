@@ -12,7 +12,7 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
@@ -43,7 +43,7 @@ def generate_launch_description():
             'vertical_distance' : 20,
             'font' : 'DejaVu Sans Mono',
             'text_size' : 12.0,
-            'horizontal_alignment' : 0,  # 0 — left  1 — right  2 — center - location of the the overlay window in RViz screen
+            'horizontal_alignment' : 0,  # 0 — left  1 — right  2 — center - location of the overlay window on the RViz screen
             'vertical_alignment' : 3,    # 2 - center, 3 - top, 4 - bottom
             'bg_color_a' : 0.05,
             'fg_color_rgba' : '0.0 0.8 0.6 1.0'

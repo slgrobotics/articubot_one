@@ -9,14 +9,14 @@ from nav2_common.launch import ReplaceString
 from articubot_one.launch_utils.helpers import include_launch
 
 #
-# Generate launch description for a typical differential drive robot drive system
+# Generate a launch description for a typical differential drive robot drive system
 #
-# This includes necessary controllers for Gazebo-resident Controller Manager:
+# This includes the necessary controllers for the Gazebo-resident Controller Manager:
 # - twist mux for cmd_vel arbitration
 # - diff drive,
 # - joint state broadcaster,
 #
-# Also, contains Gazebo and RViz launching, simulated robot spawning, and ROS-Gazebo bridging.
+# Also contains Gazebo and RViz launching, simulated robot spawning, and ROS-Gazebo bridging.
 #
 # Use example (see seggy.drive.launch.py):
 # drive_sim_launch_path = PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'drive_sim.launch.py'])
@@ -39,13 +39,13 @@ def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # can be one of the files in assets/worlds: 
@@ -224,7 +224,7 @@ def generate_launch_description():
     )
 
     # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
-    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    # Localizers/mappers only publish the map to odom transform. The robot needs an EKF filter to publish the odom to base_link transform.
     ekf_imu_odom = include_launch(
         package_name,
         ['launch', 'ekf_imu_odom.launch.py'],

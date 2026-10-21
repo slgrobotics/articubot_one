@@ -428,7 +428,7 @@
       <self_collide>false</self_collide>
     </model>
 
-    <!-- Ensure 0.79 meters gap equal to door width between the tall boxes
+    <!-- Ensure a 0.79-meter gap equal to the door width between the tall boxes
          and between the red box and the wall -->
     <model name='tall_red_box'>
       <pose>-2.01 1.5 0.65 0 0 0</pose>
@@ -800,10 +800,10 @@
       <!-- Sun direction: slightly from the side, downward -->
       <direction>0.2 0.4 -0.9</direction>
 
-      <!-- Slight warm sunlight -->
+      <!-- Slightly warm sunlight -->
       <diffuse>1.0 0.98 0.92 1</diffuse>
 
-      <!-- Keep specular modest to avoid “plastic” look -->
+      <!-- Keep specular modest to avoid a “plastic” look -->
       <specular>0.12 0.12 0.12 1</specular>
     </light>
 

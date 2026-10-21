@@ -6,7 +6,7 @@ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
 #
-# Generate launch description for Fido robot drive system
+# Generate a launch description for Fido robot drive system
 #
 # This launch file includes the generic "drive.launch.py" with appropriate
 # parameters for the Fido robot.
@@ -16,12 +16,12 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept launch arguments from parent (fido.launch.py)
+    # Accept launch arguments from the parent (fido.launch.py)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
 
-    # Fido uses common differential drive system, and we have a "generic" drive launch for that.
+    # Fido uses a common differential drive system, and we have a "generic" drive launch for that.
     #       see https://github.com/slgrobotics/diffdrive_arduino
     #
     # Include the "generic" drive launch and pass through all arguments.
@@ -41,7 +41,7 @@ def generate_launch_description():
     )
 
     # Use the sim-specific generic drive launch when "use_sim_time" is true.
-    # It will pick URDF and controller config based on robot_model argument.
+    # It will pick URDF and controller config based on the robot_model argument.
     drive_sim_launch_path = PathJoinSubstitution([
         FindPackageShare(package_name), 'launch', 'drive_sim.launch.py'
     ])  

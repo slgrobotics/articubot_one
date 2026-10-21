@@ -59,12 +59,12 @@ def main():
     '''
     # Activate navigation, if not autostarted. This should be called after setInitialPose()
     # or this will initialize at the origin of the map and update the costmap with bogus readings.
-    # If autostart, you should `waitUntilNav2Active()` instead.
+    # If autostart is enabled, you should `waitUntilNav2Active()` instead.
     # navigator.lifecycleStartup()
 
     # Wait for navigation to fully activate. Use this line if autostart is set to true.
     # https://github.com/ros-navigation/navigation2/issues/2283
-    #navigator.waitUntilNav2Active()  # must use AMCL, will wait for amcl/get_state service available
+    #navigator.waitUntilNav2Active()  # must use AMCL, will wait for the amcl/get_state service to become available
     navigator.waitUntilNav2Active(localizer='bt_navigator')
 
     # If desired, you can change or load the map as well
@@ -155,7 +155,7 @@ def main():
                 print('Timeout 10 minutes: canceling task')
                 navigator.cancelTask()
 
-            # Some follow waypoints request change to demo preemption
+            # A waypoint-following request change to demo preemption
             if now - nav_start > Duration(seconds=300.0):
                 print('Timeout 5 minutes: Executing alternative destination waypoint')
                 goal_pose_alt = PoseStamped()

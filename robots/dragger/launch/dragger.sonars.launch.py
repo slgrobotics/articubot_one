@@ -5,7 +5,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
 #
-# Generate launch description for Dragger robot sensors
+# Generate a launch description for Dragger robot sensors
 #
 #   *** runs on real robot only, not in simulation ***
 #

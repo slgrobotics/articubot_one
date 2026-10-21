@@ -48,7 +48,7 @@ slam_toolbox:
     throttle_scans: 1
 
     # SLAM Toolbox only publishes the map to odom transform. 
-    # It needs EKF filter to publish odom to base_link transform.
+    # It needs an EKF filter to publish the odom to base_link transform.
     # see https://chatgpt.com/s/t_692348bb05048191b24d621992e75b03
     transform_publish_period: 0.0 # if 0 never publishes odometry - if >0, wheels will be jumping off
 
