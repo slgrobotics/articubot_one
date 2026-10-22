@@ -29,9 +29,12 @@ options = {
   trajectory_builder = TRAJECTORY_BUILDER,
 
   -- Cartographer now waits for a valid IMU heading and mounting TF before starting trajectory 0,
-  -- so its first submap has the correct map orientation:
+  -- so its first submap has the correct map orientation.
+  -- See https://github.com/slgrobotics/cartographer_ros/blob/lyrical/README_Lyrical.md#initialize-a-fresh-map-from-imu-heading
   initialize_map_from_imu = true,
   imu_heading_offset_rad = 0.0,
+  imu_heading_timeout_sec = 30.0,
+  imu_heading_max_age_sec = 1.0,
 
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
