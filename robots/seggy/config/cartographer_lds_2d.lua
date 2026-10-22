@@ -31,6 +31,11 @@ options = {
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
   tracking_frame = "imu_link", -- "base_link", -- "laser_frame",
+
+  -- For an EKF-based robot, use this arrangement:
+  -- Cartographer: map → odom
+  -- EKF:          odom → base_link
+
   published_frame = "odom", -- "base_link",
 
   odom_frame = "odom",
