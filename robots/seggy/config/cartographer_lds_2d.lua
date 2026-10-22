@@ -28,6 +28,11 @@ options = {
   map_builder = MAP_BUILDER,
   trajectory_builder = TRAJECTORY_BUILDER,
 
+  -- Cartographer now waits for a valid IMU heading and mounting TF before starting trajectory 0,
+  -- so its first submap has the correct map orientation:
+  initialize_map_from_imu = true,
+  imu_heading_offset_rad = 0.0,
+
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
   tracking_frame = "imu_link", -- "base_link", -- "laser_frame",
@@ -60,7 +65,7 @@ options = {
   rangefinder_sampling_ratio = 1.0,
   odometry_sampling_ratio = 1.0,
   fixed_frame_pose_sampling_ratio = 1.0,
-  imu_sampling_ratio = 0.1,
+  imu_sampling_ratio = 1.0,
   landmarks_sampling_ratio = 1.0,
 }
 
@@ -95,8 +100,8 @@ TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 20
 POSE_GRAPH.constraint_builder.max_constraint_distance = 5.0
 POSE_GRAPH.constraint_builder.min_score = 0.62
 -- tune down IMU in optimization
-POSE_GRAPH.optimization_problem.acceleration_weight = 0.1 * 1e3
-POSE_GRAPH.optimization_problem.rotation_weight = 0.1 * 3e5
+-- POSE_GRAPH.optimization_problem.acceleration_weight = 0.1 * 1e3
+-- POSE_GRAPH.optimization_problem.rotation_weight = 0.1 * 3e5
 -- ignore wheels in optimization
 POSE_GRAPH.optimization_problem.odometry_translation_weight = 0.
 POSE_GRAPH.optimization_problem.odometry_rotation_weight = 0.

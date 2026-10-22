@@ -60,6 +60,6 @@ def generate_launch_description():
             '  map=', map_file
         ]),
 
-        cartographer_orientator,
+        #cartographer_orientator,
         cartographer,
     ])
