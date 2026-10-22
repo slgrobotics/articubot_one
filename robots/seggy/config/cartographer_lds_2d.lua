@@ -31,14 +31,14 @@ options = {
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
   tracking_frame = "imu_link", -- "base_link", -- "laser_frame",
-  published_frame = "base_link", -- "base_link",
+  published_frame = "odom", -- "base_link",
 
   odom_frame = "odom",
-  provide_odom_frame = true,
+  provide_odom_frame = false,
   publish_frame_projected_to_2d = true,
 
   use_odometry = true,
-  use_pose_extrapolator = false,
+  use_pose_extrapolator = true,
   use_nav_sat = false,
   use_landmarks = false,
 
