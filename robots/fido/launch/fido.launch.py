@@ -48,18 +48,23 @@ def generate_launch_description():
 
     localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
-    # Choose one:
-    # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox) - use outdoors
-    #map_file = 'basement.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
-    #map_file = 'basement' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Fido's run in Warehouse world
-    #map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    map_file = LaunchConfiguration('map', default='')
+
+    # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
+    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/office
+    # Provide the saved map to AMCL with the 'map' launch argument:
+    #     ros2 launch articubot_one fido.launch.py localizer_type:=amcl map:=~/launch/office.yaml
+    #
+    # Choose your map file for localizers that support it (map_server, amcl):
+    #    map_file = 'office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
+    #    map_file = 'office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
+    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
+    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Fido's slam_toolbox run in Warehouse world
+    #    map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
     # For SLAM Toolbox, we can use a previously saved serialized map:
-    #map_file = 'fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
+    #    map_file = 'fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map_file = '/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
@@ -179,6 +184,11 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'hardware_config', default_value='',
             description='Optional hardware YAML path; empty uses Fido packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'map', default_value='',
+            description='Path to map YAML file'
         ),
 
         # we can only use 'map_server_tf' here as Fido is indoors only and does not have Navsat to provide map->odom TF

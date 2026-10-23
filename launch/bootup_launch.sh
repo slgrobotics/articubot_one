@@ -13,7 +13,7 @@ source /home/ros/robot_ws/install/setup.bash
 
 ros2 launch articubot_one seggy.launch.py
 #ros2 launch articubot_one seggy.launch.py localizer_type:=map_server_tf
-#ros2 launch articubot_one seggy.launch.py localizer_type:=amcl
+#ros2 launch articubot_one seggy.launch.py localizer_type:=amcl map:=/home/ros/maps/office.yaml
 #ros2 launch articubot_one seggy.launch.py localizer_type:=cartographer
 
 #ros2 launch articubot_one dragger.launch.py

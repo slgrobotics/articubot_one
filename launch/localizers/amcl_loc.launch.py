@@ -8,10 +8,15 @@ from articubot_one.launch_utils.helpers import include_launch
 
 """
 AMCL (Adaptive Monte Carlo Localization) Localizer
-Provides probabilistic localization using particle filters.
-Requires a pre-built map and initial pose estimate (/initialpose)
-Provides pose estimates through Monte Carlo sampling.
-Often used with Nav2 for navigation with known maps.
+  - Provides probabilistic localization using particle filters.
+  - Requires a pre-built occupancymap and initial pose estimate (/initialpose)
+  - Provides pose estimates through Monte Carlo sampling.
+  - Often used with Nav2 for navigation with known maps.
+
+    Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
+        ros2 run nav2_map_server map_saver_cli -f ~/launch/office
+    Provide the saved map to AMCL with the 'map' launch argument:
+        ros2 launch articubot_one seggy.launch.py localizer_type:=amcl map:=~/launch/office.yaml
 """
 
 def generate_launch_description():

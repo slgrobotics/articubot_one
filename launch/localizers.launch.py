@@ -82,6 +82,10 @@ def generate_launch_description():
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'map_server_tf'))
         ),
+
+        # AMCL requires an occupancy map and an initial pose.
+        # Typically, map_server loads a saved map, and RViz's "2D Pose Estimate" supplies the initial pose.
+        # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL.
         include_launch(
             package_name,
             ['launch', 'localizers', 'amcl_loc.launch.py'],
