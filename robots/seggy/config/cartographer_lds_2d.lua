@@ -38,7 +38,7 @@ options = {
 
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
-  tracking_frame = "imu_link", -- "base_link", -- "laser_frame",
+  tracking_frame = "imu_link",
 
   -- For an EKF-based robot, use this arrangement:
   -- Cartographer: map → odom
@@ -49,6 +49,7 @@ options = {
   odom_frame = "odom",
   provide_odom_frame = false,
   publish_frame_projected_to_2d = true,
+  projection_frame = "base_footprint", -- Keep the ground at map z=0, not the IMU.
 
   use_odometry = true,
   use_pose_extrapolator = true,
