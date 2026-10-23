@@ -107,10 +107,13 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value='dragger'),
+
         DeclareLaunchArgument(
             'localizer_type', default_value='map_server',
-            choices=['map_server', 'amcl', 'cartographer', 'slam_toolbox']
+            choices=['map_server', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
         ),
+
         DeclareLaunchArgument(
             'cartographer_config_dir',
             default_value=PathJoinSubstitution([FindPackageShare('outdoors_loc_nav'), 'params']),

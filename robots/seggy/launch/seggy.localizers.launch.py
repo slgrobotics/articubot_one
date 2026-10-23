@@ -68,7 +68,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'localizer_type', default_value='slam_toolbox',
             choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
-            description='Outdoor localizer to launch'
+            description='Indoor localizer to launch'
         ),
         DeclareLaunchArgument('map', default_value=map_file),
         DeclareLaunchArgument('rtabmap_enabled', default_value='false'),
