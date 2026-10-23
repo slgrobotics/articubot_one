@@ -30,6 +30,8 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir')
+    configuration_basename = LaunchConfiguration('configuration_basename')
     hardware_config = LaunchConfiguration('hardware_config', default='')
 
     # Note: for Gazebo simulation choose "robot_world" in dragger.drive.launch.py
@@ -38,13 +40,14 @@ def generate_launch_description():
     # Localizers include - use dragger specific localizers launch
     # -------------------------------------------------------
 
-    localizer_type = 'map_server' # 'amcl', 'map_server', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='map_server')
 
     # You generally want either:
     #   - map_server (GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
     #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in the environment
     #
-    # Dragger is outdoors only and has Navsat to provide map->odom TF
+    # Dragger uses the global GPS EKF for map->odom in map_server mode.
+    # Cartographer owns map->odom when selected.
     #
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments (not many static features).
     #       The Navsat transform keeps drifting even with a good non-RTK GPS signal.
@@ -75,6 +78,8 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'robot_model': robot_model,
             'localizer_type': localizer_type,
+            'cartographer_config_dir': cartographer_config_dir,
+            'configuration_basename': configuration_basename,
             'map': map_file
         }
     )
@@ -203,7 +208,7 @@ def generate_launch_description():
         sonars_sim_include,
         delayed_loc,
         delayed_nav,
-        delayed_wifi_survey,
+        #delayed_wifi_survey,
     ])
 
     # -------------------------------------------------------
@@ -228,10 +233,26 @@ def generate_launch_description():
             description='Optional hardware YAML path; empty uses Dragger packaged defaults'
         ),
 
+        DeclareLaunchArgument(
+            'localizer_type', default_value='map_server',
+            choices=['map_server', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
+        ),
+        DeclareLaunchArgument(
+            'cartographer_config_dir',
+            default_value=PathJoinSubstitution([FindPackageShare('outdoors_loc_nav'), 'params']),
+            description='Directory containing the Cartographer Lua configuration'
+        ),
+        DeclareLaunchArgument(
+            'configuration_basename', default_value='cartographer_lds_2d.lua',
+            description='Cartographer Lua configuration filename'
+        ),
+
         LogInfo(msg=[
             '============ starting DRAGGER  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
-            '  robot_model=', robot_model
+            '  robot_model=', robot_model,
+            '  localizer_type=', localizer_type
         ]),
 
         # EVERYTHING runs inside namespace_wrap()

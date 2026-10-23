@@ -6,7 +6,8 @@ Includes the generic launch/localizers.launch.py with dragger defaults.
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import include_launch, namespace_wrap
 
 
@@ -15,9 +16,11 @@ def generate_launch_description():
 
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir')
+    configuration_basename = LaunchConfiguration('configuration_basename')
     robot_model = LaunchConfiguration('robot_model', default='dragger')
     map_file = LaunchConfiguration('map', default='') # can be '' for empty map
-    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
+    localizer_type = LaunchConfiguration('localizer_type', default='map_server')
     rtabmap_enabled = LaunchConfiguration('rtabmap_enabled', default='false')
 
     # ==========================
@@ -62,7 +65,9 @@ def generate_launch_description():
         {
             'use_sim_time': use_sim_time,
             'namespace': namespace,
-            'localizer': localizer_type,  # Default: 'map_server'
+            'localizer': localizer_type,
+            'cartographer_config_dir': cartographer_config_dir,
+            'configuration_basename': configuration_basename,
             'map': map_file,
         }
     )
@@ -102,7 +107,20 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value='dragger'),
-        DeclareLaunchArgument('localizer_type', default_value=''),
+        DeclareLaunchArgument(
+            'localizer_type', default_value='map_server',
+            choices=['map_server', 'amcl', 'cartographer', 'slam_toolbox']
+        ),
+        DeclareLaunchArgument(
+            'cartographer_config_dir',
+            default_value=PathJoinSubstitution([FindPackageShare('outdoors_loc_nav'), 'params']),
+            description='Directory containing the Cartographer Lua configuration'
+        ),
+        DeclareLaunchArgument(
+            'configuration_basename', default_value='cartographer_lds_2d.lua',
+            description='Cartographer Lua configuration filename'
+        ),
+
         DeclareLaunchArgument('map', default_value=map_file),
         DeclareLaunchArgument('rtabmap_enabled', default_value='false'),
 

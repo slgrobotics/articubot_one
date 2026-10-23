@@ -46,7 +46,7 @@ def generate_launch_description():
     #      ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args --params-file <path_to_map_server_params.yaml>
     #
 
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
     # Choose one:
     # Map file for localizers that support it (map_server, amcl):
@@ -179,6 +179,13 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'hardware_config', default_value='',
             description='Optional hardware YAML path; empty uses Fido packaged defaults'
+        ),
+
+        # we can only use 'map_server_tf' here as Fido is indoors only and does not have Navsat to provide map->odom TF
+        DeclareLaunchArgument(
+            'localizer_type', default_value='slam_toolbox',
+            choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
         ),
 
         LogInfo(msg=[

@@ -38,9 +38,7 @@ def generate_launch_description():
     # Localizers include - use turtle specific localizers launch
     # -------------------------------------------------------
 
-    # Note: we can only use 'map_server_tf' here as Turtle is indoors only and does not have Navsat to provide map->odom TF
-
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
     # Choose one:
     # Map file for localizers that support it (map_server, amcl):
@@ -174,6 +172,13 @@ def generate_launch_description():
                 FindPackageShare(package_name), 'robots', robot_model, 'config', 'hardware.yaml'
             ]),
             description='Create driver hardware YAML path'
+        ),
+
+        # we can only use 'map_server_tf' here as Turtle is indoors only and does not have Navsat to provide map->odom TF
+        DeclareLaunchArgument(
+            'localizer_type', default_value='slam_toolbox',
+            choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
         ),
 
         LogInfo(msg=[

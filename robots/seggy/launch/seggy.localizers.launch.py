@@ -63,7 +63,13 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value='seggy'),
-        DeclareLaunchArgument('localizer_type', default_value=''),
+
+        # we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
+        DeclareLaunchArgument(
+            'localizer_type', default_value='slam_toolbox',
+            choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
+        ),
         DeclareLaunchArgument('map', default_value=map_file),
         DeclareLaunchArgument('rtabmap_enabled', default_value='false'),
 
