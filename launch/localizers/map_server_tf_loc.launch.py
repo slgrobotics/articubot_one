@@ -6,7 +6,9 @@ Convenient when used with GPS, does not provide pose estimation.
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import (
+    EqualsSubstitution, IfElseSubstitution, LaunchConfiguration, PathJoinSubstitution,
+)
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import include_launch
 
@@ -17,10 +19,21 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
+
     default_map = PathJoinSubstitution([
         FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'
     ])
-    map_file = LaunchConfiguration('map', default=default_map)
+
+    # 'map' - path to map YAML; omitted or empty uses packaged "empty_map_tf.yaml"
+
+    requested_map = LaunchConfiguration('map', default=default_map)
+    # An explicit empty argument overrides launch defaults; resolve it here so
+    # the shared map server receives this localizer's ground-scale map.
+    map_file = IfElseSubstitution(
+        EqualsSubstitution(requested_map, ''),
+        if_value=default_map,
+        else_value=requested_map,
+    )
 
     # Note: The EKF filter must be launched beforehand (in the Drive or Sensors launch file)
     # It is needed to provide the odom->base_link transform
@@ -52,7 +65,7 @@ def generate_launch_description():
         DeclareLaunchArgument('robot_model', default_value=''),
         DeclareLaunchArgument(
             'map', default_value=default_map,
-            description='Path to map YAML file for map_server (defaults to the packaged empty map)'
+            description='Path to map YAML; omitted or empty uses packaged empty_map_tf.yaml'
         ),
 
         LogInfo(msg=[
