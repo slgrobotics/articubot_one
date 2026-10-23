@@ -53,8 +53,8 @@ def generate_launch_description():
     map_file = LaunchConfiguration('map', default='')
 
     # You generally want either:
-    #   - map_server (GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
-    #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in the environment
+    #   - map_server (with GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
+    #   - or slam_toolbox (with LIDAR) if you have a previously saved map or have many static features in the environment
     #
     # Dragger uses the global GPS EKF for map->odom in map_server mode.
     # Cartographer owns map->odom when selected.
@@ -62,28 +62,20 @@ def generate_launch_description():
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments (not many static features).
     #       The Navsat transform keeps drifting even with a good non-RTK GPS signal.
     #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with a map server.
+    #       Therefore, for outdoor use I am using only GPS-based localization with a map_server.
     #       Adding a previously saved map to the map server is possible.
     #
     # See https://github.com/slgrobotics/outdoors_loc_nav
     #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
-
     # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
-    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/office
-    # Provide the saved map to AMCL with the 'map' launch argument:
-    #     ros2 launch articubot_one dragger.launch.py localizer_type:=amcl map:=~/launch/office.yaml
-    #
-    # Choose your map file for localizers that support it (map_server, amcl):
-    #    map_file = 'office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
-    #    map_file = 'office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
-    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
-    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Dragger's slam_toolbox run in Warehouse world
-    #    map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/backyard
+    # Provide the saved map to AMCL or map_server with the 'map' launch argument:
+    #     ros2 launch articubot_one dragger.launch.py localizer_type:=amcl map:=~/launch/backyard.yaml
     #
     # For SLAM Toolbox, we can use a previously saved serialized map:
-    #    map_file = 'dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #    map_file = '/home/ros/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
+    #    map:='dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map:='~/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,

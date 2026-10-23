@@ -56,15 +56,15 @@ def generate_launch_description():
     #     ros2 launch articubot_one fido.launch.py localizer_type:=amcl map:=~/launch/office.yaml
     #
     # Choose your map file for localizers that support it (map_server, amcl):
-    #    map_file = 'office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
-    #    map_file = 'office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
-    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
-    #    map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Fido's slam_toolbox run in Warehouse world
-    #    map_file = '/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #    map:='office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
+    #    map:='office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's slam_toolbox run in Warehouse world
+    #    map:='/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
     #
     # For SLAM Toolbox, we can use a previously saved serialized map:
-    #    map_file = 'fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #    map_file = '/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
+    #    map:='fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map:='/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
