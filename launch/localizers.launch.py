@@ -40,7 +40,7 @@ def generate_launch_description():
     localizer_actions = [
         include_launch(
             package_name,
-            ['launch', 'localizers', 'slam_toolbox.launch.py'],
+            ['launch', 'localizers', 'slam_toolbox_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -62,7 +62,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'map_server.launch.py'],
+            ['launch', 'localizers', 'map_server_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -73,7 +73,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'map_server_tf.launch.py'],
+            ['launch', 'localizers', 'map_server_tf_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -84,7 +84,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'amcl.launch.py'],
+            ['launch', 'localizers', 'amcl_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
