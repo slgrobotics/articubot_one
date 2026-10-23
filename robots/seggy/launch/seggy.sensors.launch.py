@@ -132,6 +132,6 @@ def generate_launch_description():
         bno08x_driver_node,
         ekf_imu_odom,
         #oakd_camera,
-        #face_gesture_sensor,
-        #perception_adapter
+        face_gesture_sensor,
+        perception_adapter
     ])
