@@ -17,7 +17,10 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
-    map_file = LaunchConfiguration('map', default='')
+    default_map = PathJoinSubstitution([
+        FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'
+    ])
+    map_file = LaunchConfiguration('map', default=default_map)
 
     # Note: The EKF filter must be launched beforehand (in the Drive or Sensors launch file)
     # It is needed to provide the odom->base_link transform
@@ -38,7 +41,10 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
-        DeclareLaunchArgument('map', default_value='', description='Path to map YAML file for map_server (optional)'),
+        DeclareLaunchArgument(
+            'map', default_value=default_map,
+            description='Path to map YAML file for map_server (defaults to the packaged empty map)'
+        ),
 
         LogInfo(msg=[
             '============ starting EKF + MAP SERVER LOCALIZER  namespace="', namespace,

@@ -1,7 +1,7 @@
-image: empty_map.pgm
+image: empty_map.pgm   # 600 × 600 pixel image
 mode: trinary
-resolution: 0.25
-origin: [-75, -75, 0]
+resolution: 0.25       # 150x150 meters at this resolution
+origin: [-75, -75, 0]  # center of map is at (0,0) in world coordinates
 occupied_thresh: 0.65
 free_thresh: 0.196 
 negate: 0
