@@ -69,6 +69,7 @@ controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
     controller_frequency: 5.0 # For sim, this must be 5.0 to match or exceed simulation's time step. Works for real robots too.
+    publish_zero_velocity: true # Explicitly request a stop on goal completion (abort paths also force a stop).
     costmap_update_timeout: 0.50
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
@@ -438,8 +439,9 @@ velocity_smoother:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
     smoothing_frequency: 6.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
     scale_velocities: true        # scale velocities proportionally if any axis is outside the acceleration range to follow the same vector, if possible
-    #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
-    feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
+    # Ramp from the last output command so zero requests converge independently of wheel feedback. Dragger's PWM drive can report more speed than commanded;
+    # CLOSED_LOOP can then keep issuing nonzero deceleration commands indefinitely.
+    feedback: "OPEN_LOOP"         # Type of feedback for current speed. Open loop uses the last smoothed output. CLOSED_LOOP uses robot odometry. Default: OPEN_LOOP.
     max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
     min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
