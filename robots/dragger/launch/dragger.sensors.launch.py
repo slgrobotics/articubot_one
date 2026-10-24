@@ -120,7 +120,12 @@ def generate_launch_description():
             {'frame_id' : 'gps_link' },
             {'time_ref_source' : 'gps' },
             {'use_GNSS_time' : False },
-            {'useRMC' : False }
+            {'useRMC' : False },
+            # Standard (non-RTK) fixes: double the driver's default 4 m EPE.
+            # Covariance is (HDOP * EPE)^2, so this gives 4x the variance
+            # and reduces GPS influence on the global EKF. Receiver GST error
+            # estimates, when present, override this driver fallback.
+            {'epe_quality1': 8.0},
         ],
         remappings=[("fix", "gps/fix")]
     )
