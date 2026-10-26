@@ -57,6 +57,11 @@ def _launch_nodes(context):
                 name=name, parameters=[config, common],
                 remappings=remappings, output="screen",
             ))
+    if IfCondition(LaunchConfiguration("overlay")).evaluate(context):
+        nodes.append(Node(
+            package="wifi_logger_visualizer", executable="wifi_overlay_node.py",
+            name="wifi_overlay_node", parameters=[config], output="screen",
+        ))
     return nodes
 
 
@@ -67,6 +72,7 @@ def generate_launch_description():
     )
     return LaunchDescription([
         DeclareLaunchArgument("config_filepath", default_value=config),
+        DeclareLaunchArgument("overlay", default_value="true"),
         DeclareLaunchArgument("monitoring", default_value="true"),
         DeclareLaunchArgument("survey", default_value="false"),
         DeclareLaunchArgument("visualization", default_value="true"),
