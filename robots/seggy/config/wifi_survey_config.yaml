@@ -2,9 +2,9 @@
 /**:
   ros__parameters:
     db_path: "wifi_data.db"
-    costmap_topic: "/global_costmap/costmap"
+    costmap_topic: "global_costmap/costmap"
 
-/wifi_logger_node:
+/**/wifi_logger_node:
   ros__parameters:
     use_gps: false  # Set false on robots without a GPS receiver (skips /gps/filtered sub + stale warnings)
     db_clear_on_start: true  # Clear existing records from the database when the logger starts
@@ -30,7 +30,7 @@
     ov_do_short: true
     ov_do_full: true
 
-/wifi_visualizer_node:
+/**/wifi_visualizer_node:
   ros__parameters:
     publish_frequency: 1.0
     db_check_frequency: 2.0
@@ -39,7 +39,7 @@
     enable_signal_level: true
     enable_bit_rate: true
 
-/heat_mapper_node:
+/**/heat_mapper_node:
   ros__parameters:
     standalone: false
     do_publish_markers: true

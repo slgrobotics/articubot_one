@@ -1,12 +1,12 @@
 # Common parameters shared by the WiFi survey nodes.
 /**:
   ros__parameters:
-    db_path: "wifi_data.db"
-    map_yaml_path: ""
-    wifi_interface: ""
+    db_path: "wifi_data_v2.db"
+    map_yaml_path: ""  # Saved map YAML + PGM; or pass wifi_map_yaml_path at launch
+    wifi_interface: "wlx7cdd9079f3d5"  # Seggy USB WiFi adapter
     cell_size: 0.25
 
-/wifi_logger_node:
+/**/wifi_logger_node:
   ros__parameters:
     map_frame: "map"
     robot_frame: "base_link"
@@ -14,7 +14,7 @@
     pose_max_age: 1.0
     visit_gap: 10.0
 
-/wifi_visualizer_node:
+/**/wifi_visualizer_node:
   ros__parameters:
     metric: "signal"
     publish_frequency: 1.0
@@ -24,7 +24,7 @@
     metric_min: .nan
     metric_max: .nan
 
-/wifi_survey_node:
+/**/wifi_survey_node:
   ros__parameters:
     target_host: "amdc"
     stationary_seconds: 3.0

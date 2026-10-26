@@ -145,7 +145,9 @@ def generate_launch_description():
         package_name,
         ['launch', 'wifi_survey_v2.launch.py'],
         {
-            'config_filepath': wifi_survey_v2_config
+            'config_filepath': wifi_survey_v2_config,
+            'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'survey': LaunchConfiguration('wifi_active_survey')
         },
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
@@ -199,6 +201,7 @@ def generate_launch_description():
         sensors_include,
         delayed_loc,
         delayed_nav,
+        # Choose exactly one WiFi version; build/source the matching package.
         #delayed_wifi_survey,
         delayed_wifi_survey_v2,
     ])
@@ -223,6 +226,16 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'hardware_config', default_value='',
             description='Optional hardware YAML path; empty uses Seggy packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'wifi_map_yaml_path', default_value='',
+            description='V2 saved map YAML + PGM; empty uses the WiFi config (not a SLAM posegraph)'
+        ),
+
+        DeclareLaunchArgument(
+            'wifi_active_survey', default_value='true',
+            description='V2: run stationary ping/iperf3 tests against the configured target host'
         ),
 
         DeclareLaunchArgument(
