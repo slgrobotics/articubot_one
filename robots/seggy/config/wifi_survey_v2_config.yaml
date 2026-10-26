@@ -27,7 +27,7 @@
 
 /**/wifi_survey_node:
   ros__parameters:
-    target_host: "amdc"
+    target_host: "iperf3_runner.local"  # tip: put it in your /etc/hosts file for convenience
     stationary_seconds: 3.0
     stationary_tolerance: 0.04
     revisit_interval: 300.0
