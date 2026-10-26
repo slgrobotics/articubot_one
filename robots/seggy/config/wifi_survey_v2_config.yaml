@@ -1,0 +1,33 @@
+# Common parameters shared by the WiFi survey nodes.
+/**:
+  ros__parameters:
+    db_path: "wifi_data.db"
+    map_yaml_path: ""
+    wifi_interface: ""
+    cell_size: 0.25
+
+/wifi_logger_node:
+  ros__parameters:
+    map_frame: "map"
+    robot_frame: "base_link"
+    update_interval: 1.0
+    pose_max_age: 1.0
+    visit_gap: 10.0
+
+/wifi_visualizer_node:
+  ros__parameters:
+    metric: "signal"
+    publish_frequency: 1.0
+    highlight_unmeasured: false
+    marker_alpha: 0.65
+    map_id: 0
+    metric_min: .nan
+    metric_max: .nan
+
+/wifi_survey_node:
+  ros__parameters:
+    target_host: "amdc"
+    stationary_seconds: 3.0
+    stationary_tolerance: 0.04
+    revisit_interval: 300.0
+    iperf_duration: 3

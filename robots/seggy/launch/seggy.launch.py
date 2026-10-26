@@ -133,6 +133,23 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
+    wifi_survey_v2_config = PathJoinSubstitution([
+        FindPackageShare(package_name),
+        'robots',
+        robot_model,
+        'config',
+        'wifi_survey_v2_config.yaml'
+    ])
+
+    wifi_survey_v2_include = include_launch(
+        package_name,
+        ['launch', 'wifi_survey_v2.launch.py'],
+        {
+            'config_filepath': wifi_survey_v2_config
+        },
+        condition=UnlessCondition(use_sim_time),  # real robot only
+    )
+
     # -------------------------------------------------------
     # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
@@ -163,6 +180,7 @@ def generate_launch_description():
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
     delayed_wifi_survey = delayed_include(survey_delay, "WIFI_SURVEY", wifi_survey_include)
+    delayed_wifi_survey_v2 = delayed_include(survey_delay, "WIFI_SURVEY_V2", wifi_survey_v2_include)
 
     # -------------------------------------------------------
     # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
@@ -182,6 +200,7 @@ def generate_launch_description():
         delayed_loc,
         delayed_nav,
         #delayed_wifi_survey,
+        delayed_wifi_survey_v2,
     ])
 
     # -------------------------------------------------------
