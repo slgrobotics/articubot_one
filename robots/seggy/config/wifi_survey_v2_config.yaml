@@ -6,6 +6,7 @@
     map_yaml_path: "/home/ros/launch/seggy_office.yaml"
     wifi_interface: "wlx7cdd9079f3d5"  # Seggy USB WiFi adapter
     cell_size: 0.25
+    trace_subprocess_runs: true
 
 /**/wifi_logger_node:
   ros__parameters:
