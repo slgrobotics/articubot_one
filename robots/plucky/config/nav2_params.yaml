@@ -102,7 +102,8 @@ bt_navigator:
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 5.0 # For sim, this must be 5.0 to match or exceed simulation's time step
+    controller_frequency: 5.0   # For sim, this must be 5.0 to match or exceed simulation's time step
+    publish_zero_velocity: true # Explicitly request a stop on goal completion (abort paths also force a stop).
     costmap_update_timeout: 0.30
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
