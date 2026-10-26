@@ -25,6 +25,14 @@
     metric_min: .nan
     metric_max: .nan
 
+# Note:
+# The survey node runs iperf3 as a subprocess using subprocess.run()
+# iperf3 must be installed on the robot and the target host must be running iperf3 in server mode.
+#   sudo apt install iperf3
+# check it from the robot in both directions:
+#   iperf3 -c iperf3_runner.local
+#   iperf3 -R -c iperf3_runner.local
+
 /**/wifi_survey_node:
   ros__parameters:
     target_host: "iperf3_runner.local"  # tip: put it in your /etc/hosts file for convenience
