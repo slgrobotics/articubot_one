@@ -42,12 +42,6 @@ def generate_launch_description():
         ' db_path: ', db_path,
     ]))
 
-    for action in [
-        db_path_arg,
-        config_filepath_arg,
-    ]:
-        ld.add_action(action)
-
     wifi_logger_node = Node(
         package=package_name,
         executable='wifi_logger_node.py',
