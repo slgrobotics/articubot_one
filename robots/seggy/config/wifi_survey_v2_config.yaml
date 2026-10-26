@@ -2,7 +2,8 @@
 /**:
   ros__parameters:
     db_path: "wifi_data_v2.db"
-    map_yaml_path: ""  # Saved map YAML + PGM; or pass wifi_map_yaml_path at launch
+    #map_yaml_path: ""  # Saved map YAML + PGM; or pass wifi_map_yaml_path at launch
+    map_yaml_path: "/home/ros/launch/seggy_office.yaml"
     wifi_interface: "wlx7cdd9079f3d5"  # Seggy USB WiFi adapter
     cell_size: 0.25
 
