@@ -56,3 +56,11 @@
     text_size: 12.0
     foreground_color: [0.1, 0.1, 0.1, 1.0]
     background_color: [1.0, 1.0, 1.0, 0.5]
+
+# Read by wifi_survey_v2.launch.py and passed as CLI arguments to the viewer.
+# Database path and cell size come from the common parameters above.
+/**/wifi_web_viewer:
+  ros__parameters:
+    host: "0.0.0.0"
+    port: 8088
+    # node_names: "/path/to/access_point_names.yaml"

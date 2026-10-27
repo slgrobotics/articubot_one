@@ -2,10 +2,11 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.substitutions import ExecutableInPackage
 import yaml
 
 
@@ -62,6 +63,25 @@ def _launch_nodes(context):
             package="wifi_logger_visualizer", executable="wifi_overlay_node.py",
             name="wifi_overlay_node", parameters=[config], output="screen",
         ))
+    viewer = settings.get("/**/wifi_web_viewer", {}).get("ros__parameters", {})
+    if IfCondition(LaunchConfiguration("web_viewer")).evaluate(context):
+        defaults = settings.get("/**", {}).get("ros__parameters", {})
+        db_path = common.get("db_path", defaults.get("db_path", "~/.ros/titania_wifi.db"))
+        cell_size = common.get("cell_size", defaults.get("cell_size", 0.25))
+        port = viewer.get("port", 8088)
+        if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
+            raise ValueError("wifi_web_viewer port must be an integer between 1 and 65535")
+        # The viewer uses argparse, not rclpy: pass CLI arguments without ROS flags.
+        command = [
+            ExecutableInPackage(package="wifi_logger_visualizer", executable="web_viewer.py"),
+            "--db", os.path.abspath(os.path.expanduser(str(db_path))),
+            "--cell-size", str(cell_size),
+            "--host", str(viewer.get("host", "0.0.0.0")),
+            "--port", str(port),
+        ]
+        if viewer.get("node_names"):
+            command.extend(["--node-names", os.path.expanduser(str(viewer["node_names"]))])
+        nodes.append(ExecuteProcess(cmd=command, output="screen", additional_env={"PYTHONUNBUFFERED": "1"}))
     return nodes
 
 
@@ -72,6 +92,7 @@ def generate_launch_description():
     )
     return LaunchDescription([
         DeclareLaunchArgument("config_filepath", default_value=config),
+        DeclareLaunchArgument("web_viewer", default_value="true"),
         DeclareLaunchArgument("overlay", default_value="true"),
         DeclareLaunchArgument("monitoring", default_value="true"),
         DeclareLaunchArgument("survey", default_value="false"),
