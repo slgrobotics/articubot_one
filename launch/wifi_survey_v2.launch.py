@@ -33,7 +33,7 @@ def _launch_nodes(context):
         raise RuntimeError(
             "WiFi V2 requires a saved map YAML and PGM image. Set map_yaml_path "
             "in the WiFi config or pass wifi_map_yaml_path:=/path/to/map.yaml "
-            "when launching Seggy (map_yaml_path:=... for this launch directly)."
+            "when launching the robot (map_yaml_path:=... for this launch directly)."
         )
     common["map_yaml_path"] = os.path.abspath(os.path.expanduser(map_path))
     if not os.path.isfile(common["map_yaml_path"]):
@@ -41,6 +41,7 @@ def _launch_nodes(context):
 
     remappings = [
         ("/tf", "tf"), ("/tf_static", "tf_static"),
+        ("/gps/filtered", "gps/filtered"),
         ("/localization/recovery_active", "localization/recovery_active"),
         ("/wifi_monitor/status", "wifi_monitor/status"),
         ("/wifi_monitor/cells", "wifi_monitor/cells"),

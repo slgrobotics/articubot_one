@@ -1,0 +1,69 @@
+# Common parameters shared by the WiFi survey nodes.
+/**:
+  ros__parameters:
+    db_path: "wifi_data_v2.db"
+    #map_yaml_path: ""  # Saved map YAML + PGM; or pass wifi_map_yaml_path at launch
+    map_yaml_path: ""  # Dragger launch resolves the packaged outdoor empty map
+    wifi_interface: ""  # Set the connected Dragger adapter explicitly if multiple radios exist
+    cell_size: 0.25
+    trace_subprocess_runs: true  # traces ping, perf3, iw calls
+
+/**/wifi_logger_node:
+  ros__parameters:
+    use_gps: true  # Startup option; GPS metadata never gates Wi-Fi collection
+    gps_topic: "/gps/filtered"
+    gps_max_age: 2.0  # Seconds, based on NavSatFix source stamp in the ROS clock
+    map_frame: "map"
+    robot_frame: "base_link"
+    update_interval: 1.0
+    pose_max_age: 1.0
+    visit_gap: 10.0
+
+/**/wifi_visualizer_node:
+  ros__parameters:
+    metric: "signal"
+    publish_frequency: 1.0
+    highlight_unmeasured: false
+    marker_alpha: 0.65
+    map_id: 0
+    metric_min: .nan
+    metric_max: .nan
+
+# Note:
+# The survey node runs iperf3 as a subprocess using subprocess.run()
+# iperf3 must be installed on the robot and the target host must be running iperf3 in server mode.
+#   sudo apt install iperf3
+# check it from the robot in both directions:
+#   iperf3 -c iperf3_runner.local
+#   iperf3 -R -c iperf3_runner.local
+
+/**/wifi_survey_node:
+  ros__parameters:
+    target_host: "iperf3_runner.local"  # tip: put it in your /etc/hosts file for convenience
+    stationary_seconds: 3.0
+    stationary_tolerance: 0.04
+    revisit_interval: 300.0
+    iperf_duration: 3
+
+/**/wifi_overlay_node:
+  ros__parameters:
+    input_topic: "wifi_monitor/status"
+    output_topic: "wifi/overlay"
+    horizontal_alignment: 2  # CENTER
+    vertical_alignment: 3    # TOP
+    horizontal_distance: 10
+    vertical_distance: 10
+    width: 1000
+    height: 180
+    font: "DejaVu Sans Mono"
+    text_size: 12.0
+    foreground_color: [0.1, 0.1, 0.1, 1.0]
+    background_color: [1.0, 1.0, 1.0, 0.5]
+
+# Read by wifi_survey_v2.launch.py and passed as CLI arguments to the viewer.
+# Database path and cell size come from the common parameters above.
+/**/wifi_web_viewer:
+  ros__parameters:
+    host: "0.0.0.0"
+    port: 8088
+    # node_names: "/path/to/access_point_names.yaml"

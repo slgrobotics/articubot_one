@@ -1,7 +1,9 @@
+import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.actions import DeclareLaunchArgument, LogInfo, OpaqueFunction, SetLaunchConfiguration
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
@@ -21,6 +23,27 @@ from articubot_one.launch_utils.helpers import (
 #
 # Every robot runs a fully isolated stack under its namespace.
 #
+
+def _resolve_wifi_map(context):
+    """Use an explicit Wi-Fi raster, a navigation raster, or the outdoor default."""
+    if LaunchConfiguration('wifi_version').perform(context) != 'v2':
+        return []
+    if IfCondition(LaunchConfiguration('use_sim_time')).evaluate(context):
+        return []
+    explicit = LaunchConfiguration('wifi_map_yaml_path').perform(context)
+    navigation_map = LaunchConfiguration('map').perform(context)
+    localizer = LaunchConfiguration('localizer_type').perform(context)
+    if explicit:
+        selected = explicit
+    elif navigation_map and localizer in ('map_server', 'amcl'):
+        selected = navigation_map
+    else:
+        # SLAM Toolbox's map argument may be a serialized posegraph, not a raster.
+        selected = os.path.join(get_package_share_directory('outdoors_loc_nav'),
+                                'assets', 'maps', 'empty_map.yaml')
+    return [SetLaunchConfiguration('wifi_map_yaml_path',
+                                   os.path.abspath(os.path.expanduser(selected)))]
+
 
 def generate_launch_description():
 
@@ -162,7 +185,28 @@ def generate_launch_description():
         {
             'config_filepath': wifi_survey_config
         },
-        condition=UnlessCondition(use_sim_time),  # real robot only
+        condition=IfCondition(PythonExpression([
+            "'", use_sim_time, "'.lower() in ('false', '0') and '",
+            LaunchConfiguration('wifi_version'), "' == 'v1'"
+        ])),
+    )
+
+    wifi_survey_v2_config = PathJoinSubstitution([
+        FindPackageShare(package_name), 'robots', robot_model,
+        'config', 'wifi_survey_v2_config.yaml'
+    ])
+    wifi_survey_v2_include = include_launch(
+        package_name,
+        ['launch', 'wifi_survey_v2.launch.py'],
+        {
+            'config_filepath': wifi_survey_v2_config,
+            'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'survey': LaunchConfiguration('wifi_active_survey'),
+        },
+        condition=IfCondition(PythonExpression([
+            "'", use_sim_time, "'.lower() in ('false', '0') and '",
+            LaunchConfiguration('wifi_version'), "' == 'v2'"
+        ])),
     )
 
     # -------------------------------------------------------
@@ -195,6 +239,7 @@ def generate_launch_description():
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
     delayed_wifi_survey = delayed_include(survey_delay, "WIFI_SURVEY", wifi_survey_include)
+    delayed_wifi_survey_v2 = delayed_include(survey_delay, "WIFI_SURVEY_V2", wifi_survey_v2_include)
 
     # -------------------------------------------------------
     # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
@@ -215,7 +260,10 @@ def generate_launch_description():
         sonars_sim_include,
         delayed_loc,
         delayed_nav,
-        #delayed_wifi_survey,
+        # Make sure the correct branch of the Wi-Fi survey is cloned and built in ~/robot_ws/src/wifi_logger_visualizer
+        # only one of these two will be included, based on wifi_version launch argument:
+        delayed_wifi_survey,
+        delayed_wifi_survey_v2,
     ])
 
     # -------------------------------------------------------
@@ -238,6 +286,19 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'hardware_config', default_value='',
             description='Optional hardware YAML path; empty uses Dragger packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'wifi_version', default_value='v2', choices=['off', 'v1', 'v2'],
+            description='Wi-Fi implementation; requires the matching wifi_logger_visualizer version'
+        ),
+        DeclareLaunchArgument(
+            'wifi_map_yaml_path', default_value='',
+            description='V2 raster YAML + PGM; defaults to navigation raster in map_server/AMCL mode, otherwise the outdoor empty map'
+        ),
+        DeclareLaunchArgument(
+            'wifi_active_survey', default_value='true',
+            description='V2: run stationary ping/iperf3 tests against the configured target host'
         ),
 
         DeclareLaunchArgument(
@@ -268,6 +329,8 @@ def generate_launch_description():
             '  robot_model=', robot_model,
             '  localizer_type=', localizer_type
         ]),
+
+        OpaqueFunction(function=_resolve_wifi_map),
 
         # EVERYTHING runs inside namespace_wrap()
         namespaced_actions,
