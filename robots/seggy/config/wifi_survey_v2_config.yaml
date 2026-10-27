@@ -10,6 +10,9 @@
 
 /**/wifi_logger_node:
   ros__parameters:
+    use_gps: false  # Startup option; GPS metadata never gates Wi-Fi collection
+    gps_topic: "/gps/filtered"
+    gps_max_age: 2.0  # Seconds, based on NavSatFix source stamp in the ROS clock
     map_frame: "map"
     robot_frame: "base_link"
     update_interval: 1.0
