@@ -179,6 +179,14 @@ def generate_launch_description():
         'wifi_survey_config.yaml'
     ])
 
+    # -------------------------------------------------------
+    # Choose appropriate V1 or V2 branch from
+    #   https://github.com/slgrobotics/wifi_logger_visualizer
+    #
+    # Make sure the correct branch of the Wi-Fi survey is cloned
+    #   and built in ~/robot_ws/src/wifi_logger_visualizer
+    # -------------------------------------------------------
+
     wifi_survey_include = include_launch(
         package_name,
         ['launch', 'wifi_survey.launch.py'],
@@ -195,6 +203,7 @@ def generate_launch_description():
         FindPackageShare(package_name), 'robots', robot_model,
         'config', 'wifi_survey_v2_config.yaml'
     ])
+
     wifi_survey_v2_include = include_launch(
         package_name,
         ['launch', 'wifi_survey_v2.launch.py'],
