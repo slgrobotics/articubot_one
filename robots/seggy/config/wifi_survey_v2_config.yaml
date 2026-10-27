@@ -6,11 +6,11 @@
     map_yaml_path: "/home/ros/launch/seggy_office.yaml"
     wifi_interface: "wlx7cdd9079f3d5"  # Seggy USB dongle 300 MBit/s ODROID adapter
     cell_size: 0.25
+    use_gps: false  # Shared by the passive logger and browser viewer
     trace_subprocess_runs: true  # traces ping, perf3, iw calls
 
 /**/wifi_logger_node:
   ros__parameters:
-    use_gps: false  # Startup option; GPS metadata never gates Wi-Fi collection
     gps_topic: "/gps/filtered"
     gps_max_age: 2.0  # Seconds, based on NavSatFix source stamp in the ROS clock
     map_frame: "map"

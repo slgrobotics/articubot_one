@@ -80,6 +80,11 @@ def _launch_nodes(context):
             "--host", str(viewer.get("host", "0.0.0.0")),
             "--port", str(port),
         ]
+        use_gps = defaults.get("use_gps", False)
+        if not isinstance(use_gps, bool):
+            raise ValueError("shared use_gps must be a YAML boolean")
+        if use_gps:
+            command.append("--use-gps")
         if viewer.get("node_names"):
             command.extend(["--node-names", os.path.expanduser(str(viewer["node_names"]))])
         nodes.append(ExecuteProcess(cmd=command, output="screen", additional_env={"PYTHONUNBUFFERED": "1"}))

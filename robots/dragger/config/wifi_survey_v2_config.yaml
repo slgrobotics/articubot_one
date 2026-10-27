@@ -6,11 +6,11 @@
     map_yaml_path: ""  # Dragger launch resolves the packaged outdoor empty map
     wifi_interface: "wlx7cdd906c262d"  # Dragger USB dongle 300 MBit/s adapter
     cell_size: 0.25
+    use_gps: true  # Shared by the passive logger and browser viewer
     trace_subprocess_runs: true  # traces ping, perf3, iw calls
 
 /**/wifi_logger_node:
   ros__parameters:
-    use_gps: true  # Startup option; GPS metadata never gates Wi-Fi collection
     gps_topic: "/gps/filtered"
     gps_max_age: 2.0  # Seconds, based on NavSatFix source stamp in the ROS clock
     map_frame: "map"
