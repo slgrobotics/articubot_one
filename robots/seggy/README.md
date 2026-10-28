@@ -45,3 +45,18 @@ xacro robots/seggy/description/robot.urdf.xacro sim_mode:=false \
   design capacity and chemistry consistent with `hardware.yaml`; its estimated
   full capacity is currently 90% of design capacity.
 - Simulation battery properties remain in `description/robot.urdf.xacro`.
+
+
+### Wi-Fi V2: waiting for the first saved map
+
+A configured map path such as `/home/ros/launch/seggy_office.yaml` need not
+exist when Seggy starts. After the normal Wi-Fi bringup delay, the V2 suite
+checks for readable YAML and a complete PGM image every five seconds at INFO
+level. Mapping/localization continues. Saving the map to the configured path
+automatically starts the enabled Wi-Fi nodes, overlay, and browser viewer;
+an orientation sidecar is not required. No launch restart is needed for this
+first save. A subsequent map change requires restarting the Wi-Fi suite.
+
+Set `map_check_interval` in the shared `/**` Wi-Fi YAML parameters to adjust
+polling, or pass it when launching `wifi_survey_v2.launch.py` directly. Keep
+`map_yaml_path` configured: the suite cannot guess the desired saved filename.

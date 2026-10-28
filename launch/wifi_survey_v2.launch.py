@@ -9,6 +9,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import ExecutableInPackage
 import yaml
 
+from wifi_logger_visualizer.map_startup import wait_for_saved_map
+
 
 def _launch_nodes(context):
     config = os.path.expanduser(LaunchConfiguration("config_filepath").perform(context))
@@ -36,8 +38,6 @@ def _launch_nodes(context):
             "when launching the robot (map_yaml_path:=... for this launch directly)."
         )
     common["map_yaml_path"] = os.path.abspath(os.path.expanduser(map_path))
-    if not os.path.isfile(common["map_yaml_path"]):
-        raise RuntimeError(f"WiFi V2 map YAML does not exist: {common['map_yaml_path']}")
 
     remappings = [
         ("/tf", "tf"), ("/tf_static", "tf_static"),
@@ -88,7 +88,10 @@ def _launch_nodes(context):
         if viewer.get("node_names"):
             command.extend(["--node-names", os.path.expanduser(str(viewer["node_names"]))])
         nodes.append(ExecuteProcess(cmd=command, output="screen", additional_env={"PYTHONUNBUFFERED": "1"}))
-    return nodes
+    interval = LaunchConfiguration('map_check_interval').perform(context)
+    if not interval:
+        interval = settings.get('/**', {}).get('ros__parameters', {}).get('map_check_interval', 5.0)
+    return [wait_for_saved_map(common['map_yaml_path'], nodes, interval)]
 
 
 def generate_launch_description():
@@ -105,6 +108,8 @@ def generate_launch_description():
         DeclareLaunchArgument("visualization", default_value="true"),
         DeclareLaunchArgument("db_path", default_value=""),
         DeclareLaunchArgument("map_yaml_path", default_value=""),
+        DeclareLaunchArgument("map_check_interval", default_value="",
+                              description="Saved-map readiness polling interval; defaults to YAML or 5 seconds"),
         DeclareLaunchArgument("cell_size", default_value=""),
         DeclareLaunchArgument("target_host", default_value=""),
         OpaqueFunction(function=_launch_nodes),

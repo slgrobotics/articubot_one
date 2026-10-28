@@ -37,6 +37,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(battery_state_compat_test test/test_battery_state_compat.py)
   ament_add_pytest_test(map_orientation_launch_test test/test_map_orientation_launch.py)
+  ament_add_pytest_test(wifi_survey_v2_launch_test test/test_wifi_survey_v2_launch.py)
 endif()
 
 ament_package()

@@ -35,6 +35,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>map_orientation_saver</exec_depend>
+  <exec_depend>wifi_logger_visualizer</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
