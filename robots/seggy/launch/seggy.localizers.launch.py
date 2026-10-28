@@ -29,6 +29,8 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'robot_model': robot_model,
             'localizer_type': localizer_type,
+            'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator'),
             'map': map_file,
         }
     )
@@ -72,6 +74,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument('map', default_value=map_file),
         DeclareLaunchArgument('rtabmap_enabled', default_value='false'),
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
 
         LogInfo(msg=[
             '============ starting Seggy LOCALIZERS  namespace="', namespace,

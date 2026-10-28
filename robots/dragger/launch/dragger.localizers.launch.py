@@ -52,6 +52,8 @@ def generate_launch_description():
             'use_sim_time': use_sim_time,
             'robot_model': robot_model,
             'localizer_type': localizer_type,
+            'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+         'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator'),
             'map': map_file,
         }
     )
@@ -100,7 +102,14 @@ def generate_launch_description():
     # -----------------------------------------------------------------------------------
     # Choose indoors or outdoors:
     #robot_localizers = namespace_wrap(namespace, [indoor_localizers, rtabmap])
-    robot_localizers = namespace_wrap(namespace, [outdoor_localizers, rtabmap])
+    orientation = include_launch(
+        package_name, ['launch', 'map_orientation.launch.py'],
+        {'namespace': '', 'use_sim_time': use_sim_time,
+         'robot_model': robot_model,
+         'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+         'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator')},
+    )
+    robot_localizers = namespace_wrap(namespace, [outdoor_localizers, rtabmap, orientation])
 
     return LaunchDescription([
         
@@ -126,6 +135,8 @@ def generate_launch_description():
 
         DeclareLaunchArgument('map', default_value=map_file),
         DeclareLaunchArgument('rtabmap_enabled', default_value='false'),
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
 
         LogInfo(msg=[
             '============ starting Dragger LOCALIZERS  namespace="', namespace,

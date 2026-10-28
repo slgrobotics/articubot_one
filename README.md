@@ -35,3 +35,13 @@ Adding a new robot should be as easy as copying an existing folder (e.g. _fido_ 
 2. This project wouldn't be possible without expert help and inspiration from members of:
 - [HomeBrew Robotics Club](https://www.hbrobotics.org/)
 - [Robotics Society ​of Southern California](https://www.rssc.org/)
+
+
+## Geographic map orientation
+
+Localizer bringup starts the external `map_orientation_saver` IMU/TF estimator by default
+(`use_map_orientation_estimator:=false` disables it). Use
+`ros2 run map_orientation_saver map_saver_with_orientation -f <map_name>` to save a
+Nav2 raster plus a hash-bound `.orientation.yaml` sidecar. See
+[map orientation configuration and saving](docs/map_orientation.md) for heading
+calibration, namespace handling, quality checks, and unavailable-data behavior.

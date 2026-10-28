@@ -10,7 +10,7 @@ ament_python_install_package(${PROJECT_NAME})
 
 # Install all directories recursively
 install(
-  DIRECTORY assets config description launch robots
+  DIRECTORY assets config description docs launch robots
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -36,6 +36,7 @@ install(PROGRAMS
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(battery_state_compat_test test/test_battery_state_compat.py)
+  ament_add_pytest_test(map_orientation_launch_test test/test_map_orientation_launch.py)
 endif()
 
 ament_package()

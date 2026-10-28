@@ -72,6 +72,8 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
+            'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator'),
             'robot_model': robot_model,
             'localizer_type': localizer_type,
             'map': map_file
@@ -222,6 +224,9 @@ def generate_launch_description():
             default_value='',
             description='Top-level namespace for multi-robot deployment'
         ),
+
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
 
         DeclareLaunchArgument(
             'hardware_config', default_value='',

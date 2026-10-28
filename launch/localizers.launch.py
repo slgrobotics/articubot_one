@@ -97,6 +97,13 @@ def generate_launch_description():
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'amcl'))
         ),
+        include_launch(
+            package_name, ['launch', 'map_orientation.launch.py'],
+            {'namespace': '', 'use_sim_time': use_sim_time,
+             'robot_model': robot_model,
+             'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator')},
+        ),
     ]
 
 
@@ -145,6 +152,9 @@ def generate_launch_description():
             '  localizer_type=', LaunchConfiguration('localizer_type'),
             '  map=', map_file
         ]),
+
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
 
         robot_localizers
     ])
