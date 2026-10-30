@@ -3,6 +3,7 @@
 device: /dev/ttyACM0
 baud_rate: 115200
 timeout: 1000  # serial response timeout, ms
+reconnect_interval: 2  # seconds
 enc_counts_per_rev: 60
 wheels_pwm_factor: 60.0  # rad/s to firmware motor setpoint percent
 

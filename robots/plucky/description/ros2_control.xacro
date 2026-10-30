@@ -15,6 +15,7 @@
                 <param name="device">/dev/ttyACM0</param>
                 <param name="baud_rate">115200</param>
                 <param name="timeout">1000</param>
+                <param name="reconnect_interval">2</param>
                 <param name="enc_counts_per_rev">2506</param>
                 <param name="wheels_pwm_factor">60.0</param>
                 <!-- See https://docs.ros.org/en/jazzy/p/sensor_msgs/interfaces/msg/BatteryState.html -->

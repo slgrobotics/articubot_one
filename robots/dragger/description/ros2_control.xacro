@@ -17,6 +17,7 @@
                 <param name="device">${hw['device']}</param>
                 <param name="baud_rate">${hw['baud_rate']}</param>
                 <param name="timeout">${hw['timeout']}</param>
+                <param name="reconnect_interval">${hw['reconnect_interval']}</param>
                 <param name="enc_counts_per_rev">${hw['enc_counts_per_rev']}</param>
                 <!-- Arduino expects wheel speed setpoints in the range -100..100 (percent of max speed)
                      Use wheels_pwm_factor parameter (multiplier) to bring interface speed input into this range -->
