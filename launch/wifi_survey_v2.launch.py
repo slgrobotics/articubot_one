@@ -2,6 +2,7 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.logging import get_logger
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
@@ -13,9 +14,20 @@ from wifi_logger_visualizer.map_startup import wait_for_saved_map
 
 
 def _launch_nodes(context):
+    logger = get_logger("wifi_survey_v2.launch")
+    argument_names = (
+        "config_filepath", "web_viewer", "overlay", "monitoring", "survey",
+        "visualization", "db_path", "map_yaml_path", "map_check_interval",
+        "cell_size", "target_host",
+    )
+    logger.info("_launch_nodes launch arguments (empty values use YAML/defaults):")
+    for name in argument_names:
+        logger.info(f"  {name}={LaunchConfiguration(name).perform(context)!r}")
     config = os.path.expanduser(LaunchConfiguration("config_filepath").perform(context))
     with open(config) as stream:
         settings = yaml.safe_load(stream) or {}
+    logger.info(f"Parameter file: {config}")
+    logger.info("Loaded parameter settings:\n" + yaml.safe_dump(settings, sort_keys=False).rstrip())
     common = {}
     # Empty launch arguments leave the robot YAML values intact.
     for key in ("db_path", "map_yaml_path", "cell_size", "target_host"):
@@ -91,6 +103,8 @@ def _launch_nodes(context):
     interval = LaunchConfiguration('map_check_interval').perform(context)
     if not interval:
         interval = settings.get('/**', {}).get('ros__parameters', {}).get('map_check_interval', 5.0)
+    logger.info("Effective common node overrides:\n" + yaml.safe_dump(common, sort_keys=False).rstrip())
+    logger.info(f"Effective map_check_interval={interval!r}")
     return [wait_for_saved_map(common['map_yaml_path'], nodes, interval)]
 
 
