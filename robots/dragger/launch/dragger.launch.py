@@ -26,6 +26,8 @@ from articubot_one.launch_utils.helpers import (
 
 def _resolve_wifi_map(context):
     """Use an explicit Wi-Fi raster, a navigation raster, or the outdoor default."""
+    if LaunchConfiguration('wifi_map_source').perform(context) == 'live':
+        return []
     if LaunchConfiguration('wifi_version').perform(context) != 'v2':
         return []
     if IfCondition(LaunchConfiguration('use_sim_time')).evaluate(context):
@@ -212,11 +214,16 @@ def generate_launch_description():
         {
             'config_filepath': wifi_survey_v2_config,
             'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'use_sim_time': use_sim_time,
+            'wifi_source': LaunchConfiguration('wifi_source'),
+            'map_source': LaunchConfiguration('wifi_map_source'),
+            'map_topic': LaunchConfiguration('wifi_map_topic'),
+            'temporary_run': LaunchConfiguration('wifi_temporary_run'),
+            'wifi_sim_seed': LaunchConfiguration('wifi_sim_seed'),
             'survey': LaunchConfiguration('wifi_active_survey'),
         },
         condition=IfCondition(PythonExpression([
-            "'", use_sim_time, "'.lower() in ('false', '0') and '",
-            LaunchConfiguration('wifi_version'), "' == 'v2'"
+            "'", LaunchConfiguration('wifi_version'), "' == 'v2'"
         ])),
     )
 
@@ -282,6 +289,16 @@ def generate_launch_description():
     # -------------------------------------------------------
     return LaunchDescription([
 
+        DeclareLaunchArgument('wifi_source', default_value=PythonExpression([
+            "'simulated' if '", use_sim_time, "'.lower() in ('true','1') else 'hardware'"
+        ]), description='hardware, simulated or topic Wi-Fi input'),
+        DeclareLaunchArgument('wifi_map_source', default_value=PythonExpression([
+            "'live' if '", use_sim_time, "'.lower() in ('true','1') else 'saved'"
+        ]), description='saved raster or live occupancy grid'),
+        DeclareLaunchArgument('wifi_map_topic', default_value='map'),
+        DeclareLaunchArgument('wifi_temporary_run', default_value='auto'),
+        DeclareLaunchArgument('wifi_sim_seed', default_value='42'),
+
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
@@ -311,7 +328,9 @@ def generate_launch_description():
             description='V2 raster YAML + PGM; defaults to navigation raster in map_server/AMCL mode, otherwise the outdoor empty map'
         ),
         DeclareLaunchArgument(
-            'wifi_active_survey', default_value='true',
+            "wifi_active_survey", default_value=PythonExpression([
+                "'false' if '", use_sim_time, "'.lower() in ('true','1') else 'true'"
+            ]),
             description='V2: run stationary ping/iperf3 tests against the configured target host'
         ),
 

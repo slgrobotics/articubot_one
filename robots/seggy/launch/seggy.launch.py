@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
@@ -149,9 +149,14 @@ def generate_launch_description():
         {
             'config_filepath': wifi_survey_v2_config,
             'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'use_sim_time': use_sim_time,
+            'wifi_source': LaunchConfiguration('wifi_source'),
+            'map_source': LaunchConfiguration('wifi_map_source'),
+            'map_topic': LaunchConfiguration('wifi_map_topic'),
+            'temporary_run': LaunchConfiguration('wifi_temporary_run'),
+            'wifi_sim_seed': LaunchConfiguration('wifi_sim_seed'),
             'survey': LaunchConfiguration('wifi_active_survey')
         },
-        condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
     # -------------------------------------------------------
@@ -213,6 +218,16 @@ def generate_launch_description():
     # -------------------------------------------------------
     return LaunchDescription([
 
+        DeclareLaunchArgument('wifi_source', default_value=PythonExpression([
+            "'simulated' if '", use_sim_time, "'.lower() in ('true','1') else 'hardware'"
+        ]), description='hardware, simulated or topic Wi-Fi input'),
+        DeclareLaunchArgument('wifi_map_source', default_value=PythonExpression([
+            "'live' if '", use_sim_time, "'.lower() in ('true','1') else 'saved'"
+        ]), description='saved raster or live occupancy grid'),
+        DeclareLaunchArgument('wifi_map_topic', default_value='map'),
+        DeclareLaunchArgument('wifi_temporary_run', default_value='auto'),
+        DeclareLaunchArgument('wifi_sim_seed', default_value='42'),
+
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='false',
@@ -239,7 +254,9 @@ def generate_launch_description():
         ),
 
         DeclareLaunchArgument(
-            'wifi_active_survey', default_value='true',
+            "wifi_active_survey", default_value=PythonExpression([
+                "'false' if '", use_sim_time, "'.lower() in ('true','1') else 'true'"
+            ]),
             description='V2: run stationary ping/iperf3 tests against the configured target host'
         ),
 
