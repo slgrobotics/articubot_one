@@ -21,7 +21,6 @@
   <depend>robot_localization</depend>
   <depend>imu_tools</depend>
   <depend>slam_toolbox</depend>
-  <depend>navigation2</depend>
   <depend>cartographer_ros</depend>
   <depend>rviz_satellite</depend>
   <depend>battery_state_rviz_overlay</depend>
@@ -33,6 +32,9 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>navigation2</exec_depend>
+  <exec_depend>nav2_common</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>map_orientation_saver</exec_depend>
   <exec_depend>wifi_logger_visualizer</exec_depend>
