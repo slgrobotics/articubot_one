@@ -210,7 +210,7 @@ def generate_launch_description():
         delayed_nav,
         # Choose exactly one WiFi version; build/source the matching package.
         #delayed_wifi_survey,
-        delayed_wifi_survey_v2,
+        #delayed_wifi_survey_v2,
     ])
 
     # -------------------------------------------------------
