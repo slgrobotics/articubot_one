@@ -26,8 +26,9 @@
     <!-- using arguments here, as that allows overriding default values -->
     <xacro:arg name="lidar_offset_x" default="${wheel_offset_x + 0.05}"/>
     <xacro:arg name="lidar_offset_z" default="0.27"/>
-    <xacro:arg name="lidar_min_angle" default="-${pi * 0.95}"/>
-    <xacro:arg name="lidar_max_angle" default="${pi * 0.95}"/>
+    <!-- 355-degree scan: leave a 5-degree gap centered behind the support bar. -->
+    <xacro:arg name="lidar_min_angle" default="${-pi + pi * 2.5 / 180.0}"/>
+    <xacro:arg name="lidar_max_angle" default="${pi - pi * 2.5 / 180.0}"/>
     <!-- xacro:arg name="lidar_pedestal_height" default="0.04"/ -->
     <xacro:include filename="../../../description/lidar.xacro" />
 
