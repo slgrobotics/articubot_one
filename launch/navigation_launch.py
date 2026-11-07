@@ -240,7 +240,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings,
+                remappings=remappings + [('cmd_vel', 'cmd_vel_raw')],
             ),
             Node(
                 package='nav2_lifecycle_manager',
@@ -333,7 +333,7 @@ def generate_launch_description():
                         name='docking_server',
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
-                        remappings=remappings,
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw')],
                     ),
                     ComposableNode(
                         package='nav2_lifecycle_manager',

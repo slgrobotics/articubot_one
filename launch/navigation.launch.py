@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo
+from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
@@ -24,9 +24,10 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution for nav2 params so robot_model can be dynamic
-    nav2_params_file = PathJoinSubstitution([
+    default_nav2_params = PathJoinSubstitution([
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'
     ])
+    nav2_params_file = LaunchConfiguration('nav2_params_file')
 
     # Define the ComposableNodeContainer for Nav2 composition:
     container_nav2 = ComposableNodeContainer(
@@ -55,6 +56,8 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('nav2_params_file', default_value=default_nav2_params,
+                              description='Nav2 params override; defaults to robot configuration'),
 
         LogInfo(msg=['============ starting NAVIGATION (generic wrapper)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
         #LogInfo(msg=['Nav2 params file: ', nav2_params_file]),
