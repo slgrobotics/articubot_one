@@ -793,7 +793,7 @@
 
     <!-- Seggy reverse-docking practice bay (visual markings only; no collisions).
          Origin: requested final robot XY pose; +X is the parked robot's forward
-         direction (yaw 0.717822238473 rad). Approach from +X and reverse toward
+         direction (yaw 0 rad). Approach from +X and reverse toward
          the green origin cross. Blue cross: staging reference 0.8 m ahead.
          These are Gazebo world coordinates; verify map/world alignment before
          using this location in a Nav2 dock database. No charging is simulated. -->
@@ -802,36 +802,36 @@
       <pose>-1 3 0 0 0 0</pose>
       <link name="markings">
         <visual name="bay_floor">
-          <pose>0.5 0 0.002 0 0 0</pose>
+          <pose>0.4 0 0.002 0 0 0</pose>
           <cast_shadows>false</cast_shadows>
-          <geometry><box><size>1.8 1.0 0.004</size></box></geometry>
+          <geometry><box><size>1.8 1.3 0.004</size></box></geometry>
           <material>
             <ambient>0.08 0.16 0.22 1</ambient>
             <diffuse>0.08 0.16 0.22 1</diffuse>
           </material>
         </visual>
         <visual name="left_boundary">
-          <pose>0.5 0.5 0.006 0 0 0</pose>
+          <pose>-0.214152138547 0.384324902087 0.006 0 0 0.567232006898</pose>
           <cast_shadows>false</cast_shadows>
-          <geometry><box><size>1.8 0.035 0.004</size></box></geometry>
+          <geometry><box><size>0.50 0.035 0.004</size></box></geometry>
           <material>
             <ambient>1 0.8 0.05 1</ambient>
             <diffuse>1 0.8 0.05 1</diffuse>
           </material>
         </visual>
         <visual name="right_boundary">
-          <pose>0.5 -0.5 0.006 0 0 0</pose>
+          <pose>-0.214152138547 -0.384324902087 0.006 0 0 -0.567232006898</pose>
           <cast_shadows>false</cast_shadows>
-          <geometry><box><size>1.8 0.035 0.004</size></box></geometry>
+          <geometry><box><size>0.50 0.035 0.004</size></box></geometry>
           <material>
             <ambient>1 0.8 0.05 1</ambient>
             <diffuse>1 0.8 0.05 1</diffuse>
           </material>
         </visual>
         <visual name="rear_boundary">
-          <pose>-0.4 0 0.006 0 0 0</pose>
+          <pose>-0.425 0 0.006 0 0 0</pose>
           <cast_shadows>false</cast_shadows>
-          <geometry><box><size>0.035 1.0 0.004</size></box></geometry>
+          <geometry><box><size>0.035 0.50 0.004</size></box></geometry>
           <material>
             <ambient>1 0.8 0.05 1</ambient>
             <diffuse>1 0.8 0.05 1</diffuse>
@@ -903,8 +903,11 @@
       </link>
     </model>
 
+    <!-- Trapezoid: three 0.50 m panels, each 0.05 m thick.
+         Inner rear centre (-1.425,3), rear width 0.50 m, entrance 1.037299608 m,
+         forward depth 0.421695723 m, each side flared outward 32.5 degrees. -->
     <model name='dock-bay-wall-1'>
-      <pose>-1.25 2.45 0.25 0 0 0</pose>
+      <pose>-1.227584628755 2.594590311768 0.25 0 0 -0.567232006898</pose>
       <link name='wall_4_link'>
         <inertial>
           <inertia>
@@ -921,7 +924,7 @@
         <collision name='dock-bay-wall-1_collision'>
           <geometry>
             <box>
-              <size>0.45 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <surface>
@@ -935,7 +938,7 @@
         <visual name='dock-bay-wall-1_visual'>
           <geometry>
             <box>
-              <size>0.45 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <material>
@@ -952,7 +955,7 @@
     </model>
 
     <model name='dock-bay-wall-2'>
-      <pose>-1.45 3.0 0.25 0 0 1.5708</pose>
+      <pose>-1.45 3 0.25 0 0 1.570796326795</pose>
       <link name='wall_4_link'>
         <inertial>
           <inertia>
@@ -969,7 +972,7 @@
         <collision name='dock-bay-wall-2_collision'>
           <geometry>
             <box>
-              <size>1.05 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <surface>
@@ -983,7 +986,7 @@
         <visual name='dock-bay-wall-2_visual'>
           <geometry>
             <box>
-              <size>1.05 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <material>
@@ -1000,7 +1003,7 @@
     </model>
 
     <model name='dock-bay-wall-3'>
-      <pose>-1.25 3.55 0.25 0 0 0</pose>
+      <pose>-1.227584628755 3.405409688232 0.25 0 0 0.567232006898</pose>
       <link name='wall_4_link'>
         <inertial>
           <inertia>
@@ -1017,7 +1020,7 @@
         <collision name='dock-bay-wall-3_collision'>
           <geometry>
             <box>
-              <size>0.45 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <surface>
@@ -1031,7 +1034,7 @@
         <visual name='dock-bay-wall-3_visual'>
           <geometry>
             <box>
-              <size>0.45 0.05 0.5</size>
+              <size>0.50 0.05 0.5</size>
             </box>
           </geometry>
           <material>
@@ -1045,6 +1048,196 @@
       </link>
       <static>true</static>
       <self_collide>false</self_collide>
+    </model>
+
+    <!-- Perpendicular V dock: two 0.70 m panels, 55 degree flare per arm.
+         Final base_link (0,6), yaw -pi/2; staging (0,5.2); inner apex (0,6.6).
+         v_offset=0.60 m. The model's local +X points world -Y; reverse approach
+         moves north from staging to final. Floor markings have no collisions. -->
+    <model name="seggy_v_docking_area">
+      <static>true</static>
+      <pose>0 6.000000000000 0 0 0 -1.570796326795</pose>
+      <link name="markings">
+        <visual name="bay_floor">
+          <pose>0.375 0 0.002 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>2.1 1.35 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.08 0.22 0.16 1</ambient>
+            <diffuse>0.08 0.22 0.16 1</diffuse>
+          </material>
+        </visual>
+        <visual name="left_boundary">
+          <pose>-0.399248247277 0.286703215501 .006 0 0 0.959931088597</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.70 .035 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="right_boundary">
+          <pose>-0.399248247277 -0.286703215501 .006 0 0 -0.959931088597</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.70 .035 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="apex_reference">
+          <pose>-.6 0 .006 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.06 .06 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="target_cross_x">
+          <pose>0 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.3 0.025 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 1 0.3 1</ambient>
+            <diffuse>0.1 1 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="target_cross_y">
+          <pose>0 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.025 0.3 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 1 0.3 1</ambient>
+            <diffuse>0.1 1 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="staging_cross_x">
+          <pose>0.8 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.3 0.025 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.8 1 1</ambient>
+            <diffuse>0.1 0.8 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="staging_cross_y">
+          <pose>0.8 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.025 0.3 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.8 1 1</ambient>
+            <diffuse>0.1 0.8 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_shaft">
+          <pose>0.43 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.28 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_left">
+          <pose>0.33 0.045 0.009 0 0 -0.7853981634</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.15 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_right">
+          <pose>0.33 -0.045 0.009 0 0 0.7853981634</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.15 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="v-dock-wall-1">
+      <static>true</static>
+      <pose>-0.301042626410 6.419727048384 0.25 0 0 -2.530727415392</pose>
+      <link name="panel">
+        <collision name="panel_collision">
+          <geometry><box><size>0.70 0.05 0.50</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <geometry><box><size>0.70 0.05 0.50</size></box></geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>1 1 1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="v-dock-wall-2">
+      <static>true</static>
+      <pose>0.301042626410 6.419727048384 0.25 0 0 -0.610865238198</pose>
+      <link name="panel">
+        <collision name="panel_collision">
+          <geometry><box><size>0.70 0.05 0.50</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <geometry><box><size>0.70 0.05 0.50</size></box></geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>1 1 1 1</specular>
+          </material>
+        </visual>
+      </link>
     </model>
 
     <!-- Main sun -->
