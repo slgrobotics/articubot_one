@@ -34,6 +34,9 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>navigation2</exec_depend>
   <exec_depend>nav2_common</exec_depend>
+  <exec_depend>dock_detector</exec_depend>
+  <exec_depend>dock_detector_nav2</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>map_orientation_saver</exec_depend>

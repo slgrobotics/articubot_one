@@ -1,10 +1,11 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo, DeclareLaunchArgument, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import ComposableNodeContainer
+from articubot_one.launch_utils.docking import prepare_docking
 
 #
 # A generic wrapper launch file to start Nav2 navigation stack for a given robot model
@@ -56,11 +57,19 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('namespace', default_value=''),
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument('robot_model', default_value=''),
         DeclareLaunchArgument('nav2_params_file', default_value=default_nav2_params,
                               description='Nav2 params override; defaults to robot configuration'),
 
         LogInfo(msg=['============ starting NAVIGATION (generic wrapper)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
         #LogInfo(msg=['Nav2 params file: ', nav2_params_file]),
+
+        DeclareLaunchArgument('enable_docking', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('docking_catalogue', default_value=''),
+        DeclareLaunchArgument('docking_params_file', default_value=''),
+        OpaqueFunction(function=prepare_docking),
 
         container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         nav2
