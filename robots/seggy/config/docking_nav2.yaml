@@ -11,11 +11,14 @@ docking_server:
     dock_prestaging_tolerance: 0.10
     lidar_dock:
       plugin: dock_detector_nav2::LidarDock
-      dock_direction: backward
+      dock_direction: forward
+      #dock_direction: backward
       rotate_to_dock: false
       # Stage inside the measured close-range detection envelope; floor cross is at 0.8 m.
       staging_x_offset: -0.5
-      staging_yaw_offset: 3.141592653589793
+      # Face into the bay at staging; the detector already reports inward yaw.
+      staging_yaw_offset: 0.0
+      #staging_yaw_offset: 3.141592653589793   # for backward-facing docking
       docking_threshold: 0.025
       external_detection_timeout: 0.5
       selection_timeout: 3.0

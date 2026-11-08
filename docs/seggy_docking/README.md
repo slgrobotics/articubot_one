@@ -16,12 +16,12 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 ## What is this feature for?
 
-Seggy needs to find its parking bay and back into it carefully. This feature
+Seggy needs to find its parking bay and drive into it carefully. This feature
 connects its laser-based bay detector to Nav2, the software that guides the robot.
 You choose a bay by name. Nav2 drives Seggy near it, asks the detector for a more
 accurate location, and controls the final approach.
 
-For example, Seggy can park at the V-shaped bay, then drive forward out of it.
+For example, Seggy can park at the V-shaped bay, then reverse out of it.
 These are simulation parking tests. Successful parking does not mean the robot
 has started charging.
 
@@ -69,8 +69,23 @@ Catalogue headings point INTO the bay. Current world-derived references:
 
 | Name | Parking X/Y | Inward dock yaw | Robot parked yaw | Staging X/Y |
 |---|---|---|---|---|
-| trapezoid_bay | -1, 3 | 180 degrees | 0 degrees | -0.5, 3 |
-| v_bay | 0, 6 | 90 degrees | -90 degrees | 0, 5.5 |
+| trapezoid_bay | -1, 3 | 180 degrees | 180 degrees | -0.5, 3 |
+| v_bay | 0, 6 | 90 degrees | 90 degrees | 0, 5.5 |
+
+Seggy now uses forward docking: `lidar_dock.dock_direction: forward` and
+`staging_yaw_offset: 0.0` in docking_nav2.yaml. Both staging and parked robot
+headings point into the bay. The staging position, detector geometry, dock pose
+convention and velocity route are unchanged. `rotate_to_dock` remains false for
+continuous LiDAR detection. To restore reverse docking, set the direction to
+`backward` and staging yaw offset to pi (3.141592653589793) together.
+The generic dock_detector config generator still defaults to backward docking;
+Seggy's settings overlay explicitly selects forward docking.
+
+These settings take effect after relaunching the docking server with newly merged
+parameters. Building this workspace does not update a running remote robot.
+Hardware still requires an explicitly selected real-map docking catalogue;
+the simulation catalogue below must not be used on a real map. The real robot's
+stock root docking server is not automatically converted to the LiDAR plugin.
 
 The blue floor crosses remain at 0.8 m; Nav2 stages at 0.5 m for more reliable
 initial perception.
@@ -116,7 +131,8 @@ python3 -m pytest -q src/articubot_one/test/test_docking_launch.py
 python3 -m pytest -q src/dock_detector/test
 ```
 
-Actual Nav2 actions were tested on 2026-11-07 after a normal simulation restart:
+The following results used the previous **backward** configuration on 2026-11-07
+after a normal simulation restart. They do not validate the new forward approach:
 
 | Trial | Result | Settled world position error | Heading error |
 |---|---|---|---|

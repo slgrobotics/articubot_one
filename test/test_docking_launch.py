@@ -40,6 +40,9 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace):
         assert server['controller']['costmap_topic']=='local_costmap/costmap_raw'
         assert node.call_args.kwargs['namespace']==('/robot_a' if namespace else '/')
         assert server['lidar_dock']['staging_x_offset']==-.5
+        assert server['lidar_dock']['dock_direction']=='forward'
+        assert server['lidar_dock']['staging_yaw_offset']==0.0
+        assert server['lidar_dock']['rotate_to_dock'] is False
         assert server['lidar_dock']['external_detection_timeout']==.5
         assert node.call_args.kwargs['parameters'][0]['use_sim_time'] is True
         assert node.call_args.kwargs['parameters'][0]['dock_ids']==['trapezoid_bay','v_bay']
