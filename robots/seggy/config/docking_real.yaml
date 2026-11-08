@@ -1,0 +1,43 @@
+# Real-map experiment catalogue. Recalibrate priors if the map or bay moves.
+# Prior: 2026-11-07 real staging survey; inward yaw, base_link parking pose.
+dock_detector:
+  ros__parameters:
+    use_sim_time: false
+    target_shape: v
+    scan_topic: scan
+    pose_topic: detected_dock_pose
+    fixed_frame: odom
+    expected_frame: map
+    expected_dock_x: 2.361164737773733
+    expected_dock_y: 0.9391487314611604
+    search_radius: 0.95
+    distance_threshold: 0.025
+    min_points: 5
+    min_length: 0.12
+    max_length: 1.3
+    position_tolerance: 0.45
+    max_scan_age: 0.5
+    detection_timeout: 0.6
+    expected_dock_yaw_deg: -10.792938786882587
+    angle_tolerance_deg: 11.459155902616466
+    yaw_tolerance_deg: 25.783100780887047
+    v:
+      panel_width: 0.7
+      flare_angle_deg: 55.0
+      parking_offset: 0.6
+      max_apex_gap: 0.25
+      joint_refinement: true
+    dock_ids:
+    - real_v_bay
+    docks:
+      real_v_bay:
+        target_shape: v
+        expected_dock_x: 2.361164737773733
+        expected_dock_y: 0.9391487314611604
+        expected_dock_yaw_deg: -10.792938786882587
+        v:
+          panel_width: 0.7
+          flare_angle_deg: 55.0
+          parking_offset: 0.6
+          max_apex_gap: 0.25
+          joint_refinement: true

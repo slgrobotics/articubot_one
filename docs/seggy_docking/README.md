@@ -2,12 +2,13 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 -----------------------
 
-# Seggy simulation docking
+# Seggy Nav2 docking
 
 **Contents:**
 
 - [What is this feature for?](#what-is-this-feature-for)
 - [Start the simulation](#start-the-simulation)
+- [Enable docking on the real robot](#enable-docking-on-the-real-robot)
 - [Configuration and command routing](#configuration-and-command-routing)
 - [Dock and undock](#dock-and-undock)
 - [Testing and results](#testing-and-results)
@@ -49,6 +50,63 @@ ros2 launch articubot_one seggy_sim.launch.py enable_docking:=false
 Localizers start after the existing 18-second delay; navigation/detector start
 after 25 seconds. Wait for active navigation and a usable map before sending goals.
 
+## Enable docking on the real robot
+
+The hardware launch selects docking_real.yaml (real_v_bay) and
+docking_nav2_real.yaml when use_sim_time is false. Hardware docking stays disabled
+unless you add enable_docking:=true to your normal Seggy launch command.
+This starts the named detector and merges the LiDAR plugin/database into the
+normal docking_server; /dock_robot then recognizes real_v_bay. A separate trial
+server is no longer needed.
+
+Build all four packages on the computer that actually runs Seggy's Nav2 process,
+using its matching Nav2 compatibility overlay. A build on a desktop does not
+install the plugin on a remote robot. With updated source in that robot workspace:
+
+```bash
+source /opt/ros/lyrical/setup.bash
+source ~/nav2_compat_ws/install/setup.bash
+cd ~/robot_ws
+colcon build --packages-select dock_detector_interfaces dock_detector dock_detector_nav2 articubot_one
+source install/setup.bash
+ros2 pkg prefix dock_detector_nav2
+```
+
+Stop the previous normal bringup, then restart with the same saved map and
+localization arguments you already use, adding enable_docking:=true. For example,
+replace the placeholder map path below with your actual saved map:
+
+```bash
+ros2 launch articubot_one seggy.launch.py localizer_type:=amcl \
+  map:=/path/to/your/saved_map.yaml enable_docking:=true
+```
+
+After localization and lifecycle activation, verify the effective database/plugin:
+
+```bash
+ros2 param get /docking_server docks
+ros2 param get /docking_server lidar_dock.plugin
+ros2 param get /docking_server lidar_dock.dock_direction
+ros2 param get /docking_server lidar_dock.staging_yaw_offset
+ros2 lifecycle get /docking_server
+```
+
+Expected: real_v_bay, dock_detector_nav2::LidarDock, forward, 0.0, and active.
+Then one action performs both Nav2 staging and the detector-guided approach:
+
+```bash
+ros2 action send_goal /dock_robot nav2_msgs/action/DockRobot \
+  "{use_dock_id: true, dock_id: real_v_bay, navigate_to_staging_pose: true}" --feedback
+```
+
+The real catalogue's map prior is (2.36116, 0.93915) m, inward yaw -10.79294 degrees,
+from the saved real staging survey. Recalibrate it when changing maps or moving
+the bay. Real approach limits remain 0.015 m/s, 0.05 rad/s and zero retries.
+Arrival remains XY-only at 0.025 m. This integration fixes the missing database
+entry; the previous TF control failure and arrival overshoot remain unresolved
+and are recorded in the wiki. No hardware action has validated this new normal
+bringup integration yet.
+
 ## Configuration and command routing
 
 Persistent robot files are in robots/seggy/config:
@@ -56,7 +114,9 @@ Persistent robot files are in robots/seggy/config:
 - nav2_params.yaml: existing standard navigation settings.
 - docking_sim.yaml: named bay priors and detector geometry; one source for the
   detector and Nav2 database. Values currently assume map axes match world axes.
-- docking_nav2.yaml: docking server/controller tuning and plugin settings only.
+- docking_nav2.yaml: simulation docking server/controller tuning and plugin settings.
+- docking_real.yaml: real_v_bay map prior and V detector geometry.
+- docking_nav2_real.yaml: forward docking with conservative real-robot limits.
 
 At launch, the selected standard Nav2 file is merged with the catalogue and
 docking overrides. A temporary runtime parameter file is generated automatically
@@ -83,9 +143,9 @@ Seggy's settings overlay explicitly selects forward docking.
 
 These settings take effect after relaunching the docking server with newly merged
 parameters. Building this workspace does not update a running remote robot.
-Hardware still requires an explicitly selected real-map docking catalogue;
-the simulation catalogue below must not be used on a real map. The real robot's
-stock root docking server is not automatically converted to the LiDAR plugin.
+With enable_docking:=true, hardware now selects its real-map catalogue and
+replaces the root server docking settings with the LiDAR integration at launch.
+Without that flag, the previous standard Nav2 docking settings remain in effect.
 
 The blue floor crosses remain at 0.8 m; Nav2 stages at 0.5 m for more reliable
 initial perception.

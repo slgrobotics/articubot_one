@@ -225,10 +225,14 @@ def generate_launch_description():
             "'true' if '", use_sim_time, "'.lower() == 'true' else 'false'"
         ]), choices=['true', 'false'], description='Named LiDAR docking (enabled by default in simulation)'),
         DeclareLaunchArgument('docking_catalogue', default_value=PathJoinSubstitution([
-            FindPackageShare(package_name), 'robots', robot_model, 'config', 'docking_sim.yaml'
+            FindPackageShare(package_name), 'robots', robot_model, 'config',
+            PythonExpression(["'docking_sim.yaml' if '", use_sim_time,
+                              "'.lower() == 'true' else 'docking_real.yaml'"])
         ])),
         DeclareLaunchArgument('docking_params_file', default_value=PathJoinSubstitution([
-            FindPackageShare(package_name), 'robots', robot_model, 'config', 'docking_nav2.yaml'
+            FindPackageShare(package_name), 'robots', robot_model, 'config',
+            PythonExpression(["'docking_nav2.yaml' if '", use_sim_time,
+                              "'.lower() == 'true' else 'docking_nav2_real.yaml'"])
         ])),
 
         DeclareLaunchArgument('wifi_source', default_value=PythonExpression([
