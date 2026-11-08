@@ -42,10 +42,10 @@ def generate_launch_description():
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
           {'laser_scan_dir': True},
-          # Seggy has a vertical bar behind the LiDAR, so we crop angles around 180 degrees:
-          {'enable_angle_crop_func': True},
-          {'angle_crop_min': 170.0},
-          {'angle_crop_max': 190.0}
+          # Seggy has a vertical bar behind the LiDAR, so we can crop ~18 degrees around 180 degrees:
+          #{'enable_angle_crop_func': True},
+          #{'angle_crop_min': 171.0},
+          #{'angle_crop_max': 189.0}
         ]
     )
 
