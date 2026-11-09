@@ -9,6 +9,7 @@ docking_server:
     base_frame: base_link
     dock_prestaging_tolerance: 0.1
     lidar_dock:
+      trace_enabled: true
       plugin: dock_detector_nav2::LidarDock
       dock_direction: forward
       rotate_to_dock: false

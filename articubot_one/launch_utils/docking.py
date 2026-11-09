@@ -13,7 +13,7 @@ def prepare_docking(context):
     if LaunchConfiguration('enable_docking').perform(context).lower() != 'true':
         return []
     # Optional dependency: other robot bringups do not need detector packages.
-    from dock_detector.nav2_config import merge_nav2
+    from dock_detector.nav2_config_merger import merge_nav2
     base_path = LaunchConfiguration('nav2_params_file').perform(context)
     catalogue_path = LaunchConfiguration('docking_catalogue').perform(context)
     settings_path = LaunchConfiguration('docking_params_file').perform(context)
