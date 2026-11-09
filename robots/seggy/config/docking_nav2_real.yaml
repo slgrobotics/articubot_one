@@ -16,6 +16,7 @@ docking_server:
       staging_x_offset: -0.5
       staging_yaw_offset: 0.0
       docking_threshold: 0.025
+      docking_threshold_yaw: 5.0  # degrees
       external_detection_timeout: 0.5
       selection_timeout: 3.0
       filter_coef: 0.1
