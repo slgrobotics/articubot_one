@@ -27,6 +27,8 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
     with patch('articubot_one.launch_utils.docking.Node') as node:
         actions=prepare_docking(context)
     actions[0].execute(context)
+    actions[-2].execute(context)
+    assert context.launch_configurations['nav2_dock_action'] == 'dock_robot_position'
     generated=Path(context.launch_configurations['nav2_params_file'])
     try:
         config=yaml.safe_load(generated.read_text())
@@ -53,7 +55,18 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         assert server['lidar_dock']['rotate_to_dock'] is False
         assert server['lidar_dock']['external_detection_timeout']==.5
         assert node.call_args.kwargs['parameters'][0]['use_sim_time'] is (not real)
-        assert node.call_args.kwargs['parameters'][0]['dock_ids']==ids
+        detector, wrapper = [call.kwargs for call in node.call_args_list]
+        assert detector['parameters'][0]['dock_ids'] == ids
+        assert wrapper['executable'] == 'docking_alignment'
+        assert wrapper['parameters'][0]['docking_threshold_yaw'] == 5.0
+        assert wrapper['parameters'][0]['docking_threshold'] == server['lidar_dock']['docking_threshold']
+        assert wrapper['parameters'][0]['trace_enabled'] is True
+        assert wrapper['parameters'][0]['alignment_position_margin'] == .02
+        assert wrapper['parameters'][0]['dock_ids'] == ids
+        assert wrapper['parameters'][0]['max_insertion_travel'] == 0.0
+        assert server['lidar_dock']['docking_threshold'] == .025
+        assert server['lidar_dock']['trace_final_yaw_deg'] == 5.0
+        assert server['lidar_dock']['docking_threshold_yaw'] == 180.0
     finally:generated.unlink()
 
 

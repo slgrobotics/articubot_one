@@ -37,6 +37,7 @@ def generate_launch_description():
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')        # no default, must be supplied
     odom_topic = LaunchConfiguration('odom_topic')
+    nav2_dock_action = LaunchConfiguration('nav2_dock_action', default='dock_robot')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
@@ -240,7 +241,8 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_raw')],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_raw'),
+                                         ('dock_robot', nav2_dock_action)],
             ),
             Node(
                 package='nav2_lifecycle_manager',
@@ -333,7 +335,8 @@ def generate_launch_description():
                         name='docking_server',
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
-                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw')],
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw'),
+                                         ('dock_robot', nav2_dock_action)],
                     ),
                     ComposableNode(
                         package='nav2_lifecycle_manager',
