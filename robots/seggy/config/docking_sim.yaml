@@ -1,14 +1,14 @@
+#
 # Named catalogue; verify map/world alignment before motion.
+# Used with simulation in assets/worlds/test_robot_world.sdf
+#
 dock_detector:
   ros__parameters:
     use_sim_time: true
-    target_shape: trapezoid
     scan_topic: scan
     pose_topic: detected_dock_pose
     fixed_frame: odom
     expected_frame: map
-    expected_dock_x: -1.0
-    expected_dock_y: 3.0
     search_radius: 0.95
     distance_threshold: 0.025
     min_points: 5
@@ -17,23 +17,15 @@ dock_detector:
     position_tolerance: 0.45
     max_scan_age: 0.5
     detection_timeout: 0.6
-    expected_dock_yaw_deg: 180.0
-    angle_tolerance_deg: 11.459155902616466
-    yaw_tolerance_deg: 25.783100780887047
-    trapezoid:
-      panel_width: 0.5
-      flare_angle_deg: 32.5
-      parking_offset: 0.425
-      max_line_gap: 0.3
-      dimension_tolerance: 0.05
-      max_corner_gap: 0.1
-      joint_refinement: true
-    v:
-      panel_width: 0.7
-      flare_angle_deg: 55.0
-      parking_offset: 0.6
-      max_apex_gap: 0.25
-      joint_refinement: true
+
+    # Does the detected shape match the bay geometry? For a V bay, the measured opening must be
+    #   within 11° of twice v.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
+    #   so the detector accepts 99°–121°.
+    angle_tolerance_deg: 11.0
+    # Does the detected bay face the expected direction? The detected bay heading must be
+    #   within 25° of that bay’s expected_dock_yaw_deg, with both headings compared in the same frame.
+    yaw_tolerance_deg: 25.0
+
     dock_ids:
     - trapezoid_bay
     - v_bay

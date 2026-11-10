@@ -231,7 +231,7 @@ def generate_launch_description():
         ])),
         DeclareLaunchArgument('docking_params_file', default_value=PathJoinSubstitution([
             FindPackageShare(package_name), 'robots', robot_model, 'config',
-            PythonExpression(["'docking_nav2.yaml' if '", use_sim_time,
+            PythonExpression(["'docking_nav2_sim.yaml' if '", use_sim_time,
                               "'.lower() == 'true' else 'docking_nav2_real.yaml'"])
         ])),
 

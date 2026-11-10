@@ -114,7 +114,7 @@ Persistent robot files are in robots/seggy/config:
 - nav2_params.yaml: existing standard navigation settings.
 - docking_sim.yaml: named bay priors and detector geometry; one source for the
   detector and Nav2 database. Values currently assume map axes match world axes.
-- docking_nav2.yaml: simulation docking server/controller tuning and plugin settings.
+- docking_nav2_sim.yaml: simulation docking server/controller tuning and plugin settings.
 - docking_real.yaml: real_v_bay map prior and V detector geometry.
 - docking_nav2_real.yaml: forward docking with conservative real-robot limits.
 
@@ -133,7 +133,7 @@ Catalogue headings point INTO the bay. Current world-derived references:
 | v_bay | 0, 6 | 90 degrees | 90 degrees | 0, 5.5 |
 
 Seggy now uses forward docking: `lidar_dock.dock_direction: forward` and
-`staging_yaw_offset: 0.0` in docking_nav2.yaml. Both staging and parked robot
+`staging_yaw_offset: 0.0` in docking_nav2_sim.yaml. Both staging and parked robot
 headings point into the bay. The staging position, detector geometry, dock pose
 convention and velocity route are unchanged. `rotate_to_dock` remains false for
 continuous LiDAR detection. To restore reverse docking, set the direction to

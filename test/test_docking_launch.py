@@ -21,7 +21,7 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
     context.launch_configurations.update(enable_docking='true',use_sim_time='false' if real else 'true',
         nav2_params_file=str(ROOT/'robots/seggy/config/nav2_params.yaml'),
         docking_catalogue=str(ROOT/'robots/seggy/config'/('docking_real.yaml' if real else 'docking_sim.yaml')),
-        docking_params_file=str(ROOT/'robots/seggy/config'/('docking_nav2_real.yaml' if real else 'docking_nav2.yaml')))
+        docking_params_file=str(ROOT/'robots/seggy/config'/('docking_nav2_real.yaml' if real else 'docking_nav2_sim.yaml')))
     if namespace is not None:context.launch_configurations['namespace']=namespace
     original=yaml.safe_load(Path(context.launch_configurations['nav2_params_file']).read_text())
     with patch('articubot_one.launch_utils.docking.Node') as node:
@@ -86,4 +86,4 @@ def test_seggy_launch_selects_environment_catalogue_and_limits(sim_time):
     assert Path(perform_substitutions(context,declarations['docking_catalogue'].default_value)).name==(
         'docking_sim.yaml' if sim else 'docking_real.yaml')
     assert Path(perform_substitutions(context,declarations['docking_params_file'].default_value)).name==(
-        'docking_nav2.yaml' if sim else 'docking_nav2_real.yaml')
+        'docking_nav2_sim.yaml' if sim else 'docking_nav2_real.yaml')

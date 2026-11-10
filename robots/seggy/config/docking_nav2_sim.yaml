@@ -1,5 +1,16 @@
+#
+# Simulated Seggy robot docking configuration for Nav2 (in assets/worlds/test_robot_world.sdf).
+#
 # Applied to the standard Nav2 configuration at launch when enable_docking=true.
+# Merged over standard Nav2 params, not a full replacement.
 # Named database entries are derived from docking_sim.yaml, never duplicated here.
+# see https://github.com/slgrobotics/dock_detector/blob/main/dock_detector/nav2_config_merger.py
+
+# see https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/configuring_docking_server/
+#     https://github.com/open-navigation/opennav_docking
+#     https://docs.ros.org/en/lyrical/p/opennav_docking/index.html
+#     https://index.ros.org/r/opennav_docking/
+#     
 docking_server:
   ros__parameters:
     controller_frequency: 20.0
