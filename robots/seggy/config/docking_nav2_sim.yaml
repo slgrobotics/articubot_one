@@ -13,15 +13,18 @@
 #     
 docking_server:
   ros__parameters:
+    enable_stamped_cmd_vel: true
     controller_frequency: 20.0
     initial_perception_timeout: 8.0
     dock_approach_timeout: 90.0
     max_retries: 2
     fixed_frame: odom
     base_frame: base_link
-    dock_prestaging_tolerance: 0.10
+    dock_prestaging_tolerance: 0.10  # the XY distance within which Nav2 skips the trip to the configured staging pose.
+    # Launch generates dock_plugins, docks and their database entries.
     lidar_dock:
       trace_enabled: true
+      # Launch derives trace_final_yaw_deg from docking_threshold_yaw for alignment.
       plugin: dock_detector_nav2::LidarDock
       dock_direction: forward
       #dock_direction: backward
@@ -33,9 +36,32 @@ docking_server:
       #staging_yaw_offset: 3.141592653589793   # for backward-facing docking
       docking_threshold: 0.025
       docking_threshold_yaw: 5.0  # degrees
+      use_external_detection_pose: true
       external_detection_timeout: 0.5
+      # The detector already publishes the parking pose. Use identity transforms.
+      external_detection_translation_x: 0.0
+      external_detection_translation_y: 0.0
+      external_detection_rotation_roll: 0.0
+      external_detection_rotation_pitch: 0.0
+      external_detection_rotation_yaw: 0.0
+      selection_service: dock_detector/select_dock
+      detection_topic: dock_detector/detection
+      # The plugin uses the named selection service instead of the inherited toggle.
+      detector_service_name: ""
+      detector_service_timeout: 5.0
+      subscribe_toggle: false
+      use_stall_detection: false
+      # stall_joint_names uses Nav2's typed empty string-array default.
+      stall_velocity_threshold: 1.0
+      stall_effort_threshold: 1.0
+      staging_lateral_tolerance: 0.0  # disabled
+      staging_yaw_tolerance: 0.0  # degrees, disabled
+      staging_min_distance: 0.0  # disabled
+      approach_guard_distance: 0.0  # disabled
       selection_timeout: 3.0
       filter_coef: 0.1
+    # Other Nav2 controller settings come from the standard Nav2 configuration
+    # and the installed Nav2 defaults.
     controller:
       v_linear_min: 0.01
       v_linear_max: 0.035
@@ -43,10 +69,24 @@ docking_server:
       use_collision_detection: true
       costmap_topic: local_costmap/costmap_raw
       footprint_topic: local_costmap/published_footprint
+      costmap_topic: local_costmap/costmap_raw
+      footprint_topic: local_costmap/published_footprint
 
 # Keep the public docking action active while finishing yaw at the parking point.
 docking_alignment:
   ros__parameters:
+    # Launch supplies the clock, dock IDs and per-bay insertion overrides from
+    # the catalogue. Frames, odometry, topics, selection/freshness settings,
+    # arrival thresholds, direction and tracing follow the docking server/plugin.
+    insertion_speed: 0.01  # m/s
+    insertion_timeout: 15.0  # seconds
+    battery_topic: battery/battery_state
+    nav2_timeout: 1500.0  # seconds for the inner position docking action
+    restaging_goal_checker: ""  # disables automatic re-staging
+    max_restaging_retries: 2
+    restaging_xy_goal_tolerance: 0.025  # meters
+    restaging_yaw_goal_tolerance: 2.8647889756541165  # degrees
+    insertion_stop_margin: 0.001  # meters, plus velocity-based allowance
     max_insertion_travel: 0.05  # meters, 0 disables charging insertion
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters
     angular_speed: 0.08  # rad/s

@@ -25,11 +25,31 @@ dock_detector:
     #   within 25° of that bay’s expected_dock_yaw_deg, with both headings compared in the same frame.
     yaw_tolerance_deg: 25.0
 
+    # Shared defaults. Each named bay overrides its shape and map pose below.
+    target_shape: trapezoid
+    expected_dock_x: -1.0
+    expected_dock_y: 3.0
+    expected_dock_yaw_deg: 180.0
+    trapezoid:
+      panel_width: 0.5
+      flare_angle_deg: 32.5
+      parking_offset: 0.425
+      max_line_gap: 0.30
+      dimension_tolerance: 0.10
+      max_corner_gap: 0.18
+      joint_refinement: true
+    v:
+      panel_width: 0.70
+      flare_angle_deg: 55.0
+      parking_offset: 0.60
+      max_apex_gap: 0.25
+      joint_refinement: true
+
     dock_ids:
     - real_v_bay
     docks:
       real_v_bay:
-        max_insertion_travel: 0.13  # meters
+        max_insertion_travel: 0.15  # meters
         target_shape: v
         expected_dock_x: 2.361164737773733
         expected_dock_y: 0.9391487314611604

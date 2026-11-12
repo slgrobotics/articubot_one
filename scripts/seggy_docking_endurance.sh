@@ -227,7 +227,7 @@ def action(phase, goal, timeout):
             record("feedback", phase=phase, data=message_to_ordereddict(message.feedback))
             last_state, last_feedback = state, now
 
-    print(f"Cycle {cycle}/{args.iterations}, attempt {attempt}: {phase}", flush=True)
+    print(f"--- Cycle {cycle}/{args.iterations}, attempt {attempt}: {phase}", flush=True)
     record("goal", phase=phase, data=message_to_ordereddict(goal))
     pending = client.send_goal_async(goal, feedback_callback=feedback)
     cancel_requested = False
