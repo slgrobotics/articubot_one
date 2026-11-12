@@ -30,6 +30,10 @@ docking_server:
       docking_threshold: 0.025
       docking_threshold_yaw: 5.0  # degrees
       external_detection_timeout: 0.5
+      staging_lateral_tolerance: 0.05  # meters
+      staging_yaw_tolerance: 5.0  # degrees
+      staging_min_distance: 0.20  # meters outside the parking plane
+      approach_guard_distance: 0.08  # meters before the parking plane
       selection_timeout: 3.0
       filter_coef: 0.1
     controller:
@@ -44,6 +48,8 @@ docking_server:
 # Keep the public docking action active while finishing yaw at the parking point.
 docking_alignment:
   ros__parameters:
+    restaging_goal_checker: general_goal_checker
+    max_restaging_retries: 2
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters 
     angular_speed: 0.05  # rad/s
     alignment_timeout: 12.0  # seconds after reacquiring the dock

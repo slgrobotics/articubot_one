@@ -339,12 +339,12 @@ try:
                     completed += 1
                     first_attempt += attempt == 1
                     break
-                # These dock error codes are emitted before charging insertion.
+                # Retry staging or initial acquisition failures before the approach.
                 retryable = result["phase"] == "navigate" or (
                     not result["timed_out"] and result["status"] == GoalStatus.STATUS_ABORTED
-                    and result["error_code"] in (
-                        DockRobot.Result.FAILED_TO_STAGE, DockRobot.Result.FAILED_TO_DETECT_DOCK
-                    )
+                    and (result["error_code"] == DockRobot.Result.FAILED_TO_STAGE
+                         or (result["error_code"] == DockRobot.Result.FAILED_TO_DETECT_DOCK
+                             and result["detail"].startswith("Failed initial dock detection:")))
                 )
                 if not retryable:
                     raise RunStopped("Docking stopped in an uncertain phase. Inspect Seggy at the bay.")
