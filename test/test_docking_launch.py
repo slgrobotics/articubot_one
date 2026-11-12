@@ -63,7 +63,12 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         assert wrapper['parameters'][0]['trace_enabled'] is True
         assert wrapper['parameters'][0]['alignment_position_margin'] == .02
         assert wrapper['parameters'][0]['dock_ids'] == ids
-        assert wrapper['parameters'][0]['max_insertion_travel'] == 0.0
+        alignment = wrapper['parameters'][0]
+        if real:
+            assert alignment.get('max_insertion_travel', 0.0) == 0.0
+            assert alignment['docks']['real_v_bay']['max_insertion_travel'] == 0.15
+        else:
+            assert alignment['max_insertion_travel'] == 0.05
         assert server['lidar_dock']['docking_threshold'] == .025
         assert server['lidar_dock']['trace_final_yaw_deg'] == 5.0
         assert server['lidar_dock']['docking_threshold_yaw'] == 180.0

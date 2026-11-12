@@ -44,7 +44,6 @@ docking_server:
 # Keep the public docking action active while finishing yaw at the parking point.
 docking_alignment:
   ros__parameters:
-    max_insertion_travel: 0.05  # meters, 0 disables charging insertion
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters 
     angular_speed: 0.05  # rad/s
     alignment_timeout: 12.0  # seconds after reacquiring the dock

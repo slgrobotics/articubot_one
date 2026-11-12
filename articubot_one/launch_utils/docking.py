@@ -33,6 +33,12 @@ def prepare_docking(context):
         unknown_docks = alignment.get('docks', {}).keys() - set(server['docks'])
         if unknown_docks:
             raise ValueError(f'Unknown docking alignment overrides: {sorted(unknown_docks)}')
+        catalogue_docks = catalogue['dock_detector']['ros__parameters']['docks']
+        for dock_id in server['docks']:
+            entry = catalogue_docks[dock_id]
+            if 'max_insertion_travel' in entry:
+                overrides = alignment.setdefault('docks', {}).setdefault(dock_id, {})
+                overrides['max_insertion_travel'] = entry['max_insertion_travel']
         for name in ('dock_direction', 'docking_threshold', 'docking_threshold_yaw',
                      'external_detection_timeout', 'selection_timeout',
                      'selection_service', 'detection_topic'):

@@ -29,6 +29,7 @@ dock_detector:
     - real_v_bay
     docks:
       real_v_bay:
+        max_insertion_travel: 0.15  # meters
         target_shape: v
         expected_dock_x: 2.361164737773733
         expected_dock_y: 0.9391487314611604
