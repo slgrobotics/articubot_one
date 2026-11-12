@@ -25,11 +25,12 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-# Install Python executables
+# Install robot utilities
 install(PROGRAMS
   scripts/run_battery_state_compat.py
   scripts/gps_waypoint_follower.py
   scripts/xy_waypoint_follower.py
+  scripts/seggy_docking_endurance.sh
   DESTINATION lib/${PROJECT_NAME}
 )
 
