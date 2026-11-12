@@ -62,12 +62,12 @@ if args.dry_run:
     raise SystemExit(0)
 
 import rclpy
-from action_msgs.msg import GoalStatus
+from action_msgs.msg import GoalStatus, GoalStatusArray
 from nav2_msgs.action import DockRobot, NavigateToPose, UndockRobot
 from nav_msgs.msg import Odometry
 from rcl_interfaces.msg import Log
 from rclpy.action import ActionClient
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_action_status_default, qos_profile_sensor_data
 from rclpy.signals import SignalHandlerOptions
 from rosidl_runtime_py.convert import message_to_ordereddict
 from sensor_msgs.msg import BatteryState
@@ -104,11 +104,19 @@ csv_rows = csv.DictWriter(summary, fieldnames=[
     "cycle", "attempt", "t", "x", "y", "yaw_rad", "outcome", "phase",
     "status", "error_code", "elapsed_s", "nav_s", "dock_s", "undock_s",
     "charging_dwell_s", "noncharging_dwell_s", "unknown_dwell_s", "charge_confirmation_waived",
-    "detail",
+    "recovery_undock_s", "detail",
 ])
 csv_rows.writeheader()
+cycle_summary = (directory / "cycles.csv").open("w", newline="", buffering=1)
+cycle_rows = csv.DictWriter(cycle_summary, fieldnames=[
+    "cycle", "t", "x", "y", "yaw_rad", "outcome", "attempts", "phase",
+    "status", "error_code", "detail", "recovered",
+])
+cycle_rows.writeheader()
 cycle = attempt = 0
 odometry = battery = None
+active_actions = {}
+latest_odom_pose = None
 
 
 def record(event, **data):
@@ -118,8 +126,22 @@ def record(event, **data):
 
 
 def on_odometry(msg):
-    global odometry
+    global odometry, latest_odom_pose
     odometry = (time.monotonic(), msg.twist.twist)
+    latest_odom_pose = msg
+
+
+def on_status(msg, name):
+    active_actions[name] = any(entry.status in (
+        GoalStatus.STATUS_ACCEPTED, GoalStatus.STATUS_EXECUTING, GoalStatus.STATUS_CANCELING
+    ) for entry in msg.status_list)
+
+
+def record_pose(event, **data):
+    if latest_odom_pose is not None:
+        data["odometry"] = message_to_ordereddict(latest_odom_pose)
+        data["odometry_age_s"] = round(time.monotonic() - odometry[0], 3)
+    record(event, **data)
 
 
 def on_battery(msg):
@@ -133,7 +155,10 @@ def on_battery(msg):
 
 
 def on_log(msg):
-    if ("LiDAR dock " in msg.msg or msg.msg.startswith("ALIGN:")) and "id=real_v_bay" in msg.msg:
+    dock_line = ("LiDAR dock " in msg.msg or msg.msg.startswith(("ALIGN:", "DOCK:")))
+    dock_error = (msg.name.rsplit(".", 1)[-1] == "docking_server"
+                  and msg.msg.lstrip().startswith("xy_cm="))
+    if (dock_line and "id=real_v_bay" in msg.msg) or dock_error:
         record("dock_trace", logger=msg.name, stamp=message_to_ordereddict(msg.stamp),
                message=msg.msg)
         if " arrival " in msg.msg or msg.msg.startswith("ALIGN: result"):
@@ -145,6 +170,14 @@ subscriptions = [
     node.create_subscription(BatteryState, "/battery/battery_state", on_battery, qos_profile_sensor_data),
     node.create_subscription(Log, "/rosout", on_log, 100),
 ]
+
+
+for name in ("/navigate_to_pose", "/navigate_through_poses", "/follow_waypoints",
+             "/follow_path", "/dock_robot", "/dock_robot_position", "/undock_robot",
+             "/spin", "/backup", "/drive_on_heading", "/assisted_teleop"):
+    subscriptions.append(node.create_subscription(
+        GoalStatusArray, name + "/_action/status",
+        lambda msg, name=name: on_status(msg, name), qos_profile_action_status_default))
 
 
 def spin():
@@ -163,7 +196,8 @@ def wait_stationary():
         check_stop()
         spin()
         now = time.monotonic()
-        if odometry is not None and now - odometry[0] < .5:
+        if (odometry is not None and now - odometry[0] < .5
+                and not any(active_actions.values())):
             twist = odometry[1]
             if math.hypot(twist.linear.x, twist.linear.y) <= .005 and abs(twist.angular.z) <= .01:
                 still_since = still_since or now
@@ -171,12 +205,13 @@ def wait_stationary():
                     return
                 continue
         still_since = None
-    raise RunStopped("Fresh odometry did not confirm a stationary robot")
+    busy = [name for name, active in active_actions.items() if active]
+    raise RunStopped(f"Could not confirm idle actions and stationary odometry; active={busy}")
 
 
 def action(phase, goal, timeout):
     check_stop()
-    client = clients[phase]
+    client = clients["undock" if phase == "recovery_undock" else phase]
     started = time.monotonic()
     deadline = started + timeout
     handle = result_future = None
@@ -207,7 +242,14 @@ def action(phase, goal, timeout):
                 record("goal_rejected", phase=phase, rejection=rejections)
                 check_stop()
                 if cancel_deadline is not None or rejections > args.retries:
-                    raise RunStopped(f"{phase}: action goal rejected and retry budget exhausted")
+                    outcome = dict(
+                        phase=phase, status=GoalStatus.STATUS_UNKNOWN, error_code=1,
+                        detail="Action goal rejected and retry budget exhausted",
+                        elapsed_s=round(now - started, 3), success=False, rejected=True,
+                        timed_out=cancel_deadline is not None,
+                    )
+                    record_pose("result", **outcome)
+                    return outcome
                 print(f"{phase}: action goal rejected. Retrying in 10 seconds "
                       f"({rejections}/{args.retries}).", flush=True)
                 retry_at = time.monotonic() + 10
@@ -227,14 +269,18 @@ def action(phase, goal, timeout):
         if result_future is not None and result_future.done():
             response = result_future.result()
             result = response.result
+            if response.status not in (GoalStatus.STATUS_SUCCEEDED, GoalStatus.STATUS_ABORTED,
+                                       GoalStatus.STATUS_CANCELED):
+                raise RunStopped(f"{phase}: nonterminal result status {response.status}")
             outcome = dict(
                 phase=phase, status=response.status, error_code=result.error_code,
                 detail=result.error_msg, elapsed_s=round(now - started, 3),
                 success=(response.status == GoalStatus.STATUS_SUCCEEDED
                          and result.error_code == 0 and getattr(result, "success", True)),
                 timed_out=cancel_deadline is not None and stop_signal is None,
+                rejected=False,
             )
-            record("result", **outcome, result=message_to_ordereddict(result))
+            record_pose("result", **outcome, result=message_to_ordereddict(result))
             print(f"{phase}: status={outcome['status']} error={outcome['error_code']} "
                   f"elapsed={outcome['elapsed_s']:.1f}s {outcome['detail']}", flush=True)
             return outcome
@@ -268,7 +314,35 @@ def dwell():
     return {f"{status}_dwell_s": round(seconds, 3) for status, seconds in counts.items()}
 
 
-completed = first_attempt = 0
+def pre_approach_failure(result):
+    return (result["phase"] == "navigate" or result["rejected"] or (
+        not result["timed_out"] and result["status"] == GoalStatus.STATUS_ABORTED
+        and (result["error_code"] == DockRobot.Result.FAILED_TO_STAGE
+             or (result["error_code"] == DockRobot.Result.FAILED_TO_DETECT_DOCK
+                 and result["detail"].startswith("Failed initial dock detection:")))
+    ))
+
+
+def recover(result, row):
+    if (result["detail"].startswith("Nav2 state unconfirmed:")
+            or (result["phase"] == "dock" and result["error_code"] == DockRobot.Result.TIMEOUT
+                and result["detail"] == "ROS request timed out")):
+        raise RunStopped("Docking wrapper could not confirm Nav2 state")
+    wait_stationary()
+    if result["phase"] == "undock" or not pre_approach_failure(result):
+        record_pose("recovery_start", failed_action=result)
+        retreat = action("recovery_undock", UndockRobot.Goal(
+            dock_type="lidar_dock", max_undocking_time=60.
+        ), 75)
+        row["recovery_undock_s"] = retreat["elapsed_s"]
+        check_stop()
+        if not retreat["success"] or retreat["timed_out"]:
+            raise RunStopped("Recovery undock failed; clearance from the bay is unconfirmed")
+        wait_stationary()
+        record_pose("recovery_complete")
+
+
+completed = first_attempt = failed = 0
 exit_code = 0
 try:
     record("run_start", seed=seed, iterations=args.iterations, retries=args.retries,
@@ -281,6 +355,9 @@ try:
                 raise RunStopped(f"{phase}: action server unavailable")
     for cycle in range(1, args.iterations + 1):
         pose = sample_goal()
+        attempt = 0
+        record("cycle_start", pose=dict(frame_id="map", **pose))
+        recovered = False
         for attempt in range(1, args.retries + 2):
             row = dict(cycle=cycle, attempt=attempt, **{
                 key: pose[key] for key in ("t", "x", "y", "yaw_rad")
@@ -294,79 +371,86 @@ try:
                 nav.pose.pose.orientation.z, nav.pose.pose.orientation.w = pose["qz"], pose["qw"]
                 result = action("navigate", nav, 120)
                 row["nav_s"] = result["elapsed_s"]
-                if result["success"] and not result["timed_out"] and stop_signal is None:
+                check_stop()
+                if result["success"] and not result["timed_out"]:
                     goal = DockRobot.Goal(
                         use_dock_id=True, dock_id="real_v_bay",
                         navigate_to_staging_pose=True, max_staging_time=90.,
                     )
                     result = action("dock", goal, 240)
                     row["dock_s"] = result["elapsed_s"]
-                row.update({key: result[key] for key in (
-                    "phase", "status", "error_code", "elapsed_s", "detail"
-                )})
                 check_stop()
-                charge_confirmation_waived = (
+                waived = (
                     args.allow_unconfirmed_charge
-                    and result["phase"] == "dock"
-                    and not result["timed_out"]
+                    and result["phase"] == "dock" and not result["timed_out"]
                     and result["status"] == GoalStatus.STATUS_ABORTED
                     and result["error_code"] == DockRobot.Result.FAILED_TO_CHARGE
                     and result["detail"] == "Charging not confirmed after stopping insertion"
                 )
-                row["charge_confirmation_waived"] = charge_confirmation_waived
-                if charge_confirmation_waived:
+                row["charge_confirmation_waived"] = waived
+                if (result["success"] and not result["timed_out"]) or waived:
                     wait_stationary()
-                    record("charge_confirmation_waived", **result)
-                    print("Insertion stopped. Charging confirmation waived for this cycle.",
-                          flush=True)
-                if (result["success"] and not result["timed_out"]) or charge_confirmation_waived:
+                    if waived:
+                        record("charge_confirmation_waived", **result)
+                        print("Insertion stopped. Charging confirmation waived for this cycle.",
+                              flush=True)
                     print("Monitoring charging for 60 seconds.", flush=True)
                     row["phase"] = "dwell"
                     row.update(dwell())
-                    row["phase"] = "undock"
                     result = action("undock", UndockRobot.Goal(
                         dock_type="lidar_dock", max_undocking_time=60.
                     ), 75)
                     row["undock_s"] = result["elapsed_s"]
-                    row.update({key: result[key] for key in (
-                        "status", "error_code", "elapsed_s", "detail"
-                    )})
-                    check_stop()
-                    if not result["success"] or result["timed_out"]:
-                        raise RunStopped("Undocking failed. Inspect Seggy before starting another cycle.")
+                row.update({key: result[key] for key in (
+                    "phase", "status", "error_code", "elapsed_s", "detail"
+                )})
+                check_stop()
+                if result["success"] and not result["timed_out"]:
                     wait_stationary()
                     row["outcome"] = "completed"
                     completed += 1
                     first_attempt += attempt == 1
                     break
-                # Retry staging or initial acquisition failures before the approach.
-                retryable = result["phase"] == "navigate" or (
-                    not result["timed_out"] and result["status"] == GoalStatus.STATUS_ABORTED
-                    and (result["error_code"] == DockRobot.Result.FAILED_TO_STAGE
-                         or (result["error_code"] == DockRobot.Result.FAILED_TO_DETECT_DOCK
-                             and result["detail"].startswith("Failed initial dock detection:")))
-                )
-                if not retryable:
-                    raise RunStopped("Docking stopped in an uncertain phase. Inspect Seggy at the bay.")
-                if attempt > args.retries:
-                    raise RunStopped("Retry budget exhausted")
-                row["outcome"] = "retry"
+                if (result["phase"] != "undock" and pre_approach_failure(result)
+                        and attempt <= args.retries):
+                    row["outcome"] = "retry"
+                    continue
+                record_pose("cycle_failure", failed_action=result)
+                recover(result, row)
+                recovered = "recovery_undock_s" in row
+                row["outcome"] = "failed"
+                failed += 1
+                print(f"Cycle {cycle} failed during {result['phase']}. "
+                      "Continuing with the next sampled pre-staging goal.", flush=True)
+                break
             except RunStopped as error:
                 row["outcome"] = "stopped"
                 row["detail"] = f"{row.get('detail', '')} {error}".strip()
                 raise
             finally:
                 csv_rows.writerow(row)
+                if row.get("outcome") != "retry":
+                    report = {key: row[key] for key in (
+                        "cycle", "t", "x", "y", "yaw_rad", "outcome", "phase",
+                        "status", "error_code", "detail"
+                    ) if key in row}
+                    report.update(attempts=attempt, recovered=recovered)
+                    cycle_rows.writerow(report)
+                    record_pose("cycle_end", summary=report)
+    exit_code = int(failed > 0)
 except (RunStopped, KeyboardInterrupt) as error:
     print(f"Stopped: {error}", flush=True)
     record("run_stopped", reason=str(error))
     exit_code = 128 + stop_signal if stop_signal is not None else 1
 finally:
-    record("run_end", completed=completed, first_attempt=first_attempt, scheduled=args.iterations)
-    print(f"Completed {completed}/{args.iterations} cycles, {first_attempt} on first attempt.",
+    record("run_end", completed=completed, failed=failed,
+           first_attempt=first_attempt, scheduled=args.iterations)
+    print(f"Completed {completed}/{args.iterations} cycles, {failed} failed, "
+          f"{first_attempt} completed on first attempt.",
           flush=True)
     events.close()
     summary.close()
+    cycle_summary.close()
     node.destroy_node()
     rclpy.try_shutdown()
 raise SystemExit(exit_code)
