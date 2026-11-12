@@ -66,7 +66,9 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         alignment = wrapper['parameters'][0]
         if real:
             assert alignment.get('max_insertion_travel', 0.0) == 0.0
-            assert alignment['docks']['real_v_bay']['max_insertion_travel'] == 0.15
+            catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())
+            expected = catalogue['dock_detector']['ros__parameters']['docks']['real_v_bay']
+            assert alignment['docks']['real_v_bay']['max_insertion_travel'] == expected['max_insertion_travel']
         else:
             assert alignment['max_insertion_travel'] == 0.05
         assert server['lidar_dock']['docking_threshold'] == .025

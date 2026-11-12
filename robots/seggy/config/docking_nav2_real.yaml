@@ -49,6 +49,8 @@ docking_server:
 docking_alignment:
   ros__parameters:
     restaging_goal_checker: general_goal_checker
+    restaging_xy_goal_tolerance: 0.07  # meters
+    restaging_yaw_goal_tolerance: 5.0  # degrees
     max_restaging_retries: 2
     insertion_stop_margin: 0.03  # meters reserved for coasting, plus velocity-based allowance
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters 
