@@ -156,9 +156,9 @@ def on_battery(msg):
 
 def on_log(msg):
     dock_line = ("LiDAR dock " in msg.msg or msg.msg.startswith(("ALIGN:", "DOCK:")))
-    dock_error = (msg.name.rsplit(".", 1)[-1] == "docking_server"
-                  and msg.msg.lstrip().startswith("xy_cm="))
-    if (dock_line and "id=real_v_bay" in msg.msg) or dock_error:
+    dock_logger = msg.name.rsplit(".", 1)[-1] == "docking_server"
+    dock_detail = dock_logger and (msg.level >= Log.WARN or msg.msg.lstrip().startswith("xy_cm="))
+    if (dock_line and "id=real_v_bay" in msg.msg) or dock_detail:
         record("dock_trace", logger=msg.name, stamp=message_to_ordereddict(msg.stamp),
                message=msg.msg)
         if " arrival " in msg.msg or msg.msg.startswith("ALIGN: result"):
@@ -416,10 +416,10 @@ try:
                     row["outcome"] = "retry"
                     continue
                 record_pose("cycle_failure", failed_action=result)
+                failed += 1
                 recover(result, row)
                 recovered = "recovery_undock_s" in row
                 row["outcome"] = "failed"
-                failed += 1
                 print(f"Cycle {cycle} failed during {result['phase']}. "
                       "Continuing with the next sampled pre-staging goal.", flush=True)
                 break

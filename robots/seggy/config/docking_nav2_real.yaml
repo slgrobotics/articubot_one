@@ -50,6 +50,7 @@ docking_alignment:
   ros__parameters:
     restaging_goal_checker: general_goal_checker
     max_restaging_retries: 2
+    insertion_stop_margin: 0.03  # meters reserved for coasting, plus velocity-based allowance
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters 
     angular_speed: 0.05  # rad/s
     alignment_timeout: 12.0  # seconds after reacquiring the dock
