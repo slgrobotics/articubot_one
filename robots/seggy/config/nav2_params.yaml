@@ -126,7 +126,7 @@ controller_server:
       vx_std: 0.2
       vy_std: 0.0  # Default: 0.2 Should be 0.0 when lateral movement is not possible?
       wz_std: 0.4  # Default: 0.2
-      vx_max: 0.3  # max forward speed
+      vx_max: 0.20  # max forward speed (m/s)
       vx_min: -0.2 # max reverse speed
       vy_max: 0.0  # Default: 0.5 Should be 0.0 when lateral movement is not possible?
       wz_max: 0.1  # max turning speed (less aggressive)
@@ -180,11 +180,11 @@ controller_server:
       PathAlignCritic: # staying on path
         enabled: true
         cost_power: 1
-        cost_weight: 14.0 # Default 10.0
+        cost_weight: 18.0 # Default 10.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
-        threshold_to_consider: 0.5 # meters. Stop worrying about strict path following when the robot is very close to the goal.
-        offset_from_furthest: 20
+        threshold_to_consider: 0.10 # metres of local path required for alignment scoring
+        offset_from_furthest: 10
         use_path_orientations: false
       PathAngleCritic: # path direction
         enabled: true
