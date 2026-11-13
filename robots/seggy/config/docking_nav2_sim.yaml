@@ -80,6 +80,7 @@ docking_alignment:
     # arrival thresholds, direction and tracing follow the docking server/plugin.
     insertion_speed: 0.01  # m/s
     insertion_timeout: 15.0  # seconds
+    insertion_max_travel: 0.05  # meters, 0 disables charging insertion
     battery_topic: battery/battery_state
     nav2_timeout: 1500.0  # seconds for the inner position docking action
     restaging_goal_checker: ""  # disables automatic re-staging
@@ -87,7 +88,6 @@ docking_alignment:
     restaging_xy_goal_tolerance: 0.025  # meters
     restaging_yaw_goal_tolerance: 2.8647889756541165  # degrees
     insertion_stop_margin: 0.001  # meters, plus velocity-based allowance
-    max_insertion_travel: 0.05  # meters, 0 disables charging insertion
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters
     angular_speed: 0.08  # rad/s
     alignment_timeout: 12.0  # seconds after reacquiring the dock

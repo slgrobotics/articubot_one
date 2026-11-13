@@ -75,9 +75,9 @@ docking_alignment:
     # arrival thresholds, direction and tracing follow the docking server/plugin.
     insertion_speed: 0.01  # m/s
     insertion_timeout: 15.0  # seconds
+    insertion_max_travel: 0.0  # meters, real_v_bay overrides this in docking_real.yaml
     battery_topic: battery/battery_state
     nav2_timeout: 1500.0  # seconds for the inner position docking action
-    max_insertion_travel: 0.0  # meters, real_v_bay overrides this in docking_real.yaml
     restaging_goal_checker: general_goal_checker
     restaging_xy_goal_tolerance: 0.07  # meters
     restaging_yaw_goal_tolerance: 5.0  # degrees

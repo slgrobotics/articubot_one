@@ -107,6 +107,20 @@ entry; the previous TF control failure and arrival overshoot remain unresolved
 and are recorded in the wiki. No hardware action has validated this new normal
 bringup integration yet.
 
+The hardware catalogue configures `real_v_bay` as a `v_shaped_bay`. Its 55°
+panel flare gives a 110° opening. The `angle_tolerance_deg` of 11° permits a
+measured opening of 99°–121°. The `yaw_tolerance_deg` of 25° compares the
+detected inward heading with the configured dock heading in the same frame.
+
+Nav2's non-charging plugin handles positioning. The `docking_alignment`
+wrapper finishes yaw alignment, then attempts charging insertion when the
+selected bay's `insertion_max_travel` is positive. The value is in metres.
+With a zero limit, the wrapper finishes after alignment. During insertion,
+a fresh `sensor_msgs/msg/BatteryState` on `/battery/battery_state` with
+`present: true` and `power_supply_status: 1` (`CHARGING`) tells the wrapper
+to stop. It reports success once odometry shows Seggy has been stationary
+for at least 0.3 seconds and the battery still reports charging.
+
 ## Configuration and command routing
 
 Persistent robot files are in robots/seggy/config:
@@ -129,8 +143,8 @@ Catalogue headings point INTO the bay. Current world-derived references:
 
 | Name | Parking X/Y | Inward dock yaw | Robot parked yaw | Staging X/Y |
 |---|---|---|---|---|
-| trapezoid_bay | -1, 3 | 180 degrees | 180 degrees | -0.5, 3 |
-| v_bay | 0, 6 | 90 degrees | 90 degrees | 0, 5.5 |
+| sim_trapezoid_bay | -1, 3 | 180 degrees | 180 degrees | -0.5, 3 |
+| sim_v_bay | 0, 6 | 90 degrees | 90 degrees | 0, 5.5 |
 
 Seggy now uses forward docking: `lidar_dock.dock_direction: forward` and
 `staging_yaw_offset: 0.0` in docking_nav2_sim.yaml. Both staging and parked robot
@@ -166,9 +180,9 @@ Choose either named bay using the normal Nav2 action:
 
 ```bash
 ros2 action send_goal /dock_robot nav2_msgs/action/DockRobot \
-  "{use_dock_id: true, dock_id: trapezoid_bay, navigate_to_staging_pose: true}" --feedback
+  "{use_dock_id: true, dock_id: sim_trapezoid_bay, navigate_to_staging_pose: true}" --feedback
 ros2 action send_goal /dock_robot nav2_msgs/action/DockRobot \
-  "{use_dock_id: true, dock_id: v_bay, navigate_to_staging_pose: true}" --feedback
+  "{use_dock_id: true, dock_id: sim_v_bay, navigate_to_staging_pose: true}" --feedback
 ros2 action send_goal /undock_robot nav2_msgs/action/UndockRobot \
   "{dock_type: lidar_dock, max_undocking_time: 60.0}" --feedback
 ```

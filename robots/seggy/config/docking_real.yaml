@@ -1,6 +1,6 @@
 #
-# Real-map experiment named catalogue; verify map/world alignment before motion.
-# Edit if the map or bay moves.
+# Named dock catalogue for experiments on the saved hardware map.
+# Verify map alignment before motion. Update the prior if the map or bay changes.
 dock_detector:
   ros__parameters:
     use_sim_time: false
@@ -18,19 +18,19 @@ dock_detector:
     detection_timeout: 0.6
 
     # Does the detected shape match the bay geometry? For a V bay, the measured opening must be
-    #   within 11° of twice v.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
-    #   so the detector accepts 99°–121°.
+    # within 11° of twice v_shaped_bay.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
+    # so the detector accepts 99°–121°.
     angle_tolerance_deg: 11.0
     # Does the detected bay face the expected direction? The detected bay heading must be
-    #   within 25° of that bay’s expected_dock_yaw_deg, with both headings compared in the same frame.
+    # within 25° of that bay’s expected_dock_yaw_deg, with both headings compared in the same frame.
     yaw_tolerance_deg: 25.0
 
     # Shared defaults. Each named bay overrides its shape and map pose below.
-    target_shape: trapezoid
+    target_shape: trapezoid_bay
     expected_dock_x: -1.0
     expected_dock_y: 3.0
     expected_dock_yaw_deg: 180.0
-    trapezoid:
+    trapezoid_bay:
       panel_width: 0.5
       flare_angle_deg: 32.5
       parking_offset: 0.425
@@ -38,23 +38,35 @@ dock_detector:
       dimension_tolerance: 0.10
       max_corner_gap: 0.18
       joint_refinement: true
-    v:
+    v_shaped_bay:
       panel_width: 0.70
       flare_angle_deg: 55.0
       parking_offset: 0.60
       max_apex_gap: 0.25
       joint_refinement: true
 
+    # Nav2's non-charging plugin initially handles positioning - to a final point.
+    # Then the docking_alignment wrapper finishes yaw alignment and attempts insertion
+    #   - but only when the selected bay's `insertion_max_travel` is greater than zero.
+    #
+    # Note: With `insertion_max_travel` set to zero, the wrapper finishes after alignment (no charging bay type assumed).
+    #
+    # During insertion, a fresh `sensor_msgs/msg/BatteryState` on
+    # `/battery/battery_state` with `present: true` and `power_supply_status: 1` (CHARGING)
+    # tells the wrapper to stop. The wrapper reports success once
+    # odometry shows that Seggy has been stationary for at least 0.3 seconds
+    # and the battery still reports charging.
+
     dock_ids:
     - real_v_bay
     docks:
       real_v_bay:
-        max_insertion_travel: 0.15  # meters
-        target_shape: v
+        target_shape: v_shaped_bay
         expected_dock_x: 2.361164737773733
         expected_dock_y: 0.9391487314611604
         expected_dock_yaw_deg: -10.792938786882587
-        v:
+        insertion_max_travel: 0.15  # metres. A positive limit enables insertion and requires charging confirmation.
+        v_shaped_bay:
           panel_width: 0.7
           flare_angle_deg: 55.0
           parking_offset: 0.6

@@ -19,7 +19,7 @@ dock_detector:
     detection_timeout: 0.6
 
     # Does the detected shape match the bay geometry? For a V bay, the measured opening must be
-    #   within 11° of twice v.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
+    #   within 11° of twice v_shaped_bay.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
     #   so the detector accepts 99°–121°.
     angle_tolerance_deg: 11.0
     # Does the detected bay face the expected direction? The detected bay heading must be
@@ -27,11 +27,11 @@ dock_detector:
     yaw_tolerance_deg: 25.0
 
     # Shared defaults. Each named bay overrides its shape and map pose below.
-    target_shape: trapezoid
+    target_shape: trapezoid_bay
     expected_dock_x: -1.0
     expected_dock_y: 3.0
     expected_dock_yaw_deg: 180.0
-    trapezoid:
+    trapezoid_bay:
       panel_width: 0.5
       flare_angle_deg: 32.5
       parking_offset: 0.425
@@ -39,7 +39,7 @@ dock_detector:
       dimension_tolerance: 0.10
       max_corner_gap: 0.18
       joint_refinement: true
-    v:
+    v_shaped_bay:
       panel_width: 0.70
       flare_angle_deg: 55.0
       parking_offset: 0.60
@@ -47,15 +47,16 @@ dock_detector:
       joint_refinement: true
 
     dock_ids:
-    - trapezoid_bay
-    - v_bay
+    - sim_trapezoid_bay
+    - sim_v_bay
     docks:
-      trapezoid_bay:
-        target_shape: trapezoid
+      sim_trapezoid_bay:
+        target_shape: trapezoid_bay
         expected_dock_x: -1.0
         expected_dock_y: 3.0
         expected_dock_yaw_deg: 180.0
-        trapezoid:
+        insertion_max_travel: 0.15  # meters
+        trapezoid_bay:
           panel_width: 0.5
           flare_angle_deg: 32.5
           parking_offset: 0.425
@@ -63,12 +64,13 @@ dock_detector:
           dimension_tolerance: 0.05
           max_corner_gap: 0.1
           joint_refinement: true
-      v_bay:
-        target_shape: v
+      sim_v_bay:
+        target_shape: v_shaped_bay
         expected_dock_x: 0.0
         expected_dock_y: 6.0
         expected_dock_yaw_deg: 90.0
-        v:
+        insertion_max_travel: 0.15  # meters
+        v_shaped_bay:
           joint_refinement: true
           panel_width: 0.7
           flare_angle_deg: 55.0

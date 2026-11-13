@@ -37,7 +37,7 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         server=config['docking_server']['ros__parameters']
         assert server['controller_frequency']==20.
         assert server['max_retries']==(0 if real else 2)
-        ids=['real_v_bay'] if real else ['trapezoid_bay','v_bay']
+        ids=['real_v_bay'] if real else ['sim_trapezoid_bay','sim_v_bay']
         assert server['docks']==ids
         for dock_id in ids:
             assert server[dock_id]['id']==dock_id
@@ -65,12 +65,12 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         assert wrapper['parameters'][0]['dock_ids'] == ids
         alignment = wrapper['parameters'][0]
         if real:
-            assert alignment.get('max_insertion_travel', 0.0) == 0.0
+            assert alignment.get('insertion_max_travel', 0.0) == 0.0
             catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())
             expected = catalogue['dock_detector']['ros__parameters']['docks']['real_v_bay']
-            assert alignment['docks']['real_v_bay']['max_insertion_travel'] == expected['max_insertion_travel']
+            assert alignment['docks']['real_v_bay']['insertion_max_travel'] == expected['insertion_max_travel']
         else:
-            assert alignment['max_insertion_travel'] == 0.05
+            assert alignment['insertion_max_travel'] == 0.05
         assert server['lidar_dock']['docking_threshold'] == .025
         assert server['lidar_dock']['trace_final_yaw_deg'] == 5.0
         assert server['lidar_dock']['docking_threshold_yaw'] == 180.0
