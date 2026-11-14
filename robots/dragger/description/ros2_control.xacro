@@ -27,6 +27,9 @@
                 <param name="battery_num_cells">${hw['battery_num_cells']}</param>
                 <param name="battery_technology">${hw['battery_technology']}</param>
                 <param name="battery_design_capacity">${hw['battery_design_capacity']}</param>
+                <param name="battery_full_voltage">${hw.get('battery_full_voltage', 14.5)}</param>
+                <param name="has_battery_charging_field">${str(hw.get('has_battery_charging_field', False)).lower()}</param>
+                <param name="battery_current_measured">${str(hw.get('battery_current_measured', False)).lower()}</param>
                 <!-- A workaround for sonar no-return ".inf" values 
                  Set sonar_broadcaster's max_range: 5.1 in robots/dragger/config/controllers.yaml
                  A proper fix would be in Nav2 Collision Monitor code to accept .inf values
