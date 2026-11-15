@@ -115,9 +115,35 @@ controller_server:
       model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
 
-      # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
-      # The velocity smoother refines these commands within the controller's limits,
-      # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+      # MPPI computes body velocity commands while following a path.
+      # The behavior server generates its own commands for behaviors such as Spin and BackUp.
+      # The velocity smoother applies its configured velocity and acceleration limits.
+      # Collision Monitor can slow or stop the navigation command before twist_mux arbitrates it.
+      # The differential-drive controller applies its configured velocity, acceleration,
+      # and jerk limits, then converts the body command into left and right wheel velocities.
+
+      # `twist_mux` sits **after Collision Monitor and before the differential-drive controller**.
+      # It chooses which velocity source gets control, such as navigation or manual input, using configured priorities, timeouts, and locks.
+      # 
+      # MPPI / docking / Nav2 behaviors
+      #   → cmd_vel_raw      → velocity smoother
+      #   → cmd_vel_smoothed → Collision Monitor
+      #   → cmd_vel_nav ───────────────────────┐
+      #                                        │
+      # Manual velocity inputs ────────────────┤
+      #                                        ▼
+      #                                    twist_mux
+      #                                        │
+      #                                 diff_cont/cmd_vel
+      #                                        │
+      #                           Differential-drive controller
+      #                                        │
+      #                                Left and right wheels
+      # 
+      # Collision Monitor checks the **navigation branch** before it reaches the mux.
+      # The mux forwards the selected command, and `diff_cont` applies its drive limits and converts that command into wheel velocities.
+      # [Navigation routing](/home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py:63)
+      # [Mux routing](/home/sergei/robot_ws/src/articubot_one/launch/twist_mux.launch.py)
 
       ax_max: 1.0  # max forward acceleration
       ax_min: -1.0 # max reverse acceleration
@@ -408,9 +434,8 @@ behavior_server:
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
 
-    # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
-    # The velocity smoother refines these commands within the controller's limits,
-    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+    # MPPI computes body velocity commands while following a path.
+    # The behavior server generates its own commands for behaviors such as Spin and BackUp.
 
     acceleration_limit: 1.0  # max acceleration for recovery behaviors m/s^2 
     deceleration_limit: -1.0 # max deceleration for recovery behaviors m/s^2 
@@ -447,9 +472,9 @@ velocity_smoother:
     feedback: "OPEN_LOOP"         # Default. Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
     #feedback: "CLOSED_LOOP"       # Requires high-rate, low-latency odometry in closed-loop mode. See Nav2 Velocity Smoother docs
 
-    # The MPPI Controller generates the actual velocity commands that determine how fast and aggressively the robot moves.
-    # The velocity smoother refines these commands within the controller's limits,
-    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+    # MPPI computes body velocity commands while following a path.
+    # The behavior server generates its own commands for behaviors such as Spin and BackUp.
+    # The velocity smoother applies its configured velocity and acceleration limits.
 
     max_velocity: [0.3, 0.0, 0.1]    # Reduced to match MPPI controller vx_max and wz_max , ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
     min_velocity: [-0.2, 0.0, -0.1]  # Reduced to match controller vx_min and wz_min, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
@@ -464,7 +489,13 @@ velocity_smoother:
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
 #     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
 #     https://github.com/ros-navigation/navigation2/blob/main/nav2_collision_monitor/params/collision_monitor_params.yaml
+#
 # Collision Monitor operates directly with sensor data, bypassing the usual costmap and planning systems.
+# MPPI computes body velocity commands while following a path.
+# The behavior server generates its own commands for behaviors such as Spin and BackUp.
+# The velocity smoother applies its configured velocity and acceleration limits.
+# Collision Monitor can slow or stop the navigation command before twist_mux arbitrates it.
+
 collision_monitor:
   ros__parameters:
     enable_stamped_cmd_vel: true
