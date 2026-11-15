@@ -437,14 +437,15 @@ waypoint_follower:
       waypoint_pause_duration: 5 # Sets a 5-second pause at each waypoint
 
 # See https://docs.nav2.org/configuration/packages/configuring-velocity-smoother.html
+#     https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/configuring_velocity_smoother/
 #     https://git.tu-berlin.de/ecschuetz/navigation2/-/tree/main/nav2_velocity_smoother
 velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
-    smoothing_frequency: 6.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
+    smoothing_frequency: 12.0     # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
     scale_velocities: true        # scale velocities proportionally if any axis is outside the acceleration range to follow the same vector, if possible
-    #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
-    feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
+    feedback: "OPEN_LOOP"         # Default. Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
+    #feedback: "CLOSED_LOOP"       # Requires high-rate, low-latency odometry in closed-loop mode. See Nav2 Velocity Smoother docs
 
     # The MPPI Controller generates the actual velocity commands that determine how fast and aggressively the robot moves.
     # The velocity smoother refines these commands within the controller's limits,
