@@ -50,7 +50,7 @@ docking_server:
       # stall_joint_names uses Nav2's typed empty string-array default.
       stall_velocity_threshold: 1.0
       stall_effort_threshold: 1.0
-      staging_lateral_tolerance: 0.05  # meters
+      staging_lateral_tolerance: 0.08  # meters
       staging_yaw_tolerance: 5.0  # degrees
       staging_min_distance: 0.20  # meters outside the parking plane
       approach_guard_distance: 0.08  # meters before the parking plane
