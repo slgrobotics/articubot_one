@@ -2,8 +2,19 @@
 # See https://github.com/sushanthj/acorn_sim/blob/main/sim_ws/src/nav2_gps_waypoint_follower_demo/nav2_gps_waypoint_follower_demo/latlon_waypoint_follower.py
 #
 
-# Run this script:
-# cd ~/robot_ws; colcon build; python3 install/articubot_one/lib/articubot_one/gps_waypoint_follower.py
+"""
+Navigate to GPS waypoints loaded from a YAML file.
+
+With the workspace built and sourced, start Nav2 and the fromLL service
+before running the simulation route:
+
+     python3 install/articubot_one/lib/articubot_one/gps_waypoint_follower.py --file sim_waypoints
+
+Run from the workspace root. The file name selects a YAML file in the
+package's assets/waypoints directory. Expect each GPS waypoint to be
+converted to map coordinates and sent to Nav2, with the result printed
+for each goal.
+"""
 
 import os
 import time

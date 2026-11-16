@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-# Run repeated real Seggy docking cycles with a ROS action client that owns cancellation.
+
+# Exercise repeated docking and undocking cycles for Seggy's real_v_bay.
+#
+# From the workspace root, preview three sampled staging goals with:
+#
+#     bash src/articubot_one/scripts/seggy_docking_endurance.sh 3 --dry-run
+#
+# The preview prints the seed and one JSON goal per cycle, without ROS.
+# For a live run, source the workspace, bring up Seggy with Nav2 and docking
+# available, and omit --dry-run. The live run commands robot motion and
+# records phase results and charging outcomes in a new run directory under
+# --log-dir (the current directory by default).
+
 set -euo pipefail
 
 exec python3 - "$@" <<'PY'

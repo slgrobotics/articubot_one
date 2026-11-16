@@ -1,4 +1,17 @@
-"""Robot Wi-Fi V2 bringup waits normally for the first complete saved map."""
+"""
+Verify that Wi-Fi V2 bringup waits for a complete saved map.
+
+The tests exercise the missing-map wait, one-time launch after the map
+is ready, the disabled suite, the polling override, and filename validation.
+
+From the workspace root, source install/setup.bash and run:
+
+     python3 -m pytest -q src/articubot_one/test/test_wifi_survey_v2_launch.py
+
+Expect pytest to pass when the suite starts once after a complete map
+and the other options behave as configured.
+"""
+
 import importlib.util
 from pathlib import Path
 from unittest.mock import patch

@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
-"""Command Seggy to spin in place and record AMCL pose as CSV."""
+"""
+Measure Seggy's AMCL pose during an in-place rotation.
+
+The script commands a signed angular velocity and counts turns using wheel
+odometry. With the ROS workspace sourced, Seggy stationary in a clear area,
+and AMCL, wheel odometry, and the velocity pipeline running, use:
+
+     python3 src/articubot_one/scripts/seggy_rotation_test.py --turns 1
+
+Run from the workspace root. Expect progress in odometry turns, a stop
+command at the target, and a CSV with AMCL position and yaw alongside
+odometry turns. The default filename is timestamped. If you set --output,
+choose a new file. A negative --speed reverses the rotation.
+"""
 
 import argparse
 import csv

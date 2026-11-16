@@ -1,4 +1,17 @@
-"""Integration merge preserves working navigation and selects named simulation docks."""
+"""
+Verify that Seggy bringup merges docking settings into the Nav2 configuration.
+
+The tests cover disabled docking, hardware and simulation catalogues,
+namespace handling, and preservation of the robot navigation parameters.
+
+From the workspace root, source install/setup.bash and run:
+
+     python3 -m pytest -q src/articubot_one/test/test_docking_launch.py
+
+Expect pytest to pass when each environment selects the expected catalogue
+and limits. The tests inspect launch configuration without starting Nav2.
+"""
+
 from pathlib import Path
 from unittest.mock import patch
 import yaml

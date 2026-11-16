@@ -1,3 +1,18 @@
+"""
+Verify how the battery adapter selects and normalizes a battery state.
+
+The tests check percentage conversion, unknown values, and preservation of
+measurements and presence metadata. They also cover missing and duplicate
+battery names.
+
+From the workspace root, source install/setup.bash and run:
+
+     python3 -m pytest -q src/articubot_one/test/test_battery_state_compat.py
+
+Expect pytest to pass when valid input is normalized and ambiguous input
+is rejected.
+"""
+
 import math
 
 import pytest

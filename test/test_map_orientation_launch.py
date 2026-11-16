@@ -1,9 +1,18 @@
-"""Test articubot_one's robot-specific adapter to map_orientation_saver.
-
-These tests exercise launch/configuration wiring without starting hardware or
-copying estimator behavior tests from the standalone package. Run after sourcing
-ROS: python3 -m pytest test/test_map_orientation_launch.py -q.
 """
+Verify the robot-specific launch adapter for map_orientation_saver.
+
+The tests check disabled bringup, NavSat reuse, hardware defaults,
+simulation ENU settings, and explicit overrides. They also check the robot
+launch arguments and the runtime dependency declaration.
+
+From the workspace root, source install/setup.bash and run:
+
+     python3 -m pytest -q src/articubot_one/test/test_map_orientation_launch.py
+
+Expect pytest to pass when the adapter selects the expected node and
+configuration. The tests exercise launch wiring without starting hardware.
+"""
+
 import importlib.util
 import math
 from pathlib import Path
