@@ -64,7 +64,7 @@ diff_cont:
 
     # Velocity and acceleration limits
     # Whenever a min_* is unspecified, default to -max_*
-    # Note: if not specified below, there will be no limits applied (default is NAN for missing parameters)
+    # Note: if not specified below, there will be no limits applied (default is .nan for missing parameters)
     linear:
       x:
         max_velocity           : 0.1 # m/s - experimental on actual robot

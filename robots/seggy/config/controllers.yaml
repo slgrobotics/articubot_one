@@ -68,7 +68,7 @@ diff_cont:
 
     # Velocity and acceleration limits
     # Whenever a min_* is unspecified, default to -max_*
-    # Note: if not specified below, there will be no limits applied (default is NAN for missing parameters)
+    # Note: if not specified below, there will be no limits applied (default is .nan for missing parameters)
     linear:
       x:
         max_velocity           : 0.1  # m/s - 0.3 - experimental max on actual robot (3 rad/sec wheel speed, 25 cm wheel radius)
@@ -81,10 +81,9 @@ diff_cont:
         # Note: angular velocity must be limited to avoid losing mapping capabilities.
         max_velocity           : 0.3  # rad/s - limit robot turn rate to ~17 deg/sec, feels fast enough, mapping still works.
         # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
-        # Leave max_acceleration and max_jerk unset to disable these limits.
-        # The controller defaults to NaN; YAML's bare NAN is a string.
-        max_acceleration       : NAN  # rad/s^2  NAN - no limits
-        max_jerk               : NAN  # rad/s^3
+        # Leave max_acceleration and max_jerk unset to disable these limits - the controller defaults to .nan;
+        #max_acceleration       : .nan  # rad/s^2  .nan - no limits
+        #max_jerk               : .nan  # rad/s^3
 
 
 #
