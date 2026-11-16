@@ -83,8 +83,8 @@ diff_cont:
         # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
         # Leave max_acceleration and max_jerk unset to disable these limits.
         # The controller defaults to NaN; YAML's bare NAN is a string.
-        #max_acceleration       : NAN  # rad/s^2  NAN - no limits
-        #max_jerk               : NAN  # rad/s^3
+        max_acceleration       : NAN  # rad/s^2  NAN - no limits
+        max_jerk               : NAN  # rad/s^3
 
 
 #
