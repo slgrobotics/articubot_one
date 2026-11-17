@@ -65,7 +65,7 @@ dock_detector:
         expected_dock_x: 1.469614
         expected_dock_y: 1.272556
         expected_dock_yaw_deg: 7.983637
-        insertion_max_travel: 0.15  # metres. A positive limit enables insertion and requires charging confirmation.
+        insertion_max_travel: 0.16  # metres. A positive limit enables insertion and requires charging confirmation.
         v_shaped_bay:
           panel_width: 0.7
           flare_angle_deg: 55.0

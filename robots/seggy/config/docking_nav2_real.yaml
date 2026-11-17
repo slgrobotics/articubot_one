@@ -73,7 +73,7 @@ docking_alignment:
     # Launch supplies the clock, dock IDs and per-bay insertion overrides from
     # the catalogue. Frames, odometry, topics, selection/freshness settings,
     # arrival thresholds, direction and tracing follow the docking server/plugin.
-    insertion_speed: 0.01  # m/s
+    insertion_speed: 0.015  # m/s
     insertion_timeout: 15.0  # seconds
     insertion_max_travel: 0.0  # meters, real_v_bay overrides this in docking_real.yaml
     battery_topic: battery/battery_state
