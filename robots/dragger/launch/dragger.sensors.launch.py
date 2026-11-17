@@ -41,6 +41,7 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 230400}, # LD-19P has 230400 baud rate
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': False},
           {'angle_crop_min': 135.0},
