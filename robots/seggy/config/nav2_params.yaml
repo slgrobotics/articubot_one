@@ -292,7 +292,7 @@ local_costmap:
           clearing: True # Default: False. "True" allows the obstacle layer to clear free space in the costmap based on laser data.
           marking: True # allow the obstacle layer to mark obstacles in the costmap.
           data_type: "LaserScan"
-          raytrace_max_range: 6.0 # Half or more of maximum lidar data range
+          raytrace_max_range: 9.0 # Half or more of maximum lidar data range
           raytrace_min_range: 0.1 # Lidar is detecting robot elements as obstacles and populating the costmap around the robot; set param >0.0
           obstacle_max_range: 6.0  # Half or more of maximum lidar data range
           obstacle_min_range: 0.1 # > 0.0 to prevent lidar from detecting robot elements as obstacles
@@ -360,7 +360,7 @@ global_costmap:
           clearing: True # Default: False. True allows the obstacle layer to clear free space in the costmap based on laser scan data.
           marking: True # Default: True - allows the obstacle layer to mark obstacles in the costmap based on laser scan data.
           data_type: "LaserScan"
-          raytrace_max_range: 6.0 # Maximum lidar data range
+          raytrace_max_range: 9.0 # Maximum lidar data range
           raytrace_min_range: 0.1 # Lidar is detecting robot elements as obstacles and populating the costmap around the robot; set param >0.0
           obstacle_max_range: 6.0  # Quarter or more of maximum lidar data range
           obstacle_min_range: 0.1 # > 0.0 to prevent lidar from detecting robot elements as obstacles
