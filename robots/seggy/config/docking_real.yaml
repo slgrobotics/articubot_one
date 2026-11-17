@@ -62,9 +62,9 @@ dock_detector:
     docks:
       real_v_bay:
         target_shape: v_shaped_bay
-        expected_dock_x: 2.361164737773733
-        expected_dock_y: 0.9391487314611604
-        expected_dock_yaw_deg: -10.792938786882587
+        expected_dock_x: 1.469614
+        expected_dock_y: 1.272556
+        expected_dock_yaw_deg: 7.983637
         insertion_max_travel: 0.15  # metres. A positive limit enables insertion and requires charging confirmation.
         v_shaped_bay:
           panel_width: 0.7
