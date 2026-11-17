@@ -42,6 +42,7 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
           # Seggy has a vertical bar behind the LiDAR, so we can crop ~18 degrees around 180 degrees:
           #{'enable_angle_crop_func': True},
@@ -67,6 +68,7 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 230400}, # LD-19 has 230400 baud rate
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': True},
           {'angle_crop_min': 171.0},
