@@ -36,9 +36,10 @@ def prepare_docking(context):
         catalogue_docks = catalogue['dock_detector']['ros__parameters']['docks']
         for dock_id in server['docks']:
             entry = catalogue_docks[dock_id]
-            if 'insertion_max_travel' in entry:
-                overrides = alignment.setdefault('docks', {}).setdefault(dock_id, {})
-                overrides['insertion_max_travel'] = entry['insertion_max_travel']
+            for parameter in ('insertion_max_travel', 'charging_to_stop_delay'):
+                if parameter in entry:
+                    overrides = alignment.setdefault('docks', {}).setdefault(dock_id, {})
+                    overrides[parameter] = entry[parameter]
         for name in ('dock_direction', 'docking_threshold', 'docking_threshold_yaw',
                      'external_detection_timeout', 'selection_timeout',
                      'selection_service', 'detection_topic'):

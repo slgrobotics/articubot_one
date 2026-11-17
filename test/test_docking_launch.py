@@ -58,7 +58,9 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         if real:
             assert server['controller']['v_linear_max']==.015
             assert server['real_v_bay']['frame']=='map'
-            assert server['real_v_bay']['pose'][0]==pytest.approx(2.361164737773733)
+            catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())
+            prior = catalogue['dock_detector']['ros__parameters']['docks']['real_v_bay']
+            assert server['real_v_bay']['pose'][0] == pytest.approx(prior['expected_dock_x'])
         assert 'dock_backwards' not in server
         assert server['controller']['costmap_topic']=='local_costmap/costmap_raw'
         assert node.call_args.kwargs['namespace']==('/robot_a' if namespace else '/')
@@ -76,6 +78,8 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         assert wrapper['parameters'][0]['trace_enabled'] is True
         assert wrapper['parameters'][0]['alignment_position_margin'] == .02
         assert wrapper['parameters'][0]['dock_ids'] == ids
+        for dock_id in ids:
+            assert wrapper['parameters'][0]['docks'][dock_id]['charging_to_stop_delay'] == 0.0
         alignment = wrapper['parameters'][0]
         if real:
             assert alignment.get('insertion_max_travel', 0.0) == 0.0

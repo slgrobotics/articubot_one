@@ -117,8 +117,10 @@ wrapper finishes yaw alignment, then attempts charging insertion when the
 selected bay's `insertion_max_travel` is positive. The value is in metres.
 With a zero limit, the wrapper finishes after alignment. During insertion,
 a fresh `sensor_msgs/msg/BatteryState` on `/battery/battery_state` with
-`present: true` and `power_supply_status: 1` (`CHARGING`) tells the wrapper
-to stop. It reports success once odometry shows Seggy has been stationary
+`present: true` and `power_supply_status: 1` (`CHARGING`) starts the wrapper's
+`charging_to_stop_delay` timer, configured per bay in `docking_real.yaml` or `docking_sim.yaml`. Its default is `0.0` seconds. The wrapper commands zero when the delay
+expires or the insertion braking limit is reached, whichever happens first.
+The timer continues through charging-status flicker. It reports success once odometry shows Seggy has been stationary
 for at least 0.3 seconds and the battery still reports charging.
 
 ## Configuration and command routing

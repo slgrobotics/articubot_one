@@ -53,7 +53,8 @@ dock_detector:
     #
     # During insertion, a fresh `sensor_msgs/msg/BatteryState` on
     # `/battery/battery_state` with `present: true` and `power_supply_status: 1` (CHARGING)
-    # tells the wrapper to stop. The wrapper reports success once
+    # starts the bay's charging_to_stop_delay timer. The wrapper commands zero
+    # when the delay expires or the insertion braking limit is reached. It reports success once
     # odometry shows that Seggy has been stationary for at least 0.3 seconds
     # and the battery still reports charging.
 
@@ -66,6 +67,7 @@ dock_detector:
         expected_dock_y: 1.272556
         expected_dock_yaw_deg: 7.983637
         insertion_max_travel: 0.16  # metres. A positive limit enables insertion and requires charging confirmation.
+        charging_to_stop_delay: 0.5  # seconds after first charging status before commanding zero
         v_shaped_bay:
           panel_width: 0.7
           flare_angle_deg: 55.0

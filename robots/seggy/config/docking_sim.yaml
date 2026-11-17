@@ -56,6 +56,7 @@ dock_detector:
         expected_dock_y: 3.0
         expected_dock_yaw_deg: 180.0
         insertion_max_travel: 0.15  # meters
+        charging_to_stop_delay: 0.0  # seconds after first charging status before commanding zero
         trapezoid_bay:
           panel_width: 0.5
           flare_angle_deg: 32.5
@@ -70,6 +71,7 @@ dock_detector:
         expected_dock_y: 6.0
         expected_dock_yaw_deg: 90.0
         insertion_max_travel: 0.15  # meters
+        charging_to_stop_delay: 0.5  # seconds after first charging status before commanding zero
         v_shaped_bay:
           joint_refinement: true
           panel_width: 0.7
