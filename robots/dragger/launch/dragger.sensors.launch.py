@@ -25,11 +25,12 @@ def generate_launch_description():
     # sensor nodes don't depend on robot_model and don't use package_name
 
     # Lidar node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/LD14.md
+    # DTOF LiDAR STL-19P, 360 Degree Scanning, Anti-Glare 60000Lux, 5000Hz ranging Frequency, 12m Radius ranging
     ldlidar_node = Node(
         package='ldlidar_sl_ros2',
         namespace=namespace,
         executable='ldlidar_sl_ros2_node',
-        name='ldlidar_publisher_ld14',
+        name='ldlidar_publisher_ld19p',
         output='screen',
         respawn=True,
         respawn_delay=10,
