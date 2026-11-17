@@ -70,8 +70,8 @@ dock_detector:
         expected_dock_x: 0.0
         expected_dock_y: 6.0
         expected_dock_yaw_deg: 90.0
-        insertion_max_travel: 0.15  # meters
-        charging_to_stop_delay: 0.5  # seconds after first charging status before commanding zero
+        insertion_max_travel: 0.15   # meters. A positive limit enables insertion and stops if charging confirmation doesn't arrive.
+        charging_to_stop_delay: 1.0  # seconds after first charging status arrival before commanding zero, to allow better insertion.
         v_shaped_bay:
           joint_refinement: true
           panel_width: 0.7

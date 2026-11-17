@@ -114,7 +114,7 @@ detected inward heading with the configured dock heading in the same frame.
 
 Nav2's non-charging plugin handles positioning. The `docking_alignment`
 wrapper finishes yaw alignment, then attempts charging insertion when the
-selected bay's `insertion_max_travel` is positive. The value is in metres.
+selected bay's `insertion_max_travel` is positive. The value is in meters.
 With a zero limit, the wrapper finishes after alignment. During insertion,
 a fresh `sensor_msgs/msg/BatteryState` on `/battery/battery_state` with
 `present: true` and `power_supply_status: 1` (`CHARGING`) starts the wrapper's
