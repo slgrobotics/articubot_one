@@ -34,8 +34,8 @@ body-axis settings do not guarantee per-wheel minimums on curves; the hardware
 filter still handles each wheel independently.
 
 Docking approach linear minimum/maximum and wrapper insertion minimum/maximum
-are 0.0406 m/s. Alignment uses `minimum_angular_speed_deg: 9.84` and an
-`angular_speed` ceiling of 0.172 rad/s, just above the smoother threshold.
+are 0.0406 m/s. Alignment uses `min_angular_speed_deg: 9.84` and an
+`max_angular_speed_deg: 9.855` ceiling (degrees/s), just above the smoother threshold.
 Stops and braking still command zero. Firmware integer percentages round these
 requests to approximately 10%. Docking at the increased speed requires physical
 validation; travel limits, charging delays, and braking margins are unchanged.

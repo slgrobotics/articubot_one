@@ -73,7 +73,7 @@ docking_alignment:
     # Launch supplies the clock, dock IDs and per-bay insertion overrides from
     # the catalogue. Frames, odometry, topics, selection/freshness settings,
     # arrival thresholds, direction and tracing follow the docking server/plugin.
-    insertion_speed: 0.0406  # m/s, approximately 9.5% wheel speed
+    insertion_speed: 0.0407  # m/s, approximately 9.5% wheel speed
     insertion_min_speed: 0.0407  # m/s; do not taper into the hardware deadband
     insertion_timeout: 15.0  # seconds
     insertion_max_travel: 0.0  # meters, real_v_bay overrides this in docking_real.yaml
@@ -85,6 +85,6 @@ docking_alignment:
     max_restaging_retries: 2
     insertion_stop_margin: 0.03  # meters reserved for coasting, plus velocity-based allowance
     alignment_position_margin: 0.02  # additional tolerance while aligning after Nav2 reaches position, meters 
-    angular_speed: 0.1720  # rad/s maximum alignment speed
-    minimum_angular_speed_deg: 9.84  # degrees/s, approximately 9.5% wheel speed
+    max_angular_speed_deg: 9.855  # degrees/s maximum alignment speed (approximately 0.172 rad/s)
+    min_angular_speed_deg: 9.84  # degrees/s, approximately 9.5% wheel speed
     alignment_timeout: 12.0  # seconds after reacquiring the dock
