@@ -246,8 +246,8 @@ local_costmap:
       #Added above to improve slam exploration - 
       # see https://pastebin.com/spGSypvX
       #     https://robotics.stackexchange.com/questions/104215/gpsnavigation2-issues-navigating-with-an-empty-map-after-success-with-a-pre-b
-      update_frequency: 6.0 # Default: 5.0 Matches Laser scan frequency
-      publish_frequency: 6.0 # Default: 5.0 Matches Laser scan frequency (6 Hz)
+      update_frequency: 10.0 # Default: 5.0 Matches Laser scan frequency
+      publish_frequency: 10.0 # Default: 5.0 Matches Laser scan frequency (10 Hz)
       global_frame: odom # Default: map.  "odom" keeps the local costmap consistent with the robot’s movement.
       robot_base_frame: base_link
       static_map: false

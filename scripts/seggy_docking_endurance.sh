@@ -4,7 +4,10 @@
 #
 # From the workspace root, preview three sampled staging goals with:
 #
+#     cd /home/sergei/robot_ws
 #     bash src/articubot_one/scripts/seggy_docking_endurance.sh 3 --dry-run
+#
+#     bash src/articubot_one/scripts/seggy_docking_endurance.sh 10
 #
 # The preview prints the seed and one JSON goal per cycle, without ROS.
 # For a live run, source the workspace, bring up Seggy with Nav2 and docking
@@ -50,10 +53,10 @@ if args.iterations == 0:
 
 seed = args.seed if args.seed is not None else secrets.randbits(64)
 rng = random.Random(seed)
-start = (0.07070043528482488, 0.07923359411452124)
-end = (0.12089444929517279, 2.6351817500767054)
-start_yaw = 2 * math.atan2(0.20215634834670823, 0.9793532615063496)
-end_yaw = 2 * math.atan2(-0.3969423006361257, 0.9178435650837781)
+start = (-0.164, 0.011)
+end = (-0.988, 2.321)
+start_yaw = 1.694
+end_yaw = 0.916
 yaw_span = math.remainder(end_yaw - start_yaw, 2 * math.pi)
 
 
