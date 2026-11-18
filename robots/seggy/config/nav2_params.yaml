@@ -176,7 +176,14 @@ controller_server:
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
-        "PathAngleCritic", "PreferForwardCritic", "TwirlingCritic"]
+        "PathAngleCritic", "PreferForwardCritic", "TwirlingCritic", "VelocityDeadbandCritic"]
+      # 9.5% of the 3.5 rad/s wheel maximum: 0.0406 m/s, 0.1716 rad/s.
+      # This critic discourages low speeds; the smoother zeros subminimum axes.
+      VelocityDeadbandCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 35.0
+        deadband_velocities: [0.0406, 0.0, 0.1716]
       ConstraintCritic: # robot limits - command only what robot can physically do
         enabled: true
         cost_power: 1
@@ -439,9 +446,9 @@ behavior_server:
 
     acceleration_limit: 1.0  # max acceleration for recovery behaviors m/s^2 
     deceleration_limit: -1.0 # max deceleration for recovery behaviors m/s^2 
-    minimum_speed: 0.05      # minimum speed for recovery behaviors m/s
+    minimum_speed: 0.0406    # m/s, approximately 9.5% wheel command
     max_rotational_vel: 0.5  # max turning speed for recovery behaviors rad/s Default: 1.0
-    min_rotational_vel: 0.2  # min turning speed for recovery behaviors rad/s Default: 0.4
+    min_rotational_vel: 0.1716  # rad/s, approximately 9.5% opposing wheel commands
     rotational_acc_lim: 1.0  # max rotational acceleration for recovery behaviors rad/s^2 Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
@@ -483,7 +490,7 @@ velocity_smoother:
     odom_topic: /odometry/local      # works  # Topic of odometry to use for estimating current velocities
     #odom_topic: /diff_cont/odom     # works, but we'd better use fused odom
     odom_duration: 0.2  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
-    deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zeroed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
+    deadband_velocity: [0.0406, 0.0, 0.1716]  # Below these body-axis speeds, output zero; approximately 9.5% wheel speed
     velocity_timeout: 1.0  # Time (s) after which to zero out and stop if no new velocity commands are received
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
@@ -582,7 +589,7 @@ docking_server:
     controller:
       k_phi: 3.0
       k_delta: 2.0
-      v_linear_min: 0.15
+      v_linear_min: 0.0406
       v_linear_max: 0.15
 
 # see https://docs.nav2.org/configuration/packages/configuring-loopback-sim.html

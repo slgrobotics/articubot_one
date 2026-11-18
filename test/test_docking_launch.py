@@ -56,7 +56,7 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
             assert server[dock_id]['id']==dock_id
             assert server[dock_id]['type']=='lidar_dock'
         if real:
-            assert server['controller']['v_linear_max']==.015
+            assert server['controller']['v_linear_max']==.0406
             assert server['real_v_bay']['frame']=='map'
             catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())
             prior = catalogue['dock_detector']['ros__parameters']['docks']['real_v_bay']
@@ -79,8 +79,13 @@ def test_enabled_merge_uses_current_robot_params_and_catalogue(namespace, real):
         assert wrapper['parameters'][0]['alignment_position_margin'] == .02
         assert wrapper['parameters'][0]['dock_ids'] == ids
         for dock_id in ids:
-            assert wrapper['parameters'][0]['docks'][dock_id]['charging_to_stop_delay'] == 0.0
+            catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())
+            expected_delay = catalogue['dock_detector']['ros__parameters']['docks'][dock_id].get('charging_to_stop_delay', 0.0)
+            assert wrapper['parameters'][0]['docks'][dock_id]['charging_to_stop_delay'] == expected_delay
         alignment = wrapper['parameters'][0]
+        assert alignment['insertion_min_speed'] == alignment['insertion_speed'] == .0406
+        assert alignment['minimum_angular_speed_deg'] == 9.84
+        assert server['controller']['v_linear_min'] == .0406
         if real:
             assert alignment.get('insertion_max_travel', 0.0) == 0.0
             catalogue = yaml.safe_load(Path(context.launch_configurations['docking_catalogue']).read_text())

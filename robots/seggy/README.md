@@ -26,10 +26,22 @@ It does not change odometry or wait for the firmware watchdog to stop a wheel.
 
 At the current conversion factor, 9% is about 0.315 rad/s per wheel, equivalent
 to 0.038 m/s straight or 0.163 rad/s in-place rotation. A slower wheel in a curve
-can stop independently. Existing precision docking speeds can be suppressed:
-a pure 0.015 m/s insertion is about 4%. Re-tune and validate docking speeds
-before using docking with the 9% filter; set the hardware parameter to `0` to
-disable it. No docking speeds were automatically increased.
+can stop independently. Nav2 and both docking overlays use approximately 9.5% body-speed equivalents:
+0.0406 m/s straight and 0.1716 rad/s in-place rotation. MPPI's
+`VelocityDeadbandCritic` discourages lower speeds; the velocity smoother zeros
+body-axis commands below those thresholds. Recovery minimums match. These
+body-axis settings do not guarantee per-wheel minimums on curves; the hardware
+filter still handles each wheel independently.
+
+Docking approach linear minimum/maximum and wrapper insertion minimum/maximum
+are 0.0406 m/s. Alignment uses `minimum_angular_speed_deg: 9.84` and an
+`angular_speed` ceiling of 0.172 rad/s, just above the smoother threshold.
+Stops and braking still command zero. Firmware integer percentages round these
+requests to approximately 10%. Docking at the increased speed requires physical
+validation; travel limits, charging delays, and braking margins are unchanged.
+A two-second charging delay now permits roughly 8 cm of nominal additional
+travel, subject to the existing travel-limit stop. Set the hardware parameter
+to `0` to disable its separate 9% filter.
 
 
 The packaged file is used by default:
