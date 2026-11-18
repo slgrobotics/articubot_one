@@ -8,7 +8,7 @@ baud_rate: 115200
 timeout: 1000                  # serial response timeout, ms
 reconnect_interval: 2          # seconds
 enc_counts_per_rev: 60
-wheels_pwm_factor: 30.0        # rad/s to firmware motor setpoint percent. At 30, a 0.10 m/s direct command produced 0.103 m/s by the encoders.
+wheels_pwm_factor: 28.5714     # rad/s to firmware motor setpoint percent. Match the firmware 100.0/3.5 calculation.
 
 battery_num_cells: 4
 battery_technology: 4          # BatteryState chemistry - LiFePO4
