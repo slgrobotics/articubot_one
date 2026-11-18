@@ -476,8 +476,8 @@ velocity_smoother:
     # The behavior server generates its own commands for behaviors such as Spin and BackUp.
     # The velocity smoother applies its configured velocity and acceleration limits.
 
-    max_velocity: [0.20, 0.0, 0.1]   # [Vx, Vy, Wz], linear limit matches diff_cont
-    min_velocity: [-0.10, 0.0, -0.1] # [Vx, Vy, Wz], linear limit matches diff_cont
+    max_velocity: [0.20, 0.0, 0.1]   # [Vx, Vy, Wz], linear limit matches diff_cont. Default [0.5, 0.0, 2.5]
+    min_velocity: [-0.10, 0.0, -0.1] # [Vx, Vy, Wz], linear limit matches diff_cont. Default [-0.5, 0.0, -2.5]
     max_accel: [1.0, 0.0, 1.5]       # Reduced to match controller ax_max and az_max, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
     max_decel: [-1.0, 0.0, -1.5]     # Reduced to match controller ax_min and az_min, ordered [Ax, Ay, Aw]. Default [-2.5, 0.0, -3.2]
     odom_topic: /odometry/local      # works  # Topic of odometry to use for estimating current velocities
