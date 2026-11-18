@@ -1,11 +1,14 @@
 # Seggy configuration
 
-## Contents
+**Contents:**
 
 - [Hardware settings](#hardware-settings)
 - [Related settings](#related-settings)
+  - [Wi-Fi V2: waiting for the first saved map](#wi-fi-v2-waiting-for-the-first-saved-map)
+  - [Docking configuration](#docking-configuration)
+- [Direct firmware square test](#direct-firmware-square-test)
 
-----------------------------------------
+-------------
 
 ## Hardware settings
 
@@ -92,3 +95,75 @@ The key distinction is that **Nav2’s XY tolerance is a radius around its goal*
 The detector has separate association limits. It searches within **95 cm** of the expected landmark, accepts a fitted pose within **45 cm** of its prior and **25°** of its expected heading, and allows **±11°** on the V opening angle. Those settings affect *which detection is accepted*. The staging and arrival checks use the accepted detection to decide whether Seggy can proceed. [Detector catalogue](https://github.com/slgrobotics/articubot_one/tree/lyrical/robots/seggy/config/docking_real.yaml) · [Approach checks](/home/sergei/robot_ws/src/dock_detector_nav2/src/lidar_dock.cpp) · [Alignment and insertion](/home/sergei/robot_ws/src/dock_detector/dock_detector/docking_alignment.py)
 
 If you want to ease one value, I’d start with **staging heading**, from **5° to 6°**, and measure the effect. One logged rejection still had about **2 cm lateral error** but **5.9° heading error** after correction. I’d keep the **5 cm lateral gate** for now. A previous run passed it at **4.97 cm off-center** and still triggered the near-dock guard. Widening `docking_threshold` would also widen the guard’s allowed lateral error and the wrapper’s alignment radius, so it affects three decisions at once.
+
+## Direct firmware square test
+
+`scripts/seggy_firmware_square.py` runs without ROS or third-party Python packages.
+Run it on Seggy with the wheel firmware available at `/dev/ttyACM0` and all ROS
+hardware drivers and other serial clients stopped. It requires Linux's `fuser`
+utility to check for an existing serial client. Direct commands bypass Nav2,
+collision monitoring, and `twist_mux`; keep the complete square clear and the
+physical stop control available. Firmware joystick input must remain inactive.
+
+From the workspace root, preview the route and nominal speeds:
+
+```bash
+python3 src/articubot_one/scripts/seggy_firmware_square.py \
+  --linear-percent 15 --angular-percent 20
+```
+
+Add `--execute` to open the port and move. This is a manual test command; the
+script does not start as part of robot bringup.
+
+```bash
+python3 src/articubot_one/scripts/seggy_firmware_square.py \
+  --port /dev/ttyACM0 --side 1.0 --cycles 1 --direction ccw \
+  --linear-percent 15 --angular-percent 20 --execute
+```
+
+Percentages are integers from 1 to 100. Linear percent commands both wheels
+forward equally. Angular percent commands the same wheel-speed magnitude in
+opposite directions for in-place turns; it is a percentage of the maximum
+in-place robot turn rate, not a rad/s value. At the firmware's 3.5 rad/s wheel
+maximum, 15% linear gives a nominal 0.064 m/s and 20% angular gives 0.361 rad/s.
+The ROS `wheels_pwm_factor` is not used by this direct percent interface.
+
+Each circuit consists of four straight sides and four 90-degree turns. The
+script uses cumulative encoder counts to end each segment, sends zero velocity,
+and waits for unchanged counts before the next segment. Speeds are step commands
+with no ROS smoothing or tapering. Inertia and whole-count resolution can cause
+overshoot, which is included in segment results. There is no external localization
+or correction to the original square corners.
+
+Geometry defaults match Seggy's controller settings: wheel radius 0.122 m,
+separation 0.473 m, and 60 counts per wheel revolution. Override these with
+`--wheel-radius`, `--wheel-separation`, and `--counts-per-rev`; use
+`--motor-max-rad-s` if the firmware maximum changes. The port defaults to
+115200 baud (`--baud`). Commands and count samples default to 20 Hz (`--rate`).
+
+The JSONL log includes parameters, raw commands/replies, cumulative wheel travel,
+estimated local X/Y/yaw, measured linear/angular speeds, segment durations and
+overshoot, stop confirmation, and final estimated closure error. Counts are coarse:
+one count is about 1.28 cm at the wheel, so instantaneous speed samples are noisy.
+Wheel odometry cannot independently measure slip or actual physical square accuracy.
+Use `--output /absolute/path/new-run.jsonl` for a chosen log filename.
+
+Missing replies, malformed replies, wrong-direction travel, no count changes for
+five seconds, or segment timeouts abort the run. The script attempts zero commands
+and encoder-based stop confirmation on errors, Ctrl+C, and SIGTERM. If serial
+communication fails, stop confirmation is unavailable; the firmware's two-second
+command watchdog is the fallback. Encoder silence cannot prove a physical stop if
+the sensors have failed. `--stall-timeout`, `--segment-timeout`, `--serial-timeout`,
+and `--settle` adjust the bounded checks; see `--help` for defaults.
+
+Offline verification, with no robot access:
+
+```bash
+python3 -m unittest discover -s src/articubot_one/test \
+  -p test_seggy_firmware_square.py
+```
+
+The offline checks exercise clockwise/counterclockwise square integration with
+Hall-count quantization, 32-bit counter rollover, valid acknowledgments, malformed
+serial replies, and missing-reply timeouts. Physical square accuracy and motor
+response still require a live test.

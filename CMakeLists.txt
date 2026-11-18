@@ -31,6 +31,7 @@ install(PROGRAMS
   scripts/gps_waypoint_follower.py
   scripts/xy_waypoint_follower.py
   scripts/seggy_docking_endurance.sh
+  scripts/seggy_firmware_square.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
