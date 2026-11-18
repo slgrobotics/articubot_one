@@ -81,7 +81,7 @@ diff_cont:
     angular:
       z:
         # Note: angular velocity must be limited to avoid losing mapping capabilities.
-        max_velocity           : 0.3  # rad/s - limit robot turn rate to ~17 deg/sec, feels fast enough, mapping still works.
+        max_velocity           : 0.5  # rad/s (~29 deg/s), matches Nav2 turning limits.
         # Note: limiting acceleration and jerk on angular z causes directional oscillations on straight paths.
         # Leave max_acceleration and max_jerk unset to disable these limits - the controller defaults to .nan;
         #max_acceleration       : .nan  # rad/s^2  .nan - no limits

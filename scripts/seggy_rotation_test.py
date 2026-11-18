@@ -38,8 +38,8 @@ def main():
     parser.add_argument('--output', default=datetime.now().strftime(
         'seggy_rotation_%Y%m%d_%H%M%S.csv'))
     args = parser.parse_args()
-    if args.turns < 1 or not 0 < abs(args.speed) <= 0.3:
-        parser.error('Use at least one turn and a speed magnitude up to 0.3 rad/s')
+    if args.turns < 1 or not 0 < abs(args.speed) <= 0.5:
+        parser.error('Use at least one turn and a speed magnitude up to 0.5 rad/s')
 
     import rclpy
     from geometry_msgs.msg import PoseWithCovarianceStamped, TwistStamped
