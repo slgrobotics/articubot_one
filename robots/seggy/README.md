@@ -113,7 +113,7 @@ The key distinction is that **Nav2’s XY tolerance is a radius around its goal*
 | Complete initial staging navigation | General Nav2 goal checker **30 cm XY**, **5.7° yaw**. XY latches once accepted. NavFn separately has a **20 cm** planning tolerance for finding a reachable endpoint. |
 | Pass the LiDAR staging gate | Within **5 cm lateral** and **5° heading** of the detected dock axis. Seggy must also be at least **20 cm outside the parking plane**. That is a minimum approach distance. |
 | Complete a LiDAR re-staging move | Nav2 temporarily uses **7 cm XY** and **5° yaw**, with XY latching inherited from the normal goal checker. The fresh LiDAR staging gate runs again afterward. |
-| Pass the near-dock guard | In the final **8 cm** before parking, lateral error of **2.5 cm or more** aborts the approach. At or beyond the parking plane, being outside the **2.5 cm XY** arrival radius also aborts. |
+| Pass the near-dock guard | In the final **8 cm** before parking, lateral error of **4 cm or more** aborts the approach (`approach_guard_lateral_tolerance: 0.04`). At or beyond the parking plane, being outside the **2.5 cm XY** arrival radius also aborts. |
 | Finish Nav2 positioning | Within **2.5 cm XY** of the filtered LiDAR target. The wrapper applies the final heading requirement in the next phase. |
 | Finish yaw alignment | Within **4.5 cm XY** of the wrapper’s filtered target (**2.5 cm + 2 cm margin**) and **5° yaw**. |
 | Stay within the insertion corridor | Relative to the insertion start, at most **1 cm lateral drift** and **5° heading error**. More than **5 mm backward** aborts. The **15 cm travel cap** is measured from insertion start, with **3 cm plus a velocity-based allowance** reserved for braking. |

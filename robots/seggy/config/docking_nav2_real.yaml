@@ -54,6 +54,7 @@ docking_server:
       staging_yaw_tolerance: 5.0  # degrees
       staging_min_distance: 0.20  # meters outside the parking plane
       approach_guard_distance: 0.08  # meters before the parking plane
+      approach_guard_lateral_tolerance: 0.05  # meters; 0 inherits docking_threshold
       selection_timeout: 3.0
       filter_coef: 0.1
     # Other Nav2 controller settings come from the standard Nav2 configuration

@@ -58,6 +58,7 @@ docking_server:
       staging_yaw_tolerance: 0.0  # degrees, disabled
       staging_min_distance: 0.0  # disabled
       approach_guard_distance: 0.0  # disabled
+      approach_guard_lateral_tolerance: 0.0  # meters; 0 inherits docking_threshold
       selection_timeout: 3.0
       filter_coef: 0.1
     # Other Nav2 controller settings come from the standard Nav2 configuration
