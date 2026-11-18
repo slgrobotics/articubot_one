@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Measure Seggy firmware response while driving an encoder-controlled square.
+"""
+Measure Seggy firmware response while driving an encoder-controlled 1 meter square.
 
 Run on Seggy with ROS and other serial clients stopped, a clear test area,
 and the physical stop control available. Preview without opening the port:
@@ -11,6 +12,22 @@ Add --execute to move. Each side and turn ends using cumulative Hall counts;
 these are wheel-odometry estimates, not independent physical measurements.
 The JSONL log records commands, replies, samples, segment results, and errors.
 Expect four completed sides and turns followed by a confirmed encoder stop.
+
+-----------
+I repeated test with percents from 7 to 10, looking for jerky movements.
+The threshold lies between 9 and 10, at 9 the stops are hardly noticeable,
+  at 10 the movement is very smooth.
+Basically, we can deal with it if we can set ROS side to either move
+  wheels at 9 percent min, or command a hard stop.
+
+The tests suggest a useful minimum per-wheel speed, rather than a minimum robot linear speed.
+
+With wheels_pwm_factor: 28.5714 (robots/seggy/config/hardware.yaml):
+- 9% ≈ 0.315 rad/s per wheel
+- Both wheels forward: approximately 0.038 m/s
+- Equal opposite wheel speeds: approximately 0.163 rad/s robot rotation
+The right place to enforce this is diffdrive_arduino, after converting wheel commands into firmware percentages.
+Nav2’s linear/angular minimums cannot guarantee a minimum for each wheel during curved motion.
 """
 
 import argparse

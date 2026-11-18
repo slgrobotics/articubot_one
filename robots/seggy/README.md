@@ -17,6 +17,21 @@ motor conversion factor, and battery settings for the Arduino driver.
 The real-hardware branch of `description/ros2_control.xacro` loads this file.
 Simulation does not load it.
 
+Seggy sets `wheel_min_command_percent: 9`. The `diffdrive_arduino` driver sends
+zero for each rounded wheel command below 9% magnitude; ±9% and larger pass
+unchanged. This suppresses the low-speed hesitation observed in direct firmware
+tests. Older hardware YAML files that omit this key default to disabled (`0`).
+The setting is read at hardware initialization and requires the updated driver.
+It does not change odometry or wait for the firmware watchdog to stop a wheel.
+
+At the current conversion factor, 9% is about 0.315 rad/s per wheel, equivalent
+to 0.038 m/s straight or 0.163 rad/s in-place rotation. A slower wheel in a curve
+can stop independently. Existing precision docking speeds can be suppressed:
+a pure 0.015 m/s insertion is about 4%. Re-tune and validate docking speeds
+before using docking with the 9% filter; set the hardware parameter to `0` to
+disable it. No docking speeds were automatically increased.
+
+
 The packaged file is used by default:
 
 ```bash
