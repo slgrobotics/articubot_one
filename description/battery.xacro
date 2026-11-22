@@ -33,6 +33,7 @@
   </xacro:macro>
 
   <xacro:if value="$(arg sim_mode)">
+  <xacro:property name="battery_start_draining" default="false"/>
   <gazebo>
     <plugin name="gz::sim::systems::LinearBatteryPlugin" filename="gz-sim-linearbatteryplugin-system">
       <!--Li-ion battery spec from LIR18650 datasheet-->
@@ -55,8 +56,8 @@
         charging I should be > discharging I -->
       <charging_time>3.0</charging_time>
       <recharge_by_topic>true</recharge_by_topic>
-      <!-- Start draining on the first nonzero joint velocity or force command. -->
-      <start_draining>false</start_draining>
+      <!-- By default, discharge starts on the first nonzero joint command. -->
+      <start_draining>${str(battery_start_draining).lower()}</start_draining>
     </plugin>
   </gazebo>
   </xacro:if>
