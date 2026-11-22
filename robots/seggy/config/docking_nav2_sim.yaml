@@ -80,7 +80,7 @@ docking_alignment:
     # the catalogue. Frames, odometry, topics, selection/freshness settings,
     # arrival thresholds, direction and tracing follow the docking server/plugin.
     insertion_speed: 0.0406  # m/s, approximately 9.5% wheel speed
-    insertion_min_speed: 0.0406  # m/s; do not taper into the hardware deadband
+    insertion_min_speed: 0.0406  # m/s; docking-specific floor matching the real robot's creeping constraint
     insertion_timeout: 15.0  # seconds
     insertion_max_travel: 0.05  # meters, 0 disables charging insertion
     battery_topic: battery/battery_state

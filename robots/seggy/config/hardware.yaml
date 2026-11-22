@@ -10,7 +10,6 @@ reconnect_interval: 2          # seconds
 
 enc_counts_per_rev: 60         # encoder counts per wheel revolution, 60 for Seggy's BLDC wheels firmware
 wheels_pwm_factor: 28.5714     # rad/s to firmware motor setpoint percent. Match the firmware 100.0/3.5 calculation.
-wheel_min_command_percent: 9   # per-wheel firmware commands below 9% become zero; 0 (default) disables
 
 battery_num_cells: 4
 battery_technology: 4          # BatteryState chemistry - LiFePO4

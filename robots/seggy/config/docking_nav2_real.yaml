@@ -75,7 +75,7 @@ docking_alignment:
     # the catalogue. Frames, odometry, topics, selection/freshness settings,
     # arrival thresholds, direction and tracing follow the docking server/plugin.
     insertion_speed: 0.0407  # m/s, approximately 9.5% wheel speed
-    insertion_min_speed: 0.0407  # m/s; do not taper into the hardware deadband
+    insertion_min_speed: 0.0407  # m/s; docking-specific floor to avoid rough low-speed creeping
     insertion_timeout: 15.0  # seconds
     insertion_max_travel: 0.0  # meters, real_v_bay overrides this in docking_real.yaml
     battery_topic: battery/battery_state

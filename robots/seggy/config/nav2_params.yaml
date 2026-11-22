@@ -176,14 +176,10 @@ controller_server:
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
-        "PathAngleCritic", "PreferForwardCritic", "TwirlingCritic", "VelocityDeadbandCritic"]
-      # 9.5% of the 3.5 rad/s wheel maximum: 0.0406 m/s, 0.1716 rad/s.
-      # This critic discourages low speeds; the smoother zeros subminimum axes.
-      VelocityDeadbandCritic:
-        enabled: true
-        cost_power: 1
-        cost_weight: 35.0
-        deadband_velocities: [0.0406, 0.0, 0.1716]
+        "PathAngleCritic", "PreferForwardCritic", "TwirlingCritic"]
+      # Wheel-speed minimums are not independent body-axis minimums: small yaw
+      # corrections are valid while both wheels are moving. Keep docking speed
+      # floors in the docking configuration, not in path-following critics.
       ConstraintCritic: # robot limits - command only what robot can physically do
         enabled: true
         cost_power: 1
@@ -490,7 +486,9 @@ velocity_smoother:
     odom_topic: /odometry/local      # works  # Topic of odometry to use for estimating current velocities
     #odom_topic: /diff_cont/odom     # works, but we'd better use fused odom
     odom_duration: 0.2  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
-    deadband_velocity: [0.0406, 0.0, 0.1716]  # Below these body-axis speeds, output zero; approximately 9.5% wheel speed
+    # Preserve small steering corrections. Low wheel speeds can move in encoder
+    # steps as the firmware PI integral accumulates; docking sets its own floors.
+    deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0  # Time (s) after which to zero out and stop if no new velocity commands are received
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html

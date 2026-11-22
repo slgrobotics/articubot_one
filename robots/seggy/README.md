@@ -17,31 +17,22 @@ motor conversion factor, and battery settings for the Arduino driver.
 The real-hardware branch of `description/ros2_control.xacro` loads this file.
 Simulation does not load it.
 
-Seggy sets `wheel_min_command_percent: 9`. The `diffdrive_arduino` driver sends
-zero for each rounded wheel command below 9% magnitude; ±9% and larger pass
-unchanged. This suppresses the low-speed hesitation observed in direct firmware
-tests. Older hardware YAML files that omit this key default to disabled (`0`).
-The setting is read at hardware initialization and requires the updated driver.
-It does not change odometry or wait for the firmware watchdog to stop a wheel.
+The driver no longer zeros small wheel commands. Seggy's BLDC wheels can move
+at low requested speeds as the firmware PI integral accumulates, although motion
+can occur in uneven encoder-sized steps. Normal path following preserves small
+steering corrections: the velocity smoother has zero deadbands, and MPPI does
+not use `VelocityDeadbandCritic`.
 
-At the current conversion factor, 9% is about 0.315 rad/s per wheel, equivalent
-to 0.038 m/s straight or 0.163 rad/s in-place rotation. A slower wheel in a curve
-can stop independently. Nav2 and both docking overlays use approximately 9.5% body-speed equivalents:
-0.0406 m/s straight and 0.1716 rad/s in-place rotation. MPPI's
-`VelocityDeadbandCritic` discourages lower speeds; the velocity smoother zeros
-body-axis commands below those thresholds. Recovery minimums match. These
-body-axis settings do not guarantee per-wheel minimums on curves; the hardware
-filter still handles each wheel independently.
-
-Docking approach linear minimum/maximum and wrapper insertion minimum/maximum
-are 0.0406 m/s. Alignment uses `min_angular_speed_deg: 9.84` and an
-`max_angular_speed_deg: 9.855` ceiling (degrees/s), just above the smoother threshold.
+Docking retains separate speed floors to avoid prolonged rough creeping:
+the approach linear minimum is 0.0406 m/s, and wrapper insertion uses 0.0406 m/s
+in simulation and 0.0407 m/s on the real robot. Alignment uses
+`min_angular_speed_deg: 9.84` and a `max_angular_speed_deg: 9.855` ceiling (degrees/s).
 Stops and braking still command zero. Firmware integer percentages round these
 requests to approximately 10%. Docking at the increased speed requires physical
 validation; travel limits, charging delays, and braking margins are unchanged.
 A two-second charging delay now permits roughly 8 cm of nominal additional
-travel, subject to the existing travel-limit stop. Set the hardware parameter
-to `0` to disable its separate 9% filter.
+travel, subject to the existing travel-limit stop. These docking floors are
+operating choices, not hardware dead-zone thresholds.
 
 
 The packaged file is used by default:
