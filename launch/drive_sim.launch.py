@@ -210,6 +210,13 @@ def generate_launch_description():
             gazebo_ui,
             spawn_sim_robot,
             gz_bridge,
+            Node(
+                package='articubot_one',
+                executable='run_battery_state_compat.py',
+                namespace=namespace,
+                parameters=[{'simulated': True}],
+                output='screen',
+            ),
             #odom_relay,
         ]
     )

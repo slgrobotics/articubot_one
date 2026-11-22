@@ -10,6 +10,8 @@ This node:
  - converts the report from the broadcaster's 0..100 percentage convention to the older sensor_msgs/BatteryState 0..1 range,
  - and republishes it on the legacy battery/battery_state topic used by the rest of the robot stack.
 
+In simulation, it normalizes the single BatteryState message from ros_gz_bridge.
+
 This keeps older nodes and launch files working while the system uses the newer official battery monitor output.
 
 See scripts/run_battery_state_compat.py
@@ -29,7 +31,7 @@ from sensor_msgs.msg import BatteryState
 
 
 def normalize_battery_state(message, frame_id):
-    """Convert the official 0..100 percentage to sensor_msgs' 0..1 fraction."""
+    """Convert a 0..100 percentage to sensor_msgs' 0..1 fraction."""
     result = deepcopy(message)
     result.header.frame_id = frame_id
     result.percentage = (
@@ -54,15 +56,24 @@ class BatteryStateCompat(Node):
 
         self.battery_name = self.declare_parameter('battery_name', 'main_battery').value
         self.frame_id = self.declare_parameter('frame_id', 'battery_frame').value
+        simulated = self.declare_parameter('simulated', False).value
 
         self.get_logger().info("BatteryStateCompat node started with parameters: "
                                 f"battery_name={self.battery_name}, frame_id={self.frame_id}")
 
         self.publisher = self.create_publisher(BatteryState, 'battery/battery_state', 10)
 
-        self.subscription = self.create_subscription(
-            BatteryStateArray, 'battery/raw_battery_states', self.on_battery_states, 10,
-        )
+        if simulated:
+            self.subscription = self.create_subscription(
+                BatteryState, 'battery/sim_raw_state', self.on_sim_battery_state, 10,
+            )
+        else:
+            self.subscription = self.create_subscription(
+                BatteryStateArray, 'battery/raw_battery_states', self.on_battery_states, 10,
+            )
+
+    def on_sim_battery_state(self, message):
+        self.publisher.publish(normalize_battery_state(message, message.header.frame_id))
 
     def on_battery_states(self, message):
         state = select_battery(message, self.battery_name, self.frame_id)

@@ -45,9 +45,9 @@
       <power_load>${power_load}</power_load>
       <resistance>0.07</resistance>
       <smooth_current_tau>2.0</smooth_current_tau>
-      <!-- ros_gz_bridge forwards percentage unchanged. Keep false for ROS's 0..1
-           range. True uses charge / capacity and publishes it on a 0..100 scale. -->
-      <fix_issue_225>false</fix_issue_225>
+      <!-- Use charge / capacity for state of charge. The simulation battery
+           relay converts the published 0..100 percentage to ROS's 0..1 range. -->
+      <fix_issue_225>true</fix_issue_225>
       <!-- ROS BatteryState uses negative current during discharge. -->
       <invert_current_sign>true</invert_current_sign>
       <enable_recharge>true</enable_recharge>

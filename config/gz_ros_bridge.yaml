@@ -8,10 +8,9 @@
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS  # can be BIDIRECTIONAL or ROS_TO_GZ
 
-- ros_topic_name: "battery/battery_state"
+- ros_topic_name: "battery/sim_raw_state"
   # gz topic --echo --topic /model/plucky/battery/lithium_battery/state
-  # Note: make sure percentage is reported by GZ in the 0..1 range, as the ROS2 message requires.
-  #       see <fix_issue_225>false</fix_issue_225> in battery.xacro
+  # battery_state_compat converts Gazebo's 0..100 percentage to the ROS 0..1 range.
   # <model_name> and <namespace> must be replaced by the launch file:
   gz_topic_name: /model/<model_name>/battery/<namespace>/lithium_battery/state
   ros_type_name: "sensor_msgs/msg/BatteryState"

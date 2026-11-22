@@ -257,6 +257,13 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             gz_bridge,
+            Node(
+                package='articubot_one',
+                executable='run_battery_state_compat.py',
+                namespace=namespace,
+                parameters=[{'simulated': True}],
+                output='screen',
+            ),
             #odom_relay,
             #gps_fix_translator
         ]
