@@ -5,15 +5,16 @@
 
   <!-- See https://docs.ros.org/en/lyrical/p/battery_state_broadcaster/
            https://github.com/gazebosim/ros_gz/blob/ros2/ros_gz_sim_demos/README.md
-           /opt/ros/${ROS_DISTRO}/opt/gz_sim_vendor/share/gz/gz-sim8/worlds/linear_battery_demo.sdf
+           /opt/ros/${ROS_DISTRO}/opt/gz_sim_vendor/share/gz/gz-sim/worlds/linear_battery_demo.sdf
            /opt/ros/${ROS_DISTRO}/share/ros_gz_sim_demos
-           https://gazebosim.org/api/sim/7/battery.html
+           https://gazebosim.org/api/sim/10/classgz_1_1sim_1_1systems_1_1LinearBatteryPlugin.html
 
       Note: This is a generic SIM battery. Copy to robots/<robot_model>/description/. and customize.
             Modify robot.urdf.xacro to include the customized version.
 
       parameters: open_circuit_voltage
                   battery_capacity
+                  power_load (W)
   -->
 
   <!-- Included inside the real drive system's ros2_control element. Gazebo
@@ -41,23 +42,21 @@
       <open_circuit_voltage_linear_coef>-2.0</open_circuit_voltage_linear_coef>
       <initial_charge>${battery_capacity * 0.9}</initial_charge>
       <capacity>${battery_capacity}</capacity>
+      <power_load>${power_load}</power_load>
       <resistance>0.07</resistance>
-      <power_load>6.6</power_load>
       <smooth_current_tau>2.0</smooth_current_tau>
-      <!-- if "fix_issue_225" is true, percentage is reported in the 1..100 range which is wrong.
-               see https://github.com/gazebosim/gz-sim/issues/225 -->
+      <!-- ros_gz_bridge forwards percentage unchanged. Keep false for ROS's 0..1
+           range. True uses charge / capacity and publishes it on a 0..100 scale. -->
       <fix_issue_225>false</fix_issue_225>
-      <!-- https://github.com/gazebosim/gz-sim/pull/2696 -->
+      <!-- ROS BatteryState uses negative current during discharge. -->
       <invert_current_sign>true</invert_current_sign>
       <enable_recharge>true</enable_recharge>
       <!-- charging I = c / t, discharging I = P / V,
         charging I should be > discharging I -->
       <charging_time>3.0</charging_time>
-      <!-- Consumer-specific -->
-      <soc_threshold>0.51</soc_threshold>
-      <power_load>2.1</power_load>
       <recharge_by_topic>true</recharge_by_topic>
-      <start_on_motion>true</start_on_motion>
+      <!-- Start draining on the first nonzero joint velocity or force command. -->
+      <start_draining>false</start_draining>
     </plugin>
   </gazebo>
   </xacro:if>
