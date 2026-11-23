@@ -68,46 +68,89 @@
           <geometry><box><size>10 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>10 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
       </link>
     </model>
 
-    <model name="wall_south">
+    <!-- 32-inch doorway centered at X=2 -->
+    <model name="wall_south_west">
       <static>true</static>
-      <pose>4 -0.925 1.25 0 0 0</pose>
+      <pose>0.2968 -0.925 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>10 0.15 2.5</size></box></geometry>
+          <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>10 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
       </link>
     </model>
 
-    <model name="wall_west">
+    <model name="wall_south_east">
       <static>true</static>
-      <pose>-0.925 4 1.25 0 0 0</pose>
+      <pose>5.7032 -0.925 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 10 2.5</size></box></geometry>
+          <geometry><box><size>6.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 10 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <geometry><box><size>6.5936 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 32-inch doorway centered at Y=2 -->
+    <model name="wall_west_south">
+      <static>true</static>
+      <pose>-0.925 0.2968 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <transparency>0.5</transparency>
+          <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_north">
+      <static>true</static>
+      <pose>-0.925 5.7032 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 6.5936 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <transparency>0.5</transparency>
+          <geometry><box><size>0.15 6.5936 2.5</size></box></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -122,10 +165,11 @@
           <geometry><box><size>0.15 10 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>0.15 10 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>1 1 0 1</ambient>
+            <diffuse>1 1 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -143,10 +187,11 @@
           <geometry><box><size>0.15 2.5186 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>0.15 2.5186 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -161,10 +206,11 @@
           <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -179,10 +225,11 @@
           <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -197,10 +244,11 @@
           <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -217,10 +265,11 @@
           <geometry><box><size>2.5186 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>2.5186 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -235,10 +284,11 @@
           <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -253,10 +303,11 @@
           <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
@@ -271,10 +322,11 @@
           <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
+          <transparency>0.5</transparency>
           <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
           <material>
-            <ambient>0.55 0.35 0.17 1</ambient>
-            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
             <specular>0.1 0.1 0.1 1</specular>
           </material>
         </visual>
