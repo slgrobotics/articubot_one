@@ -62,13 +62,13 @@
 
     <model name="wall_north">
       <static>true</static>
-      <pose>4 8 1.25 0 0 0</pose>
+      <pose>4 9 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <geometry><box><size>10 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <geometry><box><size>10 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -80,13 +80,13 @@
 
     <model name="wall_south">
       <static>true</static>
-      <pose>4 0.075 1.25 0 0 0</pose>
+      <pose>4 -0.925 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <geometry><box><size>10 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <geometry><box><size>10 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -98,13 +98,13 @@
 
     <model name="wall_west">
       <static>true</static>
-      <pose>0.075 4 1.25 0 0 0</pose>
+      <pose>-0.925 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <geometry><box><size>0.15 10 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <geometry><box><size>0.15 10 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -116,13 +116,13 @@
 
     <model name="wall_east">
       <static>true</static>
-      <pose>8 4 1.25 0 0 0</pose>
+      <pose>9 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <geometry><box><size>0.15 10 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <geometry><box><size>0.15 10 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -133,17 +133,17 @@
     </model>
 
     <!-- ==================== INTERIOR WALLS ==================== -->
-    <!-- Vertical divider at X=4: doorways at Y=1.5-2.5 and Y=5.5-6.5 -->
+    <!-- Vertical divider at X=4: 32-inch openings centered at Y=2 and Y=6 -->
 
     <model name="wall_room_3_4_lower">
       <static>true</static>
-      <pose>4 0.75 1.25 0 0 0</pose>
+      <pose>4 0.3343 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 2.5186 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 2.5186 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -155,13 +155,13 @@
 
     <model name="wall_room_3_4_upper">
       <static>true</static>
-      <pose>4 3.25 1.25 0 0 0</pose>
+      <pose>4 3.2032 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -173,13 +173,13 @@
 
     <model name="wall_room_1_2_lower">
       <static>true</static>
-      <pose>4 4.75 1.25 0 0 0</pose>
+      <pose>4 4.7968 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 1.5936 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -191,13 +191,13 @@
 
     <model name="wall_room_1_2_upper">
       <static>true</static>
-      <pose>4 7.25 1.25 0 0 0</pose>
+      <pose>4 7.7032 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <geometry><box><size>0.15 2.5936 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -207,17 +207,17 @@
       </link>
     </model>
 
-    <!-- Horizontal divider at Y=4: doorways at X=1.5-2.5 and X=5.5-6.5 -->
+    <!-- Horizontal divider at Y=4: 32-inch openings centered at X=2 and X=6 -->
 
     <model name="wall_room_1_3_left">
       <static>true</static>
-      <pose>0.75 4 1.25 0 0 0</pose>
+      <pose>0.3343 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>2.5186 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>2.5186 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -229,13 +229,13 @@
 
     <model name="wall_room_1_3_right">
       <static>true</static>
-      <pose>3.25 4 1.25 0 0 0</pose>
+      <pose>3.2032 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -247,13 +247,13 @@
 
     <model name="wall_room_2_4_left">
       <static>true</static>
-      <pose>4.75 4 1.25 0 0 0</pose>
+      <pose>4.7968 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>1.5936 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
@@ -265,13 +265,13 @@
 
     <model name="wall_room_2_4_right">
       <static>true</static>
-      <pose>7.25 4 1.25 0 0 0</pose>
+      <pose>7.7032 4 1.25 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <geometry><box><size>2.5936 0.15 2.5</size></box></geometry>
           <material>
             <ambient>0.55 0.35 0.17 1</ambient>
             <diffuse>0.65 0.42 0.20 1</diffuse>
