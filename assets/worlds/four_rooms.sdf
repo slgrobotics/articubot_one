@@ -1,0 +1,446 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <!-- Copied from https://github.com/OmarAds2002/turtlebot3-autonomous-patrol/tree/main/worlds -->
+  <world name="four_rooms">
+    <plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands"/>
+    <!-- Physics -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Lighting -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+            <diffuse>0.95 0.95 0.95 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== OUTER WALLS ==================== -->
+
+    <model name="wall_north">
+      <static>true</static>
+      <pose>4 8 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south">
+      <static>true</static>
+      <pose>4 0.075 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>8 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west">
+      <static>true</static>
+      <pose>0.075 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_east">
+      <static>true</static>
+      <pose>8 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 8 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== INTERIOR WALLS ==================== -->
+    <!-- Vertical divider at X=4: doorways at Y=1.5-2.5 and Y=5.5-6.5 -->
+
+    <model name="wall_room_3_4_lower">
+      <static>true</static>
+      <pose>4 0.75 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_3_4_upper">
+      <static>true</static>
+      <pose>4 3.25 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_1_2_lower">
+      <static>true</static>
+      <pose>4 4.75 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_1_2_upper">
+      <static>true</static>
+      <pose>4 7.25 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 1.5 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Horizontal divider at Y=4: doorways at X=1.5-2.5 and X=5.5-6.5 -->
+
+    <model name="wall_room_1_3_left">
+      <static>true</static>
+      <pose>0.75 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_1_3_right">
+      <static>true</static>
+      <pose>3.25 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_2_4_left">
+      <static>true</static>
+      <pose>4.75 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_room_2_4_right">
+      <static>true</static>
+      <pose>7.25 4 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material>
+            <ambient>0.55 0.35 0.17 1</ambient>
+            <diffuse>0.65 0.42 0.20 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== TABLES (one per room) ==================== -->
+
+    <!-- Room 1 (top-left): center ~(1.5, 6.5) -->
+    <include>
+      <uri>model://table</uri>
+      <name>table_room1</name>
+      <pose>1.5 6.5 0 0 0 0</pose>
+    </include>
+
+    <!-- Room 2 (top-right): center ~(6.0, 6.0) -->
+    <include>
+      <uri>model://table</uri>
+      <name>table_room2</name>
+      <pose>6.0 6.0 0 0 0 0</pose>
+    </include>
+
+    <!-- Room 3 (bottom-left): center ~(1.5, 1.5) -->
+    <include>
+      <uri>model://table</uri>
+      <name>table_room3</name>
+      <pose>1.5 1.5 0 0 0 0</pose>
+    </include>
+
+    <!-- Room 4 (bottom-right): center ~(6.5, 1.5) -->
+    <include>
+      <uri>model://table</uri>
+      <name>table_room4</name>
+      <pose>6.5 1.5 0 0 0 0</pose>
+    </include>
+
+    <!-- ==================== RANDOM OBJECTS ==================== -->
+
+    <!-- Room 1: red box on table -->
+    <model name="obj_box_r1">
+      <static>true</static>
+      <pose>1.5 6.5 0.76 0 0 0.3</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.12 0.12 0.08</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.12 0.12 0.08</size></box></geometry>
+          <material>
+            <ambient>0.8 0.1 0.1 1</ambient>
+            <diffuse>0.9 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 1: green cylinder on floor -->
+    <model name="obj_cyl_r1">
+      <static>true</static>
+      <pose>0.8 5.2 0.1 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.06</radius><length>0.2</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.06</radius><length>0.2</length></cylinder></geometry>
+          <material>
+            <ambient>0.1 0.7 0.2 1</ambient>
+            <diffuse>0.15 0.8 0.25 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 2: blue sphere on floor -->
+    <model name="obj_sphere_r2">
+      <static>true</static>
+      <pose>5.5 7.0 0.08 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.08</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.08</radius></sphere></geometry>
+          <material>
+            <ambient>0.1 0.2 0.8 1</ambient>
+            <diffuse>0.15 0.25 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 2: yellow box on table -->
+    <model name="obj_box_r2">
+      <static>true</static>
+      <pose>6.1 6.0 0.78 0 0 0.7</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.15 0.08 0.1</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.15 0.08 0.1</size></box></geometry>
+          <material>
+            <ambient>0.8 0.75 0.1 1</ambient>
+            <diffuse>0.9 0.85 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 3: orange cylinder on floor -->
+    <model name="obj_cyl_r3">
+      <static>true</static>
+      <pose>2.8 2.8 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.08</radius><length>0.3</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.08</radius><length>0.3</length></cylinder></geometry>
+          <material>
+            <ambient>0.85 0.45 0.05 1</ambient>
+            <diffuse>0.95 0.55 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 3: purple sphere on table -->
+    <model name="obj_sphere_r3">
+      <static>true</static>
+      <pose>1.4 1.5 0.78 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.06</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.06</radius></sphere></geometry>
+          <material>
+            <ambient>0.5 0.1 0.7 1</ambient>
+            <diffuse>0.6 0.15 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 4: red cylinder on floor -->
+    <model name="obj_cyl_r4">
+      <static>true</static>
+      <pose>5.2 0.8 0.12 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.05</radius><length>0.24</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.05</radius><length>0.24</length></cylinder></geometry>
+          <material>
+            <ambient>0.75 0.1 0.1 1</ambient>
+            <diffuse>0.85 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Room 4: blue box on table, rotated -->
+    <model name="obj_box_r4">
+      <static>true</static>
+      <pose>6.6 1.6 0.77 0 0 1.1</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.18 0.10 0.06</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.18 0.10 0.06</size></box></geometry>
+          <material>
+            <ambient>0.1 0.3 0.8 1</ambient>
+            <diffuse>0.15 0.35 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
