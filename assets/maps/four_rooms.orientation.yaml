@@ -1,0 +1,36 @@
+schema_version: 1
+map_file: four_rooms.yaml
+map_content_hash: 7ee99d91e7b404ba8c0bee9d3ffc007e4a0d5cfbd1d8dc62320b89fccf37517c
+saved_at: '2026-11-23T23:18:22.291068+00:00'
+geometry:
+  resolution: 0.05
+  origin:
+  - -9.108
+  - -10.354
+  - 0
+orientation:
+  schema_version: 1
+  valid: true
+  reason: ''
+  session_id: 8ff28bae-882a-456e-806e-6bd2518a36d9
+  map_frame: map
+  robot_frame: base_link
+  reference: true_north
+  source: imu_and_tf
+  published_at_ros_ns: 1656000000000
+  imu_topic: imu/data
+  pending_samples: 0
+  pending_tf_reason: ''
+  heading_reference: true_enu
+  correction_radians: 0.0
+  imu_uncertainty_assumed: true
+  heading_rad: -0.0068432571639370915
+  uncertainty_rad: 0.261799387799495
+  dispersion_rad: 4.2540140222372177e-07
+  sample_count: 149
+  stamp: 1655.872
+  segment: 0
+  estimate_age_seconds: 0.12799999999992906
+  map_x_heading_from_east_deg: -0.39208975361626064
+  north_yaw_in_map_deg: 90.39208975361626
+  uncertainty_deg: 15.000000000019801
