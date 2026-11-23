@@ -176,6 +176,181 @@
       </link>
     </model>
 
+    <!-- Southwest boundary arc with a centered 32-inch doorway. -->
+    <model name="wall_southwest_arc">
+      <static>true</static>
+      <link name="arc">
+        <collision name="segment_1_collision">
+          <pose>-8.923003752 7.825264270 1.25 0 0 -1.505346480</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_1_visual">
+          <pose>-8.923003752 7.825264270 1.25 0 0 -1.505346480</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_2_collision">
+          <pose>-8.616336189 5.495892864 1.25 0 0 -1.374446786</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_2_visual">
+          <pose>-8.616336189 5.495892864 1.25 0 0 -1.374446786</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_3_collision">
+          <pose>-8.008248229 3.226477703 1.25 0 0 -1.243547092</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_3_visual">
+          <pose>-8.008248229 3.226477703 1.25 0 0 -1.243547092</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_4_collision">
+          <pose>-7.109144427 1.055849109 1.25 0 0 -1.112647398</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_4_visual">
+          <pose>-7.109144427 1.055849109 1.25 0 0 -1.112647398</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_5_collision">
+          <pose>-5.934408697 -0.978852861 1.25 0 0 -0.981747704</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_5_visual">
+          <pose>-5.934408697 -0.978852861 1.25 0 0 -0.981747704</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_6_collision">
+          <pose>-4.646621689 -2.680345911 1.25 0 0 -0.850848010</pose>
+          <geometry><box><size>1.962324892 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_6_visual">
+          <pose>-4.646621689 -2.680345911 1.25 0 0 -0.850848010</pose>
+          <geometry><box><size>1.962324892 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_7_collision">
+          <pose>-2.680345911 -4.646621688 1.25 0 0 -0.719948316</pose>
+          <geometry><box><size>1.962324892 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_7_visual">
+          <pose>-2.680345911 -4.646621688 1.25 0 0 -0.719948316</pose>
+          <geometry><box><size>1.962324892 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_8_collision">
+          <pose>-0.978852861 -5.934408697 1.25 0 0 -0.589048623</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_8_visual">
+          <pose>-0.978852861 -5.934408697 1.25 0 0 -0.589048623</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_9_collision">
+          <pose>1.055849109 -7.109144427 1.25 0 0 -0.458148929</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_9_visual">
+          <pose>1.055849109 -7.109144427 1.25 0 0 -0.458148929</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_10_collision">
+          <pose>3.226477703 -8.008248229 1.25 0 0 -0.327249235</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_10_visual">
+          <pose>3.226477703 -8.008248229 1.25 0 0 -0.327249235</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_11_collision">
+          <pose>5.495892864 -8.616336189 1.25 0 0 -0.196349541</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_11_visual">
+          <pose>5.495892864 -8.616336189 1.25 0 0 -0.196349541</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="segment_12_collision">
+          <pose>7.825264270 -8.923003752 1.25 0 0 -0.065449847</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+        </collision>
+        <visual name="segment_12_visual">
+          <pose>7.825264270 -8.923003752 1.25 0 0 -0.065449847</pose>
+          <geometry><box><size>2.394512652 0.15 2.5</size></box></geometry>
+          <transparency>0.5</transparency>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
     <!-- ==================== INTERIOR WALLS ==================== -->
     <!-- Vertical divider at X=4: 32-inch openings centered at Y=2 and Y=6 -->
 
