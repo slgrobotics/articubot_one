@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <model name="bookcase">
+    <static>true</static>
+    <link name="body">
+      <collision name="back_collision">
+        <pose>0 0.155 0.8 0 0 0</pose>
+        <geometry><box><size>0.9 0.04 1.6</size></box></geometry>
+      </collision>
+      <visual name="back_visual">
+        <pose>0 0.155 0.8 0 0 0</pose>
+        <geometry><box><size>0.9 0.04 1.6</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_side_collision">
+        <pose>-0.425 -0.02 0.8 0 0 0</pose>
+        <geometry><box><size>0.05 0.31 1.6</size></box></geometry>
+      </collision>
+      <visual name="left_side_visual">
+        <pose>-0.425 -0.02 0.8 0 0 0</pose>
+        <geometry><box><size>0.05 0.31 1.6</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_side_collision">
+        <pose>0.425 -0.02 0.8 0 0 0</pose>
+        <geometry><box><size>0.05 0.31 1.6</size></box></geometry>
+      </collision>
+      <visual name="right_side_visual">
+        <pose>0.425 -0.02 0.8 0 0 0</pose>
+        <geometry><box><size>0.05 0.31 1.6</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="shelf_1_collision">
+        <pose>0 -0.02 0.025 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+      </collision>
+      <visual name="shelf_1_visual">
+        <pose>0 -0.02 0.025 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="shelf_2_collision">
+        <pose>0 -0.02 0.42 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+      </collision>
+      <visual name="shelf_2_visual">
+        <pose>0 -0.02 0.42 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="shelf_3_collision">
+        <pose>0 -0.02 0.81 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+      </collision>
+      <visual name="shelf_3_visual">
+        <pose>0 -0.02 0.81 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="shelf_4_collision">
+        <pose>0 -0.02 1.2 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+      </collision>
+      <visual name="shelf_4_visual">
+        <pose>0 -0.02 1.2 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="shelf_5_collision">
+        <pose>0 -0.02 1.575 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+      </collision>
+      <visual name="shelf_5_visual">
+        <pose>0 -0.02 1.575 0 0 0</pose>
+        <geometry><box><size>0.8 0.31 0.05</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

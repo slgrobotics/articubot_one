@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <model name="sofa">
+    <static>true</static>
+    <link name="body">
+      <collision name="seat_collision">
+        <pose>0 0 0.23 0 0 0</pose>
+        <geometry><box><size>1.94 0.8 0.46</size></box></geometry>
+      </collision>
+      <visual name="seat_visual">
+        <pose>0 0 0.23 0 0 0</pose>
+        <geometry><box><size>1.94 0.8 0.46</size></box></geometry>
+        <material>
+          <ambient>0.24 0.39 0.52 1</ambient>
+          <diffuse>0.24 0.39 0.52 1</diffuse>
+        </material>
+      </visual>
+      <collision name="back_collision">
+        <pose>0 0.33 0.65 0 0 0</pose>
+        <geometry><box><size>1.94 0.14 0.38</size></box></geometry>
+      </collision>
+      <visual name="back_visual">
+        <pose>0 0.33 0.65 0 0 0</pose>
+        <geometry><box><size>1.94 0.14 0.38</size></box></geometry>
+        <material>
+          <ambient>0.24 0.39 0.52 1</ambient>
+          <diffuse>0.24 0.39 0.52 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_arm_collision">
+        <pose>-0.89 -0.06 0.56 0 0 0</pose>
+        <geometry><box><size>0.16 0.64 0.2</size></box></geometry>
+      </collision>
+      <visual name="left_arm_visual">
+        <pose>-0.89 -0.06 0.56 0 0 0</pose>
+        <geometry><box><size>0.16 0.64 0.2</size></box></geometry>
+        <material>
+          <ambient>0.24 0.39 0.52 1</ambient>
+          <diffuse>0.24 0.39 0.52 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_arm_collision">
+        <pose>0.89 -0.06 0.56 0 0 0</pose>
+        <geometry><box><size>0.16 0.64 0.2</size></box></geometry>
+      </collision>
+      <visual name="right_arm_visual">
+        <pose>0.89 -0.06 0.56 0 0 0</pose>
+        <geometry><box><size>0.16 0.64 0.2</size></box></geometry>
+        <material>
+          <ambient>0.24 0.39 0.52 1</ambient>
+          <diffuse>0.24 0.39 0.52 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

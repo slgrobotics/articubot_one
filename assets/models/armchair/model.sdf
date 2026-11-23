@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <model name="armchair">
+    <static>true</static>
+    <link name="body">
+      <collision name="seat_collision">
+        <pose>0 0 0.22 0 0 0</pose>
+        <geometry><box><size>0.84 0.8 0.44</size></box></geometry>
+      </collision>
+      <visual name="seat_visual">
+        <pose>0 0 0.22 0 0 0</pose>
+        <geometry><box><size>0.84 0.8 0.44</size></box></geometry>
+        <material>
+          <ambient>0.36 0.48 0.32 1</ambient>
+          <diffuse>0.36 0.48 0.32 1</diffuse>
+        </material>
+      </visual>
+      <collision name="back_collision">
+        <pose>0 0.33 0.65 0 0 0</pose>
+        <geometry><box><size>0.84 0.14 0.42</size></box></geometry>
+      </collision>
+      <visual name="back_visual">
+        <pose>0 0.33 0.65 0 0 0</pose>
+        <geometry><box><size>0.84 0.14 0.42</size></box></geometry>
+        <material>
+          <ambient>0.36 0.48 0.32 1</ambient>
+          <diffuse>0.36 0.48 0.32 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_arm_collision">
+        <pose>-0.35 -0.05 0.54 0 0 0</pose>
+        <geometry><box><size>0.14 0.62 0.2</size></box></geometry>
+      </collision>
+      <visual name="left_arm_visual">
+        <pose>-0.35 -0.05 0.54 0 0 0</pose>
+        <geometry><box><size>0.14 0.62 0.2</size></box></geometry>
+        <material>
+          <ambient>0.36 0.48 0.32 1</ambient>
+          <diffuse>0.36 0.48 0.32 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_arm_collision">
+        <pose>0.35 -0.05 0.54 0 0 0</pose>
+        <geometry><box><size>0.14 0.62 0.2</size></box></geometry>
+      </collision>
+      <visual name="right_arm_visual">
+        <pose>0.35 -0.05 0.54 0 0 0</pose>
+        <geometry><box><size>0.14 0.62 0.2</size></box></geometry>
+        <material>
+          <ambient>0.36 0.48 0.32 1</ambient>
+          <diffuse>0.36 0.48 0.32 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

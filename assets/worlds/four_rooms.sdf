@@ -34,11 +34,33 @@
     </spherical_coordinates>
 
     <!-- Lighting -->
-    <light type="directional" name="sun">
+    <!-- Main sun -->
+    <light name="sun" type="directional">
+      <!-- Pose doesn't matter much for directional, keep it simple -->
       <cast_shadows>true</cast_shadows>
-      <pose>0 0 10 0 0 0</pose>
-      <diffuse>0.8 0.8 0.8 1</diffuse>
-      <direction>-0.5 0.1 -0.9</direction>
+      <intensity>1.0</intensity>
+
+      <!-- Sun direction: slightly from the side, downward -->
+      <direction>0.2 0.4 -0.9</direction>
+
+      <!-- Slightly warm sunlight -->
+      <diffuse>1.0 0.98 0.92 1</diffuse>
+
+      <!-- Keep specular modest to avoid a “plastic” look -->
+      <specular>0.12 0.12 0.12 1</specular>
+    </light>
+
+    <!-- Sky fill (soft ambient-ish lift) -->
+    <light name="sky_fill" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <intensity>0.35</intensity>
+
+      <!-- From above-ish but different angle than sun -->
+      <direction>-0.2 -0.1 -0.98</direction>
+
+      <!-- Cool-ish skylight -->
+      <diffuse>0.80 0.86 1.0 1</diffuse>
+      <specular>0 0 0 1</specular>
     </light>
 
     <!-- Ground plane -->
@@ -970,7 +992,29 @@
     <include>
       <uri>model://models/table</uri>
       <name>table_room4</name>
-      <pose>6.5 1.5 0 0 0 0</pose>
+      <pose>6.5 -0.500 0 0 0 0</pose>
+    </include>
+
+    <!-- ==================== FURNITURE ==================== -->
+
+    <include>
+      <uri>model://models/sofa</uri>
+      <pose>1.35 8.28 0 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://models/armchair</uri>
+      <pose>7.9 7.9 0 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://models/bookcase</uri>
+      <pose>3.750 0.5 0 0 0 -1.570796326795</pose>
+    </include>
+
+    <include>
+      <uri>model://models/bed</uri>
+      <pose>8.15 2.25 0 0 0 0</pose>
     </include>
 
     <!-- ==================== RANDOM OBJECTS ==================== -->
@@ -978,13 +1022,13 @@
     <!-- Room 1: red box on table -->
     <model name="obj_box_r1">
       <static>true</static>
-      <pose>1.5 6.5 0.76 0 0 0.3</pose>
+      <pose>1.5 6.5 0.82 0 0 0.3</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.12 0.12 0.08</size></box></geometry>
+          <geometry><box><size>0.24 0.24 0.16</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.12 0.12 0.08</size></box></geometry>
+          <geometry><box><size>0.24 0.24 0.16</size></box></geometry>
           <material>
             <ambient>0.8 0.1 0.1 1</ambient>
             <diffuse>0.9 0.15 0.15 1</diffuse>
@@ -996,13 +1040,13 @@
     <!-- Room 1: green cylinder on floor -->
     <model name="obj_cyl_r1">
       <static>true</static>
-      <pose>0.8 5.2 0.1 0 0 0</pose>
+      <pose>0.8 5.2 0.2 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><cylinder><radius>0.06</radius><length>0.2</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.12</radius><length>0.4</length></cylinder></geometry>
         </collision>
         <visual name="visual">
-          <geometry><cylinder><radius>0.06</radius><length>0.2</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.12</radius><length>0.4</length></cylinder></geometry>
           <material>
             <ambient>0.1 0.7 0.2 1</ambient>
             <diffuse>0.15 0.8 0.25 1</diffuse>
@@ -1014,13 +1058,13 @@
     <!-- Room 2: blue sphere on floor -->
     <model name="obj_sphere_r2">
       <static>true</static>
-      <pose>5.5 7.0 0.08 0 0 0</pose>
+      <pose>5.5 7.0 0.16 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><sphere><radius>0.08</radius></sphere></geometry>
+          <geometry><sphere><radius>0.16</radius></sphere></geometry>
         </collision>
         <visual name="visual">
-          <geometry><sphere><radius>0.08</radius></sphere></geometry>
+          <geometry><sphere><radius>0.16</radius></sphere></geometry>
           <material>
             <ambient>0.1 0.2 0.8 1</ambient>
             <diffuse>0.15 0.25 0.9 1</diffuse>
@@ -1032,13 +1076,13 @@
     <!-- Room 2: yellow box on table -->
     <model name="obj_box_r2">
       <static>true</static>
-      <pose>6.1 6.0 0.78 0 0 0.7</pose>
+      <pose>6.1 6.0 0.84 0 0 0.7</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.15 0.08 0.1</size></box></geometry>
+          <geometry><box><size>0.30 0.16 0.2</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.15 0.08 0.1</size></box></geometry>
+          <geometry><box><size>0.30 0.16 0.2</size></box></geometry>
           <material>
             <ambient>0.8 0.75 0.1 1</ambient>
             <diffuse>0.9 0.85 0.15 1</diffuse>
@@ -1050,13 +1094,13 @@
     <!-- Room 3: orange cylinder on floor -->
     <model name="obj_cyl_r3">
       <static>true</static>
-      <pose>2.8 2.8 0.15 0 0 0</pose>
+      <pose>2.8 2.8 0.3 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><cylinder><radius>0.08</radius><length>0.3</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.16</radius><length>0.6</length></cylinder></geometry>
         </collision>
         <visual name="visual">
-          <geometry><cylinder><radius>0.08</radius><length>0.3</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.16</radius><length>0.6</length></cylinder></geometry>
           <material>
             <ambient>0.85 0.45 0.05 1</ambient>
             <diffuse>0.95 0.55 0.1 1</diffuse>
@@ -1068,13 +1112,13 @@
     <!-- Room 3: purple sphere on table -->
     <model name="obj_sphere_r3">
       <static>true</static>
-      <pose>1.4 1.5 0.78 0 0 0</pose>
+      <pose>1.4 1.5 0.86 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><sphere><radius>0.06</radius></sphere></geometry>
+          <geometry><sphere><radius>0.12</radius></sphere></geometry>
         </collision>
         <visual name="visual">
-          <geometry><sphere><radius>0.06</radius></sphere></geometry>
+          <geometry><sphere><radius>0.12</radius></sphere></geometry>
           <material>
             <ambient>0.5 0.1 0.7 1</ambient>
             <diffuse>0.6 0.15 0.8 1</diffuse>
@@ -1086,13 +1130,13 @@
     <!-- Room 4: red cylinder on floor -->
     <model name="obj_cyl_r4">
       <static>true</static>
-      <pose>5.2 0.8 0.12 0 0 0</pose>
+      <pose>5.2 0.8 0.24 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><cylinder><radius>0.05</radius><length>0.24</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.10</radius><length>0.48</length></cylinder></geometry>
         </collision>
         <visual name="visual">
-          <geometry><cylinder><radius>0.05</radius><length>0.24</length></cylinder></geometry>
+          <geometry><cylinder><radius>0.10</radius><length>0.48</length></cylinder></geometry>
           <material>
             <ambient>0.75 0.1 0.1 1</ambient>
             <diffuse>0.85 0.15 0.15 1</diffuse>
@@ -1104,13 +1148,13 @@
     <!-- Room 4: blue box on table, rotated -->
     <model name="obj_box_r4">
       <static>true</static>
-      <pose>6.6 1.6 0.77 0 0 1.1</pose>
+      <pose>6.6 -0.42 0.80 0 0 1.1</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.18 0.10 0.06</size></box></geometry>
+          <geometry><box><size>0.36 0.20 0.12</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.18 0.10 0.06</size></box></geometry>
+          <geometry><box><size>0.36 0.20 0.12</size></box></geometry>
           <material>
             <ambient>0.1 0.3 0.8 1</ambient>
             <diffuse>0.15 0.35 0.9 1</diffuse>
