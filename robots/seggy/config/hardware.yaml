@@ -14,6 +14,6 @@ wheels_pwm_factor: 28.5714     # rad/s to firmware motor setpoint percent. Match
 battery_num_cells: 4
 battery_technology: 4          # BatteryState chemistry - LiFePO4
 battery_design_capacity: 20.0  # Ah; keep broadcaster metadata in sync
-battery_full_voltage:    13.80 # 14.5     # V; report FULL at or above this voltage (13.84 with Schottky diode)
+battery_full_voltage:    14.10  # V; report FULL at or above this voltage (13.80 with Schottky diode, 14.10 with ideal diode)
 has_battery_charging_field: true  # use the optional fourth field in the health reply from the wheels firmware
 battery_current_measured: false   # don't publish measured current with the charging flag
