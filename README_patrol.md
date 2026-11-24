@@ -7,6 +7,7 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 **Contents:**
 
 - [What is this feature for?](#what-is-this-feature-for)
+- [The Four Rooms world](#the-four-rooms-world)
 - [Build the patrol package](#build-the-patrol-package)
 - [Start Seggy with the saved map](#start-seggy-with-the-saved-map)
 - [Start and monitor the patrol](#start-and-monitor-the-patrol)
@@ -21,6 +22,26 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 ## What is this feature for?
 
 Seggy can visit the same places without someone driving it by hand. Give it a list of stops and it will use a map to find its way around walls and furniture. In the Four Rooms simulation, Seggy visits four indoor stops and two outdoor stops, then starts the route again.
+
+## The Four Rooms world
+
+[Four Rooms](assets/worlds/four_rooms.sdf) is a Gazebo practice site with four furnished rooms and an outdoor yard along the south and west sides. The wall colors are visual landmarks for the four compass directions. The coordinates below are in the Gazebo world frame.
+
+| Wall | Color | Landmark |
+| --- | --- | --- |
+| North | Blue | Extends west along the yard to meet the arc. |
+| South | Red | Doorway near `(2, -0.925)` leads into the yard. |
+| West | Green | Doorway near `(-0.925, 2)` leads into the yard. |
+| East | Yellow | Extends south along the yard to meet the arc. |
+| Interior dividers and yard arc | Brown | Separate the rooms and mark the curved yard boundary. |
+
+The walls are 2.5 m high, 0.15 m thick, and 50% transparent so you can see through them in Gazebo. Their collision geometry still blocks the robot. Four passages connect the rooms, two connect the building to the yard, and one sits at the midpoint of the yard arc. Each has 32 inches (0.8128 m) of clear width. The north and east walls extend to an 18 m radius quarter-circle built from 12 segments.
+
+Each room has a table. The northwest room also has a sofa, the northeast an armchair, the southwest a bookcase flush with the interior divider, and the southeast a bed. The southeast table's edge is 5 cm from the south wall. Tabletops are 29.1 inches (0.74 m) high, with 27.6 inches (0.70 m) of clearance below. The table legs are spaced wide enough for Seggy to enter from a long side when centered.
+
+Eight boxes, cylinders, and spheres give the camera objects to look for on the tables and floor. The northeast sphere is 60 cm across and weighs 50 g. The three floor cylinders weigh 200 g each. Seggy can push those four objects.
+
+Six green circles on the muted green ground mark the patrol stops. The circles are 0.5 m in diameter and have no collision geometry. The yard also has two reverse-docking practice bays. The V-shaped bay is south of the building and opens west. The trapezoidal bay is west of the building and opens south. Painted crosses and arrows mark the approach and docking positions. See [Dock staging points](#dock-staging-points) for the coordinates.
 
 ## Build the patrol package
 
@@ -38,7 +59,7 @@ If an older checkout reports `Unknown CMake command "ament_target_dependencies"`
 
 ## Start Seggy with the saved map
 
-Seggy's simulation drive launch selects [four_rooms.sdf](assets/worlds/four_rooms.sdf). It has four furnished rooms, 32-inch openings, an outdoor boundary and two docking bays. The eight camera targets are boxes, cylinders, and spheres, including a movable 60 cm sphere in the northeast room. Six green floor circles mark the patrol stops and have no collision geometry.
+Seggy's simulation drive launch selects [four_rooms.sdf](assets/worlds/four_rooms.sdf).
 
 Stop any previous Seggy bringup before starting this launch. From a terminal with `~/robot_ws/install/setup.bash` sourced:
 
