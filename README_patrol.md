@@ -101,7 +101,7 @@ The robot spawns near `(0, 0)`, aimed about 19° north of east. In RViz, set the
 
 ## Start and monitor the patrol
 
-In a second terminal, source the same ROS environment and the patrol workspace. The commander starts sending goals as soon as it loads the tree, so check localization before running it.
+In a second terminal, source the shared robot workspace. The commander starts sending goals as soon as it loads the tree, so check localization before running it.
 
 ```bash
 source ~/robot_ws/install/setup.bash
