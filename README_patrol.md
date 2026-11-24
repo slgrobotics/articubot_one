@@ -108,7 +108,7 @@ source ~/robot_ws/install/setup.bash
 
 ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
   -p use_sim_time:=true \
-  -p bt_xml_path:="$HOME/robot_ws/src/articubot_one/robots/seggy/config/seggy_four_rooms_patrol_bt.xml"
+  -p bt_xml_path:="$HOME/robot_ws/src/articubot_one/robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml"
 ```
 
 This uses Seggy's running Nav2 stack. Leave the TurtleBot3 simulator and its navigation launch out of this setup. The patrol commander currently expects the global `/navigate_to_pose` action.
@@ -116,7 +116,7 @@ This uses Seggy's running Nav2 stack. Leave the TurtleBot3 simulator and its nav
 Watch the behavior tree in a separate terminal:
 
 ```bash
-ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|RecoveryRotate|ApproachObject|ChargeBattery'
+ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|Running:|RecoveryRotate|ApproachObject|ChargeBattery'
 ```
 
 `NavigateToRoom: heading to (x, y)` identifies the current stop, and `SUCCESS — arrived at room` confirms arrival.
@@ -132,7 +132,7 @@ ros2 topic echo /navigate_to_pose/_action/feedback --field feedback.distance_rem
 
 ## Patrol points
 
-The [Seggy patrol tree](robots/seggy/config/seggy_four_rooms_patrol_bt.xml) keeps the six points in the order selected in RViz. The table rounds the coordinates to three decimals. The XML stores the full values.
+The [Seggy patrol tree](robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml) keeps the six points in the order selected in RViz. The table rounds the coordinates to three decimals. The XML stores the full values.
 
 | Stop | X (m) | Y (m) |
 | ---: | ---: | ---: |
