@@ -1039,9 +1039,17 @@
 
     <!-- Room 1: green cylinder on floor -->
     <model name="obj_cyl_r1">
-      <static>true</static>
+      <static>false</static>
       <pose>0.8 5.2 0.2 0 0 0</pose>
       <link name="link">
+        <inertial>
+          <mass>0.2</mass>
+          <inertia>
+            <ixx>0.0033866667</ixx>
+            <iyy>0.0033866667</iyy>
+            <izz>0.0014400000</izz>
+          </inertia>
+        </inertial>
         <collision name="collision">
           <geometry><cylinder><radius>0.12</radius><length>0.4</length></cylinder></geometry>
         </collision>
@@ -1101,9 +1109,17 @@
 
     <!-- Room 3: orange cylinder on floor -->
     <model name="obj_cyl_r3">
-      <static>true</static>
+      <static>false</static>
       <pose>2.8 2.8 0.3 0 0 0</pose>
       <link name="link">
+        <inertial>
+          <mass>0.2</mass>
+          <inertia>
+            <ixx>0.0072800000</ixx>
+            <iyy>0.0072800000</iyy>
+            <izz>0.0025600000</izz>
+          </inertia>
+        </inertial>
         <collision name="collision">
           <geometry><cylinder><radius>0.16</radius><length>0.6</length></cylinder></geometry>
         </collision>
@@ -1137,9 +1153,17 @@
 
     <!-- Room 4: red cylinder on floor -->
     <model name="obj_cyl_r4">
-      <static>true</static>
+      <static>false</static>
       <pose>5.2 0.8 0.24 0 0 0</pose>
       <link name="link">
+        <inertial>
+          <mass>0.2</mass>
+          <inertia>
+            <ixx>0.0043400000</ixx>
+            <iyy>0.0043400000</iyy>
+            <izz>0.0010000000</izz>
+          </inertia>
+        </inertial>
         <collision name="collision">
           <geometry><cylinder><radius>0.10</radius><length>0.48</length></cylinder></geometry>
         </collision>
@@ -1166,6 +1190,67 @@
           <material>
             <ambient>0.1 0.3 0.8 1</ambient>
             <diffuse>0.15 0.35 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Patrol goals from Seggy’s four_rooms map, placed in Gazebo world coordinates. -->
+    <model name="patrol_point_markers">
+      <static>true</static>
+      <link name="markers">
+        <visual name="point_1">
+          <pose>0.628275 2.702289 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_2">
+          <pose>2.510551 5.785819 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_3">
+          <pose>7.011052 6.958282 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_4">
+          <pose>6.138499 1.643179 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_5">
+          <pose>2.794839 -4.651623 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_6">
+          <pose>-4.476039 3.528987 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry><cylinder><radius>0.25</radius><length>0.002</length></cylinder></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
           </material>
         </visual>
       </link>
