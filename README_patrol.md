@@ -23,6 +23,9 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 Seggy can visit the same places without someone driving it by hand. Give it a list of stops and it will use a map to find its way around walls and furniture. In the Four Rooms simulation, Seggy visits four indoor stops and two outdoor stops, then starts the route again.
 
+<img alt="The Four Rooms world" src="https://github.com/user-attachments/assets/04be0637-5ecd-4947-826f-6fa5d206129b" />
+
+
 ## The Four Rooms world
 
 [Four Rooms](assets/worlds/four_rooms.sdf) is a Gazebo practice site with four furnished rooms and an outdoor yard along the south and west sides. The wall colors are visual landmarks for the four compass directions. The coordinates below are in the Gazebo world frame.
@@ -45,23 +48,44 @@ Six green circles on the muted green ground mark the patrol stops. The circles a
 
 ## Build the patrol package
 
-The C++ patrol commander lives in the separate `turtlebot3_autonomous_patrol` package under `~/patrol_ws/src`. Seggy's world, map, and six-stop behavior tree live in this repository. Build both workspaces against the same ROS distribution. The patrol package has been built with ROS 2 Lyrical using the dependency targets exported by ROS packages.
+The C++ patrol commander lives in the separate `turtlebot3_autonomous_patrol` package under `~/robot_ws/src`. The `articubot_one` code is cloned there as well.
 
-From a terminal with the Seggy workspace sourced:
+From a terminal:
 
 ```bash
-cd ~/patrol_ws
-colcon build --packages-select turtlebot3_autonomous_patrol
+mkdir -p ~/robot_ws/src
+cd ~/robot_ws/src
+
+# To run Seggy sim:
+git clone https://github.com/slgrobotics/articubot_one.git
+git clone https://github.com/slgrobotics/ros_battery_monitoring.git
+git clone https://github.com/slgrobotics/scan_to_range.git
+git clone https://github.com/slgrobotics/outdoors_loc_nav.git
+git clone https://github.com/slgrobotics/rviz_attitude_plugin.git
+git clone https://github.com/slgrobotics/dock_detector.git
+git clone https://github.com/slgrobotics/dock_detector_interfaces.git
+git clone https://github.com/slgrobotics/dock_detector_nav2.git
+git clone https://github.com/slgrobotics/map_orientation_saver.git
+git clone https://github.com/slgrobotics/slg_bt_plugins.git
+
+# and, finally the patrol package:
+git clone https://github.com/slgrobotics/turtlebot3-autonomous-patrol.git   # this pulls "lyrical" branch
+
+cd ~/robot_ws
+
+sudo rosdep init    # do it once, if you haven't done it before
+rosdep update
+rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -r -y --skip-keys ament_python
+
+colcon build
 source install/setup.bash
 ```
 
-If an older checkout reports `Unknown CMake command "ament_target_dependencies"`, use the updated patrol package, which links its C++ targets with `target_link_libraries`.
-
 ## Start Seggy with the saved map
 
-Seggy's simulation drive launch selects [four_rooms.sdf](assets/worlds/four_rooms.sdf).
+Edit Seggy's simulation drive (`~robot_ws/src/articubot_one/robots/seggy/launch/seggy.drive.launch.py` ) launch to select [four_rooms.sdf](assets/worlds/four_rooms.sdf): `'robot_world': 'four_rooms',`
 
-Stop any previous Seggy bringup before starting this launch. From a terminal with `~/robot_ws/install/setup.bash` sourced:
+From a terminal with `~/robot_ws/install/setup.bash` sourced:
 
 ```bash
 ros2 launch articubot_one seggy.launch.py \
@@ -70,14 +94,14 @@ ros2 launch articubot_one seggy.launch.py \
   map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml"
 ```
 
-The nominal spawn is near `(0, 0)`, aimed about 19° north of east. In RViz, set the fixed frame to `map` and use **2D Pose Estimate** near that position and heading. Check that the laser scan aligns with the mapped walls and that `ros2 action list` includes `/navigate_to_pose`.
+The robot spawns near `(0, 0)`, aimed about 19° north of east. In RViz, set the fixed frame to `map` and use **2D Pose Estimate** near that position and heading.
 
 ## Start and monitor the patrol
 
 In a second terminal, source the same ROS environment and the patrol workspace. The commander starts sending goals as soon as it loads the tree, so check localization before running it.
 
 ```bash
-source ~/patrol_ws/install/setup.bash
+source ~/robot_ws/install/setup.bash
 
 ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
   -p use_sim_time:=true \
@@ -89,11 +113,13 @@ This uses Seggy's running Nav2 stack. Leave the TurtleBot3 simulator and its nav
 Watch the behavior tree in a separate terminal:
 
 ```bash
-ros2 topic echo /bt_log --field data |
-  grep --line-buffered -E 'NavigateToRoom|RecoveryRotate|ApproachObject|ChargeBattery'
+ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|RecoveryRotate|ApproachObject|ChargeBattery'
 ```
 
-`NavigateToRoom: heading to (x, y)` identifies the current stop, and `SUCCESS — arrived at room` confirms arrival. The filter also shows failures, cancellations, and recovery. A successful arrival at point 6 followed by a goal for point 1 marks a completed lap. The commander has no lap counter.
+`NavigateToRoom: heading to (x, y)` identifies the current stop, and `SUCCESS — arrived at room` confirms arrival.
+The filter also shows failures, cancellations, and recovery.
+A successful arrival at point 6 followed by a goal for point 1 marks a completed lap.
+The commander has no lap counter.
 
 For live distance remaining on the current leg:
 
