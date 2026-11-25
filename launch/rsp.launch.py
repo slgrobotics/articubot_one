@@ -1,14 +1,16 @@
+import shlex
+
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
-from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.actions import DeclareLaunchArgument, LogInfo, OpaqueFunction, SetLaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 #
-# Generate launch description for robot_state_publisher
+# Generate a launch description for robot_state_publisher
 #
-# Will load robot description from "robot.urdf.xacro" file located at robot's "description" directory
+# Will load the robot description from the "robot.urdf.xacro" file located in the robot's "description" directory
 #
 # Typical use (see seggy.launch.py):
 #    robot_state_publisher = IncludeLaunchDescription(
@@ -19,17 +21,24 @@ from launch_ros.substitutions import FindPackageShare
 #    )
 #
 
+def configure_hardware_argument(context):
+    # An empty override preserves each robot Xacro's own default (or no argument).
+    path = LaunchConfiguration('hardware_config').perform(context)
+    argument = ' ' + shlex.quote('hardware_config:=' + path) if path else ''
+    return [SetLaunchConfiguration('hardware_config_xacro_arg', argument)]
+
+
 def generate_launch_description():
 
     package_name='articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - sim, dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - sim, dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution-based paths so robot_model can be used at launch-time
@@ -39,10 +48,11 @@ def generate_launch_description():
     ])
 
     # Produce full XML/SDF description by invoking xacro on the substitution path
-    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time])
+    robot_description_sdf = Command(['xacro ', xacro_file, ' sim_mode:=', use_sim_time,
+                                     LaunchConfiguration('hardware_config_xacro_arg')])
     
     # Create a robot_state_publisher node
-    # See https://github.com/ros/robot_state_publisher/tree/jazzy
+    # See https://github.com/ros/robot_state_publisher
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         namespace=namespace,
@@ -56,7 +66,7 @@ def generate_launch_description():
                     }]
     )
 
-    # Optional nodes to interact with joints from the RViz2:
+    # Optional nodes to interact with joints from RViz2:
     node_joint_state_publisher = Node(
         package='joint_state_publisher',
         namespace=namespace,
@@ -72,7 +82,7 @@ def generate_launch_description():
         executable='joint_state_publisher_gui',
         name='joint_state_publisher_gui',
         output=['screen'],
-        # no need to supply SDF source here, it will be picked from topic /robot_description by default
+        # no need to supply SDF source here, it will be picked up from the /robot_description topic by default
         #arguments=[robot_description_sdf]
     )
 
@@ -84,12 +94,17 @@ def generate_launch_description():
             default_value='false',
             description='Use sim time if true'),
 
+        DeclareLaunchArgument(
+            'hardware_config', default_value='',
+            description='Optional hardware YAML path; empty uses the robot Xacro default'),
+        OpaqueFunction(function=configure_hardware_argument),
+
         LogInfo(msg=['============ starting ROBOT STATE PUBLISHER  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
         LogInfo(msg=['xacro_file: ', xacro_file]),
 
         node_robot_state_publisher,
 
-        # Either of these two will override /joint_states topic with zeroes.
+        # Either of these two will override the /joint_states topic with zeroes.
         # Normally, joint_state_broadcaster publishes it.
         #node_joint_state_publisher,
         #node_joint_state_publisher_gui

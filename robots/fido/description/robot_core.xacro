@@ -53,7 +53,7 @@
     
     <!-- ****************** ROBOT BASE FOOTPRINT ***************************  -->
     <!-- The base_footprint is the representation of the robot position on the floor. 
-         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole height respecitvely.
+         The floor is usually the level where the supporting leg rests, i.e. z = min(l_sole_z, r_sole_z) where l_sole_z and r_sole_z are the left and right sole heights, respectively.
          The translation component of the frame should be the barycenter of the feet projections on the floor.
          With respect to the odom frame, the roll and pitch angles should be zero and the yaw angle should correspond to the base_link yaw angle.
          Rationale: base_footprint provides a fairly stable 2D planar representation of the humanoid even while walking and swaying with the base_link. -->
@@ -90,7 +90,8 @@
         <visual name="chassis_visual_bottom">
             <origin xyz="0 0 ${chassis_height/8}"/>
             <geometry>
-                <box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/>
+                <cylinder radius="${chassis_length/2}" length="${chassis_height/4}"/>
+                <!-- box size="${chassis_length} ${chassis_width} ${chassis_height/4}"/ -->
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -104,7 +105,8 @@
         <visual name="chassis_top_visual">
             <origin xyz="${wheel_offset_x} 0 ${chassis_top_offset}"/>
             <geometry>
-                <box size="${chassis_top_length} ${chassis_top_width} 0.02"/>
+                <cylinder radius="${chassis_top_length/2}" length="0.02"/>
+                <!-- box size="${chassis_top_length} ${chassis_top_width} 0.02"/ -->
             </geometry>
             <material name="body_color"/>
         </visual>
@@ -176,14 +178,7 @@
     </joint>
 
     <link name="left_wheel">
-        <visual name="left_wheel_tire_gz_visual">
-            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
-            <geometry>
-                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
-            </geometry>
-            <material name="port_red"/>
-        </visual>
-        <visual name="left_wheel_tire_rviz_visual">
+        <visual name="left_wheel_tire_visual">
             <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
@@ -250,14 +245,7 @@
     </joint>
 
     <link name="right_wheel">
-        <visual name="right_wheel_tire_gz_visual">
-            <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
-            <geometry>
-                <mesh filename="model://meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>
-            </geometry>
-            <material name="starboard_green"/>
-        </visual>
-        <visual name="right_wheel_tire_rviz_visual">
+        <visual name="right_wheel_tire_visual">
             <origin xyz="0 0 0" rpy="${-pi/2} 0 0" />
             <geometry>
                 <mesh filename="package://articubot_one/assets/meshes/wheel_link.STL" scale="${wheel_radius*12.7} ${wheel_thickness*10.2} ${wheel_radius*12.7}"/>

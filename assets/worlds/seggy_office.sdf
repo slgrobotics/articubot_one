@@ -1,0 +1,1497 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <world name="seggy_office">
+
+    <!-- Traced from the Nov 17 live Seggy office map in assets/maps/seggy_office.* at 0.05 m per cell.
+         X/Y follow the saved map frame. Furniture types, depths and heights are approximate.
+         Isolated returns and unobserved boundaries are omitted.
+
+        View it in Gazebo:
+          gz sim /home/sergei/robot_ws/src/articubot_one/assets/worlds/seggy_office.sdf 
+    -->
+
+    <physics name='office_physics' type='ode'>
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    <plugin name='gz::sim::systems::Magnetometer' filename='gz-sim-magnetometer-system'/>
+    <plugin name='gz::sim::systems::AirPressure' filename='gz-sim-air-pressure-system'/>
+    <plugin name='gz::sim::systems::ApplyLinkWrench' filename='gz-sim-apply-link-wrench-system'/>
+    <plugin name='gz::sim::systems::NavSat' filename='gz-sim-navsat-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <gravity>0 0 -9.8</gravity>
+    <atmosphere type='adiabatic'/>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <!-- lat/lon/alt show up in gps/fix topic in sim -->
+      <latitude_deg>33.199840</latitude_deg>
+      <longitude_deg>-86.299795</longitude_deg>
+      <elevation>150</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+
+    <gui fullscreen="false">
+      <plugin filename="MinimalScene" name="3D View">
+        <gz-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_pose>4.934685 1.513874 11.611955 0.000005 1.336677 2.338831</camera_pose>
+      </plugin>
+      <plugin filename="EntityContextMenuPlugin" name="Entity context menu">
+        <gz-gui>
+          <property key="state" type="string">floating</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="GzSceneManager" name="Scene Manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="InteractiveViewControl" name="Interactive view control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CameraTracking" name="Camera Tracking">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="MarkerManager" name="Marker manager">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="SelectEntities" name="Select Entities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Spawn" name="Spawn Entities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="VisualizationCapabilities" name="Visualization Capabilities">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="width" type="double">5</property>
+          <property key="height" type="double">5</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="WorldControl" name="World control">
+        <gz-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="z">1</property>
+
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>true</start_paused>
+        <use_event>true</use_event>
+
+      </plugin>
+      <plugin filename="WorldStats" name="World stats">
+        <gz-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </gz-gui>
+
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+      </plugin>
+      <plugin filename="Shapes" name="Shapes">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">0</property>
+          <property key="y" type="double">0</property>
+          <property key="width" type="double">300</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#666666</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Lights" name="Lights">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">300</property>
+          <property key="y" type="double">0</property>
+          <property key="width" type="double">150</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#666666</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="TransformControl" name="Transform control">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">0</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">250</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="Screenshot" name="Screenshot">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">250</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">50</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="CopyPaste" name="CopyPaste">
+        <gz-gui>
+          <property key="resizable" type="bool">false</property>
+          <property key="x" type="double">300</property>
+          <property key="y" type="double">50</property>
+          <property key="width" type="double">100</property>
+          <property key="height" type="double">50</property>
+          <property key="state" type="string">floating</property>
+          <property key="showTitleBar" type="bool">false</property>
+          <property key="cardBackground" type="string">#777777</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="ComponentInspector" name="Component inspector">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+      <plugin filename="EntityTree" name="Entity tree">
+        <gz-gui>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </gz-gui>
+      </plugin>
+    </gui>
+
+    <!-- Lighting -->
+    <!-- Main sun -->
+    <light name="sun" type="directional">
+      <!-- Pose doesn't matter much for directional, keep it simple -->
+      <cast_shadows>true</cast_shadows>
+      <intensity>1.0</intensity>
+
+      <!-- Sun direction: slightly from the side, downward -->
+      <direction>0.2 0.4 -0.9</direction>
+
+      <!-- Slightly warm sunlight -->
+      <diffuse>1.0 0.98 0.92 1</diffuse>
+
+      <!-- Keep specular modest to avoid a “plastic” look -->
+      <specular>0.12 0.12 0.12 1</specular>
+    </light>
+
+    <!-- Sky fill (soft ambient-ish lift) -->
+    <light name="sky_fill" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <intensity>0.35</intensity>
+
+      <!-- From above-ish but different angle than sun -->
+      <direction>-0.2 -0.1 -0.98</direction>
+
+      <!-- Cool-ish skylight -->
+      <diffuse>0.80 0.86 1.0 1</diffuse>
+      <specular>0 0 0 1</specular>
+    </light>
+
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material>
+            <ambient>0.34 0.42 0.34 1</ambient>
+            <diffuse>0.49 0.58 0.47 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_exterior_1">
+      <static>true</static>
+      <pose>-6.258 3.114 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_north_1">
+      <static>true</static>
+      <pose>2.642 7.514 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_north_2">
+      <static>true</static>
+      <pose>0.092 7.089 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_south_1">
+      <static>true</static>
+      <pose>2.642 -1.286 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_south_2">
+      <static>true</static>
+      <pose>-2.208 -1.111 0 0 0 1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.39 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.39 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_south_3">
+      <static>true</static>
+      <pose>-1.708 -0.936 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.04 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.04 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_south_return_1">
+      <static>true</static>
+      <pose>-0.033 -0.786 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.19 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.19 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_partition_return_1">
+      <static>true</static>
+      <pose>1.217 -0.911 0 0 0 -0.620249</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.470116 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.470116 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_partition_return_2">
+      <static>true</static>
+      <pose>1.392 -0.761 0 0 0 1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.59 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.59 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_partition_return_3">
+      <static>true</static>
+      <pose>1.767 -0.486 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_east_partition_1">
+      <static>true</static>
+      <pose>0.392 4.614 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.34 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.34 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_west_room_east_partition_2">
+      <static>true</static>
+      <pose>1.692 3.464 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.64 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.64 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_central_north_room_west_1">
+      <static>true</static>
+      <pose>2.042 5.814 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.54 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.54 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_central_north_room_west_2">
+      <static>true</static>
+      <pose>2.467 5.064 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_central_north_room_back_1">
+      <static>true</static>
+      <pose>3.692 6.614 0 0 0 0</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.64 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.64 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_central_north_room_back_2">
+      <static>true</static>
+      <pose>4.492 5.039 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>3.19 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>3.19 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_central_north_room_back_3">
+      <static>true</static>
+      <pose>4.142 3.464 0 0 0 3.141593</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.74 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.74 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_north_workbench">
+      <static>true</static>
+      <pose>8.727 7.139 0 0 0 0</pose>
+      <link name="body">
+        <collision name="cabinet_base_collision">
+          <pose>0 0 0.425 0 0 0</pose>
+          <geometry><box><size>5.47 0.51 0.85</size></box></geometry>
+        </collision>
+        <visual name="cabinet_base_visual">
+          <pose>0 0 0.425 0 0 0</pose>
+          <geometry><box><size>5.47 0.51 0.85</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+        <collision name="worktop_collision">
+          <pose>0 0 0.875 0 0 0</pose>
+          <geometry><box><size>5.51 0.55 0.05</size></box></geometry>
+        </collision>
+        <visual name="worktop_visual">
+          <pose>0 0 0.875 0 0 0</pose>
+          <geometry><box><size>5.51 0.55 0.05</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_east_exterior_1">
+      <static>true</static>
+      <pose>11.542 3.114 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>1 1 0 1</ambient>
+            <diffuse>1 1 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_east_exterior_2">
+      <static>true</static>
+      <pose>11.342 1.264 0 0 0 -2.896614</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.452311 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.452311 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_east_room_south_1">
+      <static>true</static>
+      <pose>10.867 1.414 0 0 0 2.512796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.720074 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.720074 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_east_room_south_2">
+      <static>true</static>
+      <pose>10.217 1.614 0 0 0 3.141593</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_core_north_and_west_1">
+      <static>true</static>
+      <pose>3.392 2.564 0 0 0 -3.101614</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.541999 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>2.541999 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_core_north_and_west_2">
+      <static>true</static>
+      <pose>2.142 1.014 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>3.04 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>3.04 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="wall_south_core_east_return_1">
+      <static>true</static>
+      <pose>4.642 2.014 0 0 0 -1.570796</pose>
+      <link name="body">
+        <collision name="panel_collision">
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.24 0.12 1.2</size></box></geometry>
+        </collision>
+        <visual name="panel_visual">
+          <transparency>0.3</transparency>
+          <pose>0 0 0.6 0 0 0</pose>
+          <geometry><box><size>1.24 0.12 1.2</size></box></geometry>
+          <material>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_wall_low_cabinet">
+      <static>true</static>
+      <pose>-5.958 4.164 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.38 0 0 0</pose>
+          <geometry><box><size>0.6 0.7 0.76</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.38 0 0 0</pose>
+          <geometry><box><size>0.6 0.7 0.76</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_wall_bench">
+      <static>true</static>
+      <pose>-5.883 2.864 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.275 0 0 0</pose>
+          <geometry><box><size>0.75 0.6 0.55</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.275 0 0 0</pose>
+          <geometry><box><size>0.75 0.6 0.55</size></box></geometry>
+          <material>
+            <ambient>0.30 0.40 0.44 1</ambient>
+            <diffuse>0.30 0.40 0.44 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_wall_storage">
+      <static>true</static>
+      <pose>-6.008 1.389 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.575 0 0 0</pose>
+          <geometry><box><size>0.5 0.65 1.15</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.575 0 0 0</pose>
+          <geometry><box><size>0.5 0.65 1.15</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_room_north_shelving">
+      <static>true</static>
+      <pose>-0.383 6.239 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.825 0 0 0</pose>
+          <geometry><box><size>0.95 0.85 1.65</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.825 0 0 0</pose>
+          <geometry><box><size>0.95 0.85 1.65</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_room_side_cabinet">
+      <static>true</static>
+      <pose>-0.558 4.039 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.475 0 0 0</pose>
+          <geometry><box><size>0.5 0.65 0.95</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.475 0 0 0</pose>
+          <geometry><box><size>0.5 0.65 0.95</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="central_north_room_shelf">
+      <static>true</static>
+      <pose>4.242 4.164 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.675 0 0 0</pose>
+          <geometry><box><size>0.5 0.9 1.35</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.675 0 0 0</pose>
+          <geometry><box><size>0.5 0.9 1.35</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="central_partition_east_storage">
+      <static>true</static>
+      <pose>4.842 5.289 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.625 0 0 0</pose>
+          <geometry><box><size>0.6 1.15 1.25</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.625 0 0 0</pose>
+          <geometry><box><size>0.6 1.15 1.25</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_north_cabinets">
+      <static>true</static>
+      <pose>6.742 6.639 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.59 0 0 0</pose>
+          <geometry><box><size>1.1 0.45 1.18</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.59 0 0 0</pose>
+          <geometry><box><size>1.1 0.45 1.18</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_south_cabinets">
+      <static>true</static>
+      <pose>9.242 1.064 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.47 0 0 0</pose>
+          <geometry><box><size>1 0.5 0.94</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.47 0 0 0</pose>
+          <geometry><box><size>1 0.5 0.94</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_room_worktable">
+      <static>true</static>
+      <pose>-3.108 2.239 0 0 0 0</pose>
+      <link name="body">
+        <collision name="top_collision">
+          <pose>0 0 0.7325 0 0 0</pose>
+          <geometry><box><size>1.6 1.45 0.055</size></box></geometry>
+        </collision>
+        <visual name="top_visual">
+          <pose>0 0 0.7325 0 0 0</pose>
+          <geometry><box><size>1.6 1.45 0.055</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_1_collision">
+          <pose>-0.73 -0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_1_1_visual">
+          <pose>-0.73 -0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_2_collision">
+          <pose>-0.73 0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_1_2_visual">
+          <pose>-0.73 0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_1_collision">
+          <pose>0.73 -0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_2_1_visual">
+          <pose>0.73 -0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_2_collision">
+          <pose>0.73 0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_2_2_visual">
+          <pose>0.73 0.655 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_room_worktable_chair">
+      <static>true</static>
+      <pose>-4.283 3.039 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.41 0 0 0</pose>
+          <geometry><box><size>0.65 0.55 0.82</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.41 0 0 0</pose>
+          <geometry><box><size>0.65 0.55 0.82</size></box></geometry>
+          <material>
+            <ambient>0.30 0.40 0.44 1</ambient>
+            <diffuse>0.30 0.40 0.44 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="west_room_small_island">
+      <static>true</static>
+      <pose>-2.858 6.139 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.45 0 0 0</pose>
+          <geometry><box><size>0.4 0.65 0.9</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.45 0 0 0</pose>
+          <geometry><box><size>0.4 0.65 0.9</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_workbench">
+      <static>true</static>
+      <pose>8.792 4.3823 0 0 0 0</pose>
+      <link name="body">
+        <collision name="top_collision">
+          <pose>0 0 0.8725 0 0 0</pose>
+          <geometry><box><size>2.4 0.7366 0.055</size></box></geometry>
+        </collision>
+        <visual name="top_visual">
+          <pose>0 0 0.8725 0 0 0</pose>
+          <geometry><box><size>2.4 0.7366 0.055</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_1_collision">
+          <pose>-1.13 -0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+        </collision>
+        <visual name="leg_1_1_visual">
+          <pose>-1.13 -0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_2_collision">
+          <pose>-1.13 0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+        </collision>
+        <visual name="leg_1_2_visual">
+          <pose>-1.13 0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_1_collision">
+          <pose>1.13 -0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+        </collision>
+        <visual name="leg_2_1_visual">
+          <pose>1.13 -0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_2_collision">
+          <pose>1.13 0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+        </collision>
+        <visual name="leg_2_2_visual">
+          <pose>1.13 0.2983 0.4225 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_workbench_return">
+      <static>true</static>
+      <pose>6.992 4.489 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.45 0 0 0</pose>
+          <geometry><box><size>0.7 0.55 0.9</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.45 0 0 0</pose>
+          <geometry><box><size>0.7 0.55 0.9</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_small_island">
+      <static>true</static>
+      <pose>8.267 3.339 0 0 0 0</pose>
+      <link name="body">
+        <collision name="body_collision">
+          <pose>0 0 0.47 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.94</size></box></geometry>
+        </collision>
+        <visual name="body_visual">
+          <pose>0 0 0.47 0 0 0</pose>
+          <geometry><box><size>0.45 0.45 0.94</size></box></geometry>
+          <material>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="east_room_south_island">
+      <static>true</static>
+      <pose>6.617 1.314 0 0 0 0</pose>
+      <link name="body">
+        <collision name="top_collision">
+          <pose>0 0 0.7325 0 0 0</pose>
+          <geometry><box><size>1.75 1 0.055</size></box></geometry>
+        </collision>
+        <visual name="top_visual">
+          <pose>0 0 0.7325 0 0 0</pose>
+          <geometry><box><size>1.75 1 0.055</size></box></geometry>
+          <material>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_1_collision">
+          <pose>-0.805 -0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_1_1_visual">
+          <pose>-0.805 -0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_1_2_collision">
+          <pose>-0.805 0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_1_2_visual">
+          <pose>-0.805 0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_1_collision">
+          <pose>0.805 -0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_2_1_visual">
+          <pose>0.805 -0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+        <collision name="leg_2_2_collision">
+          <pose>0.805 0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+        </collision>
+        <visual name="leg_2_2_visual">
+          <pose>0.805 0.43 0.3525 0 0 0</pose>
+          <geometry><box><size>0.06 0.06 0.705</size></box></geometry>
+          <material>
+            <ambient>0.24 0.25 0.26 1</ambient>
+            <diffuse>0.24 0.25 0.26 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- real_v_bay: parking target and inward heading from docking_real.yaml. -->
+    <model name="real_v_bay">
+      <static>true</static>
+      <pose>1.469614 1.272556 0 0 0 -1.431455574861</pose>
+      <link name="panel_1">
+        <pose>-0.301042626410 0.419727048384 0.25 0 0 -2.530727415392</pose>
+        <collision name="panel_collision">
+          <geometry>
+            <box>
+              <size>0.70 0.05 0.50</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="panel_visual">
+          <geometry>
+            <box>
+              <size>0.70 0.05 0.50</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>1 1 1 1</specular>
+          </material>
+        </visual>
+      </link>
+      <link name="panel_2">
+        <pose>0.301042626410 0.419727048384 0.25 0 0 -0.610865238198</pose>
+        <collision name="panel_collision">
+          <geometry>
+            <box>
+              <size>0.70 0.05 0.50</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="panel_visual">
+          <geometry>
+            <box>
+              <size>0.70 0.05 0.50</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.5 0.5 0.5 1</ambient>
+            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <specular>1 1 1 1</specular>
+          </material>
+        </visual>
+      </link>
+      <link name="markings">
+        <pose>0.000000000000 0.000000000000 0 0 0 -1.570796326795</pose>
+        <visual name="bay_floor">
+          <pose>0.375 0 0.002 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>2.1 1.35 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.08 0.22 0.16 1</ambient>
+            <diffuse>0.08 0.22 0.16 1</diffuse>
+          </material>
+        </visual>
+        <visual name="left_boundary">
+          <pose>-0.399248247277 0.286703215501 .006 0 0 0.959931088597</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.70 .035 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="right_boundary">
+          <pose>-0.399248247277 -0.286703215501 .006 0 0 -0.959931088597</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.70 .035 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="apex_reference">
+          <pose>-.6 0 .006 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>.06 .06 .004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.8 0.05 1</ambient>
+            <diffuse>1 0.8 0.05 1</diffuse>
+          </material>
+        </visual>
+        <visual name="target_cross_x">
+          <pose>0 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.3 0.025 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 1 0.3 1</ambient>
+            <diffuse>0.1 1 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="target_cross_y">
+          <pose>0 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.025 0.3 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 1 0.3 1</ambient>
+            <diffuse>0.1 1 0.3 1</diffuse>
+          </material>
+        </visual>
+        <visual name="staging_cross_x">
+          <pose>0.8 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.3 0.025 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.8 1 1</ambient>
+            <diffuse>0.1 0.8 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="staging_cross_y">
+          <pose>0.8 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.025 0.3 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.1 0.8 1 1</ambient>
+            <diffuse>0.1 0.8 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_shaft">
+          <pose>0.43 0 0.009 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.28 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_left">
+          <pose>0.33 0.045 0.009 0 0 -0.7853981634</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.15 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+        <visual name="reverse_arrow_right">
+          <pose>0.33 -0.045 0.009 0 0 0.7853981634</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <box>
+              <size>0.15 0.035 0.004</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Patrol points recorded from Seggy in the office map frame. -->
+    <model name="patrol_point_markers">
+      <static>true</static>
+      <link name="markers">
+        <visual name="point_1">
+          <pose>-0.181 0.276 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>0.002</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_2">
+          <pose>-2.994 4.360 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>0.002</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+        <visual name="point_3">
+          <pose>-4.473 0.392 0.003 0 0 0</pose>
+          <cast_shadows>false</cast_shadows>
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>0.002</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

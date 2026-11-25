@@ -81,7 +81,7 @@
       <pose>205 155 -1 0 0 0</pose>
     </include>
 
-    <!-- Note: use the Web URI for larger cones, my local model is scaled 0.6 of that size -->
+    <!-- Note: use the Web URI for larger cones, my local model is scaled to 0.6 of that size -->
     <include>
       <!-- <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/Construction Cone</uri> -->
       <uri>model://models/construction_cone</uri>

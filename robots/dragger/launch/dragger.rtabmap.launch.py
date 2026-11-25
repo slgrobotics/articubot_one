@@ -17,7 +17,7 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='dragger')
 
     # Launch visual SLAM/localization with RTAB-Map if requested.
-    # Dragger uses separate Raspberry Pi with dual cameras
+    # Dragger uses a separate Raspberry Pi with dual cameras
     #  - see https://github.com/slgrobotics/ros2_inference_stereo
     rtabmap = include_launch(
         package_name,

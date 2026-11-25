@@ -1,20 +1,12 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <ros2_control name="TurtleSimRobot" type="system">
+    <ros2_control name="TurtleRobot" type="system">
 
-        <!-- Wheel geometry information - see controllers.yaml -->
+        <!-- The simulated drive controller gets its wheel geometry from controllers.yaml. -->
 
         <hardware>
-            <xacro:unless value="$(arg sim_mode)">
-                <!-- Actual Create 1 base hardware driver runs on the Turtlebot Raspberry Pi 3B
-                     It publishes /joint_states [wheel_left_joint, wheel_right_joint] <- ! note the names !
-                     see https://github.com/slgrobotics/robots_bringup/tree/main/Docs/Create1 -->
-            </xacro:unless>
-
-            <xacro:if value="$(arg sim_mode)">
-                <plugin>gz_ros2_control/GazeboSimSystem</plugin>
-            </xacro:if>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
 
         <joint name="wheel_left_joint">

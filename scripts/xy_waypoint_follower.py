@@ -14,12 +14,23 @@
 # limitations under the License.
 
 #
-# See /opt/ros/jazzy/lib/python3.12/site-packages/nav2_simple_commander/example_waypoint_follower.py
+# See /opt/ros/${ROS_DISTRO}/lib/python3.*/site-packages/nav2_simple_commander/example_waypoint_follower.py
 #     https://github.com/ros-navigation/navigation2/tree/main/nav2_simple_commander/nav2_simple_commander
 #     https://automaticaddison.com/how-to-send-waypoints-to-the-ros-2-navigation-stack-nav-2/
 #
-# Run this script:
-#  cd ~/robot_ws; colcon build; ros2 run articubot_one xy_waypoint_follower.py
+
+"""
+Run the Nav2 demo route through hard-coded poses in the map frame.
+
+Use a simulation with active Nav2 and a localized robot on the map the
+route was written for. With the built workspace sourced, run:
+
+     ros2 run articubot_one xy_waypoint_follower.py
+
+Expect waypoint progress and a final Nav2 status on stdout. The demo can
+switch to an alternate goal after five minutes and requests cancellation
+at its ten-minute timeout.
+"""
 
 from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
@@ -59,12 +70,12 @@ def main():
     '''
     # Activate navigation, if not autostarted. This should be called after setInitialPose()
     # or this will initialize at the origin of the map and update the costmap with bogus readings.
-    # If autostart, you should `waitUntilNav2Active()` instead.
+    # If autostart is enabled, you should `waitUntilNav2Active()` instead.
     # navigator.lifecycleStartup()
 
     # Wait for navigation to fully activate. Use this line if autostart is set to true.
     # https://github.com/ros-navigation/navigation2/issues/2283
-    #navigator.waitUntilNav2Active()  # must use AMCL, will wait for amcl/get_state service available
+    #navigator.waitUntilNav2Active()  # must use AMCL, will wait for the amcl/get_state service to become available
     navigator.waitUntilNav2Active(localizer='bt_navigator')
 
     # If desired, you can change or load the map as well
@@ -155,7 +166,7 @@ def main():
                 print('Timeout 10 minutes: canceling task')
                 navigator.cancelTask()
 
-            # Some follow waypoints request change to demo preemption
+            # A waypoint-following request change to demo preemption
             if now - nav_start > Duration(seconds=300.0):
                 print('Timeout 5 minutes: Executing alternative destination waypoint')
                 goal_pose_alt = PoseStamped()

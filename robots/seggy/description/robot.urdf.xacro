@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
 
-    <!-- See common Gazebo pugins in the world file -->
+    <!-- Override this path for machine-specific real-hardware calibration. -->
+    <xacro:arg name="hardware_config"
+               default="$(find articubot_one)/robots/seggy/config/hardware.yaml"/>
+
+    <!-- See common Gazebo plugins in the world file -->
     
     <!--
         To re-generate robot.urdf.generated.xml manually for troubleshooting:
@@ -20,15 +24,18 @@
     <xacro:include filename="../../../description/imu.xacro" />
 
     <!-- using arguments here, as that allows overriding default values -->
-    <xacro:arg name="lidar_offset_x" default="${wheel_offset_x + 0.05}"/>
+    <xacro:arg name="lidar_offset_x" default="${wheel_offset_x + 0.063}"/>
     <xacro:arg name="lidar_offset_z" default="0.27"/>
-    <xacro:arg name="lidar_min_angle" default="-${pi * 0.95}"/>
-    <xacro:arg name="lidar_max_angle" default="${pi * 0.95}"/>
+    <!-- 355-degree scan: leave a 5-degree gap centered behind the support bar. -->
+    <xacro:arg name="lidar_min_angle" default="${-pi + pi * 2.5 / 180.0}"/>
+    <xacro:arg name="lidar_max_angle" default="${pi - pi * 2.5 / 180.0}"/>
     <!-- xacro:arg name="lidar_pedestal_height" default="0.04"/ -->
     <xacro:include filename="../../../description/lidar.xacro" />
 
     <xacro:property name="open_circuit_voltage" value="12.592"/>
     <xacro:property name="battery_capacity" value="20.0"/>
+    <xacro:property name="power_load" value="15.0"/> <!-- Simulated electrical load in watts -->
+    <xacro:property name="battery_start_draining" value="true"/>
     <xacro:include filename="../../../description/battery.xacro" />
 
     <xacro:property name="camera_oakd_offset_x" value="${wheel_offset_x + 0.03}"/>

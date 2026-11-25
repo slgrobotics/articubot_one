@@ -1,0 +1,18 @@
+# Turtle Create 1 driver settings (ROS node parameters).
+# The wildcard also matches create_driver inside a robot namespace.
+/**:
+  ros__parameters:
+    robot_model: CREATE_1  # base/driver model, not the articubot_one robot directory
+    dev: /dev/ttyUSB0
+    baud: 57600
+
+    base_frame: base_link
+    odom_frame: odom
+    publish_tf: false  # TF is provided by the localization stack
+
+    latch_cmd_duration: 2.0  # seconds
+    loop_hz: 66.0  # Create 1 provides sensor data every 15 ms
+
+    gyro_offset: 0.0
+    gyro_scale: 1.21
+    distance_scale: 1.05

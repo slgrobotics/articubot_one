@@ -14,9 +14,12 @@
 
 -- /* Author: Darby Lim */
 
--- See turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
+-- See:
+--     https://github.com/slgrobotics/articubot_one/wiki/Jazzy-to-Lyrical-migration#cartographer-port
+--     turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
 --     https://github.com/ROBOTIS-GIT/turtlebot3/blob/main/turtlebot3_cartographer/config/turtlebot3_lds_2d.lua
---     /opt/ros/jazzy/share/cartographer_ros/configuration_files/mir-100-mapping.lua (MiR100 Mobile Robot)
+--     /opt/ros/${ROS_DISTRO}/share/cartographer_ros/configuration_files/mir-100-mapping.lua (MiR100 Mobile Robot) - if present
+--     https://github.com/slgrobotics/cartographer_ros/blob/lyrical/cartographer_ros/configuration_files/mir-100-mapping.lua
 
 include "map_builder.lua"
 include "trajectory_builder.lua"
@@ -25,17 +28,31 @@ options = {
   map_builder = MAP_BUILDER,
   trajectory_builder = TRAJECTORY_BUILDER,
 
+  -- Cartographer now waits for a valid IMU heading and mounting TF before starting trajectory 0,
+  -- so its first submap has the correct map orientation.
+  -- See https://github.com/slgrobotics/cartographer_ros/blob/lyrical/README_Lyrical.md#initialize-a-fresh-map-from-imu-heading
+  initialize_map_from_imu = true,
+  imu_heading_offset_rad = 0.0,
+  imu_heading_timeout_sec = 30.0,
+  imu_heading_max_age_sec = 1.0,
+
 -- See https://google-cartographer-ros.readthedocs.io/en/stable/configuration.html
   map_frame = "map",
-  tracking_frame = "imu_link", -- "base_link", -- "laser_frame",
-  published_frame = "base_link", -- "base_link",
+  tracking_frame = "imu_link",
+
+  -- For an EKF-based robot, use this arrangement:
+  -- Cartographer: map → odom
+  -- EKF:          odom → base_link
+
+  published_frame = "odom", -- "base_link",
 
   odom_frame = "odom",
-  provide_odom_frame = true,
+  provide_odom_frame = false,
   publish_frame_projected_to_2d = true,
+  projection_frame = "base_footprint", -- Keep the ground at map z=0, not the IMU.
 
   use_odometry = true,
-  use_pose_extrapolator = false,
+  use_pose_extrapolator = true,
   use_nav_sat = false,
   use_landmarks = false,
 
@@ -52,11 +69,11 @@ options = {
   rangefinder_sampling_ratio = 1.0,
   odometry_sampling_ratio = 1.0,
   fixed_frame_pose_sampling_ratio = 1.0,
-  imu_sampling_ratio = 0.1,
+  imu_sampling_ratio = 1.0,
   landmarks_sampling_ratio = 1.0,
 }
 
--- Override some default parameters from files in /opt/ros/jazzy/share/cartographer/configuration_files
+-- Override some default parameters from files in /opt/ros/${ROS_DISTRO}/share/cartographer/configuration_files
 --    map_builder.lua
 --    map_builder_server.lua
 --    pose_graph.lua
@@ -83,12 +100,12 @@ TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 20
 -- IMU is ok
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 20
 
--- less outliers
+-- fewer outliers
 POSE_GRAPH.constraint_builder.max_constraint_distance = 5.0
 POSE_GRAPH.constraint_builder.min_score = 0.62
 -- tune down IMU in optimization
-POSE_GRAPH.optimization_problem.acceleration_weight = 0.1 * 1e3
-POSE_GRAPH.optimization_problem.rotation_weight = 0.1 * 3e5
+-- POSE_GRAPH.optimization_problem.acceleration_weight = 0.1 * 1e3
+-- POSE_GRAPH.optimization_problem.rotation_weight = 0.1 * 3e5
 -- ignore wheels in optimization
 POSE_GRAPH.optimization_problem.odometry_translation_weight = 0.
 POSE_GRAPH.optimization_problem.odometry_rotation_weight = 0.

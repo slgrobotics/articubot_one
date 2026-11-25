@@ -42,17 +42,17 @@ def generate_launch_description():
         ' db_path: ', db_path,
     ]))
 
-    for action in [
-        db_path_arg,
-        config_filepath_arg,
-    ]:
-        ld.add_action(action)
-
     wifi_logger_node = Node(
         package=package_name,
         executable='wifi_logger_node.py',
         name='wifi_logger_node',
         output='screen',
+        remappings=[
+            ('/tf', 'tf'), ('/tf_static', 'tf_static'),
+            ('/odometry/local', 'odometry/local'), ('/gps/filtered', 'gps/filtered'),
+            ('/wifi/metrics', 'wifi/metrics'), ('/wifi/overlay', 'wifi/overlay'),
+            ('/global_costmap/costmap', 'global_costmap/costmap'),
+        ],
         parameters=[config_filepath, {'db_path': db_path}],
         # arguments=['--ros-args', '--log-level', 'DEBUG'],
     )
@@ -63,6 +63,12 @@ def generate_launch_description():
         executable='wifi_visualizer_node.py',
         name='wifi_visualizer_node',
         output='screen',
+        remappings=[
+            ('/tf', 'tf'), ('/tf_static', 'tf_static'),
+            ('/odometry/local', 'odometry/local'), ('/gps/filtered', 'gps/filtered'),
+            ('/wifi/metrics', 'wifi/metrics'), ('/wifi/overlay', 'wifi/overlay'),
+            ('/global_costmap/costmap', 'global_costmap/costmap'),
+        ],
         parameters=[config_filepath, {'db_path': db_path}],
     )
     ld.add_action(wifi_visualizer_node)
@@ -72,6 +78,12 @@ def generate_launch_description():
         executable='heat_mapper_node.py',
         name='heat_mapper_node',
         output='screen',
+        remappings=[
+            ('/tf', 'tf'), ('/tf_static', 'tf_static'),
+            ('/odometry/local', 'odometry/local'), ('/gps/filtered', 'gps/filtered'),
+            ('/wifi/metrics', 'wifi/metrics'), ('/wifi/overlay', 'wifi/overlay'),
+            ('/global_costmap/costmap', 'global_costmap/costmap'),
+        ],
         parameters=[config_filepath, {'db_path': db_path}],
     )
     ld.add_action(heat_mapper_node)

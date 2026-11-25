@@ -1,0 +1,19 @@
+#
+# Seggy Arduino hardware settings, loaded by ros2_control.xacro.
+# Wheel geometry and the actual control update rate remain in controllers.yaml.
+#
+
+device: /dev/ttyACM0           # Teensy 4.0 USB serial device - https://github.com/slgrobotics/Misc/tree/master/Arduino/Sketchbook/WheelsROS_Seggy
+baud_rate: 115200
+timeout: 1000                  # serial response timeout, ms
+reconnect_interval: 2          # seconds
+
+enc_counts_per_rev: 60         # encoder counts per wheel revolution, 60 for Seggy's BLDC wheels firmware
+wheels_pwm_factor: 28.5714     # rad/s to firmware motor setpoint percent. Match the firmware 100.0/3.5 calculation.
+
+battery_num_cells: 4
+battery_technology: 4          # BatteryState chemistry - LiFePO4
+battery_design_capacity: 20.0  # Ah; keep broadcaster metadata in sync
+battery_full_voltage:    14.10  # V; report FULL at or above this voltage (13.80 with Schottky diode, 14.10 with ideal diode)
+has_battery_charging_field: true  # use the optional fourth field in the health reply from the wheels firmware
+battery_current_measured: false   # don't publish measured current with the charging flag

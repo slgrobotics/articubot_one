@@ -109,7 +109,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # You need to press "Startup" button in RViz when autostart=false
+    # You need to press the "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])
@@ -257,6 +257,13 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             gz_bridge,
+            Node(
+                package='articubot_one',
+                executable='run_battery_state_compat.py',
+                namespace=namespace,
+                parameters=[{'simulated': True}],
+                output='screen',
+            ),
             #odom_relay,
             #gps_fix_translator
         ]

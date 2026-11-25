@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 from articubot_one.launch_utils.helpers import include_launch
 
 #
-# Generate launch description for Dragger robot sensors
+# Generate a launch description for Dragger robot sensors
 #
 # Sensors are almost always robot-specific, so we have this separate launch file.
 #   
@@ -19,17 +19,18 @@ def generate_launch_description():
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from dragger.launch.py
+    # Keep the interface compatible with being included from dragger.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # sensor nodes don't depend on robot_model and don't use package_name
 
     # Lidar node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/LD14.md
+    # DTOF LiDAR STL-19P, 360 Degree Scanning, Anti-Glare 60000Lux, 5000Hz ranging Frequency, 12m Radius ranging
     ldlidar_node = Node(
         package='ldlidar_sl_ros2',
         namespace=namespace,
         executable='ldlidar_sl_ros2_node',
-        name='ldlidar_publisher_ld14',
+        name='ldlidar_publisher_ld19p',
         output='screen',
         respawn=True,
         respawn_delay=10,
@@ -40,6 +41,7 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 230400}, # LD-19P has 230400 baud rate
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': False},
           {'angle_crop_min': 135.0},
@@ -55,9 +57,9 @@ def generate_launch_description():
         FindPackageShare(package_name), 'config', 'bno085_i2c.yaml'
     ])
 
-    # BNO085 by default has active DMP (Digital Motion Processor) and does not need running
-    #        a imu_filter_madgwick node from imu_tools to fuse raw IMU data into AHRS orientation quaternion.
-    #        The driver takes advantage of that. Device does not need calibration.
+    # BNO085 by default has an active DMP (Digital Motion Processor) and does not require running
+    #        an imu_filter_madgwick node from imu_tools to fuse raw IMU data into an AHRS orientation quaternion.
+    #        The driver takes advantage of that. The device does not need calibration.
     bno08x_driver_node = Node(
         package="bno08x_driver",
         namespace=namespace,
@@ -120,13 +122,18 @@ def generate_launch_description():
             {'frame_id' : 'gps_link' },
             {'time_ref_source' : 'gps' },
             {'use_GNSS_time' : False },
-            {'useRMC' : False }
+            {'useRMC' : False },
+            # Standard (non-RTK) fixes: double the driver's default 4 m EPE.
+            # Covariance is (HDOP * EPE)^2, so this gives 4x the variance
+            # and reduces GPS influence on the global EKF. Receiver GST error
+            # estimates, when present, override this driver fallback.
+            {'epe_quality1': 8.0},
         ],
         remappings=[("fix", "gps/fix")]
     )
 
     # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
-    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    # Localizers/mappers only publish the map to odom transform. The robot needs an EKF filter to publish the odom to base_link transform.
     # "ekf_imu_odom" is needed, providing "a valid transform from your configured odom_frame to base_frame"
     # it does IMU + ODOM fusing. Publishes /odometry/local and TF odom->base_link
     # also, produces odom_topic: /odometry/local which can be used by Nav2
@@ -143,7 +150,7 @@ def generate_launch_description():
         }
     )
 
-    # OAK-D camera launch We only supply the camera model and its position/rotation relative to the robot base frame. 
+    # OAK-D camera launch: We only supply the camera model and its position/rotation relative to the robot base frame.
     # The rest of the launch arguments are defaults from launch/oakd.launch.py
     # As the parent is camera_oakd_link_optical, the current positioning zero values are reasonable
     oakd_camera = include_launch(

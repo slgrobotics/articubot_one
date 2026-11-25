@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, LogInfo
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
@@ -10,11 +10,11 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for Seggy robot — multi-robot safe version
+# Generate a launch description for Seggy robot — multi-robot safe version
 #
-# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+# If launched with "use_sim_time=true", the robot will run in Gazebo simulation.
 #
-# Multi-robot usage example. On the robots' Raspberry Pi's:
+# Multi-robot usage example. On the robots' Raspberry Pis:
 #
 #   ros2 launch articubot_one seggy.launch.py namespace:=robot1
 #   ros2 launch articubot_one seggy.launch.py namespace:=robot2
@@ -30,6 +30,7 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    hardware_config = LaunchConfiguration('hardware_config', default='')
 
     # Note: for Gazebo simulation choose "robot_world" in seggy.drive.launch.py
 
@@ -45,27 +46,34 @@ def generate_launch_description():
     #      ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args --params-file <path_to_map_server_params.yaml>
     #
 
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
-    # Choose one:
-    # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox) - use outdoors
-    #map_file = 'basement.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
-    #map_file = 'basement' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's run in Warehouse world
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    map_file = LaunchConfiguration('map', default='')
+
+    # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
+    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/office
+    # Provide the saved map to AMCL with the 'map' launch argument:
+    #     ros2 launch articubot_one seggy.launch.py localizer_type:=amcl map:=~/launch/office.yaml
     #
-    # For SlAM Toolbox, we can use previously saved serialized map:
-    #map_file = 'seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/ros/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
+    # Choose your map file for localizers that support it (map_server, amcl):
+    #    map:='office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
+    #    map:='office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's slam_toolbox run in Warehouse world
+    #    map:='/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #
+    # For SLAM Toolbox, we can use a previously saved serialized map:
+    #    map:='seggy_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map:='/home/ros/robot_ws/seggy_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'seggy.localizers.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.localizers.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
+            'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator'),
             'robot_model': robot_model,
             'localizer_type': localizer_type,
             'map': map_file
@@ -81,7 +89,8 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'hardware_config': hardware_config
         },
     )
 
@@ -90,7 +99,7 @@ def generate_launch_description():
     # -------------------------------------------------------
     drive_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'seggy.drive.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.drive.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -100,7 +109,7 @@ def generate_launch_description():
 
     sensors_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'seggy.sensors.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.sensors.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -126,6 +135,30 @@ def generate_launch_description():
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
+    wifi_survey_v2_config = PathJoinSubstitution([
+        FindPackageShare(package_name),
+        'robots',
+        robot_model,
+        'config',
+        'wifi_survey_v2_config.yaml'
+    ])
+
+    wifi_survey_v2_include = include_launch(
+        package_name,
+        ['launch', 'wifi_survey_v2.launch.py'],
+        {
+            'config_filepath': wifi_survey_v2_config,
+            'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'use_sim_time': use_sim_time,
+            'wifi_source': LaunchConfiguration('wifi_source'),
+            'map_source': LaunchConfiguration('wifi_map_source'),
+            'map_topic': LaunchConfiguration('wifi_map_topic'),
+            'temporary_run': LaunchConfiguration('wifi_temporary_run'),
+            'wifi_sim_seed': LaunchConfiguration('wifi_sim_seed'),
+            'survey': LaunchConfiguration('wifi_active_survey')
+        },
+    )
+
     # -------------------------------------------------------
     # Navigation include - use generic navigation.launch.py
     # -------------------------------------------------------
@@ -136,7 +169,10 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'enable_docking': LaunchConfiguration('enable_docking'),
+            'docking_catalogue': LaunchConfiguration('docking_catalogue'),
+            'docking_params_file': LaunchConfiguration('docking_params_file')
         }
     )
 
@@ -147,8 +183,8 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
+    # Localizers are run with a delay to allow the IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow the map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
     survey_delay = 30.0  # seconds - after navigation is running, we can start wifi survey
@@ -156,6 +192,7 @@ def generate_launch_description():
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
     delayed_wifi_survey = delayed_include(survey_delay, "WIFI_SURVEY", wifi_survey_include)
+    delayed_wifi_survey_v2 = delayed_include(survey_delay, "WIFI_SURVEY_V2", wifi_survey_v2_include)
 
     # -------------------------------------------------------
     # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
@@ -174,13 +211,39 @@ def generate_launch_description():
         sensors_include,
         delayed_loc,
         delayed_nav,
-        delayed_wifi_survey,
+        # Choose exactly one WiFi version; build/source the matching package.
+        #delayed_wifi_survey,
+        #delayed_wifi_survey_v2,
     ])
 
     # -------------------------------------------------------
     # Final LaunchDescription
     # -------------------------------------------------------
     return LaunchDescription([
+
+        DeclareLaunchArgument('enable_docking', default_value=PythonExpression([
+            "'true' if '", use_sim_time, "'.lower() == 'true' else 'false'"
+        ]), choices=['true', 'false'], description='Named LiDAR docking (enabled by default in simulation)'),
+        DeclareLaunchArgument('docking_catalogue', default_value=PathJoinSubstitution([
+            FindPackageShare(package_name), 'robots', robot_model, 'config',
+            PythonExpression(["'docking_sim.yaml' if '", use_sim_time,
+                              "'.lower() == 'true' else 'docking_real.yaml'"])
+        ])),
+        DeclareLaunchArgument('docking_params_file', default_value=PathJoinSubstitution([
+            FindPackageShare(package_name), 'robots', robot_model, 'config',
+            PythonExpression(["'docking_nav2_sim.yaml' if '", use_sim_time,
+                              "'.lower() == 'true' else 'docking_nav2_real.yaml'"])
+        ])),
+
+        DeclareLaunchArgument('wifi_source', default_value=PythonExpression([
+            "'simulated' if '", use_sim_time, "'.lower() in ('true','1') else 'hardware'"
+        ]), description='hardware, simulated or topic Wi-Fi input'),
+        DeclareLaunchArgument('wifi_map_source', default_value=PythonExpression([
+            "'live' if '", use_sim_time, "'.lower() in ('true','1') else 'saved'"
+        ]), description='saved raster or live occupancy grid'),
+        DeclareLaunchArgument('wifi_map_topic', default_value='map'),
+        DeclareLaunchArgument('wifi_temporary_run', default_value='auto'),
+        DeclareLaunchArgument('wifi_sim_seed', default_value='42'),
 
         DeclareLaunchArgument(
             'use_sim_time',
@@ -192,6 +255,38 @@ def generate_launch_description():
             'namespace',
             default_value='',
             description='Top-level namespace for multi-robot deployment'
+        ),
+
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
+
+        DeclareLaunchArgument(
+            'hardware_config', default_value='',
+            description='Optional hardware YAML path; empty uses Seggy packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'wifi_map_yaml_path', default_value='',
+            description='V2 saved map YAML + PGM; empty uses the WiFi config (not a SLAM posegraph)'
+        ),
+
+        DeclareLaunchArgument(
+            "wifi_active_survey", default_value=PythonExpression([
+                "'false' if '", use_sim_time, "'.lower() in ('true','1') else 'true'"
+            ]),
+            description='V2: run stationary ping/iperf3 tests against the configured target host'
+        ),
+
+        DeclareLaunchArgument(
+            'map', default_value='',
+            description='Path to map YAML file'
+        ),
+
+        # we can only use 'map_server_tf' here as Seggy is indoors only and does not have Navsat to provide map->odom TF
+        DeclareLaunchArgument(
+            'localizer_type', default_value='slam_toolbox',
+            choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Indoor localizer to launch'
         ),
 
         LogInfo(msg=[

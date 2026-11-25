@@ -3,7 +3,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
 <!--  
-We want Turtle's LIDAR (XV-11) to look a bit different, so we don't use common description.
+We want Turtle's LIDAR (XV-11) to look a bit different, so we don't use the common description.
 
 meld ~/robot_ws/src/articubot_one/robots/turtle/description/create_sensors.urdf.xacro ~/robot_ws/src/articubot_one/description/lidar.xacro 
 -->

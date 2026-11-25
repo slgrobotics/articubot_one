@@ -1,10 +1,11 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo
+from launch.actions import IncludeLaunchDescription, TimerAction, LogInfo, DeclareLaunchArgument, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import ComposableNodeContainer
+from articubot_one.launch_utils.docking import prepare_docking
 
 #
 # A generic wrapper launch file to start Nav2 navigation stack for a given robot model
@@ -18,15 +19,16 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept launch arguments from parent (for example, seggy.launch.py)
+    # Accept launch arguments from the parent (for example, seggy.launch.py)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Build substitution for nav2 params so robot_model can be dynamic
-    nav2_params_file = PathJoinSubstitution([
+    default_nav2_params = PathJoinSubstitution([
         FindPackageShare(package_name), 'robots', robot_model, 'config', 'nav2_params.yaml'
     ])
+    nav2_params_file = LaunchConfiguration('nav2_params_file')
 
     # Define the ComposableNodeContainer for Nav2 composition:
     container_nav2 = ComposableNodeContainer(
@@ -39,7 +41,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # You need to press "Startup" button in RViz when autostart=false
+    # You need to press the "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package_name), 'launch', 'navigation_launch.py'])
@@ -55,9 +57,19 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('namespace', default_value=''),
+        DeclareLaunchArgument('use_sim_time', default_value='false'),
+        DeclareLaunchArgument('robot_model', default_value=''),
+        DeclareLaunchArgument('nav2_params_file', default_value=default_nav2_params,
+                              description='Nav2 params override; defaults to robot configuration'),
 
         LogInfo(msg=['============ starting NAVIGATION (generic wrapper)  namespace: "', namespace, '"  use_sim_time: ', use_sim_time, ', robot_model: ', robot_model]),
         #LogInfo(msg=['Nav2 params file: ', nav2_params_file]),
+
+        DeclareLaunchArgument('enable_docking', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('docking_catalogue', default_value=''),
+        DeclareLaunchArgument('docking_params_file', default_value=''),
+        OpaqueFunction(function=prepare_docking),
 
         container_nav2,  # Add the container to the launch description, if 'use_composition': 'True' is set
         nav2

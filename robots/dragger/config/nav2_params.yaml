@@ -1,11 +1,11 @@
 #
-# copied from /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
+# originally copied from /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml
 #
 # see https://docs.nav2.org/configuration/index.html
 #     https://automaticaddison.com/ros-2-navigation-tuning-guide-nav2/
 #     https://github.com/slgrobotics/robots_bringup/blob/main/Docs/ROS-Jazzy/README-BT.md
 #
-# meld /opt/ros/jazzy/share/nav2_bringup/params/nav2_params.yaml ~/robot_ws/src/articubot_one/robots/dragger/config/nav2_params.yaml
+# meld /opt/ros/${ROS_DISTRO}/share/nav2_bringup/params/nav2_params.yaml ~/robot_ws/src/articubot_one/robots/dragger/config/nav2_params.yaml
 #
 
 # see https://docs.nav2.org/configuration/packages/configuring-bt-navigator.html
@@ -28,27 +28,33 @@ bt_navigator:
 
     # Two navigators and their trees supporting different RViz2 mouse-click navigation modes: 
     navigators: ["navigate_to_pose", "navigate_through_poses"]
+
     # These two lines should be here for the param_substitutions in "*_nav.launch.py" to work:
     default_nav_to_pose_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml"
     default_nav_through_poses_bt_xml: "$(find-pkg-share nav2_bt_navigator)/behavior_trees/navigate_through_poses_w_replanning_and_recovery.xml"
+
     navigate_to_pose: # Go to a single location
       plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+      # enable_groot_monitoring: true
+      # groot_server_port: 1667
+
     navigate_through_poses: # Follow a series of waypoints 
       plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+      # enable_groot_monitoring: true
+      # groot_server_port: 1669
 
-      # /opt/ros/jazzy/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
+      # /opt/ros/${ROS_DISTRO}/share/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_goal_patience_and_recovery.xml
 
-    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
 
     # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
-    # Built-in plugins are added automatically
+    # Built-in plugins are added automatically - you only need to include your new custom plugins
     # plugin_lib_names: []
 
-    #error_code_names: # works for Jazzy, must be removed for Kilted
-    error_code_name_prefixes: # works for Kilted
+    error_code_name_prefixes: # works since Kilted
       - compute_path_error_code
       - follow_path_error_code
       - smoother_error_code
@@ -57,12 +63,13 @@ bt_navigator:
 
     transform_tolerance: 0.5 # Default: 0.1 - How old position information can be before it’s considered outdated.
 
-# See https://docs.ros.org/en/jazzy/p/nav2_mppi_controller/index.html
-#     https://docs.nav2.org/configuration/packages/configuring-controller-server.html
+# See https://docs.ros.org/en/lyrical/p/nav2_mppi_controller/index.html
+#     https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/controller_server/
 controller_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
-    controller_frequency: 5.0 # For sim must be 5.0 to match or exceed simulation's time step
+    controller_frequency: 5.0   # For sim, this must be 5.0 to match or exceed simulation's time step. Works for real robots too.
+    publish_zero_velocity: true # Explicitly request a stop on goal completion (abort paths also force a stop).
     costmap_update_timeout: 0.50
     #odom_topic: /diff_cont/odom   # works, but probably the worst of odom topics
     #odom_topic: /odometry/gps     # can't use it, orientation is always 0
@@ -104,23 +111,32 @@ controller_server:
       time_steps: 20 # Default: 56
       model_dt: 0.2 # Default: 0.05  0.16 matches 6 Hz Laser scan frequency, dt must be larger.
       batch_size: 1000 # Default: 1000
-      ax_max: 3.0
-      ax_min: -3.0
-      ay_max: 0.0 # Default: 3.0 Should be 0.0 when lateral movement is not possible?
-      az_max: 3.5
+
+      # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+      # The velocity smoother refines these commands within the controller's limits,
+      # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+      ax_max: 3.0   # max forward acceleration
+      ax_min: -3.0  # max reverse acceleration
+      ay_max: 0.0   # Default: 3.0 Should be 0.0 when lateral movement is not possible?
+      az_max: 3.5   # max turning acceleration (reduce for smoother turns)
       vx_std: 0.2
-      vy_std: 0.0 # Default: 0.2 Should be 0.0 when lateral movement is not possible?
-      wz_std: 0.4 # Default: 0.2
-      vx_max: 0.5
-      vx_min: -0.35
-      vy_max: 0.0 # Default: 0.5 Should be 0.0 when lateral movement is not possible?
-      wz_max: 1.9
+      vy_std: 0.0   # Default: 0.2 Should be 0.0 when lateral movement is not possible?
+      wz_std: 0.4   # Default: 0.2
+      vx_max: 0.5   # max forward speed
+      vx_min: -0.35 # max reverse speed
+      vy_max: 0.0   # Default: 0.5 Should be 0.0 when lateral movement is not possible?
+      wz_max: 1.9   # max turning speed (pretty aggressive)
+
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.5  # delay in transform (tf) data that is tolerable in seconds
       temperature: 0.3 # Higher values make selection more random, potentially finding creative solutions
       gamma: 0.015 # cost sensitivity setting
       motion_model: "DiffDrive"
+      # Lyrical loads motion models as plugins under the selected namespace.
+      DiffDrive:
+        plugin: "mppi::DiffDriveMotionModel"
       visualize: true
       regenerate_noises: true
       TrajectoryVisualizer:
@@ -164,7 +180,7 @@ controller_server:
         cost_weight: 14.0 # Default 10.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
-        threshold_to_consider: 0.5 # meters. Stop worrying about strict path following when robot is very close to the goal.
+        threshold_to_consider: 0.5 # meters. Stop worrying about strict path following when the robot is very close to the goal.
         offset_from_furthest: 20
         use_path_orientations: false
       PathAngleCritic: # path direction
@@ -241,9 +257,9 @@ local_costmap:
           marking: True # allow the obstacle layer to mark obstacles in the costmap.
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Half or more of maximum lidar data range
-          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacles and populating the costmap around the robot; set param >0.0
           obstacle_max_range: 9.0  # Half or more of maximum lidar data range
-          obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+          obstacle_min_range: 0.35 # > 0.0 to prevent lidar from detecting robot elements as obstacles
 
       range_sensor_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
@@ -315,9 +331,9 @@ global_costmap:
           marking: True # Default: True - allows the obstacle layer to mark obstacles in the costmap based on laser scan data.
           data_type: "LaserScan"
           raytrace_max_range: 12.0 # Maximum lidar data range
-          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacle and populating costmap around the robot set param >0.0
+          raytrace_min_range: 0.35 # Lidar is detecting robot elements as obstacles and populating the costmap around the robot; set param >0.0
           obstacle_max_range: 9.0  # Quarter or more of maximum lidar data range
-          obstacle_min_range: 0.35 # > 0.0 avoid that lidar detect robot elements as obstacle
+          obstacle_min_range: 0.35 # > 0.0 to prevent lidar from detecting robot elements as obstacles
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -325,7 +341,7 @@ global_costmap:
         # See http://wiki.ros.org/costmap_2d/hydro/inflation
         #     https://chatgpt.com/s/t_692127cb69908191b67ce0e1df8d9646
         cost_scaling_factor: 2.0 # Default: 1.0  The rate at which the cost decays exponentially across the inflation radius.
-        inflation_radius: 0.65  #a bit more conservative globally. Default: 0.55  Must be larger than robot footprint (radius 0.45)
+        inflation_radius: 0.65   # a bit more conservative globally. Default: 0.55  Must be larger than robot footprint (radius 0.45)
         inflate_unknown: false # Unknown cells will not be inflated as if they were lethal obstacles.
         inflate_around_unknown: false # will not inflate costs around unknown cells.
 
@@ -335,7 +351,7 @@ global_costmap:
 planner_server:
   ros__parameters: # planner server computes the optimal path for the robot to reach its goal. 
     enable_stamped_cmd_vel: true
-    expected_planner_frequency: 2.0 # Default: 20.0  - 2.0 is adequate for slow indoors robots, to avoid oscillations caused by frequent re-planning.
+    expected_planner_frequency: 2.0 # Default: 20.0  - 2.0 is adequate for slow indoor robots, to avoid oscillations caused by frequent re-planning.
     planner_plugins: ["GridBased"]
     costmap_update_timeout: 1.0
     GridBased:
@@ -387,17 +403,22 @@ behavior_server:
     transform_timeout: 0.8   # Default: 0.1
     transform_tolerance: 0.5 # delay in transform (tf) data that is tolerable in seconds
     simulate_ahead_time: 2.0
-    acceleration_limit: 2.5  # m/s^2
-    deceleration_limit: -2.5 # m/s^2
-    minimum_speed: 0.1       # m/s
-    max_rotational_vel: 1.0  # rad/s Default: 1.0
-    min_rotational_vel: 0.4  # rad/s Default: 0.4
+
+    # The MPPIController generates the actual velocity commands that determine how fast and aggressively the robot moves.
+    # The velocity smoother refines these commands within the controller's limits,
+    # and the behavior server only affects recovery maneuvers (like spinning in place when stuck).
+
+    acceleration_limit: 2.5  # m/s^2  max acceleration for recovery behaviors
+    deceleration_limit: -2.5 # m/s^2  max deceleration for recovery behaviors
+    minimum_speed: 0.1       # m/s    minimum speed for recovery behaviors
+    max_rotational_vel: 1.0  # rad/s  Default: 1.0
+    min_rotational_vel: 0.4  # rad/s  Default: 0.4
     rotational_acc_lim: 3.2  # maximum rotational acceleration (rad/s^2) Default: 3.2
 
 # See https://robotics.snowcron.com/robotics_ros2/waypoint_follower_theory.htm
                 
 # The nav2_waypoint_follower namespace includes the following plugins: WaitAtWaypoint PhotoAtWaypoint InputAtWaypoint
-# which corresponds to a standard (ROS2 provided) action that the bot should perform when it reaches a waypoint.
+# each of which corresponds to a standard (ROS2 provided) action that the bot should perform when it reaches a waypoint.
 
 waypoint_follower:
   ros__parameters: # see https://docs.nav2.org/configuration/packages/configuring-waypoint-follower.html#default-plugin
@@ -417,9 +438,10 @@ velocity_smoother:
   ros__parameters:
     enable_stamped_cmd_vel: true  # Whether to stamp the velocity. True uses TwistStamped. False uses Twist
     smoothing_frequency: 6.0      # Rate to run smoother. Default: 20.0 Hz. Experimental - 1.0...12.0 good. Higher value causes oscillations
-    scale_velocities: true        # scale velocities proportionally if any axis is outside of acceleration range to follow same vector, if possible
-    #feedback: "OPEN_LOOP"        # Type of feedback for current speed. Open loop uses the last smoothed output. Closed loop uses robot odometry
-    feedback: "CLOSED_LOOP"       # Default: OPEN_LOOP
+    scale_velocities: true        # scale velocities proportionally if any axis is outside the acceleration range to follow the same vector, if possible
+    # Ramp from the last output command so zero requests converge independently of wheel feedback. Dragger's PWM drive can report more speed than commanded;
+    # CLOSED_LOOP can then keep issuing nonzero deceleration commands indefinitely.
+    feedback: "OPEN_LOOP"         # Type of feedback for current speed. Open loop uses the last smoothed output. CLOSED_LOOP uses robot odometry. Default: OPEN_LOOP.
     max_velocity: [0.5, 0.0, 2.5]    # Maximum velocities, ordered [Vx, Vy, Vw]. Default [0.5, 0.0, 2.5]
     min_velocity: [-0.5, 0.0, -2.5]  # Minimum velocities, ordered [Vx, Vy, Vw]. Default [-0.5, 0.0, -2.5]
     max_accel: [0.5, 0.0, 3.2]       # Maximum acceleration, ordered [Ax, Ay, Aw]. Default [2.5, 0.0, 3.2]
@@ -427,8 +449,8 @@ velocity_smoother:
     odom_topic: /odometry/local   # works  # Topic of odometry to use for estimating current velocities
     #odom_topic: /diff_cont/odom   # works
     odom_duration: 0.5  # Default: 0.1  Period of time (s) to sample odometry information in for velocity estimation
-    deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zero-ed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
-    velocity_timeout: 1.0  # Time (s) after which if no new velocity commands are received to zero out and stop
+    deadband_velocity: [0.0, 0.0, 0.0]  # A deadband of velocities below which they should be zeroed out for sending to the robot base controller, ordered [Vx, Vy, Vw]
+    velocity_timeout: 1.0  # Time (s) after which to zero out and stop if no new velocity commands are received
 
 # see https://docs.nav2.org/configuration/packages/configuring-collision-monitor.html
 #     https://docs.nav2.org/configuration/packages/collision_monitor/configuring-collision-monitor-node.html
@@ -446,8 +468,8 @@ collision_monitor:
     source_timeout: 0.5 # Default: 2.0  How long to wait before assuming sensor data is too old. 
     base_shift_correction: True # true makes collision detection more accurate but uses more CPU power. Like taking a photo from a moving car.
     stop_pub_timeout: 2.0
-    # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
-    # and robot footprint for "approach" action type.
+    # Polygons represent zones around the robot for "stop", "slowdown" and "limit" action types,
+    # and the robot footprint for the "approach" action type.
     polygons: ["FootprintApproach"]
     FootprintApproach:
       type: "polygon"
@@ -486,7 +508,11 @@ collision_monitor:
 #      max_height: 1.0
 #      enabled: True
 
-# see https://docs.nav2.org/configuration/packages/configuring-docking-server.html
+# see https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/configuring_docking_server/
+#     https://github.com/open-navigation/opennav_docking
+#     https://docs.ros.org/en/lyrical/p/opennav_docking/index.html
+#     https://index.ros.org/r/opennav_docking/
+#     
 docking_server:
   ros__parameters:
     enable_stamped_cmd_vel: true
@@ -495,7 +521,7 @@ docking_server:
     wait_charge_timeout: 5.0 # Timeout (s) to wait to see if charging starts after docking.
     dock_approach_timeout: 30.0 # Timeout (s) to attempt vision-control approach loop.
     undock_linear_tolerance: 0.05 # Tolerance (m) to exit the undocking control loop at staging pose.
-    undock_angular_tolerance: 0.1 # Angular Tolerance (rad) to exist undocking loop at staging pose.
+    undock_angular_tolerance: 0.1 # Angular tolerance (rad) to exit the undocking loop at the staging pose.
     max_retries: 3
     base_frame: "base_link"
     fixed_frame: "odom" # Fixed frame to use, recommended to be a smooth odometry frame not map.
@@ -538,7 +564,7 @@ docking_server:
 # see https://docs.nav2.org/configuration/packages/configuring-loopback-sim.html
 loopback_simulator:
   ros__parameters: # Loopback Simulator computes the robot’s odometry based on the command velocity’s output request
-                   # needed when neither physical robot nor Gazebo sim is available
+                   # needed when neither a physical robot nor a Gazebo sim is available
     enable_stamped_cmd_vel: true
     base_frame_id: "base_footprint"
     odom_frame_id: "odom"

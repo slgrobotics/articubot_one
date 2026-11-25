@@ -6,7 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import SetParameter
 from launch_ros.actions import Node
 
-# See /opt/ros/jazzy/share/nav2_bringup/launch/localization_launch.py
+# See /opt/ros/${ROS_DISTRO}/share/nav2_bringup/launch/localization_launch.py
 
 def generate_launch_description():
 

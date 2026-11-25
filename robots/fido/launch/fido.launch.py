@@ -10,11 +10,11 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for Fido robot — multi-robot safe version
+# Generate a launch description for Fido robot — multi-robot safe version
 #
-# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+# If launched with "use_sim_time=true", the robot will run in Gazebo simulation.
 #
-# Multi-robot usage example. On the robots' Raspberry Pi's:
+# Multi-robot usage example. On the robots' Raspberry Pis:
 #
 #   ros2 launch articubot_one fido.launch.py namespace:=robot1
 #   ros2 launch articubot_one fido.launch.py namespace:=robot2
@@ -30,6 +30,7 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    hardware_config = LaunchConfiguration('hardware_config', default='')
 
     # Note: for Gazebo simulation choose "robot_world" in fido.drive.launch.py
 
@@ -45,24 +46,29 @@ def generate_launch_description():
     #      ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args --params-file <path_to_map_server_params.yaml>
     #
 
-    localizer_type = 'slam_toolbox' # 'amcl', 'map_server_tf', 'cartographer', 'slam_toolbox'
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
 
-    # Choose one:
-    # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox) - use outdoors
-    #map_file = 'basement.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
-    #map_file = 'basement' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Fido's run in Warehouse world
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    map_file = LaunchConfiguration('map', default='')
+
+    # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
+    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/office
+    # Provide the saved map to AMCL with the 'map' launch argument:
+    #     ros2 launch articubot_one fido.launch.py localizer_type:=amcl map:=~/launch/office.yaml
     #
-    # For SlAM Toolbox, we can use previously saved serialized map:
-    #map_file = 'fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
+    # Choose your map file for localizers that support it (map_server, amcl):
+    #    map:='office.yaml' # previously saved PGM map in ~/launch directory, to be used with map_server or amcl
+    #    map:='office' # previously saved SLAM Toolbox map in ~/launch directory, to be used by SLAM Toolbox
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map_tf.yaml'])  # use indoors
+    #    map:=PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of Seggy's slam_toolbox run in Warehouse world
+    #    map:='/opt/ros/${ROS_DISTRO}/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    #
+    # For SLAM Toolbox, we can use a previously saved serialized map:
+    #    map:='fido_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map:='/home/ros/robot_ws/fido_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'fido.localizers.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.localizers.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -81,7 +87,8 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'hardware_config': hardware_config
         },
     )
 
@@ -90,7 +97,7 @@ def generate_launch_description():
     # -------------------------------------------------------
     drive_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'fido.drive.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.drive.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -100,7 +107,7 @@ def generate_launch_description():
 
     sensors_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'fido.sensors.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.sensors.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -130,8 +137,8 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
+    # Localizers are run with a delay to allow the IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow the map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
 
@@ -172,6 +179,23 @@ def generate_launch_description():
             'namespace',
             default_value='',
             description='Top-level namespace for multi-robot deployment'
+        ),
+
+        DeclareLaunchArgument(
+            'hardware_config', default_value='',
+            description='Optional hardware YAML path; empty uses Fido packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'map', default_value='',
+            description='Path to map YAML file'
+        ),
+
+        # we can only use 'map_server_tf' here as Fido is indoors only and does not have Navsat to provide map->odom TF
+        DeclareLaunchArgument(
+            'localizer_type', default_value='slam_toolbox',
+            choices=['map_server_tf', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Indoor localizer to launch'
         ),
 
         LogInfo(msg=[

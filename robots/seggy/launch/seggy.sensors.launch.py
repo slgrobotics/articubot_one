@@ -5,7 +5,7 @@ from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import include_launch
 
 #
-# Generate launch description for Seggy robot sensors
+# Generate a launch description for Seggy robot sensors
 #
 # Sensors are almost always robot-specific, so we have this separate launch file.
 #   
@@ -19,13 +19,14 @@ def generate_launch_description():
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from seggy.launch.py
+    # Keep the interface compatible with being included from seggy.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # sensor nodes don't depend on robot_model and don't use package_name
 
     # Lidar node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/LD14.md
-    ldlidar_node = Node(
+    # LD14 / STL-14 LiDAR Sensor, old style, retired on Seggy
+    ldlidar_node_ld14 = Node(
         package='ldlidar_sl_ros2',
         namespace=namespace,
         executable='ldlidar_sl_ros2_node',
@@ -41,11 +42,40 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
-          # Seggy has vertical bar behind the LiDAR, so we crop angles around 180 degrees:
+          # Seggy has a vertical bar behind the LiDAR, so we can crop ~18 degrees around 180 degrees:
+          #{'enable_angle_crop_func': True},
+          #{'angle_crop_min': 171.0},
+          #{'angle_crop_max': 189.0}
+        ]
+    )
+
+    # Lidar node - https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/LD14.md
+    # FHL-LD19 Lidar Sensor - 12Meter (39ft) 360° Ranging - new style, currently used on Seggy
+    ldlidar_node_ld19 = Node(
+        package='ldlidar_sl_ros2',
+        namespace=namespace,
+        executable='ldlidar_sl_ros2_node',
+        name='ldlidar_publisher_ld19',
+        output='screen',
+        respawn=True,
+        respawn_delay=10,
+        parameters=[
+          {'product_name': 'LDLiDAR_LD14P'},  # LDLiDAR_LD14P setting works for FHL-LD19 LIDAR
+          {'laser_scan_topic_name': 'scan'},
+          {'point_cloud_2d_topic_name': 'pointcloud2d'},
+          {'frame_id': 'laser_frame'},
+          {'port_name': '/dev/ttyUSBLDR'},
+          {'serial_baudrate' : 230400}, # LD-19 has 230400 baud rate
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
+          {'laser_scan_dir': True},
           {'enable_angle_crop_func': True},
-          {'angle_crop_min': 170.0},
-          {'angle_crop_max': 190.0}
+          {'angle_crop_min': 171.0},
+          {'angle_crop_max': 189.0},
+          {'min_intensity': 45},
+          {'do_filtering': False},
+          {'do_triplets': False}
         ]
     )
 
@@ -54,9 +84,9 @@ def generate_launch_description():
         FindPackageShare(package_name), 'config', 'bno085_i2c.yaml'
     ])
 
-    # BNO085 by default has active DMP (Digital Motion Processor) and does not need running
-    #        a imu_filter_madgwick node from imu_tools to fuse raw IMU data into AHRS orientation quaternion.
-    #        The driver takes advantage of that. Device does not need calibration.
+    # BNO085 by default has an active DMP (Digital Motion Processor) and does not require running
+    #        an imu_filter_madgwick node from imu_tools to fuse raw IMU data into an AHRS orientation quaternion.
+    #        The driver takes advantage of that. The device does not need calibration.
     bno08x_driver_node = Node(
         package="bno08x_driver",
         namespace=namespace,
@@ -71,7 +101,7 @@ def generate_launch_description():
     )
 
     # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
-    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    # Localizers/mappers only publish the map to odom transform. The robot needs an EKF filter to publish the odom to base_link transform.
     ekf_imu_odom = include_launch(
         package_name,
         ['launch', 'ekf_imu_odom.launch.py'],
@@ -82,7 +112,7 @@ def generate_launch_description():
         }
     )
 
-    # OAK-D camera launch We only supply the camera model and its position/rotation relative to the robot base frame. 
+    # OAK-D camera launch: We only supply the camera model and its position/rotation relative to the robot base frame.
     # The rest of the launch arguments are defaults from launch/oakd.launch.py
     # As the parent is camera_oakd_link_optical, the current positioning zero values are reasonable
     oakd_camera = include_launch(
@@ -128,10 +158,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        ldlidar_node,
+        #ldlidar_node_ld14,
+        ldlidar_node_ld19,
         bno08x_driver_node,
         ekf_imu_odom,
-        oakd_camera,
-        face_gesture_sensor,
-        perception_adapter
+        #oakd_camera,
+        #face_gesture_sensor,
+        #perception_adapter
     ])

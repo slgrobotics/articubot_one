@@ -12,10 +12,10 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for robot localizers
+# Generate a launch description for robot localizers
 #
 # Localizers are SLAM and/or EKF nodes that provide robot pose estimates
-# to be used by navigation stack (Nav2) and other components.
+# to be used by the navigation stack (Nav2) and other components.
 # They can be robot-specific, and that's why we have this separate launch file.
 #
 
@@ -23,13 +23,13 @@ def generate_launch_description():
 
     package_name = 'articubot_one'
 
-    # Accept namespace from parent launch or use empty default
+    # Accept a namespace from the parent launch or use an empty default
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from <robot_model>.launch.py
+    # Keep the interface compatible with being included from <robot_model>.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - dragger, fido, seggy, turtle, plucky...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # Optional map file for localizers that support it (map_server, amcl)
@@ -40,7 +40,7 @@ def generate_launch_description():
     localizer_actions = [
         include_launch(
             package_name,
-            ['launch', 'localizers', 'slam_toolbox.launch.py'],
+            ['launch', 'localizers', 'slam_toolbox_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -51,7 +51,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'cartographer.launch.py'],
+            ['launch', 'localizers', 'cartographer_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -62,7 +62,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'map_server.launch.py'],
+            ['launch', 'localizers', 'map_server_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -73,7 +73,7 @@ def generate_launch_description():
         ),
         include_launch(
             package_name,
-            ['launch', 'localizers', 'map_server_tf.launch.py'],
+            ['launch', 'localizers', 'map_server_tf_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -82,9 +82,13 @@ def generate_launch_description():
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'map_server_tf'))
         ),
+
+        # AMCL requires an occupancy map and an initial pose.
+        # Typically, map_server loads a saved map, and RViz's "2D Pose Estimate" supplies the initial pose.
+        # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL.
         include_launch(
             package_name,
-            ['launch', 'localizers', 'amcl.launch.py'],
+            ['launch', 'localizers', 'amcl_loc.launch.py'],
             {
                 'use_sim_time': use_sim_time,
                 'namespace': namespace,
@@ -92,6 +96,13 @@ def generate_launch_description():
                 'map': map_file
             },
             condition=IfCondition(EqualsSubstitution(LaunchConfiguration('localizer_type'), 'amcl'))
+        ),
+        include_launch(
+            package_name, ['launch', 'map_orientation.launch.py'],
+            {'namespace': '', 'use_sim_time': use_sim_time,
+             'robot_model': robot_model,
+             'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator')},
         ),
     ]
 
@@ -141,6 +152,9 @@ def generate_launch_description():
             '  localizer_type=', LaunchConfiguration('localizer_type'),
             '  map=', map_file
         ]),
+
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
 
         robot_localizers
     ])

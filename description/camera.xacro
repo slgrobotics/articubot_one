@@ -55,7 +55,7 @@
           <horizontal_fov>1.56</horizontal_fov>
 
           <image>
-            <!-- Use reasonable frame size 820x616 for fast transmission and rendering -->
+            <!-- Use a reasonable frame size 820x616 for fast transmission and rendering -->
             <width>820</width>
             <height>616</height>
             <format>R8G8B8</format>

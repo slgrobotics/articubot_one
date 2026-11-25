@@ -2,8 +2,19 @@
 # See https://github.com/sushanthj/acorn_sim/blob/main/sim_ws/src/nav2_gps_waypoint_follower_demo/nav2_gps_waypoint_follower_demo/latlon_waypoint_follower.py
 #
 
-# Run this script:
-# cd ~/robot_ws; colcon build; python3 install/articubot_one/lib/articubot_one/gps_waypoint_follower.py
+"""
+Navigate to GPS waypoints loaded from a YAML file.
+
+With the workspace built and sourced, start Nav2 and the fromLL service
+before running the simulation route:
+
+     python3 install/articubot_one/lib/articubot_one/gps_waypoint_follower.py --file sim_waypoints
+
+Run from the workspace root. The file name selects a YAML file in the
+package's assets/waypoints directory. Expect each GPS waypoint to be
+converted to map coordinates and sent to Nav2, with the result printed
+for each goal.
+"""
 
 import os
 import time
@@ -61,13 +72,13 @@ class GpsWpCommander(Node):
         print("IP: GpsWpCommander::start_wpf()")
         # Wait for navigation to fully activate. Use this line if autostart is set to true.
         # https://github.com/ros-navigation/navigation2/issues/2283
-        #navigator.waitUntilNav2Active()  # must use AMCL, will wait for amcl/get_state service available
+        #navigator.waitUntilNav2Active()  # must use AMCL, will wait for the amcl/get_state service to become available
         self.navigator.waitUntilNav2Active(localizer='bt_navigator')
         #self.navigator.waitUntilNav2Active(localizer='controller_server')
         wps = self.wp_parser.get_wps()
 
         for wp in wps:
-            # Convert GPS coordinates to map frame using FromLL service
+            # Convert GPS coordinates to the map frame using the FromLL service
             self.req = FromLL.Request()
             self.req.ll_point.longitude = wp.position.longitude
             self.req.ll_point.latitude = wp.position.latitude
@@ -85,7 +96,7 @@ class GpsWpCommander(Node):
                 self.get_logger().error("Failed to convert GPS to map coordinates")
                 return
 
-            # Create PoseStamped message for the current waypoint
+            # Create a PoseStamped message for the current waypoint
             pose = PoseStamped()
             pose.header.frame_id = 'map'
             pose.header.stamp = self.get_clock().now().to_msg()

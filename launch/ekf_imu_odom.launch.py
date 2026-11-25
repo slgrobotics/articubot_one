@@ -18,7 +18,7 @@ from launch.actions import DeclareLaunchArgument, LogInfo
 import launch_ros.actions
 
 #
-# Generate launch description for robot_localization EKF odometry node
+# Generate a launch description for robot_localization EKF odometry node
 #
 # Use robot-specific configuration file from robots/<robot_model>/config/ekf_odom_params.yaml
 # (typically specifies wheels odometry and IMU inputs to fuse for better odometry)
@@ -39,7 +39,7 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Robot specific files reside under "robots" directory - dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - dragger, plucky, seggy, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     package_path = get_package_share_directory(package_name)

@@ -83,7 +83,7 @@ TRAJECTORY_BUILDER_2D.ceres_scan_matcher.translation_weight = 20
 -- IMU is ok
 TRAJECTORY_BUILDER_2D.ceres_scan_matcher.rotation_weight = 20
 
--- less outliers
+-- fewer outliers
 POSE_GRAPH.constraint_builder.max_constraint_distance = 5.0
 POSE_GRAPH.constraint_builder.min_score = 0.62
 -- tune down IMU in optimization

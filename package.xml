@@ -21,16 +21,37 @@
   <depend>robot_localization</depend>
   <depend>imu_tools</depend>
   <depend>slam_toolbox</depend>
-  <depend>navigation2</depend>
   <depend>cartographer_ros</depend>
   <depend>rviz_satellite</depend>
   <depend>battery_state_rviz_overlay</depend>
+  <exec_depend>battery_state_broadcaster</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>navigation2</exec_depend>
+  <exec_depend>nav2_common</exec_depend>
+  <exec_depend>dock_detector</exec_depend>
+  <exec_depend>dock_detector_nav2</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>map_orientation_saver</exec_depend>
+  <exec_depend>wifi_logger_visualizer</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
+  <exec_depend>depthai_ros_driver</exec_depend>
+  <exec_depend>depthai_descriptions</exec_depend>
+  <exec_depend>rviz_2d_overlay_plugins</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
+    <!-- Resolve package://articubot_one/... resources in Gazebo as well as RViz. -->
+    <gazebo_ros gazebo_model_path="${prefix}/../"/>
+    <gazebo_ros gazebo_model_path="/opt/ros/lyrical/share"/>
   </export>
 </package>

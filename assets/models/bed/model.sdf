@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <model name="bed">
+    <static>true</static>
+    <link name="body">
+      <collision name="base_collision">
+        <pose>0 0 0.16 0 0 0</pose>
+        <geometry><box><size>1.4 2.02 0.32</size></box></geometry>
+      </collision>
+      <visual name="base_visual">
+        <pose>0 0 0.16 0 0 0</pose>
+        <geometry><box><size>1.4 2.02 0.32</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="mattress_collision">
+        <pose>0 -0.035 0.415 0 0 0</pose>
+        <geometry><box><size>1.36 1.91 0.19</size></box></geometry>
+      </collision>
+      <visual name="mattress_visual">
+        <pose>0 -0.035 0.415 0 0 0</pose>
+        <geometry><box><size>1.36 1.91 0.19</size></box></geometry>
+        <material>
+          <ambient>0.84 0.81 0.73 1</ambient>
+          <diffuse>0.84 0.81 0.73 1</diffuse>
+        </material>
+      </visual>
+      <collision name="headboard_collision">
+        <pose>0 0.965 0.56 0 0 0</pose>
+        <geometry><box><size>1.4 0.09 0.48</size></box></geometry>
+      </collision>
+      <visual name="headboard_visual">
+        <pose>0 0.965 0.56 0 0 0</pose>
+        <geometry><box><size>1.4 0.09 0.48</size></box></geometry>
+        <material>
+          <ambient>0.48 0.31 0.19 1</ambient>
+          <diffuse>0.48 0.31 0.19 1</diffuse>
+        </material>
+      </visual>
+      <collision name="pillow_left_collision">
+        <pose>-0.33 0.64 0.56 0 0 0</pose>
+        <geometry><box><size>0.55 0.36 0.1</size></box></geometry>
+      </collision>
+      <visual name="pillow_left_visual">
+        <pose>-0.33 0.64 0.56 0 0 0</pose>
+        <geometry><box><size>0.55 0.36 0.1</size></box></geometry>
+        <material>
+          <ambient>0.94 0.93 0.89 1</ambient>
+          <diffuse>0.94 0.93 0.89 1</diffuse>
+        </material>
+      </visual>
+      <collision name="pillow_right_collision">
+        <pose>0.33 0.64 0.56 0 0 0</pose>
+        <geometry><box><size>0.55 0.36 0.1</size></box></geometry>
+      </collision>
+      <visual name="pillow_right_visual">
+        <pose>0.33 0.64 0.56 0 0 0</pose>
+        <geometry><box><size>0.55 0.36 0.1</size></box></geometry>
+        <material>
+          <ambient>0.94 0.93 0.89 1</ambient>
+          <diffuse>0.94 0.93 0.89 1</diffuse>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

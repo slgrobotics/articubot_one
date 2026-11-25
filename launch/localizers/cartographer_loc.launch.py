@@ -1,6 +1,14 @@
 """
 Cartographer Localizer Launch Wrapper
 Provides SLAM-based localization using Cartographer with orientation initialization.
+
+Launch:
+    as part of the dragger launch - set localizer_type:=cartographer in dragger.launch.py
+    (other robots should work too)
+
+See also "outdoors_loc_nav" package with its own cartographer.launch.py and config files:
+    https://github.com/slgrobotics/outdoors_loc_nav/blob/lyrical/outdoors_loc_nav/launch/cartographer.launch.py
+
 """
 
 from launch import LaunchDescription
@@ -17,8 +25,8 @@ def generate_launch_description():
     robot_model = LaunchConfiguration('robot_model', default='')
     map_file = LaunchConfiguration('map', default='')
 
-    # Note: EKF filter must be launched prior (in the Drive or Sensors launch file) 
-    # It is needed to provide odom->base_link transform
+    # Note: The EKF filter must be launched beforehand (in the Drive or Sensors launch file)
+    # It is needed to provide the odom->base_link transform
 
     cartographer_orientator = include_launch(
         'outdoors_loc_nav',
@@ -52,6 +60,6 @@ def generate_launch_description():
             '  map=', map_file
         ]),
 
-        cartographer_orientator,
+        #cartographer_orientator,
         cartographer,
     ])

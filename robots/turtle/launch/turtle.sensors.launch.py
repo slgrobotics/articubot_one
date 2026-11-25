@@ -4,7 +4,7 @@ from launch_ros.actions import Node
 from articubot_one.launch_utils.helpers import include_launch
 
 #
-# Generate launch description for Turtle robot sensors
+# Generate a launch description for Turtle robot sensors
 #
 # Sensors are almost always robot-specific, so we have this separate launch file.
 #   
@@ -18,7 +18,7 @@ def generate_launch_description():
     # Allow the including launch file to set a namespace via a launch-argument
     namespace = LaunchConfiguration('namespace', default='')
 
-    # Keep interface compatible with being included from turtle.launch.py
+    # Keep the interface compatible with being included from turtle.launch.py
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     # sensor nodes don't depend on robot_model and don't use package_name
@@ -194,7 +194,7 @@ def generate_launch_description():
     )
 
     # We need to run an EKF filter here to ensure its output stabilizes before starting SLAM Toolbox or other Localizers.
-    # Localizers/mappers only publish the map to odom transform. Robot needs EKF filter to publish odom to base_link transform.
+    # Localizers/mappers only publish the map to odom transform. The robot needs an EKF filter to publish the odom to base_link transform.
     ekf_imu_odom = include_launch(
         package_name,
         ['launch', 'ekf_imu_odom.launch.py'],

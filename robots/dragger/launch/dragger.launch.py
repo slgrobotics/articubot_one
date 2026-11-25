@@ -1,7 +1,9 @@
+import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.actions import DeclareLaunchArgument, LogInfo, OpaqueFunction, SetLaunchConfiguration
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.substitutions import FindPackageShare
 from articubot_one.launch_utils.helpers import (
     include_launch,
@@ -10,17 +12,40 @@ from articubot_one.launch_utils.helpers import (
 )
 
 #
-# Generate launch description for Dragger robot — multi-robot safe version
+# Generate a launch description for Dragger robot — multi-robot safe version
 #
-# If launched with "use_sim_time=true", will be running in Gazebo simulation.
+# If launched with "use_sim_time=true", the robot will run in Gazebo simulation.
 #
-# Multi-robot usage example. On the robots' Raspberry Pi's:
+# Multi-robot usage example. On the robots' Raspberry Pis:
 #
 #   ros2 launch articubot_one dragger.launch.py namespace:=robot1
 #   ros2 launch articubot_one dragger.launch.py namespace:=robot2
 #
 # Every robot runs a fully isolated stack under its namespace.
 #
+
+def _resolve_wifi_map(context):
+    """Use an explicit Wi-Fi raster, a navigation raster, or the outdoor default."""
+    if LaunchConfiguration('wifi_map_source').perform(context) == 'live':
+        return []
+    if LaunchConfiguration('wifi_version').perform(context) != 'v2':
+        return []
+    if IfCondition(LaunchConfiguration('use_sim_time')).evaluate(context):
+        return []
+    explicit = LaunchConfiguration('wifi_map_yaml_path').perform(context)
+    navigation_map = LaunchConfiguration('map').perform(context)
+    localizer = LaunchConfiguration('localizer_type').perform(context)
+    if explicit:
+        selected = explicit
+    elif navigation_map and localizer in ('map_server', 'amcl'):
+        selected = navigation_map
+    else:
+        # SLAM Toolbox's map argument may be a serialized posegraph, not a raster.
+        selected = os.path.join(get_package_share_directory('outdoors_loc_nav'),
+                                'assets', 'maps', 'empty_map.yaml')
+    return [SetLaunchConfiguration('wifi_map_yaml_path',
+                                   os.path.abspath(os.path.expanduser(selected)))]
+
 
 def generate_launch_description():
 
@@ -30,6 +55,9 @@ def generate_launch_description():
     # Launch arguments (can be overridden)
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    cartographer_config_dir = LaunchConfiguration('cartographer_config_dir')
+    configuration_basename = LaunchConfiguration('configuration_basename')
+    hardware_config = LaunchConfiguration('hardware_config', default='')
 
     # Note: for Gazebo simulation choose "robot_world" in dragger.drive.launch.py
 
@@ -37,43 +65,55 @@ def generate_launch_description():
     # Localizers include - use dragger specific localizers launch
     # -------------------------------------------------------
 
-    localizer_type = 'map_server' # 'amcl', 'map_server', 'cartographer', 'slam_toolbox'
+    # Note: 
+    #  - we can use 'map_server' here as Dragger is outdoors only and has Navsat to provide map->odom TF
+    #  - SLAM Toolbox can save maps in PGM/YAML or serialized format for later use with map_server or itself
+    #      these maps are saved in the launch directory (normally ~/robot_ws or ~/launch)
+    #  - Map Server can be used to save PGM/YAML maps, here is the command:
+    #      ros2 run nav2_map_server map_saver_cli -f <map_name> --ros-args --params-file <path_to_map_server_params.yaml>
+    #
+
+    localizer_type = LaunchConfiguration('localizer_type', default='slam_toolbox')
+
+    map_file = LaunchConfiguration('map', default='')
 
     # You generally want either:
-    #   - map_server (GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
-    #   - slam_toolbox (LIDAR) if you have a previously saved map or have many static features in environment
+    #   - map_server (with GPS) with empty map, to allow Nav2 to use Local Costmap for obstacle avoidance
+    #   - or slam_toolbox (with LIDAR) if you have a previously saved map or have many static features in the environment
     #
-    # Dragger is outdoors only and has Navsat to provide map->odom TF
+    # Dragger uses the global GPS EKF for map->odom in map_server mode.
+    # Cartographer owns map->odom when selected.
     #
     # Note: SLAM Toolbox seems to be very ineffective outdoors in my experiments (not many static features).
-    #       The Navsat transform keeps drifting even with good non-RTK GPS signal.
+    #       The Navsat transform keeps drifting even with a good non-RTK GPS signal.
     #       The LIDAR range is limited in sunshine, and there are few features to lock on to.
-    #       Therefore, for outdoor use I am using only GPS-based localization with map server.
+    #       Therefore, for outdoor use I am using only GPS-based localization with a map_server.
     #       Adding a previously saved map to the map server is possible.
     #
     # See https://github.com/slgrobotics/outdoors_loc_nav
     #     https://github.com/slgrobotics/articubot_one/wiki/Conversations-with-Overlords#question-6
     #
-
-    # Choose one:
-    # Map file for localizers that support it (map_server, amcl):
-    map_file = '' # empty 600x600 cells 0.25 m per cell map by default (or no starting map for SLAM Toolbox)
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'empty_map.yaml'])
-    #map_file = PathJoinSubstitution([FindPackageShare(package_name), 'assets', 'maps', 'warehouse.yaml']) # result of run in Warehouse world
-    #map_file = '/opt/ros/jazzy/share/nav2_bringup/maps/warehouse.yaml' # original Nav2 warehouse map
+    # Use SLAM Toolbox to map the area, save its /map, then use that saved map with AMCL:
+    #     ros2 run nav2_map_server map_saver_cli -f ~/launch/backyard
+    # Provide the saved map to AMCL or map_server with the 'map' launch argument:
+    #     ros2 launch articubot_one dragger.launch.py localizer_type:=amcl map:=~/launch/backyard.yaml
     #
-    # For SlAM Toolbox, we can use previously saved serialized map:
-    #map_file = 'dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
-    #map_file = '/home/sergei/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
+    # For SLAM Toolbox, we can use a previously saved serialized map:
+    #    map:='dragger_map_serial' # previously saved serialized map, relative to launch directory (normally ~/robot_ws)
+    #    map:='~/robot_ws/dragger_map_serial' # previously saved serialized map, full path OK too
 
     localizers_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'dragger.localizers.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.localizers.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
+            'orientation_config_filepath': LaunchConfiguration('orientation_config_filepath'),
+             'use_map_orientation_estimator': LaunchConfiguration('use_map_orientation_estimator'),
             'robot_model': robot_model,
             'localizer_type': localizer_type,
+            'cartographer_config_dir': cartographer_config_dir,
+            'configuration_basename': configuration_basename,
             'map': map_file
         }
     )
@@ -87,7 +127,8 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
-            'robot_model': robot_model
+            'robot_model': robot_model,
+            'hardware_config': hardware_config
         },
     )
 
@@ -96,7 +137,7 @@ def generate_launch_description():
     # -------------------------------------------------------
     drive_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'dragger.drive.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.drive.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -106,7 +147,7 @@ def generate_launch_description():
 
     sensors_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'dragger.sensors.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.sensors.launch.py'],
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
@@ -123,7 +164,7 @@ def generate_launch_description():
     # Sonar broadcasters for *** real robot ***
     sonars_include = include_launch(
         package_name,
-        ['robots', robot_model, 'launch', 'dragger.sonars.launch.py'],
+        ['robots', robot_model, 'launch', f'{robot_model}.sonars.launch.py'],
         condition=UnlessCondition(use_sim_time),  # real robot only
     )
 
@@ -142,13 +183,48 @@ def generate_launch_description():
         'wifi_survey_config.yaml'
     ])
 
+    # -------------------------------------------------------
+    # Choose appropriate V1 or V2 branch from
+    #   https://github.com/slgrobotics/wifi_logger_visualizer
+    #
+    # Make sure the correct branch of the Wi-Fi survey is cloned
+    #   and built in ~/robot_ws/src/wifi_logger_visualizer
+    # -------------------------------------------------------
+
     wifi_survey_include = include_launch(
         package_name,
         ['launch', 'wifi_survey.launch.py'],
         {
             'config_filepath': wifi_survey_config
         },
-        condition=UnlessCondition(use_sim_time),  # real robot only
+        condition=IfCondition(PythonExpression([
+            "'", use_sim_time, "'.lower() in ('false', '0') and '",
+            LaunchConfiguration('wifi_version'), "' == 'v1'"
+        ])),
+    )
+
+    wifi_survey_v2_config = PathJoinSubstitution([
+        FindPackageShare(package_name), 'robots', robot_model,
+        'config', 'wifi_survey_v2_config.yaml'
+    ])
+
+    wifi_survey_v2_include = include_launch(
+        package_name,
+        ['launch', 'wifi_survey_v2.launch.py'],
+        {
+            'config_filepath': wifi_survey_v2_config,
+            'map_yaml_path': LaunchConfiguration('wifi_map_yaml_path'),
+            'use_sim_time': use_sim_time,
+            'wifi_source': LaunchConfiguration('wifi_source'),
+            'map_source': LaunchConfiguration('wifi_map_source'),
+            'map_topic': LaunchConfiguration('wifi_map_topic'),
+            'temporary_run': LaunchConfiguration('wifi_temporary_run'),
+            'wifi_sim_seed': LaunchConfiguration('wifi_sim_seed'),
+            'survey': LaunchConfiguration('wifi_active_survey'),
+        },
+        condition=IfCondition(PythonExpression([
+            "'", LaunchConfiguration('wifi_version'), "' == 'v2'"
+        ])),
     )
 
     # -------------------------------------------------------
@@ -172,8 +248,8 @@ def generate_launch_description():
     #       https://chatgpt.com/s/t_691df1a57c6c819194bea42f267a8570
     # -------------------------------------------------------
 
-    # Localizers are run with a delay to allow IMU and odometry to stabilize
-    # Navigation stack is run with a further delay to allow map to stabilize
+    # Localizers are run with a delay to allow the IMU and odometry to stabilize
+    # Navigation stack is run with a further delay to allow the map to stabilize
     loc_delay = 18.0    # seconds
     nav_delay = 25.0
     survey_delay = 40.0  # seconds - after navigation is running, we can start wifi survey
@@ -181,6 +257,7 @@ def generate_launch_description():
     delayed_loc = delayed_include(loc_delay, "LOCALIZERS", localizers_include)
     delayed_nav = delayed_include(nav_delay, "NAVIGATION", navigation_include)
     delayed_wifi_survey = delayed_include(survey_delay, "WIFI_SURVEY", wifi_survey_include)
+    delayed_wifi_survey_v2 = delayed_include(survey_delay, "WIFI_SURVEY_V2", wifi_survey_v2_include)
 
     # -------------------------------------------------------
     # GROUP EVERYTHING UNDER A NAMESPACE FOR MULTI-ROBOT
@@ -201,13 +278,26 @@ def generate_launch_description():
         sonars_sim_include,
         delayed_loc,
         delayed_nav,
+        # Make sure the correct branch of the Wi-Fi survey is cloned and built in ~/robot_ws/src/wifi_logger_visualizer
+        # only one of these two will be included, based on wifi_version launch argument:
         delayed_wifi_survey,
+        delayed_wifi_survey_v2,
     ])
 
     # -------------------------------------------------------
     # Final LaunchDescription
     # -------------------------------------------------------
     return LaunchDescription([
+
+        DeclareLaunchArgument('wifi_source', default_value=PythonExpression([
+            "'simulated' if '", use_sim_time, "'.lower() in ('true','1') else 'hardware'"
+        ]), description='hardware, simulated or topic Wi-Fi input'),
+        DeclareLaunchArgument('wifi_map_source', default_value=PythonExpression([
+            "'live' if '", use_sim_time, "'.lower() in ('true','1') else 'saved'"
+        ]), description='saved raster or live occupancy grid'),
+        DeclareLaunchArgument('wifi_map_topic', default_value='map'),
+        DeclareLaunchArgument('wifi_temporary_run', default_value='auto'),
+        DeclareLaunchArgument('wifi_sim_seed', default_value='42'),
 
         DeclareLaunchArgument(
             'use_sim_time',
@@ -221,11 +311,59 @@ def generate_launch_description():
             description='Top-level namespace for multi-robot deployment'
         ),
 
+        DeclareLaunchArgument('use_map_orientation_estimator', default_value='true'),
+        DeclareLaunchArgument('orientation_config_filepath', default_value=''),
+
+        DeclareLaunchArgument(
+            'hardware_config', default_value='',
+            description='Optional hardware YAML path; empty uses Dragger packaged defaults'
+        ),
+
+        DeclareLaunchArgument(
+            'wifi_version', default_value='v2', choices=['off', 'v1', 'v2'],
+            description='Wi-Fi implementation; requires the matching wifi_logger_visualizer version'
+        ),
+        DeclareLaunchArgument(
+            'wifi_map_yaml_path', default_value='',
+            description='V2 raster YAML + PGM; defaults to navigation raster in map_server/AMCL mode, otherwise the outdoor empty map'
+        ),
+        DeclareLaunchArgument(
+            "wifi_active_survey", default_value=PythonExpression([
+                "'false' if '", use_sim_time, "'.lower() in ('true','1') else 'true'"
+            ]),
+            description='V2: run stationary ping/iperf3 tests against the configured target host'
+        ),
+
+        DeclareLaunchArgument(
+            'localizer_type', default_value='map_server',
+            choices=['map_server', 'amcl', 'cartographer', 'slam_toolbox'],
+            description='Outdoor localizer to launch'
+        ),
+
+        DeclareLaunchArgument(
+            'map', default_value='',
+            description='Path to map YAML file'
+        ),
+
+        DeclareLaunchArgument(
+            'cartographer_config_dir',
+            default_value=PathJoinSubstitution([FindPackageShare('outdoors_loc_nav'), 'params']),
+            description='Directory containing the Cartographer Lua configuration'
+        ),
+
+        DeclareLaunchArgument(
+            'configuration_basename', default_value='cartographer_lds_2d.lua',
+            description='Cartographer Lua configuration filename'
+        ),
+
         LogInfo(msg=[
             '============ starting DRAGGER  namespace="', namespace,
             '"  use_sim_time=', use_sim_time,
-            '  robot_model=', robot_model
+            '  robot_model=', robot_model,
+            '  localizer_type=', localizer_type
         ]),
+
+        OpaqueFunction(function=_resolve_wifi_map),
 
         # EVERYTHING runs inside namespace_wrap()
         namespaced_actions,

@@ -1,4 +1,4 @@
-/wifi_logger_node:
+/**/wifi_logger_node:
   ros__parameters:
     use_gps: true  # Set false on robots without a GPS receiver (skips /gps/filtered sub + stale warnings)
     db_path: "wifi_data.db"
@@ -24,7 +24,7 @@
     ov_do_short: true
     ov_do_full: true
 
-/wifi_visualizer_node:
+/**/wifi_visualizer_node:
   ros__parameters:
     db_path: "wifi_data.db"
     publish_frequency: 1.0
@@ -35,7 +35,7 @@
     enable_bit_rate: true
     costmap_topic: "/global_costmap/costmap"
 
-/heat_mapper_node:
+/**/heat_mapper_node:
   ros__parameters:
     standalone: false
     db_path: "wifi_data.db"

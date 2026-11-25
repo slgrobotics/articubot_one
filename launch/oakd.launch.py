@@ -3,6 +3,9 @@
 #      https://github.com/slgrobotics/robots_bringup/blob/main/Docs/Sensors/OAK-D_Lite.md
 #
 #   meld ~/robot_ws/src/articubot_one/launch/oakd.launch.py /opt/ros/jazzy/share/depthai_ros_driver/launch/camera.launch.py
+#   meld ~/robot_ws/src/articubot_one/launch/oakd.launch.py /opt/ros/${ROS_DISTRO}/share/depthai_ros_driver/launch/driver.launch.py
+#
+#   see other launch files in /opt/ros/${ROS_DISTRO}/share/depthai_ros_driver/launch/
 #
 
 from ament_index_python.packages import get_package_share_directory
@@ -94,7 +97,7 @@ def launch_setup(context, *args, **kwargs):
         infra_profile = LaunchConfiguration("depth_module.infra_profile").perform(
             context
         )
-        # split profile string (0,0,0 or 0x0x0 or 0X0X0) into with (int) height(int) and fps(double)
+        # split profile string (0,0,0 or 0x0x0 or 0X0X0) into width (int), height (int), and fps (double)
         # find delimiter
         delimiter = ","
         if "x" in depth_profile:
@@ -284,7 +287,6 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    depthai_prefix = PathJoinSubstitution([FindPackageShare('depthai_ros_driver')])
 
     declared_arguments = [
         DeclareLaunchArgument("name", default_value="oak"),
@@ -299,7 +301,8 @@ def generate_launch_description():
         DeclareLaunchArgument("cam_yaw", default_value="0.0"),
         DeclareLaunchArgument(
             "params_file",
-            default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'camera.yaml']),
+            #default_value=PathJoinSubstitution([FindPackageShare('depthai_ros_driver'), 'config', 'camera.yaml']),
+            default_value=PathJoinSubstitution([FindPackageShare('articubot_one'), 'config', 'camera_oakd.yaml']),
         ),
         DeclareLaunchArgument("use_rviz", default_value="false"),
         DeclareLaunchArgument(

@@ -98,7 +98,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # You need to press "Startup" button in RViz when autostart=false
+    # You need to press the "Startup" button in RViz when autostart=false
     nav2 = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(package_path,'launch','navigation_launch.py')]
                 ), launch_arguments={'use_sim_time': use_sim_time,
@@ -139,7 +139,17 @@ def generate_launch_description():
         package="controller_manager",
         namespace=namespace,
         executable="spawner",
-        arguments=["battery_state_broadcaster", "--controller-ros-args", "--remap battery_state_broadcaster/battery_state:=battery/battery_state"],
+        arguments=["battery_state_broadcaster", "--param-file", 
+                   os.path.join(robot_path, "config", "controllers.yaml"),
+                   "--controller-ros-args", "--remap ~/raw_battery_states:=battery/raw_battery_states --remap ~/battery_state:=battery/aggregate_state"],
+        output="screen"
+    )
+
+    battery_state_compat = Node(
+        package=package_name,
+        executable="run_battery_state_compat.py",
+        namespace=namespace,
+        parameters=[{"use_sim_time": use_sim_time}],
         output="screen"
     )
 
@@ -222,6 +232,7 @@ def generate_launch_description():
           {'frame_id': 'laser_frame'},
           {'port_name': '/dev/ttyUSBLDR'},
           {'serial_baudrate' : 115200},
+          {'limit_scan_rate': 0.0},     # 0 = no limit, to allow the LIDAR to run at its maximum speed of ~10 Hz.
           {'laser_scan_dir': True},
           {'enable_angle_crop_func': False},
           {'angle_crop_min': 135.0},
@@ -339,6 +350,7 @@ def generate_launch_description():
             delayed_diff_drive_spawner,
             delayed_joint_broad_spawner,
             delayed_battery_state_broadcaster_spawner,
+            battery_state_compat,
             delayed_sonars_spawner
         ]
     )

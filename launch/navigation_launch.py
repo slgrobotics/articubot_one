@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# originally from /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
-# meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/jazzy/share/nav2_bringup/launch/navigation_launch.py
+# originally from /opt/ros/${ROS_DISTRO}/share/nav2_bringup/launch/navigation_launch.py
+# meld /home/sergei/robot_ws/src/articubot_one/launch/navigation_launch.py /opt/ros/${ROS_DISTRO}/share/nav2_bringup/launch/navigation_launch.py
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -37,6 +37,7 @@ def generate_launch_description():
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')        # no default, must be supplied
     odom_topic = LaunchConfiguration('odom_topic')
+    nav2_dock_action = LaunchConfiguration('nav2_dock_action', default='dock_robot')
     use_composition = LaunchConfiguration('use_composition')
     container_name = LaunchConfiguration('container_name')
     container_name_full = (namespace, '/', container_name)
@@ -44,7 +45,7 @@ def generate_launch_description():
     log_level = LaunchConfiguration('log_level')
 
     # composition is used to run multiple Nav2 nodes in a single process to lower the memory utilization and CPU utilization of Nav2.
-    # This is specially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
+    # This is especially useful when running Nav2 on constrained devices which are limited by the computational power and memory.
     # If you don’t use composition you will have a higher memory utilization and CPU utilization.
 
     lifecycle_nodes = [
@@ -58,6 +59,10 @@ def generate_launch_description():
         'waypoint_follower',
         'docking_server',
     ]
+
+    # Velocity chain: cmd_vel_raw -> smoother -> cmd_vel_smoothed ->
+    # collision monitor -> cmd_vel_nav -> twist mux. Keep the smoother input
+    # separate from the collision monitor output to avoid feeding commands back.
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -147,7 +152,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_smoother',
@@ -180,7 +185,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                remappings=remappings + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_bt_navigator',
@@ -214,7 +219,7 @@ def generate_launch_description():
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings
-                + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
             ),
             Node(
                 package='nav2_collision_monitor',
@@ -236,12 +241,13 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings,
+                remappings=remappings + [('cmd_vel', 'cmd_vel_raw'),
+                                         ('dock_robot', nav2_dock_action)],
             ),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
-                name='lifecycle_manager_navigation',
+                name='lifecycle_manager_nav2',
                 output='screen',
                 arguments=['--ros-args', '--log-level', log_level],
                 parameters=[{'autostart': autostart}, {'node_names': lifecycle_nodes}],
@@ -264,7 +270,7 @@ def generate_launch_description():
                         name='controller_server',
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
-                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_smoother',
@@ -288,7 +294,7 @@ def generate_launch_description():
                         name='behavior_server',
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
-                        remappings=remappings + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_bt_navigator',
@@ -313,7 +319,7 @@ def generate_launch_description():
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
                         remappings=remappings
-                        + [('cmd_vel', 'cmd_vel_nav'), ('odom', odom_topic)],
+                        + [('cmd_vel', 'cmd_vel_raw'), ('odom', odom_topic)],
                     ),
                     ComposableNode(
                         package='nav2_collision_monitor',
@@ -329,12 +335,13 @@ def generate_launch_description():
                         name='docking_server',
                         parameters=[configured_params],
                         extra_arguments=[{'use_intra_process_comms': True}],
-                        remappings=remappings,
+                        remappings=remappings + [('cmd_vel', 'cmd_vel_raw'),
+                                         ('dock_robot', nav2_dock_action)],
                     ),
                     ComposableNode(
                         package='nav2_lifecycle_manager',
                         plugin='nav2_lifecycle_manager::LifecycleManager',
-                        name='lifecycle_manager_navigation',
+                        name='lifecycle_manager_nav2',
                         parameters=[
                             {'autostart': autostart, 'node_names': lifecycle_nodes}
                         ],
