@@ -13,6 +13,9 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 - [Build the patrol package](#build-the-patrol-package)
 - [Start Seggy with the saved map](#start-seggy-with-the-saved-map)
 - [Start and monitor the patrol](#start-and-monitor-the-patrol)
+- [Run the office patrol on the real robot](#run-the-office-patrol-on-the-real-robot)
+  - [Office patrol stops](#office-patrol-stops)
+  - [Arrival and monitoring](#arrival-and-monitoring)
 - [Patrol points](#patrol-points)
 - [Save a new map with orientation](#save-a-new-map-with-orientation)
 - [Dock staging points](#dock-staging-points)
@@ -131,6 +134,47 @@ For live distance remaining on the current leg:
 ```bash
 ros2 topic echo /navigate_to_pose/_action/feedback --field feedback.distance_remaining
 ```
+
+## Run the office patrol on the real robot
+
+The [office patrol tree](robots/seggy/behavior_trees/seggy_office_patrol_bt.xml) uses three stops recorded on the physical Seggy. Use the saved office map from that run. The commands below assume the map and workspace are in the same account as the terminal running them. Adjust the map path if Seggy's bringup runs on another machine.
+
+```bash
+source ~/robot_ws/install/setup.bash
+ros2 launch articubot_one seggy.launch.py \
+  use_sim_time:=false \
+  localizer_type:=amcl \
+  map:="$HOME/launch/maps_/seggy_office.yaml"
+```
+
+If Seggy is already running with AMCL and the correct map, keep that bringup running. In RViz, set the fixed frame to `map`, use **2D Pose Estimate** at the robot's actual location and heading if needed, and check that the lidar scan aligns with the map. Confirm `ros2 action list` shows `/navigate_to_pose`.
+
+In a second terminal on the same ROS network, run the commander. Seggy starts moving as soon as the first goal is accepted.
+
+```bash
+source ~/robot_ws/install/setup.bash
+ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
+  -p use_sim_time:=false \
+  -p bt_xml_path:="$HOME/robot_ws/src/articubot_one/robots/seggy/behavior_trees/seggy_office_patrol_bt.xml"
+```
+
+### Office patrol stops
+
+| Stop | Map X (m) | Map Y (m) | Recorded yaw (rad) |
+| ---: | ---: | ---: | ---: |
+| 1 | −0.181 | 0.276 | 1.630 |
+| 2 | −2.994 | 4.360 | 3.107 |
+| 3 | −4.473 | 0.392 | 0.200 |
+
+These poses were recorded while Seggy was stationary using `ros2 run tf2_ros tf2_echo map base_footprint`. The XML keeps the measured headings in comments. The current `NavigateToRoom` action sends yaw zero, so Seggy faces the positive X direction of the map at each stop. The [office simulation world](assets/worlds/seggy_office.sdf) marks the same stops with green floor circles.
+
+### Arrival and monitoring
+
+Seggy's standard Nav2 goal checker uses a **7 cm XY radius** and **0.10 rad (about 5.7°) yaw tolerance**. XY is latched. Once Seggy enters the position radius, it can finish turning even if it drifts beyond that radius. [Seggy Nav2 parameters](robots/seggy/config/nav2_params.yaml)
+
+Use the same [monitoring commands](#start-and-monitor-the-patrol) as in simulation. An arrival at point 3 followed by a goal for point 1 marks the start of the next lap. If you stop the commander while Seggy is moving, check whether a Nav2 goal is still active and cancel it in RViz if needed.
+
+The three poses were sampled on hardware. A complete autonomous office lap has yet to be verified. The patrol tree still uses the demo battery, object detection, and charging behavior described below.
 
 ## Patrol points
 
