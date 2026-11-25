@@ -386,16 +386,16 @@
 
     <model name="wall_west_room_south_1">
       <static>true</static>
-      <pose>-4.233 -1.286 0 0 0 0</pose>
+      <pose>2.642 -1.286 0 0 0 0</pose>
       <link name="body">
         <collision name="panel_collision">
           <pose>0 0 1.25 0 0 0</pose>
-          <geometry><box><size>4.09 0.12 2.5</size></box></geometry>
+          <geometry><box><size>17.840 0.12 2.5</size></box></geometry>
         </collision>
         <visual name="panel_visual">
           <transparency>0.3</transparency>
           <pose>0 0 1.25 0 0 0</pose>
-          <geometry><box><size>4.09 0.12 2.5</size></box></geometry>
+          <geometry><box><size>17.840 0.12 2.5</size></box></geometry>
           <material>
             <ambient>1 0 0 1</ambient>
             <diffuse>1 0 0 1</diffuse>
@@ -726,16 +726,16 @@
 
     <model name="wall_east_exterior_1">
       <static>true</static>
-      <pose>11.542 4.089 0 0 0 -1.570796</pose>
+      <pose>11.542 2.789 0 0 0 -1.570796</pose>
       <link name="body">
         <collision name="panel_collision">
           <pose>0 0 1.25 0 0 0</pose>
-          <geometry><box><size>5.59 0.12 2.5</size></box></geometry>
+          <geometry><box><size>8.190 0.12 2.5</size></box></geometry>
         </collision>
         <visual name="panel_visual">
           <transparency>0.3</transparency>
           <pose>0 0 1.25 0 0 0</pose>
-          <geometry><box><size>5.59 0.12 2.5</size></box></geometry>
+          <geometry><box><size>8.190 0.12 2.5</size></box></geometry>
           <material>
             <ambient>1 1 0 1</ambient>
             <diffuse>1 1 0 1</diffuse>
