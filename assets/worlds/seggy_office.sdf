@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
 <sdf version="1.10">
   <world name="seggy_office">
-    <!-- Traced from the Nov 17 live Seggy office map in ~/launch/maps_ at 0.05 m per cell.
+
+    <!-- Traced from the Nov 17 live Seggy office map in assets/maps/seggy_office.* at 0.05 m per cell.
          X/Y follow the saved map frame. Furniture types, depths and heights are approximate.
-         Isolated returns and unobserved boundaries are omitted. -->
+         Isolated returns and unobserved boundaries are omitted.
+
+        View it in Gazebo:
+          gz sim /home/sergei/robot_ws/src/articubot_one/assets/worlds/seggy_office.sdf 
+    -->
+
     <physics name='office_physics' type='ode'>
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1</real_time_factor>
@@ -283,27 +289,6 @@
       </link>
     </model>
 
-    <!-- Close the gap between the northern exterior wall runs. -->
-    <model name="wall_north_corridor_closure">
-      <static>true</static>
-      <pose>1.317000 7.614000 0 0 0 0.081452</pose>
-      <link name="body">
-        <collision name="panel_collision">
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>2.498150 0.12 1.2</size></box></geometry>
-        </collision>
-        <visual name="panel_visual">
-          <transparency>0.3</transparency>
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>2.498150 0.12 1.2</size></box></geometry>
-          <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-
     <model name="wall_west_exterior_1">
       <static>true</static>
       <pose>-6.258 3.114 0 0 0 -1.570796</pose>
@@ -326,16 +311,16 @@
 
     <model name="wall_west_room_north_1">
       <static>true</static>
-      <pose>-3.083 7.514 0 0 0 0</pose>
+      <pose>2.642 7.514 0 0 0 0</pose>
       <link name="body">
         <collision name="panel_collision">
           <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>6.39 0.12 1.2</size></box></geometry>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
         </collision>
         <visual name="panel_visual">
           <transparency>0.3</transparency>
           <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>6.39 0.12 1.2</size></box></geometry>
+          <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
           <material>
             <ambient>0 0 1 1</ambient>
             <diffuse>0 0 1 1</diffuse>
@@ -357,8 +342,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -377,8 +362,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>17.840 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -397,8 +382,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.39 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -417,8 +402,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>1.04 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -437,8 +422,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>2.19 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -457,8 +442,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.470116 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -477,8 +462,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.59 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -497,8 +482,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -644,61 +629,32 @@
       </link>
     </model>
 
-    <model name="wall_north_corridor_exterior_1">
+    <model name="east_room_north_workbench">
       <static>true</static>
-      <pose>4.767 7.714 0 0 0 0</pose>
+      <pose>8.727 7.139 0 0 0 0</pose>
       <link name="body">
-        <collision name="panel_collision">
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>4.49 0.12 1.2</size></box></geometry>
+        <collision name="cabinet_base_collision">
+          <pose>0 0 0.425 0 0 0</pose>
+          <geometry><box><size>5.47 0.51 0.85</size></box></geometry>
         </collision>
-        <visual name="panel_visual">
-          <transparency>0.3</transparency>
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>4.49 0.12 1.2</size></box></geometry>
+        <visual name="cabinet_base_visual">
+          <pose>0 0 0.425 0 0 0</pose>
+          <geometry><box><size>5.47 0.51 0.85</size></box></geometry>
           <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
+            <ambient>0.48 0.51 0.53 1</ambient>
+            <diffuse>0.48 0.51 0.53 1</diffuse>
           </material>
         </visual>
-      </link>
-    </model>
-
-    <model name="wall_north_corridor_exterior_2">
-      <static>true</static>
-      <pose>6.992 7.289 0 0 0 -1.570796</pose>
-      <link name="body">
-        <collision name="panel_collision">
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+        <collision name="worktop_collision">
+          <pose>0 0 0.875 0 0 0</pose>
+          <geometry><box><size>5.51 0.55 0.05</size></box></geometry>
         </collision>
-        <visual name="panel_visual">
-          <transparency>0.3</transparency>
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>0.89 0.12 1.2</size></box></geometry>
+        <visual name="worktop_visual">
+          <pose>0 0 0.875 0 0 0</pose>
+          <geometry><box><size>5.51 0.55 0.05</size></box></geometry>
           <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
-          </material>
-        </visual>
-      </link>
-    </model>
-
-    <model name="wall_east_room_north_1">
-      <static>true</static>
-      <pose>8.767 6.864 0 0 0 0</pose>
-      <link name="body">
-        <collision name="panel_collision">
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>5.59 0.12 1.2</size></box></geometry>
-        </collision>
-        <visual name="panel_visual">
-          <transparency>0.3</transparency>
-          <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>5.59 0.12 1.2</size></box></geometry>
-          <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
+            <ambient>0.60 0.43 0.28 1</ambient>
+            <diffuse>0.60 0.43 0.28 1</diffuse>
           </material>
         </visual>
       </link>
@@ -706,16 +662,16 @@
 
     <model name="wall_east_exterior_1">
       <static>true</static>
-      <pose>11.542 2.789 0 0 0 -1.570796</pose>
+      <pose>11.542 3.114 0 0 0 -1.570796</pose>
       <link name="body">
         <collision name="panel_collision">
           <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>8.190 0.12 1.2</size></box></geometry>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
         </collision>
         <visual name="panel_visual">
           <transparency>0.3</transparency>
           <pose>0 0 0.6 0 0 0</pose>
-          <geometry><box><size>8.190 0.12 1.2</size></box></geometry>
+          <geometry><box><size>8.840 0.12 1.2</size></box></geometry>
           <material>
             <ambient>1 1 0 1</ambient>
             <diffuse>1 1 0 1</diffuse>
@@ -737,8 +693,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.452311 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 1 0 1</ambient>
-            <diffuse>1 1 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -757,8 +713,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.720074 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -777,8 +733,8 @@
           <pose>0 0 0.6 0 0 0</pose>
           <geometry><box><size>0.79 0.12 1.2</size></box></geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
+            <ambient>0.65 0.26 0 1</ambient>
+            <diffuse>0.65 0.26 0 1</diffuse>
           </material>
         </visual>
       </link>
@@ -1122,26 +1078,26 @@
 
     <model name="east_room_workbench">
       <static>true</static>
-      <pose>8.792 4.189 0 0 0 0</pose>
+      <pose>8.792 4.3823 0 0 0 0</pose>
       <link name="body">
         <collision name="top_collision">
           <pose>0 0 0.8725 0 0 0</pose>
-          <geometry><box><size>2.4 0.35 0.055</size></box></geometry>
+          <geometry><box><size>2.4 0.7366 0.055</size></box></geometry>
         </collision>
         <visual name="top_visual">
           <pose>0 0 0.8725 0 0 0</pose>
-          <geometry><box><size>2.4 0.35 0.055</size></box></geometry>
+          <geometry><box><size>2.4 0.7366 0.055</size></box></geometry>
           <material>
             <ambient>0.60 0.43 0.28 1</ambient>
             <diffuse>0.60 0.43 0.28 1</diffuse>
           </material>
         </visual>
         <collision name="leg_1_1_collision">
-          <pose>-1.13 -0.105 0.4225 0 0 0</pose>
+          <pose>-1.13 -0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
         </collision>
         <visual name="leg_1_1_visual">
-          <pose>-1.13 -0.105 0.4225 0 0 0</pose>
+          <pose>-1.13 -0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
           <material>
             <ambient>0.24 0.25 0.26 1</ambient>
@@ -1149,11 +1105,11 @@
           </material>
         </visual>
         <collision name="leg_1_2_collision">
-          <pose>-1.13 0.105 0.4225 0 0 0</pose>
+          <pose>-1.13 0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
         </collision>
         <visual name="leg_1_2_visual">
-          <pose>-1.13 0.105 0.4225 0 0 0</pose>
+          <pose>-1.13 0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
           <material>
             <ambient>0.24 0.25 0.26 1</ambient>
@@ -1161,11 +1117,11 @@
           </material>
         </visual>
         <collision name="leg_2_1_collision">
-          <pose>1.13 -0.105 0.4225 0 0 0</pose>
+          <pose>1.13 -0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
         </collision>
         <visual name="leg_2_1_visual">
-          <pose>1.13 -0.105 0.4225 0 0 0</pose>
+          <pose>1.13 -0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
           <material>
             <ambient>0.24 0.25 0.26 1</ambient>
@@ -1173,11 +1129,11 @@
           </material>
         </visual>
         <collision name="leg_2_2_collision">
-          <pose>1.13 0.105 0.4225 0 0 0</pose>
+          <pose>1.13 0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
         </collision>
         <visual name="leg_2_2_visual">
-          <pose>1.13 0.105 0.4225 0 0 0</pose>
+          <pose>1.13 0.2983 0.4225 0 0 0</pose>
           <geometry><box><size>0.06 0.06 0.845</size></box></geometry>
           <material>
             <ambient>0.24 0.25 0.26 1</ambient>

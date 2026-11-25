@@ -1,0 +1,36 @@
+schema_version: 1
+map_file: seggy_office.yaml
+map_content_hash: 24cb1335bbebd79bdea281ca559e16eef6d5dc137a880caf7ade27418faac02b
+saved_at: '2026-11-17T16:19:04.972339+00:00'
+geometry:
+  resolution: 0.05
+  origin:
+  - -6.383
+  - -1.411
+  - 0
+orientation:
+  schema_version: 1
+  valid: true
+  reason: ''
+  session_id: 5ab6d376-d47f-45ac-b6a8-1b80fc1ab231
+  map_frame: map
+  robot_frame: base_link
+  reference: true_north
+  source: imu_and_tf
+  published_at_ros_ns: 1794932340869633792
+  imu_topic: imu/data
+  pending_samples: 0
+  pending_tf_reason: ''
+  heading_reference: magnetic
+  correction_radians: 0.07301235859867879
+  imu_uncertainty_assumed: false
+  heading_rad: 0.03812933729611938
+  uncertainty_rad: 0.08660255986027574
+  dispersion_rad: 5.951462596602524e-05
+  sample_count: 142
+  stamp: 1794932340.6997588
+  segment: 0
+  estimate_age_seconds: 0.16985225677490234
+  map_x_heading_from_east_deg: 2.184650102698402
+  north_yaw_in_map_deg: 87.8153498973016
+  uncertainty_deg: 4.961961175022872
