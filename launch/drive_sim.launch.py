@@ -45,7 +45,7 @@ def generate_launch_description():
     # Check if we're told to use sim time
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
-    # Robot-specific files reside under the "robots" directory - sim, dragger, plucky, seggy, turtle...
+    # Robot-specific files reside under the "robots" directory - seggy, dragger, fido, plucky, turtle...
     robot_model = LaunchConfiguration('robot_model', default='')
 
     # can be one of the files in assets/worlds: 
