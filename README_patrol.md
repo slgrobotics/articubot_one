@@ -2,11 +2,13 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 -----------------------
 
-# Seggy's Four Rooms Patrol
+# Seggy's Four Rooms Patrol Experiment
+
+> **Note:** I am using a fork of [TurtleBot3 Autonomous Patrol package](https://github.com/slgrobotics/turtlebot3-autonomous-patrol) - all credit and copyright belong to the original [author](https://github.com/OmarAds2002).
 
 **Contents:**
 
-- [What is this feature for?](#what-is-this-feature-for)
+- [What are we doing here?](#what-are-we-doing-here)
 - [The Four Rooms world](#the-four-rooms-world)
 - [Build the patrol package](#build-the-patrol-package)
 - [Start Seggy with the saved map](#start-seggy-with-the-saved-map)
@@ -19,7 +21,7 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 -------------
 
-## What is this feature for?
+## What are we doing here?
 
 Seggy can visit the same places without someone driving it by hand. Give it a list of stops and it will use a map to find its way around walls and furniture. In the Four Rooms simulation, Seggy visits four indoor stops and two outdoor stops, then starts the route again.
 
