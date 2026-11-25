@@ -1,0 +1,97 @@
+<!--
+  Patrol behavior tree — mission-level executor
+  Three stops recorded during a live Seggy run in the office.
+  NavigateToRoom uses X and Y and currently sends zero yaw.
+  Runs in patrol_commander (NOT in bt_navigator)
+
+  Architecture per patrol point:
+    Fallback
+    ├── ReactiveSequence             navigate unless object interrupts
+    │   ├── Inverter(DetectObject)   SUCCESS = clear, FAILURE = object found
+    │   └── NavigateToRoom           halted via onHalted() when Inverter fails
+    ├── ApproachObject               runs when object interrupted nav
+    └── Sequence                     nav failed, no object -> recover
+        ├── RecoveryRotate           360 spin to re-localize
+        └── WaitAndRetry             2s wait, returns FAILURE to trigger retry
+
+  Top-level: CheckBattery gates the patrol loop.
+  If battery < 20%, ChargeBattery fires (stub for demo).
+-->
+
+<root BTCPP_format="4">
+  <BehaviorTree ID="PatrolTree">
+    <Fallback>
+      <ReactiveSequence>
+        <CheckBattery/>
+        <Sequence name="Patrol">
+
+          <!-- Office patrol point 1 in map frame. Recorded yaw 1.630 rad. -->
+          <Fallback>
+            <ReactiveSequence>
+              <Inverter>
+                <DetectObject target="box" object_pose="{object_pose}"/>
+              </Inverter>
+              <NavigateToRoom x="-0.181" y="0.276"/>
+            </ReactiveSequence>
+            <ApproachObject target_pose="{object_pose}"/>
+            <Sequence>
+              <RecoveryRotate/>
+              <WaitAndRetry/>
+            </Sequence>
+          </Fallback>
+
+          <!-- Office patrol point 2 in map frame. Recorded yaw 3.107 rad. -->
+          <Fallback>
+            <ReactiveSequence>
+              <Inverter>
+                <DetectObject target="box" object_pose="{object_pose}"/>
+              </Inverter>
+              <NavigateToRoom x="-2.994" y="4.360"/>
+            </ReactiveSequence>
+            <ApproachObject target_pose="{object_pose}"/>
+            <Sequence>
+              <RecoveryRotate/>
+              <WaitAndRetry/>
+            </Sequence>
+          </Fallback>
+
+          <!-- Office patrol point 3 in map frame. Recorded yaw 0.200 rad. -->
+          <Fallback>
+            <ReactiveSequence>
+              <Inverter>
+                <DetectObject target="box" object_pose="{object_pose}"/>
+              </Inverter>
+              <NavigateToRoom x="-4.473" y="0.392"/>
+            </ReactiveSequence>
+            <ApproachObject target_pose="{object_pose}"/>
+            <Sequence>
+              <RecoveryRotate/>
+              <WaitAndRetry/>
+            </Sequence>
+          </Fallback>
+
+        </Sequence>
+      </ReactiveSequence>
+      <!-- battery too low — dock and charge (stub: logs and returns SUCCESS) -->
+      <ChargeBattery/>
+    </Fallback>
+  </BehaviorTree>
+
+  <TreeNodesModel>
+    <Condition ID="CheckBattery"/>
+    <Condition ID="DetectObject">
+      <input_port name="target"/>
+      <output_port name="object_pose"/>
+    </Condition>
+    <Action ID="ApproachObject">
+      <input_port name="target_pose"/>
+    </Action>
+    <Action ID="NavigateToRoom">
+      <input_port name="x"/>
+      <input_port name="y"/>
+    </Action>
+    <Action ID="RecoveryRotate"/>
+    <Action ID="WaitAndRetry"/>
+    <Action ID="ChargeBattery"/>
+  </TreeNodesModel>
+</root>
