@@ -191,7 +191,7 @@ Both staging centers fall on free cells in the saved map. These are separate fro
 | Navigation | Sends `NavigateToPose` goals in `map`, in the configured order. |
 | Object detection | Demo subscriber listens for a string on `/detections` and supplies a fixed inspection pose. |
 | Recovery | Demo spin publishes an unstamped `Twist` on `cmd_vel`, followed by a short wait and retry. |
-| Battery check | Listens for a `Float32` on `/battery_state`, defaults to 100%, and branches to charging below 20%. |
+| Battery check | Reads `sensor_msgs/msg/BatteryState` on `/battery/battery_state`. Set `-p low_battery_threshold:=0.25` in the commander’s ROS arguments for a 25% cutoff. The default is 20%. After a low reading, patrol waits for `full_battery_threshold` (default 1.0) or `FULL` status. For a 95% restart threshold, also pass `-p full_battery_threshold:=0.95`. Patrol can start before the first valid reading. |
 | Charging | Demo action logs and returns success. |
 
 ============================================
@@ -252,7 +252,7 @@ Once Seggy enters the position radius, it can finish turning even if it drifts b
 Use the same [monitoring commands](#start-and-monitor-the-patrol) as in simulation. An arrival at point 3 followed by a goal for point 1 marks the start of the next lap.
 If you stop the commander while Seggy is moving, check whether a Nav2 goal is still active and cancel it in RViz if needed.
 
-The three poses were sampled on hardware. A complete autonomous office lap has yet to be verified. The patrol tree still uses the demo battery, object detection, and charging behavior described below.
+The three poses were sampled on hardware. A complete autonomous office lap has yet to be verified. The patrol tree still uses the demo object detection and charging behavior described below.
 
 ## Verification and remaining work
 
@@ -260,7 +260,7 @@ In testing, Seggy completed numerous six-point laps with very few Nav2 failures.
 
 - **Camera inspection.** Connect Seggy's simulated RGB-D stream to a detector, transform detections into `map`, and plan reachable inspection poses beside objects on the tables. Track inspected objects so a repeated detection does not keep interrupting the route.
 - **Recovery.** Use Seggy's Nav2 recovery actions or route recovery commands through its stamped velocity and collision-monitor path.
-- **Battery and docking.** Read Seggy's `sensor_msgs/msg/BatteryState` on `battery/battery_state`. Connect the charge branch to Seggy's docking stack, configure the relocated bays for this map, and verify the transition from docking to charging and back to patrol. [Seggy docking configuration](robots/seggy/config/docking_sim.yaml)
+- **Battery and docking.** Connect the charge branch to Seggy's docking stack, configure the relocated bays for this map, and verify the transition from docking to charging and back to patrol. [Seggy docking configuration](robots/seggy/config/docking_sim.yaml)
 
 -----------------------
 
