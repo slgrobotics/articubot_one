@@ -88,7 +88,7 @@ source install/setup.bash
 
 ## Start Seggy with the saved map
 
-Edit Seggy's simulation drive (`~robot_ws/src/articubot_one/robots/seggy/launch/seggy.drive.launch.py` ) launch to select [four_rooms.sdf](assets/worlds/four_rooms.sdf): `'robot_world': 'four_rooms',`
+Pass `robot_world:=four_rooms` to select [Four Rooms](assets/worlds/four_rooms.sdf) in Gazebo.
 
 From a terminal with `~/robot_ws/install/setup.bash` sourced:
 
@@ -133,7 +133,7 @@ For automatic charging in Four Rooms, start Seggy with the [Four Rooms docking c
 
 ```bash
 ros2 launch articubot_one seggy.launch.py \
-  use_sim_time:=true localizer_type:=amcl enable_docking:=true \
+  use_sim_time:=true robot_world:=four_rooms localizer_type:=amcl enable_docking:=true \
   map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml" \
   docking_catalogue:="$HOME/robot_ws/src/articubot_one/robots/seggy/config/docking_four_rooms_sim.yaml"
 ```

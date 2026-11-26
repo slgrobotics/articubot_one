@@ -20,6 +20,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     robot_model = LaunchConfiguration('robot_model', default='')
+    robot_world = LaunchConfiguration('robot_world')
 
     # Fido uses a common differential drive system, and we have a "generic" drive launch for that.
     #       see https://github.com/slgrobotics/diffdrive_arduino
@@ -52,7 +53,7 @@ def generate_launch_description():
             'namespace': namespace,
             'use_sim_time': use_sim_time,
             'robot_model': robot_model,
-            # 'robot_world': 'warehouse', # see assets/worlds/*.sdf Default: 'test_robot_world'
+            'robot_world': robot_world,
             # 'initial_x': '1.0',
             # 'initial_y': '1.0',
             # 'initial_z': '20.0',
@@ -70,6 +71,7 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value=''),
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('robot_model', default_value=''),
+        DeclareLaunchArgument('robot_world', default_value='test_robot_world'),
 
         drive_launch,
         drive_sim_launch

@@ -32,7 +32,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
     hardware_config = LaunchConfiguration('hardware_config', default='')
 
-    # Note: for Gazebo simulation choose "robot_world" in fido.drive.launch.py
+    robot_world = LaunchConfiguration('robot_world')
 
     # -------------------------------------------------------
     # Localizers include - use fido specific localizers launch
@@ -101,6 +101,7 @@ def generate_launch_description():
         {
             'namespace': namespace,
             'use_sim_time': use_sim_time,
+            'robot_world': robot_world,
             'robot_model': robot_model
         },
     )
@@ -168,6 +169,10 @@ def generate_launch_description():
     # Final LaunchDescription
     # -------------------------------------------------------
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'robot_world', default_value='test_robot_world',
+            description='Gazebo world name from assets/worlds, without the .sdf extension',
+        ),
 
         DeclareLaunchArgument(
             'use_sim_time',
