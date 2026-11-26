@@ -129,6 +129,27 @@ The filter also shows failures, cancellations, and recovery.
 A successful arrival at point 6 followed by a goal for point 1 marks a completed lap.
 The commander has no lap counter.
 
+For automatic charging in Four Rooms, start Seggy with the [Four Rooms docking catalogue](robots/seggy/config/docking_four_rooms_sim.yaml). It uses the bays in this world. Verify the approximate dock poses against the active map before starting the patrol.
+
+```bash
+ros2 launch articubot_one seggy.launch.py \
+  use_sim_time:=true localizer_type:=amcl enable_docking:=true \
+  map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml" \
+  docking_catalogue:="$HOME/robot_ws/src/articubot_one/robots/seggy/config/docking_four_rooms_sim.yaml"
+```
+
+Then launch the commander with the profile from the workspace root:
+
+```bash
+cd ~/robot_ws
+ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
+  --params-file src/articubot_one/robots/seggy/config/patrol_sim.yaml
+```
+
+The profile selects `sim_v_bay` and enables Gazebo recharge. The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), and stops recharge before undocking. Patrol resumes after undocking succeeds. If docking, charging, or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
+
+The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
+
 For live distance remaining on the current leg:
 
 ```bash
@@ -192,7 +213,7 @@ Both staging centers fall on free cells in the saved map. These are separate fro
 | Object detection | Demo subscriber listens for a string on `/detections` and supplies a fixed inspection pose. |
 | Recovery | Demo spin publishes an unstamped `Twist` on `cmd_vel`, followed by a short wait and retry. |
 | Battery check | Reads `sensor_msgs/msg/BatteryState` on `/battery/battery_state`. Set `-p low_battery_threshold:=0.25` in the commander’s ROS arguments for a 25% cutoff. The default is 20%. After a low reading, patrol waits for `full_battery_threshold` (default 1.0) or `FULL` status. For a 95% restart threshold, also pass `-p full_battery_threshold:=0.95`. Patrol can start before the first valid reading. |
-| Charging | Demo action logs and returns success. |
+| Charging | Calls `/dock_robot` for the configured `dock_id`, waits for the full battery condition, then calls `/undock_robot`. |
 
 ============================================
 
@@ -210,6 +231,7 @@ source ~/robot_ws/install/setup.bash
 ros2 launch articubot_one seggy.launch.py \
   use_sim_time:=false \
   localizer_type:=amcl \
+  enable_docking:=true \
   map:="$HOME/launch/maps_/seggy_office.yaml"
 ```
 
@@ -220,10 +242,11 @@ Confirm `ros2 action list` shows `/navigate_to_pose`.
 In a Workstation's terminal on the same ROS network, run the Patrol commander. Seggy starts moving as soon as the first goal is accepted.
 
 ```bash
-source ~/robot_ws/install/setup.bash
+cd ~/robot_ws
+source install/setup.bash
 
 ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
-  -p bt_xml_path:="$HOME/robot_ws/src/articubot_one/robots/seggy/behavior_trees/seggy_office_patrol_bt.xml"
+  --params-file src/articubot_one/robots/seggy/config/patrol_real.yaml
 ```
 
 ### Office patrol stops
@@ -252,7 +275,7 @@ Once Seggy enters the position radius, it can finish turning even if it drifts b
 Use the same [monitoring commands](#start-and-monitor-the-patrol) as in simulation. An arrival at point 3 followed by a goal for point 1 marks the start of the next lap.
 If you stop the commander while Seggy is moving, check whether a Nav2 goal is still active and cancel it in RViz if needed.
 
-The three poses were sampled on hardware. A complete autonomous office lap has yet to be verified. The patrol tree still uses the demo object detection and charging behavior described below.
+The three poses were sampled on hardware. A complete autonomous office lap has yet to be verified. The patrol tree still uses demo object detection. Verify the docking and charging cycle on hardware before relying on automatic charge stops.
 
 ## Verification and remaining work
 
@@ -260,7 +283,7 @@ In testing, Seggy completed numerous six-point laps with very few Nav2 failures.
 
 - **Camera inspection.** Connect Seggy's simulated RGB-D stream to a detector, transform detections into `map`, and plan reachable inspection poses beside objects on the tables. Track inspected objects so a repeated detection does not keep interrupting the route.
 - **Recovery.** Use Seggy's Nav2 recovery actions or route recovery commands through its stamped velocity and collision-monitor path.
-- **Battery and docking.** Connect the charge branch to Seggy's docking stack, configure the relocated bays for this map, and verify the transition from docking to charging and back to patrol. [Seggy docking configuration](robots/seggy/config/docking_sim.yaml)
+- **Battery and docking.** Verify a full docking, charging, and undocking cycle in each environment and check that the active dock catalogue matches the map. [Seggy docking configuration](robots/seggy/config/docking_sim.yaml)
 
 -----------------------
 

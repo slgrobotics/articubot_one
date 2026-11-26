@@ -13,7 +13,7 @@
         └── WaitAndRetry             2s wait, returns FAILURE to trigger retry
 
   Top-level: CheckBattery gates the patrol loop.
-  If battery < 20%, ChargeBattery fires (stub for demo).
+  A low battery starts docking, charging, and undocking.
 -->
 
 <root BTCPP_format="4">
@@ -115,7 +115,7 @@
 
         </Sequence>
       </ReactiveSequence>
-      <!-- battery too low — dock and charge (stub: logs and returns SUCCESS) -->
+      <!-- Hold patrol until docking, charging, and undocking complete -->
       <ChargeBattery/>
     </Fallback>
   </BehaviorTree>

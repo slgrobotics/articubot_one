@@ -1,0 +1,80 @@
+#
+# Named catalogue; verify map/world alignment before motion.
+# Four Rooms simulation. Approximate map poses from the saved map alignment.
+#
+dock_detector:
+  ros__parameters:
+    use_sim_time: true
+    scan_topic: scan
+    pose_topic: detected_dock_pose
+    fixed_frame: odom
+    expected_frame: map
+    search_radius: 0.95
+    distance_threshold: 0.025
+    min_points: 5
+    min_length: 0.12
+    max_length: 1.3
+    position_tolerance: 0.45
+    max_scan_age: 0.5
+    detection_timeout: 0.6
+
+    # Does the detected shape match the bay geometry? For a V bay, the measured opening must be
+    #   within 11° of twice v_shaped_bay.flare_angle_deg. Seggy’s 55° flare gives a 110° opening,
+    #   so the detector accepts 99°–121°.
+    angle_tolerance_deg: 11.0
+    # Does the detected bay face the expected direction? The detected bay heading must be
+    #   within 25° of that bay’s expected_dock_yaw_deg, with both headings compared in the same frame.
+    yaw_tolerance_deg: 25.0
+
+    # Shared defaults. Each named bay overrides its shape and map pose below.
+    target_shape: trapezoid_bay
+    expected_dock_x: -4.456
+    expected_dock_y: 7.708
+    expected_dock_yaw_deg: 90.0
+    trapezoid_bay:
+      panel_width: 0.5
+      flare_angle_deg: 32.5
+      parking_offset: 0.425
+      max_line_gap: 0.30
+      dimension_tolerance: 0.10
+      max_corner_gap: 0.18
+      joint_refinement: true
+    v_shaped_bay:
+      panel_width: 0.70
+      flare_angle_deg: 55.0
+      parking_offset: 0.60
+      max_apex_gap: 0.25
+      joint_refinement: true
+
+    dock_ids:
+    - sim_trapezoid_bay
+    - sim_v_bay
+    docks:
+      sim_trapezoid_bay:
+        target_shape: trapezoid_bay
+        expected_dock_x: -4.456
+        expected_dock_y: 7.708
+        expected_dock_yaw_deg: 90.0
+        insertion_max_travel: 0.15  # meters
+        charging_to_stop_delay: 0.0  # seconds after first charging status before commanding zero
+        trapezoid_bay:
+          panel_width: 0.5
+          flare_angle_deg: 32.5
+          parking_offset: 0.425
+          max_line_gap: 0.3
+          dimension_tolerance: 0.05
+          max_corner_gap: 0.1
+          joint_refinement: true
+      sim_v_bay:
+        target_shape: v_shaped_bay
+        expected_dock_x: 7.722
+        expected_dock_y: -3.797
+        expected_dock_yaw_deg: 0.0
+        insertion_max_travel: 0.15   # meters. A positive limit enables insertion and stops if charging confirmation doesn't arrive.
+        charging_to_stop_delay: 1.0  # seconds after first charging status arrival before commanding zero, to allow better insertion.
+        v_shaped_bay:
+          joint_refinement: true
+          panel_width: 0.7
+          flare_angle_deg: 55.0
+          parking_offset: 0.6
+          max_apex_gap: 0.25

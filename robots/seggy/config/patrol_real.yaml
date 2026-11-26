@@ -11,6 +11,7 @@
 patrol_commander:
   ros__parameters:
     use_sim_time: false
+    dock_id: real_v_bay
     low_battery_threshold: 0.20   # 0...1.0 SOC
     full_battery_threshold: 1.0   # or BatteryState reporting FULL status.
     # Path to the behavior tree XML file, "cd ~/robot_ws" before you start Patrol Commander - or use absolute path:
