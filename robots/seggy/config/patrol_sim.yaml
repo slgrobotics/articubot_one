@@ -1,0 +1,17 @@
+#
+# This is a configuration file for the Autonomous Patrol Commander node.
+#
+# See https://github.com/slgrobotics/articubot_one/blob/lyrical/README_patrol.md
+#
+# Run it with:
+#    cd ~/robot_ws
+#    ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args --params-file "src/articubot_one/robots/seggy/config/patrol_sim.yaml"
+#
+
+patrol_commander:
+  ros__parameters:
+    use_sim_time: true
+    low_battery_threshold: 0.20   # 0...1.0 SOC
+    full_battery_threshold: 1.0   # or BatteryState reporting FULL status.
+    # Path to the behavior tree XML file, "cd ~/robot_ws" before you start Patrol Commander - or use absolute path:
+    bt_xml_path: src/articubot_one/robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml
