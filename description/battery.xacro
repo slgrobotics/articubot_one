@@ -54,7 +54,9 @@
       <enable_recharge>true</enable_recharge>
       <!-- charging I = c / t, discharging I = P / V, charging I should be > discharging I 
            Seggy sim: charging current is 20 Ah / 3.0 hours = 6.67 A. Subtracting 15 W electrical load - ~5.3 A -->
-      <charging_time>3.0</charging_time>
+      <!-- charging_time>3.0</charging_time -->
+      <!-- for patrol demo accelerate charging from 88% to 90% within a minute -->
+      <charging_time>0.1</charging_time>
       <recharge_by_topic>true</recharge_by_topic>
       <!-- By default, discharge starts on the first nonzero joint command. -->
       <start_draining>${str(battery_start_draining).lower()}</start_draining>
