@@ -83,20 +83,28 @@ rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro=${ROS_DISTRO} -r -y --skip-keys ament_python
 
 colcon build
-source install/setup.bash
 ```
 
 ## Start Seggy with the saved map
 
 Pass `robot_world:=four_rooms` to select [Four Rooms](assets/worlds/four_rooms.sdf) in Gazebo.
 
+For automatic charging in Four Rooms, start Seggy with the [Four Rooms docking catalogue](robots/seggy/config/docking_four_rooms_sim.yaml).
+It uses the bays in this world.
+
 From a terminal with `~/robot_ws/install/setup.bash` sourced:
 
 ```bash
+cd ~/robot_ws
+source ~/robot_ws/install/setup.bash
+
 ros2 launch articubot_one seggy.launch.py \
   use_sim_time:=true \
   localizer_type:=amcl \
-  map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml"
+  enable_docking:=true \
+  robot_world:=four_rooms \
+  map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml" \
+  docking_catalogue:="$HOME/robot_ws/src/articubot_one/robots/seggy/config/docking_four_rooms_sim.yaml"
 ```
 
 This command starts Gazebo, RViz2, Joystick driver node and all robot's nodes including ACML and Nav2.
@@ -109,48 +117,43 @@ The robot spawns near `(0, 0)`, aimed about 19° north of east. In RViz, set the
 In a second terminal, source the shared robot workspace. The commander starts sending goals as soon as it loads the tree, so check localization before running it.
 
 ```bash
+cd ~/robot_ws
 source ~/robot_ws/install/setup.bash
 
-ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
-  -p use_sim_time:=true \
-  -p bt_xml_path:="$HOME/robot_ws/src/articubot_one/robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml"
+ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args --params-file "src/articubot_one/robots/seggy/config/patrol_sim.yaml"
 ```
 
 This uses Seggy's running Nav2 stack. Leave the TurtleBot3 simulator and its navigation launch out of this setup. The patrol commander currently expects the global `/navigate_to_pose` action.
 
+The `patrol_sim.yaml` profile selects `sim_v_bay` and enables Gazebo recharge.
+The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), 
+and confirms from fresh battery status that recharge has stopped before undocking.
+Patrol resumes after undocking succeeds.
+
+If the docking server rejects a goal, the commander retries without moving to pre-staging. It waits 2 seconds initially and backs off to at most 30 seconds between requests.
+The simulation profile also allows two retries after a recoverable failure on an accepted docking goal. Before each retry, Nav2 drives to `dock_retry_pose`,
+a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause.
+Restart it after resolving the fault.
+
+The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
+
 Watch the behavior tree in a separate terminal:
 
 ```bash
-ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|Running:|RecoveryRotate|ApproachObject|ChargeBattery'
+ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|Running|RecoveryRotate|ApproachObject|CheckBattery|ChargeBattery'
+
+  or
+
+ros2 topic echo /bt_log --field data | tee patrol_log.txt
 ```
 
-`NavigateToRoom: heading to` shows the stop label, goal, and starting position with straight-line distance when TF is available, and `SUCCESS — arrived at` confirms arrival and reports the stop label, goal coordinates, latest map pose, heading, and XY error when TF is available.
-The minute-by-minute `Running:` messages include the goal and current pose when TF is available, plus distance along the Nav2 path, estimated time remaining, and recovery count when fresh action feedback provides them. The filter also shows failures, cancellations, and recovery.
-A successful arrival at point 6 followed by a goal for point 1 marks a completed lap.
-The commander has no lap counter.
+`NavigateToRoom: heading to` shows the stop label, goal, and starting position with straight-line distance when TF is available, and `SUCCESS — arrived at` confirms arrival and reports the stop label,
+goal coordinates, latest map pose, heading, and XY error when TF is available.
 
-For automatic charging in Four Rooms, start Seggy with the [Four Rooms docking catalogue](robots/seggy/config/docking_four_rooms_sim.yaml). It uses the bays in this world. Verify the approximate dock poses against the active map before starting the patrol.
+The minute-by-minute `Running:` messages include the goal and current pose when TF is available, plus distance along the Nav2 path, estimated time remaining, and recovery count when fresh action feedback provides them.
+The filter also shows failures, cancellations, and recovery.
 
-```bash
-ros2 launch articubot_one seggy.launch.py \
-  use_sim_time:=true robot_world:=four_rooms localizer_type:=amcl enable_docking:=true \
-  map:="$HOME/robot_ws/src/articubot_one/assets/maps/four_rooms.yaml" \
-  docking_catalogue:="$HOME/robot_ws/src/articubot_one/robots/seggy/config/docking_four_rooms_sim.yaml"
-```
-
-Then launch the commander with the profile from the workspace root:
-
-```bash
-cd ~/robot_ws
-ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
-  --params-file src/articubot_one/robots/seggy/config/patrol_sim.yaml
-```
-
-The profile selects `sim_v_bay` and enables Gazebo recharge. The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), and confirms from fresh battery status that recharge has stopped before undocking. Patrol resumes after undocking succeeds.
-
-If the docking server rejects a goal, the commander retries without moving to pre-staging. It waits 2 seconds initially and backs off to at most 30 seconds between requests. The simulation profile also allows two retries after a recoverable failure on an accepted docking goal. Before each retry, Nav2 drives to `dock_retry_pose`, a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
-
-The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
+A successful arrival at point 6 followed by a goal for point 1 marks a completed lap. The commander has no lap counter.
 
 For live distance remaining on the current leg:
 
@@ -177,7 +180,7 @@ Gazebo world coordinates and ROS map coordinates have different origins. The gre
 
 ## Save a new map with orientation
 
-Use SLAM Toolbox to map the rooms, outdoor paths, and docking approaches. In a sourced terminal, run the orientation-aware saver while SLAM publishes `/map`:
+For a live robot or a different sim world use SLAM Toolbox to map the rooms, outdoor paths, and docking approaches. In a sourced terminal, run the orientation-aware saver while SLAM publishes `/map`:
 
 ```bash
 mkdir -p ~/launch/maps
