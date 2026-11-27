@@ -29,7 +29,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="0.6471121311187744" y="2.7072768211364746"/>
+              <NavigateToRoom x="0.6471121311187744" y="2.7072768211364746" label="Stop 1 (southwest room)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -44,7 +44,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="2.5293877124786377" y="5.790807247161865"/>
+              <NavigateToRoom x="2.5293877124786377" y="5.790807247161865" label="Stop 2 (northwest room)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -59,7 +59,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="7.029889106750488" y="6.96327018737793"/>
+              <NavigateToRoom x="7.029889106750488" y="6.96327018737793" label="Stop 3 (northeast room)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -74,7 +74,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="6.157336235046387" y="1.648167371749878"/>
+              <NavigateToRoom x="6.157336235046387" y="1.648167371749878" label="Stop 4 (southeast room)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -89,7 +89,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="2.81367564201355" y="-4.646635055541992"/>
+              <NavigateToRoom x="2.81367564201355" y="-4.646635055541992" label="Stop 5 (south yard)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -104,7 +104,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="-4.457201957702637" y="3.5339748859405518"/>
+              <NavigateToRoom x="-4.457201957702637" y="3.5339748859405518" label="Stop 6 (west yard)"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -132,6 +132,7 @@
     <Action ID="NavigateToRoom">
       <input_port name="x"/>
       <input_port name="y"/>
+      <input_port name="label"/>
     </Action>
     <Action ID="RecoveryRotate"/>
     <Action ID="WaitAndRetry"/>

@@ -124,8 +124,8 @@ Watch the behavior tree in a separate terminal:
 ros2 topic echo /bt_log --field data | grep --line-buffered -E 'NavigateToRoom|Running:|RecoveryRotate|ApproachObject|ChargeBattery'
 ```
 
-`NavigateToRoom: heading to (x, y)` identifies the current stop, and `SUCCESS — arrived at room` confirms arrival.
-The filter also shows failures, cancellations, and recovery.
+`NavigateToRoom: heading to` shows the stop label, goal, and starting position with straight-line distance when TF is available, and `SUCCESS — arrived at` confirms arrival and reports the stop label, goal coordinates, latest map pose, heading, and XY error when TF is available.
+The minute-by-minute `Running:` messages include the goal and current pose when TF is available, plus distance along the Nav2 path, estimated time remaining, and recovery count when fresh action feedback provides them. The filter also shows failures, cancellations, and recovery.
 A successful arrival at point 6 followed by a goal for point 1 marks a completed lap.
 The commander has no lap counter.
 
@@ -146,7 +146,9 @@ ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
   --params-file src/articubot_one/robots/seggy/config/patrol_sim.yaml
 ```
 
-The profile selects `sim_v_bay` and enables Gazebo recharge. The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), and stops recharge before undocking. Patrol resumes after undocking succeeds. If docking, charging, or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
+The profile selects `sim_v_bay` and enables Gazebo recharge. The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), and confirms from fresh battery status that recharge has stopped before undocking. Patrol resumes after undocking succeeds.
+
+The simulation profile allows two retries after a recoverable docking failure. Before each retry, Nav2 drives to `dock_retry_pose`, a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
 
 The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
 

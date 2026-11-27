@@ -31,7 +31,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="-0.181" y="0.276"/>
+              <NavigateToRoom x="-0.181" y="0.276" label="Office stop 1"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -46,7 +46,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="-2.994" y="4.360"/>
+              <NavigateToRoom x="-2.994" y="4.360" label="Office stop 2"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -61,7 +61,7 @@
               <Inverter>
                 <DetectObject target="box" object_pose="{object_pose}"/>
               </Inverter>
-              <NavigateToRoom x="-4.473" y="0.392"/>
+              <NavigateToRoom x="-4.473" y="0.392" label="Office stop 3"/>
             </ReactiveSequence>
             <ApproachObject target_pose="{object_pose}"/>
             <Sequence>
@@ -89,6 +89,7 @@
     <Action ID="NavigateToRoom">
       <input_port name="x"/>
       <input_port name="y"/>
+      <input_port name="label"/>
     </Action>
     <Action ID="RecoveryRotate"/>
     <Action ID="WaitAndRetry"/>
