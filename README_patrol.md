@@ -148,7 +148,7 @@ ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args \
 
 The profile selects `sim_v_bay` and enables Gazebo recharge. The commander logs docking stages on `/bt_log`, starts simulation recharge when docking requests charge confirmation (or after successful positioning if it skips that stage), and confirms from fresh battery status that recharge has stopped before undocking. Patrol resumes after undocking succeeds.
 
-The simulation profile allows two retries after a recoverable docking failure. Before each retry, Nav2 drives to `dock_retry_pose`, a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
+If the docking server rejects a goal, the commander retries without moving to pre-staging. It waits 2 seconds initially and backs off to at most 30 seconds between requests. The simulation profile also allows two retries after a recoverable failure on an accepted docking goal. Before each retry, Nav2 drives to `dock_retry_pose`, a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause. Restart it after resolving the fault.
 
 The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
 
