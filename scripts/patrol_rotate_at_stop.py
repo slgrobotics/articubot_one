@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-r"""
+
+"""
 Run a configured in-place rotation for one Seggy patrol stop.
 
 The script reads the named stop from the task YAML, then commands its signed
