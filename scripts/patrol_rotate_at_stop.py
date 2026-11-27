@@ -3,6 +3,8 @@
 """
 Run a configured in-place rotation for one Seggy patrol stop.
 
+See https://github.com/slgrobotics/turtlebot3-autonomous-patrol/blob/lyrical/README.md#run-custom-scripts-at-patrol-stops
+
 The script reads the named stop from the task YAML, then commands its signed
 angle at the requested angular rate. Positive angles turn left. It tracks
 multiple revolutions with wheel odometry and sends velocity commands through
