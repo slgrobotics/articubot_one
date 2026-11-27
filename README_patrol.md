@@ -132,7 +132,8 @@ Patrol resumes after undocking succeeds.
 
 If the docking server rejects a goal, the commander retries without moving to pre-staging. It waits 2 seconds initially and backs off to at most 30 seconds between requests.
 The simulation profile also allows two retries after a recoverable failure on an accepted docking goal. Before each retry, Nav2 drives to `dock_retry_pose`,
-a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails, the commander holds patrol and logs the cause.
+a map-frame position and yaw about 2 m west of the V-bay staging pose. If pre-staging fails, the docking retry budget is exhausted, or charging or undocking fails,
+the commander holds patrol and logs the cause.
 Restart it after resolving the fault.
 
 The hardware profile selects `real_v_bay` and leaves recharge to the physical dock. Use that profile with Seggy's hardware docking bringup enabled.
@@ -150,7 +151,8 @@ ros2 topic echo /bt_log --field data | tee patrol_log.txt
 `NavigateToRoom: heading to` shows the stop label, goal, and starting position with straight-line distance when TF is available, and `SUCCESS — arrived at` confirms arrival and reports the stop label,
 goal coordinates, latest map pose, heading, and XY error when TF is available.
 
-The minute-by-minute `Running:` messages include the goal and current pose when TF is available, plus distance along the Nav2 path, estimated time remaining, and recovery count when fresh action feedback provides them.
+The minute-by-minute `Running:` messages include the goal and current pose when TF is available, plus distance along the Nav2 path, estimated time remaining,
+and recovery count when fresh action feedback provides them.
 The filter also shows failures, cancellations, and recovery.
 
 A successful arrival at point 6 followed by a goal for point 1 marks a completed lap. The commander has no lap counter.
@@ -174,13 +176,17 @@ The [Seggy patrol tree](robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.x
 | 5 | 2.814 | −4.647 |
 | 6 | −4.457 | 3.534 |
 
-To record a different route, use RViz **Publish Point** with fixed frame `map` while running `ros2 topic echo /clicked_point`. Copy X and Y in visit order and verify each message has `frame_id: map`. **Publish Point** records position only. The current `NavigateToRoom` action sets yaw to zero. Use **Navigate Through Poses** to test a route once you have selected the stops.
+To record a different route, use RViz **Publish Point** with fixed frame `map` while running `ros2 topic echo /clicked_point`. 
+Copy X and Y in visit order and verify each message has `frame_id: map`. **Publish Point** records position only. 
+The current `NavigateToRoom` action sets yaw to zero. Use **Navigate Through Poses** to test a route once you have selected the stops.
 
-Gazebo world coordinates and ROS map coordinates have different origins. The green circles are 0.5 m diameter and use the measured map-to-world alignment. If you regenerate the map, verify the route in the new frame before reusing the XML or moving the circles.
+Gazebo world coordinates and ROS map coordinates have different origins. The green circles are 0.5 m diameter and use the measured map-to-world alignment.
+If you regenerate the map, verify the route in the new frame before reusing the XML or moving the circles.
 
 ## Save a new map with orientation
 
-For a live robot or a different sim world use SLAM Toolbox to map the rooms, outdoor paths, and docking approaches. In a sourced terminal, run the orientation-aware saver while SLAM publishes `/map`:
+For a live robot or a different sim world use SLAM Toolbox to map the rooms, outdoor paths, and docking approaches. In a sourced terminal,
+run the orientation-aware saver while SLAM publishes `/map`:
 
 ```bash
 mkdir -p ~/launch/maps
@@ -190,7 +196,10 @@ ros2 run map_orientation_saver map_saver_with_orientation \
   --params-file "$(ros2 pkg prefix --share map_orientation_saver)/config/map_saver_params.yaml"
 ```
 
-The saved [map YAML](assets/maps/four_rooms.yaml) references the occupancy image at 5 cm per pixel. AMCL loads those two files. The [orientation sidecar](assets/maps/four_rooms.orientation.yaml) records the map's heading estimate. The `four_rooms_serialized.data` and `four_rooms_serialized.posegraph` files support resuming SLAM Toolbox mapping. [Map orientation guide](docs/map_orientation.md)
+The saved [map YAML](assets/maps/four_rooms.yaml) references the occupancy image at 5 cm per pixel. AMCL loads those two files.
+The [orientation sidecar](assets/maps/four_rooms.orientation.yaml) records the map's heading estimate.
+The `four_rooms_serialized.data` and `four_rooms_serialized.posegraph` files support resuming SLAM Toolbox mapping.
+[Map orientation guide](docs/map_orientation.md)
 
 ## Dock staging points
 
@@ -209,7 +218,8 @@ Both staging centers fall on free cells in the saved map. These are separate fro
 - The commander ticks a BehaviorTree.CPP tree at 10 Hz.
 - The tree sends one Nav2 goal at a time.
 - An object detection can interrupt a goal, causing the navigation action to cancel it and letting the approach branch run.
-- A failed navigation can trigger a spin and retry.
+- A failed navigation can trigger a spin and one retry of the same stop. If both attempts fail, the route continues at the next stop.
+Only the low-battery gate can start docking.
 - A battery check gates the route on each tick.
 
 | Function | Current behavior |
