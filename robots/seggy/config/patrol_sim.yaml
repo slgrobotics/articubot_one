@@ -12,8 +12,10 @@ patrol_commander:
   ros__parameters:
     use_sim_time: true
     dock_id: sim_v_bay
+    max_dock_retries: 2
+    dock_retry_pose: [5.222, -3.797, 0.0]  # map x, y, yaw; 2 m west of staging
     simulate_dock_recharge: true
-    low_battery_threshold: 0.20   # 0...1.0 SOC
-    full_battery_threshold: 1.0   # or BatteryState reporting FULL status.
+    low_battery_threshold: 0.88   # 0...1.0 SOC
+    full_battery_threshold: 0.89   # or BatteryState reporting FULL status.
     # Path to the behavior tree XML file, "cd ~/robot_ws" before you start Patrol Commander - or use absolute path:
     bt_xml_path: src/articubot_one/robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml
