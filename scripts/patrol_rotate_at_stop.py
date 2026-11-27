@@ -17,6 +17,9 @@ the velocity smoother, and the collision monitor must be available.
 
 Expect startup output listing the CLI arguments and effective YAML settings,
 local start and end times, and progress with elapsed time, ETA, and percentage.
+Start, progress, and finish events are emitted as JSON lines on stdout,
+with the human-readable message in each event's log field.
+The finish event includes the exit code and, on failure, the error details.
 The script exits successfully after reaching
 the target angle and confirming that the robot has stopped. A timeout or
 missing feedback produces an error and a nonzero exit status.
@@ -24,6 +27,7 @@ missing feedback produces an error and a nonzero exit status.
 
 import argparse
 from datetime import datetime
+import json
 import math
 from pathlib import Path
 import signal
@@ -52,6 +56,23 @@ def format_duration(seconds):
     return f'{hours:02d}:{minutes:02d}:{seconds:02d}'
 
 
+def emit_event(event, stop, name, log, **fields):
+    record = {
+        'event': event,
+        'version': 1,
+        'stop': stop,
+        'name': name,
+        'log': log,
+        **fields,
+    }
+    print(json.dumps(record, separators=(',', ':'), allow_nan=False), flush=True)
+
+
+def emit_progress(stop, name, log, elapsed_s, eta_s, percent_complete):
+    emit_event('patrol_task_progress', stop, name, log, elapsed_s=round(elapsed_s, 3),
+               eta_s=eta_s, percent_complete=round(percent_complete, 1))
+
+
 def load_task(path, stop):
     try:
         task = yaml.safe_load(path.read_text())['stops'][stop]
@@ -74,7 +95,7 @@ def load_task(path, stop):
     return name, angle, rate, timeout, use_sim_time
 
 
-def rotate(node, stop, angle, rate, timeout):
+def rotate(node, stop, task_name, angle, rate, timeout):
     target = abs(math.radians(angle))
     direction = math.copysign(1, angle)
     previous_yaw = None
@@ -123,7 +144,8 @@ def rotate(node, stop, angle, rate, timeout):
         if now >= deadline:
             raise RuntimeError('Waiting for stationary wheel odometry, command subscriber, or clock')
 
-    print(f'{stop}: rotating {angle:g}° at {rate:g} rad/s', flush=True)
+    emit_progress(stop, task_name, f'{stop}: rotating {angle:g}° at {rate:g} rad/s',
+                  0.0, math.ceil(target / rate), 0.0)
     rotating = True
     rotation_start = now
     next_command = now
@@ -141,9 +163,11 @@ def rotate(node, stop, angle, rate, timeout):
                 progress = max(0.0, direction * rotation)
                 estimated_rate = progress / elapsed if progress > 0 else rate
                 eta = math.ceil((target - progress) / estimated_rate)
-                print(f'{stop}: rotated {math.degrees(rotation):.1f}° of {angle:g}° | '
-                      f'elapsed={format_duration(elapsed)} | ETA={format_duration(eta)} | '
-                      f'complete={100 * progress / target:.1f}%', flush=True)
+                percent = 100 * progress / target
+                log = (f'{stop}: rotated {math.degrees(rotation):.1f}° of {angle:g}° | '
+                       f'elapsed={format_duration(elapsed)} | ETA={format_duration(eta)} | '
+                       f'complete={percent:.1f}%')
+                emit_progress(stop, task_name, log, elapsed, eta, percent)
                 next_progress = now + 2
             if now >= next_command:
                 command(direction * rate)
@@ -158,9 +182,10 @@ def rotate(node, stop, angle, rate, timeout):
                 break
         else:
             raise RuntimeError('Could not confirm that rotation stopped')
-    elapsed = format_duration(time.monotonic() - rotation_start)
-    print(f'{stop}: completed rotation ({math.degrees(rotation):.1f}°) | '
-          f'elapsed={elapsed} | ETA=00:00:00 | complete=100.0%', flush=True)
+    elapsed = time.monotonic() - rotation_start
+    log = (f'{stop}: completed rotation ({math.degrees(rotation):.1f}°) | '
+           f'elapsed={format_duration(elapsed)} | ETA=00:00:00 | complete=100.0%')
+    emit_progress(stop, task_name, log, elapsed, 0, 100.0)
 
 
 def main():
@@ -168,38 +193,52 @@ def main():
     parser.add_argument('tasks_file', type=Path)
     parser.add_argument('stop', help='Stop name under stops in the YAML')
     args = parser.parse_args()
-    print(f'CLI arguments: tasks_file={str(args.tasks_file)!r}, stop={args.stop!r}', flush=True)
+    cli_log = f'CLI arguments: tasks_file={str(args.tasks_file)!r}, stop={args.stop!r}'
     try:
         name, angle, rate, timeout, use_sim_time = load_task(args.tasks_file, args.stop)
     except ValueError as error:
-        parser.error(str(error))
-    print(f'YAML settings for {args.stop!r}: name={name!r}, angle_deg={angle:g}, '
-          f'angular_speed_rad_s={rate:g}, timeout_s={timeout:g}, '
-          f'use_sim_time={str(use_sim_time).lower()}', flush=True)
+        emit_event('patrol_task_finish', args.stop, None, f'{cli_log}\n{args.stop}: {error}',
+                   elapsed_s=0.0, exit_code=2,
+                   error_code='invalid_configuration', error_message=str(error))
+        return 2
+    settings_log = (f'YAML settings for {args.stop!r}: name={name!r}, angle_deg={angle:g}, '
+                    f'angular_speed_rad_s={rate:g}, timeout_s={timeout:g}, '
+                    f'use_sim_time={str(use_sim_time).lower()}')
 
     def interrupt(_signum, _frame):
         raise KeyboardInterrupt
 
     signal.signal(signal.SIGTERM, interrupt)
-    rclpy.init(args=[], signal_handler_options=SignalHandlerOptions.NO)
-    node = rclpy.create_node(
-        'patrol_rotate_at_stop', parameter_overrides=[Parameter('use_sim_time', value=use_sim_time)])
     started = time.monotonic()
-    print(f'{local_timestamp()} {args.stop}: started {name!r}', flush=True)
+    start_log = f'{cli_log}\n{settings_log}\n{local_timestamp()} {args.stop}: started {name!r}'
+    emit_event('patrol_task_start', args.stop, name, start_log, elapsed_s=0.0)
+    node = None
+    exit_code, error_code, error_message = 0, None, None
     try:
-        rotate(node, args.stop, angle, rate, timeout)
-        return 0
+        rclpy.init(args=[], signal_handler_options=SignalHandlerOptions.NO)
+        node = rclpy.create_node(
+            'patrol_rotate_at_stop', parameter_overrides=[Parameter('use_sim_time', value=use_sim_time)])
+        rotate(node, args.stop, name, angle, rate, timeout)
     except KeyboardInterrupt:
-        print(f'{args.stop}: rotation canceled', file=sys.stderr)
-        return 130
-    except RuntimeError as error:
-        print(f'{args.stop}: {error}', file=sys.stderr)
-        return 1
+        exit_code, error_code, error_message = 130, 'canceled', 'rotation canceled'
+    except Exception as error:
+        exit_code, error_code, error_message = 1, 'execution_failed', str(error)
     finally:
-        elapsed = format_duration(time.monotonic() - started)
-        print(f'{local_timestamp()} {args.stop}: ended {name!r} | elapsed={elapsed}', flush=True)
-        node.destroy_node()
-        rclpy.try_shutdown()
+        try:
+            if node is not None:
+                node.destroy_node()
+            rclpy.try_shutdown()
+        except Exception as error:
+            if exit_code == 0:
+                exit_code, error_code, error_message = 1, 'cleanup_failed', str(error)
+        elapsed = time.monotonic() - started
+        end_log = (f'{local_timestamp()} {args.stop}: ended {name!r} | '
+                   f'elapsed={format_duration(elapsed)}')
+        if error_message is not None:
+            end_log = f'{args.stop}: {error_message}\n{end_log}'
+        emit_event('patrol_task_finish', args.stop, name, end_log, elapsed_s=round(elapsed, 3),
+                   exit_code=exit_code, error_code=error_code, error_message=error_message)
+    return exit_code
 
 
 if __name__ == '__main__':
