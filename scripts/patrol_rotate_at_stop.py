@@ -45,6 +45,10 @@ from rclpy.qos import qos_profile_sensor_data
 from rclpy.signals import SignalHandlerOptions
 
 
+class StopUnconfirmed(RuntimeError):
+    """Wheel odometry did not confirm that the robot stopped."""
+
+
 def local_timestamp():
     now = datetime.now().astimezone()
     return f'{now:%Y-%m-%d} {now.hour % 12 or 12}:{now:%M:%S %p %Z}'
@@ -181,7 +185,7 @@ def rotate(node, stop, task_name, angle, rate, timeout):
             if odom_time > stop_started and abs(measured_speed) <= 0.02:
                 break
         else:
-            raise RuntimeError('Could not confirm that rotation stopped')
+            raise StopUnconfirmed('Could not confirm that rotation stopped')
     elapsed = time.monotonic() - rotation_start
     log = (f'{stop}: completed rotation ({math.degrees(rotation):.1f}°) | '
            f'elapsed={format_duration(elapsed)} | ETA=00:00:00 | complete=100.0%')
@@ -221,6 +225,8 @@ def main():
         rotate(node, args.stop, name, angle, rate, timeout)
     except KeyboardInterrupt:
         exit_code, error_code, error_message = 130, 'canceled', 'rotation canceled'
+    except StopUnconfirmed as error:
+        exit_code, error_code, error_message = 3, 'motion_stop_unconfirmed', str(error)
     except Exception as error:
         exit_code, error_code, error_message = 1, 'execution_failed', str(error)
     finally:

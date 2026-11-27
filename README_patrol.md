@@ -183,6 +183,10 @@ The current `NavigateToRoom` action sets yaw to zero. Use **Navigate Through Pos
 Gazebo world coordinates and ROS map coordinates have different origins. The green circles are 0.5 m diameter and use the measured map-to-world alignment.
 If you regenerate the map, verify the route in the new frame before reusing the XML or moving the circles.
 
+The simulation profile also loads [patrol_four_rooms_sim.tasks.yaml](robots/seggy/config/patrol_four_rooms_sim.tasks.yaml). After a successful arrival, the commander runs the stop's configured `package executable` with the task YAML path and stop key as arguments. It forwards each supported JSON event's `log` text to `/bt_log` as `RunPatrolTask:` messages. Add `RunPatrolTask` to the monitoring filter to see those messages.
+
+The task's process exit status determines the outcome. An ordinary task failure advances the patrol to the next stop. A low-battery interruption sends SIGTERM and waits for the task to exit before docking. Motion tasks must stop cleanly before returning and use exit code 3 if they cannot confirm a stop. An unconfirmed stop holds the commander for inspection.
+
 ## Save a new map with orientation
 
 For a live robot or a different sim world use SLAM Toolbox to map the rooms, outdoor paths, and docking approaches. In a sourced terminal,

@@ -29,12 +29,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="0.6471121311187744" y="2.7072768211364746" label="Stop 1 (southwest room)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="0.6471121311187744" y="2.7072768211364746" label="Stop 1 (southwest room)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="southwest_room"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -48,12 +53,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="2.5293877124786377" y="5.790807247161865" label="Stop 2 (northwest room)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="2.5293877124786377" y="5.790807247161865" label="Stop 2 (northwest room)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="northwest_room"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -67,12 +77,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="7.029889106750488" y="6.96327018737793" label="Stop 3 (northeast room)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="7.029889106750488" y="6.96327018737793" label="Stop 3 (northeast room)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="northeast_room"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -86,12 +101,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="6.157336235046387" y="1.648167371749878" label="Stop 4 (southeast room)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="6.157336235046387" y="1.648167371749878" label="Stop 4 (southeast room)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="southeast_room"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -105,12 +125,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="2.81367564201355" y="-4.646635055541992" label="Stop 5 (south yard)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="2.81367564201355" y="-4.646635055541992" label="Stop 5 (south yard)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="south_yard"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -124,12 +149,17 @@
         <ForceSuccess>
           <RetryUntilSuccessful num_attempts="2">
             <Fallback>
-              <ReactiveSequence>
-                <Inverter>
-                  <DetectObject target="box" object_pose="{object_pose}"/>
-                </Inverter>
-                <NavigateToRoom x="-4.457201957702637" y="3.5339748859405518" label="Stop 6 (west yard)"/>
-              </ReactiveSequence>
+              <Sequence>
+                <ReactiveSequence>
+                  <Inverter>
+                    <DetectObject target="box" object_pose="{object_pose}"/>
+                  </Inverter>
+                  <NavigateToRoom x="-4.457201957702637" y="3.5339748859405518" label="Stop 6 (west yard)"/>
+                </ReactiveSequence>
+                <ForceSuccess>
+                  <RunPatrolTask stop="west_yard"/>
+                </ForceSuccess>
+              </Sequence>
               <ApproachObject target_pose="{object_pose}"/>
               <Sequence>
                 <RecoveryRotate/>
@@ -160,5 +190,8 @@
     <Action ID="RecoveryRotate"/>
     <Action ID="WaitAndRetry"/>
     <Action ID="ChargeBattery"/>
+    <Action ID="RunPatrolTask">
+      <input_port name="stop"/>
+    </Action>
   </TreeNodesModel>
 </root>

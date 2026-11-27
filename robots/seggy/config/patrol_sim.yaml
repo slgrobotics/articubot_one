@@ -18,4 +18,5 @@ patrol_commander:
     low_battery_threshold: 0.88   # 0...1.0 SOC
     full_battery_threshold: 0.89   # or BatteryState reporting FULL status.
     # Path to the behavior tree XML file, "cd ~/robot_ws" before you start Patrol Commander - or use absolute path:
+    patrol_tasks_file: src/articubot_one/robots/seggy/config/patrol_four_rooms_sim.tasks.yaml
     bt_xml_path: src/articubot_one/robots/seggy/behavior_trees/seggy_four_rooms_patrol_bt.xml
