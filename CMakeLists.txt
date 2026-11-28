@@ -29,6 +29,7 @@ install(
 install(PROGRAMS
   scripts/run_battery_state_compat.py
   scripts/patrol_rotate_at_stop.py
+  scripts/patrol_wait_at_stop.py
   scripts/gps_waypoint_follower.py
   scripts/xy_waypoint_follower.py
   scripts/seggy_docking_endurance.sh
