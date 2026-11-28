@@ -1,48 +1,68 @@
+#
+# This file defines the patrol task for the Seggy robot in a simulated environment with four rooms.
+# Each stop can have a list of actions to perform, such as rotating in place.
+# See https://github.com/slgrobotics/articubot_one/blob/lyrical/README_patrol.md
+#
+
 stops:
   southwest_room:
-    name: "Rotate left two turns"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: 720.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Rotate left two turns"
+      executable: "articubot_one patrol_rotate_at_stop.py"  # see scripts/patrol_rotate_at_stop.py
+      angle_deg: 720.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
 
   northwest_room:
-    name: "Rotate right one turn"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: -360.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Rotate right one turn"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: -360.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
+
+    - name: "Rotate left one turn"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: 360.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
 
   northeast_room:
-    name: "Rotate left one turn"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: 360.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Rotate left one turn"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: 360.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
 
   southeast_room:
-    name: "Rotate right two turns"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: -720.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Rotate right two turns"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: -720.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
 
   south_yard:
-    name: "Rotate once left"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: 360.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Rotate once left"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: 360.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
 
   west_yard:
-    name: "Rotate turn left"
-    executable: "articubot_one patrol_rotate_at_stop.py"
-    angle_deg: 90.0            # Positive turns left. Negative turns right.
-    angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
-    timeout_s: 90.0
-    use_sim_time: true
+    - name: "Turn left"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: 90.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true
+
+    - name: "Turn right"
+      executable: "articubot_one patrol_rotate_at_stop.py"
+      angle_deg: -90.0            # Positive turns left. Negative turns right.
+      angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
+      timeout_s: 90.0
+      use_sim_time: true

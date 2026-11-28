@@ -5,14 +5,17 @@ Run a configured in-place rotation for one Seggy patrol stop.
 
 See https://github.com/slgrobotics/turtlebot3-autonomous-patrol/blob/lyrical/README.md#run-custom-scripts-at-patrol-stops
 
-The script reads the named stop from the task YAML, then commands its signed
+The script reads a task at the named stop from the YAML, then commands its signed
 angle at the requested angular rate. Positive angles turn left. It tracks
 multiple revolutions with wheel odometry and sends velocity commands through
 Seggy's velocity smoother and collision monitor.
 
     ros2 run articubot_one patrol_rotate_at_stop.py \
         "$HOME/robot_ws/src/articubot_one/robots/seggy/config/patrol_four_rooms_sim.tasks.yaml" \
-        south_yard
+        south_yard 1
+
+The optional third argument selects a task in a stop's list, starting at 1.
+Omit it to run the first entry or a legacy single-task mapping.
 
 Run with the ROS workspace sourced, Seggy stationary, and patrol idle.
 The Four Rooms profile requires a running simulation clock. Wheel odometry,
@@ -80,9 +83,15 @@ def emit_progress(stop, name, log, elapsed_s, eta_s, percent_complete):
                eta_s=eta_s, percent_complete=round(percent_complete, 1))
 
 
-def load_task(path, stop):
+def load_task(path, stop, task_index=1):
     try:
         task = yaml.safe_load(path.read_text())['stops'][stop]
+        if isinstance(task, list):
+            if not 1 <= task_index <= len(task):
+                raise ValueError(f'task_index must be between 1 and {len(task)}')
+            task = task[task_index - 1]
+        elif task_index != 1:
+            raise ValueError('a single-task mapping only supports task_index 1')
         name = task.get('name', stop)
         angle, rate, timeout = (float(task[key]) for key in
                                 ('angle_deg', 'angular_speed_rad_s', 'timeout_s'))
@@ -151,7 +160,8 @@ def rotate(node, stop, task_name, angle, rate, timeout):
         if now >= deadline:
             raise RuntimeError('Waiting for stationary wheel odometry, command subscriber, or clock')
 
-    emit_progress(stop, task_name, f'{stop}: rotating {angle:g}° at {rate:g} rad/s',
+    label = f'{stop}: {task_name}'
+    emit_progress(stop, task_name, f'{label} — rotating {angle:g}° at {rate:g} rad/s',
                   0.0, math.ceil(target / rate), 0.0)
     rotating = True
     rotation_start = now
@@ -171,7 +181,7 @@ def rotate(node, stop, task_name, angle, rate, timeout):
                 estimated_rate = progress / elapsed if progress > 0 else rate
                 eta = math.ceil((target - progress) / estimated_rate)
                 percent = 100 * progress / target
-                log = (f'{stop}: rotated {math.degrees(rotation):.1f}° of {angle:g}° | '
+                log = (f'{label} — rotated {math.degrees(rotation):.1f}° of {angle:g}° | '
                        f'elapsed={format_duration(elapsed)} | ETA={format_duration(eta)} | '
                        f'complete={percent:.1f}%')
                 emit_progress(stop, task_name, log, elapsed, eta, percent)
@@ -190,7 +200,7 @@ def rotate(node, stop, task_name, angle, rate, timeout):
         else:
             raise StopUnconfirmed('Could not confirm that rotation stopped')
     elapsed = time.monotonic() - rotation_start
-    log = (f'{stop}: completed rotation ({math.degrees(rotation):.1f}°) | '
+    log = (f'{label} — completed rotation ({math.degrees(rotation):.1f}°) | '
            f'elapsed={format_duration(elapsed)} | ETA=00:00:00 | complete=100.0%')
     emit_progress(stop, task_name, log, elapsed, 0, 100.0)
 
@@ -199,10 +209,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('tasks_file', type=Path)
     parser.add_argument('stop', help='Stop name under stops in the YAML')
+    parser.add_argument('task_index', nargs='?', type=int, default=1,
+                        help='One-based task position at the stop (default: 1)')
     args = parser.parse_args()
-    cli_log = f'CLI arguments: tasks_file={str(args.tasks_file)!r}, stop={args.stop!r}'
+    cli_log = (f'CLI arguments: tasks_file={str(args.tasks_file)!r}, stop={args.stop!r}, '
+               f'task_index={args.task_index}')
     try:
-        name, angle, rate, timeout, use_sim_time = load_task(args.tasks_file, args.stop)
+        name, angle, rate, timeout, use_sim_time = load_task(args.tasks_file, args.stop, args.task_index)
     except ValueError as error:
         emit_event('patrol_task_finish', args.stop, None, f'{cli_log}\n{args.stop}: {error}',
                    elapsed_s=0.0, exit_code=2,
