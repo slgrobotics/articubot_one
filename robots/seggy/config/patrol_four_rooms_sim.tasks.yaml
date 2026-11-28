@@ -3,6 +3,10 @@
 # Each stop can have a list of actions to perform, such as rotating in place.
 # See https://github.com/slgrobotics/articubot_one/blob/lyrical/README_patrol.md
 #
+# Patrol Commander uses it:
+#    cd ~/robot_ws
+#    ros2 run turtlebot3_autonomous_patrol patrol_commander --ros-args --params-file "src/articubot_one/robots/seggy/config/patrol_sim.yaml"
+#
 
 stops:
   southwest_room:
@@ -11,6 +15,12 @@ stops:
       angle_deg: 720.0            # Positive turns left. Negative turns right.
       angular_speed_rad_s: 0.30  # Requested angular velocity before smoothing and collision checks.
       timeout_s: 90.0
+      use_sim_time: true
+
+    - name: "Wait some time"
+      executable: "articubot_one patrol_wait_at_stop.py"
+      enforce_monitoring_timeout: false  # do not enforce the 5 minutes patrol commander timeout for longer waits
+      duration_s: 120.0
       use_sim_time: true
 
   northwest_room:
