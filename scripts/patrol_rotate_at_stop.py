@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""
+r"""
 Run a configured in-place rotation for one Seggy patrol stop.
 
 See https://github.com/slgrobotics/turtlebot3-autonomous-patrol/blob/lyrical/README.md#run-custom-scripts-at-patrol-stops

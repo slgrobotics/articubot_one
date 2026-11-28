@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 Measure Seggy firmware response while driving an encoder-controlled 1 meter square.
 
 Run on Seggy with ROS and other serial clients stopped, a clear test area,
