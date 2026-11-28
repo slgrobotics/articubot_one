@@ -45,6 +45,8 @@ The commander forwards progress and results to `/bt_log` topic and can cancel th
 
 That means you can add or change what Seggy does at each stop by updating the task configuration and scripts, without changing Nav2 or the patrol commander.
 
+> **Tip:** See [patrol_sim.yaml](https://github.com/slgrobotics/articubot_one/blob/lyrical/robots/seggy/config/patrol_sim.yaml) and other related files in that directory for configuration examples.
+
 ## The Four Rooms world
 
 [Four Rooms](assets/worlds/four_rooms.sdf) is a Gazebo practice site with four furnished rooms and an outdoor yard along the south and west sides. The wall colors are visual landmarks for the four compass directions. The coordinates below are in the Gazebo world frame.
