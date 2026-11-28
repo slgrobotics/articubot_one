@@ -26,10 +26,24 @@ Back to [Main Project Home](https://github.com/slgrobotics/articubot_one/wiki)
 
 ## What are we doing here?
 
-Seggy can visit the same places without someone driving it by hand. Give it a list of stops and it will use a map to find its way around walls and furniture. In the Four Rooms simulation, Seggy visits four indoor stops and two outdoor stops, then starts the route again.
+Seggy can visit the same places without someone driving it by hand. 
+Give it a list of stops and it will use a map to find its way around walls and furniture. 
+In the Four Rooms simulation, Seggy visits four indoor stops and two outdoor stops, then starts the route again.
 
 <img alt="The Four Rooms world" src="https://github.com/user-attachments/assets/04be0637-5ecd-4947-826f-6fa5d206129b" />
 
+-----------------
+
+The [TurtleBot3 Autonomous Patrol package](https://github.com/slgrobotics/turtlebot3-autonomous-patrol) runs *patrol commander* as a separate ROS 2 process alongside Nav2.
+The patrol commander decides which stop to visit next and sends navigation goals to Nav2, which handles planning and driving.
+The commander also monitors battery level and can pause the route to dock, charge, and undock before resuming.
+Seggy uses [dock_detector package](https://github.com/slgrobotics/dock_detector) for docking to a charger bay.
+
+After Seggy reaches a stop, the commander can launch a custom executable configured for that stop in YAML. 
+For example, one stop can tell Seggy to turn left twice, while another can run a different script.
+The commander forwards progress and results to `/bt_log` topic and can cancel the task if the battery runs low, invoking a docking/charging cycle.
+
+That means you can add or change what Seggy does at each stop by updating the task configuration and scripts, without changing Nav2 or the patrol commander.
 
 ## The Four Rooms world
 
